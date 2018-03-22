@@ -191,6 +191,13 @@ sdCoupledModelMsg$sdBuildCoupledScenario2 <- function(scenComponent, modelId)
           typeof(scenComponent), "' of the component '", modelId, 
           "' could not be added.", call. = F)
 
+sdCoupledModelMsg$addComponent0 <- function(pcoupledModelId, id)
+  warning("sdsim::addComponent - Coupled Model '", pcoupledModelId, 
+          "' adding component: The component '", (id), 
+          "' identification is equal to the coupled model ID. ",
+          "Component skipped, refactor its ID and try to add it again.", 
+          call. = F)
+
 sdCoupledModelMsg$addComponent1 <- function(pcoupledModelId, id)
   warning("sdsim::addComponent - Coupled Model '", pcoupledModelId, 
           "' adding component: The component '", (id), 

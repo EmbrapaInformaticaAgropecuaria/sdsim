@@ -586,10 +586,11 @@ sdCoupledModelClass <- R6::R6Class(
         # only add sdModel's or sdStaticModel's
         if (inherits(model, "sdModelClass"))
         {
-          id <- gsub(" ", "", model$modelId, fixed = TRUE)
+          id <- model$modelId
+          # check if id already exist in components id
           if (any(grepl(pattern = paste0("^",id,"."), 
                         x = private$pcomponentsId, perl = TRUE)) ||
-              id %in% private$pcomponentsId)
+              id %in% private$pcomponentsId) 
           {
             sdCoupledModelMsg$addComponent1(private$pcoupledModelId, id)
             
@@ -597,6 +598,12 @@ sdCoupledModelClass <- R6::R6Class(
               grepl(pattern = paste0("^",id,"."), 
                     x = private$pcomponentsId, perl = TRUE)], id))
           }
+          else if (id == private$pcoupledModelId)
+          {
+            sdCoupledModelMsg$addComponent0(private$pcoupledModelId, id)
+            next()
+          }
+          
           private$pcomponentsId <- c(private$pcomponentsId, id)
           private$pcomponents[[id]] <- model$clone(deep = TRUE)
           private$pcomponentsEquations[[id]] <- model$DifferentialEquations
@@ -629,7 +636,7 @@ sdCoupledModelClass <- R6::R6Class(
         }
         else if (inherits(model, "sdStaticModelClass"))
         {
-          id <- gsub(" ", "", model$staticModelId, fixed = TRUE)
+          id <- model$staticModelId
           if (any(grepl(pattern = paste0("^",id,"."), 
                         x = private$pcomponentsId, perl = TRUE)) ||
               id %in% private$pcomponentsId)
@@ -640,6 +647,12 @@ sdCoupledModelClass <- R6::R6Class(
               grepl(pattern = paste0("^",id,"."), 
                     x = private$pcomponentsId, perl = TRUE)], id))
           }
+          else if (id == private$pcoupledModelId)
+          {
+            sdCoupledModelMsg$addComponent0(private$pcoupledModelId, id)
+            next()
+          }
+          
           private$pcomponentsId <- c(private$pcomponentsId, id)
           private$pcomponents[[id]] <- model$clone(deep = TRUE)
           private$pcomponentsInitVars[[id]] <- model$InitVars
@@ -649,7 +662,7 @@ sdCoupledModelClass <- R6::R6Class(
         }
         else if (inherits(model, "sdCoupledModelClass"))
         {
-          id <- gsub(" ", "", model$coupledModelId, fixed = TRUE)
+          id <- model$coupledModelId
           if (any(grepl(pattern = paste0("^",id,"."), 
                         x = private$pcomponentsId, perl = TRUE)) ||
               id %in% private$pcomponentsId)
@@ -659,6 +672,11 @@ sdCoupledModelClass <- R6::R6Class(
             self$removeComponent(c(private$pcomponentsId[
               grepl(pattern = paste0("^",id,"."), 
                     x = private$pcomponentsId, perl = TRUE)], id))
+          }
+          else if (id == private$pcoupledModelId)
+          {
+            sdCoupledModelMsg$addComponent0(private$pcoupledModelId, id)
+            next()
           }
           
           # add the components with the coupled model id as prefix
@@ -687,14 +705,13 @@ sdCoupledModelClass <- R6::R6Class(
         else
           sdCoupledModelMsg$addComponent2(private$pcoupledModelId,
                                           typeof(model))
-        
-        invisible()
       }
       # merge the components auxs
       private$pcomponentsAux <- lapply(unlist(private$pcomponentsAux, 
                                               recursive = FALSE), 
                                        as.expression)
       private$flagBuild = FALSE
+      invisible()
     },
     removeComponent = function(...)
     {
