@@ -1,0 +1,66 @@
+#' sdsim: System Dynamics Simulator for Models of Initial Value Problems of 
+#' Ordinary Differential Equations (ODE) 
+#'
+#' R6 classes that represents atomic and coupled system dynamics models, static
+#' models, scenarios (variables and values that constitute a system environment) 
+#' and the simulation output. Two or more atomic, static or coupled models can 
+#' be coupled to form a more complex model, that enables communication between 
+#' it's components during simulation.
+#' A function to simulate system dynamics models; a wrapper around the 
+#' \code{\link[deSolve]{ode}} solver from the deSolve-package that solves the 
+#' initial value problem of first-order ordinary differential equations (ODE) 
+#' that specifies a model definition.    
+#' A function to build a coupled scenario from two or more component 
+#' scenarios of a complex system.
+#' Functions to help in the auxiliary and/or algebraic equations definition
+#' and in the transformation of the time series variables into temporal 
+#' functions. 
+#' All the sdsim package functionalities for atomic system dynamics models are 
+#' available in a intuitive graphical user interface application built with the 
+#' shiny web application framework.
+#' 
+#' @author Adauto Mancini, Bruno H. Pereira, Cristina F. Bazzano & Luis Barioni
+#' 
+#' @seealso 
+#' sdsim Functions:
+#' 
+#' \code{\link{sdRunApp}} for launching the sdsim application for atomic models; 
+#' a shiny server interface,
+#' 
+#' \code{\link{sdModel}} for creating an atomic system dynamics model object, 
+#' 
+#' \code{\link{sdStaticModel}} for creating a static system model object, 
+#' 
+#' \code{\link{sdCoupledModel}} for creating a coupled system dynamics model 
+#' object,
+#' 
+#' \code{\link{sdLoadModel}} for loading a model from a sdsim XML file or from
+#' the sdsim repository, see available models in \code{\link{sdRepository}},
+#' 
+#' \code{\link{sdScenario}} for creating a system scenario object (it represents 
+#' the variables and values that constitute a system environment and that are 
+#' used to compute the equations of a model),
+#' 
+#' \code{\link{sdLoadScenario}} for loading a scenario from an EXCEL or XML 
+#' file and \code{\link{sdExcelTemplate}} for creating an empty template for a 
+#' sdsim scenario EXCEL file,
+#' 
+#' \code{\link{sdBuildCoupledScenario}} for creating a coupled scenario from two 
+#' or more component's scenarios of a coupled model,
+#' 
+#' \code{\link{sdSimulate}} for solving static, atomic or coupled models in a 
+#' given scenario merged with the defaults. Runs the simulation and outputs the 
+#' result in a \code{\link{sdOutput}} object with visualization methods, 
+#' 
+#' \code{\link{sdInitEquations}} for creating a list of sorted equations from a 
+#' list of R-expressions and/or strings with the equations in R-format,
+#' 
+#' \code{\link{sdTemporalFunction}} for interpolating input time series 
+#' variables. It is automatically used in the scenario initialization, 
+#' see \code{\link{sdScenarioClass}} documentation. 
+#' Can be used to test how the interpolation will happen and prevent the 
+#' output of wrong values. 
+#'
+#' @docType package
+#' @name sdsim
+NULL

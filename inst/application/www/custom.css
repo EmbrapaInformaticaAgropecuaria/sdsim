@@ -1,0 +1,179 @@
+.selectize-dropdown {
+  width: 211px; 
+  top: 34px;
+}
+
+:root {
+  --logo-color: #237423;
+  --main-color: #247f24;
+  --button-color: #247f24;
+  --button-pressed-color: #2a8a2a;
+  --sidebar-color: #222c33;
+}
+
+.main-header .logo {
+  font-family: "Georgia", Times, "Times New Roman", serif;
+  font-weight: bold;
+  font-size: 25px;
+}
+
+.skin-blue .main-header .navbar {
+  background-color: var(--main-color);
+}
+
+.skin-blue .main-header .logo, .skin-blue .main-header .logo:hover {
+  background-color: var(--logo-color);
+}
+
+.skin-blue .main-header .navbar .sidebar-toggle:hover {
+  background-color: var(--main-color);
+}
+
+.box.box-solid.box-primary > .box-header {
+  background-color: var(--main-color);
+}
+
+.box.box-solid.box-primary {
+    border: 1px solid var(--main-color);
+}
+
+.skin-blue .left-side, .skin-blue .main-sidebar, .skin-blue .wrapper {
+  background-color: var(--sidebar-color);
+}
+
+.sidebar-menu label {
+  font-size: 16px;
+}
+
+.main-sidebar .user-panel, .sidebar-menu, .sidebar-menu {
+  font-size: 15px;
+}
+
+
+
+.selectize-control {
+  height: 25px;
+}
+
+.btn.focus, .btn:focus, .btn:hover {
+    background-color: var(--button-pressed-color);
+    color: #fff;
+    border-color: var(--button-pressed-color);
+    border-radius: 7px;
+}
+
+.btn {
+    background-color: var(--button-color);
+    color: #fff;
+    border-color: var(--button-color);
+    border-radius: 7px;
+}
+
+.btn-default.focus, .btn-default:focus, .btn-default.active.focus, .btn-default.active:focus, .btn-default.active:hover, .btn-default:active.focus, .btn-default:active:focus, .btn-default:active:hover, .open>.dropdown-toggle.btn-default.focus, .open>.dropdown-toggle.btn-default:focus, .open>.dropdown-toggle.btn-default:hover {
+    background-color: var(--button-pressed-color);
+    color: #fff;
+    border-color: var(--button-pressed-color);
+    border-radius: 7px;
+}
+
+.btn-default.disabled.focus, .btn-default.disabled:focus, .btn-default.disabled:hover, 
+.btn-default[disabled].focus, .btn-default[disabled]:focus, .btn-default[disabled]:hover, 
+fieldset[disabled] .btn-default.focus, fieldset[disabled] .btn-default:focus, fieldset[disabled] .btn-default:hover {
+    background-color: var(--button-color);
+    border-color: var(--button-color);
+}
+
+[error-tooltip] {
+  position:relative;
+  display:inline-block;
+}
+
+[error-tooltip]::before {
+  content: "";
+  position: absolute;
+  left:70%;
+  bottom:33px;
+  transform: translateX(-50%);
+  border-width: 11px 6px 0 6px;
+  border-style: solid;
+  border-color: rgba(53,53,53,1) transparent transparent     transparent;
+  z-index: 3;
+  opacity:1;
+  
+  margin-left:0px;
+  transform:translatey(-50%) rotate(45deg)
+}
+
+[error-tooltip]::after {
+  content: attr(error-tooltip);
+  position: absolute;
+  left:70%;
+  bottom:31px;
+  transform: translateX(-50%)   translateY(-100%);
+  background: rgba(53,53,53,1);
+  text-align: center;
+  color: #fff;
+  padding:4px 2px;
+  font-size: 12px;
+  min-width: 50px;
+  border-radius: 3px;
+  border: 0px solid #FFFFFF;
+  pointer-events: none;
+  padding: 4px 4px;
+  z-index:2;
+  opacity:1;
+  white-space: nowrap;
+  
+  margin-left:6px;
+  transform: translateX(0%)   translateY(-50%);
+}
+
+[data-tooltip]{
+  position:relative;
+  display:inline-block;
+}
+
+[data-tooltip]::before {
+  content: "";
+  position: absolute;
+  left:70%;
+  bottom:33px;
+  transform: translateX(-50%);
+  border-width: 11px 6px 0 6px;
+  border-style: solid;
+  border-color: rgba(53,53,53,1) transparent transparent     transparent;
+  z-index: 3;
+  opacity:0;
+  
+  margin-left:0px;
+  transform:translatey(-50%) rotate(45deg)
+}
+  
+[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left:70%;
+  bottom:31px;
+  transform: translateX(-50%)   translateY(-100%);
+  background: rgba(53,53,53,1);
+  text-align: center;
+  color: #fff;
+  padding:4px 2px;
+  font-size: 12px;
+  min-width: 50px;
+  border-radius: 3px;
+  border: 0px solid #FFFFFF;
+  pointer-events: none;
+  padding: 4px 4px;
+  z-index:2;
+  opacity:0;
+  white-space: nowrap;
+  
+  margin-left:6px;
+  transform: translateX(0%)   translateY(-50%);
+}
+  
+[data-tooltip]:hover::after,[data-tooltip]:hover::before {
+  opacity:1;
+  transition-delay: 0.3s;
+}

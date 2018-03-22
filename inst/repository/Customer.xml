@@ -1,0 +1,50 @@
+<?sdsim about='R package for modeling and simulation of system dynamics' version='0.1'?>
+<sdModel>
+  <modelId>customers</modelId>
+  <modelDescription>In order to demonstrate how a system dynamics model is constructed, a one-stock model of an organization’s customer base is modeled. Given that the customer base is an accumulation, it can be modeled as a stock. The inflow is recruits, and the outflow are losses, also known as the churn rate. The goal of organizations is to limit the losses and maximize the recruits, in order to maintain increasing customers
+levels, and therefore support company growth. Source: System Dynamics Modeling with R, Jim Dugga.</modelDescription>
+  <DifferentialEquations>function (t, st, ct, par, inp, sw, aux) 
+{
+    recruits &lt;- st$customers * ct$growth
+    losses &lt;- st$customers * ct$decline
+    dCustomers &lt;- recruits - losses
+    return(list(c(dCustomers)))
+}</DifferentialEquations>
+  <InitVars>NULL</InitVars>
+  <PostProcessVars>NULL</PostProcessVars>
+  <RootSpecification>NULL</RootSpecification>
+  <EventFunction>NULL</EventFunction>
+  <aux/>
+  <defaultScenario>
+    <scenarioId>customerScen</scenarioId>
+    <times>
+      <from>2015</from>
+      <to>2030</to>
+      <by>0.25</by>
+    </times>
+    <method>rk4</method>
+    <state>
+      <customers>10000</customers>
+    </state>
+    <constant>
+      <growth>0.08</growth>
+      <decline>0.03</decline>
+    </constant>
+    <input/>
+    <interpolation/>
+    <parameter/>
+    <switch/>
+    <plotConfig/>
+    <unit>
+      <time>year</time>
+	  <customers>clients</customers>
+	  <growth>dimensionless</growth>
+      <decline>dimensionless</decline>
+	</unit>
+    <description>
+	  <customers>stock of clients</customers>
+	  <growth>rate of clients growth</growth>
+      <decline>rate of clients decline</decline>
+	</description>
+  </defaultScenario>
+</sdModel>

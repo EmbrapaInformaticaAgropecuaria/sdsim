@@ -1,0 +1,9 @@
+<?sdsim about='R package for modeling and simulation of system dynamics' version='0.1' date='2018-03-03'?>
+<sdStaticModel>
+  <staticModelId>Unnamed Static Model</staticModelId>
+  <staticModelDescription/>
+  <InitVars/>
+  <equations/>
+  <globalFunctions/>
+  <defaultScenario/>
+</sdStaticModel>

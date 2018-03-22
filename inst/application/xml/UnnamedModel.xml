@@ -1,0 +1,50 @@
+<?sdsim about='R package for modeling and simulation of system dynamics' version='0.1'?>
+<SDModel>
+  <modelId>Unnamed Model</modelId>
+  <modelDescription/>
+  <DifferentialEquations>function(t, st, ct, par, inp, sw, aux) {
+  # Calculate the differentials
+  
+  # Return the differentials to the integrator
+  return(list(c()))
+}</DifferentialEquations>
+  <InitVars># # Uncomment to use initialization function
+# function(st, ct, par, inp, sw, aux) 
+# {
+#   # Initialize variables
+#    
+#   # Return the differentials to the integrator
+#   return(list(st = st, ct = ct, inp = inp, par = par, sw = sw))
+# }</InitVars>
+  <PostProcessVars>NULL</PostProcessVars>
+  <RootSpecification># # Uncomment to use root function
+# function(t, st, ct, par, inp, sw, aux) 
+# {
+#   # return roots
+#   return(c())
+# }</RootSpecification>
+  <EventFunction># # Uncomment to use events (Root function must be defined)
+# function (t, st, ct, par, inp, sw, aux) 
+# {
+#   # Return the altered state
+#   return(st)
+# }</EventFunction>
+  <aux/>
+  <defaultScenario>
+    <scenarioId>Unnamed Scenario</scenarioId>
+    <times>
+      <from>0</from>
+      <to>100</to>
+      <by>0.1</by>
+    </times>
+    <method>lsoda</method>
+    <state/>
+    <constant/>
+    <input/>
+    <interpolation/>
+    <parameter/>
+    <switch/>
+    <unit/>
+    <description/>
+  </defaultScenario>
+</SDModel>

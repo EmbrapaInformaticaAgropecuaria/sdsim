@@ -1,0 +1,42 @@
+Package: sdsim
+Title: System Dynamics Model Simulator for Initial Value Problems of ODE 
+Version: 0.1
+Authors@R: c(
+  person("Cristina", "Bazzano", 
+        email = "cristina.bazzano@colaborador.embrapa.br", 
+         role = c("aut", "cre")),
+  person("Bruno", "Pereira", email = "bruno.henrique@colaborador.embrapa.br", 
+         role = "aut"),
+  person("Luis", "Barioni", email = "luis.barioni@embrapa.br",
+         role = "aut"),
+  person("Adauto", "Mancini", email = "adauto.mancini@embrapa.br", 
+         role = "ctb"),
+  person("Embrapa", "Informatica Agropecuaria", email = "copyright holder", 
+         role = "cph"))
+Description: R6 classes for prototyping system dynamics models and a solver to
+  simulate the initial value problem of first-order ordinary differential 
+  equations (ODE) that specifies the model definition. A wrapper around the ode 
+  solver from the deSolve-package. 
+  Also supports static models and coupling to represent more complex systems. 
+Depends:
+  R (>= 2.15.0)
+License: GPL
+LazyLoad: true
+Imports:
+  graphics,
+  grDevices,
+  stats,
+  utils,
+  deSolve,
+  R6,
+  openxlsx,
+  readxl,
+  XML,
+  shiny,
+  shinyAce,
+  shinydashboard,
+  rhandsontable
+RoxygenNote: 6.0.1
+Suggests: knitr,
+    rmarkdown
+VignetteBuilder: knitr

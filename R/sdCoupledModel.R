@@ -1,0 +1,1567 @@
+#' Builds a Coupled Scenario
+#'
+#' Merge a named list of \code{\link{sdScenarioClass}} objects in to a unique 
+#' coupled scenario object with all the variables named with the prefix 
+#' 'ModelId.' followed by the original variable name. The 'ModelId' is the name 
+#' of each element in the \code{scenarios} list and must be the same name of the 
+#' component ID that will use it.
+#' Use the arguments to define the coupled scenario simulation time sequence 
+#' (the arguments \code{from}, \code{to} and \code{by} must be present to define 
+#' the time sequence) and the integrator method to be used in the simulations 
+#' (or the default 'lsoda' will be used).
+#'
+#' @param coupledScenarioId A string with the coupled scenario ID. If missing a
+#' default timestamp ID will be created. 
+#' @param scenarios A named list of not empty \code{\link{sdScenarioClass}} 
+#' objects and/or character strings with a sdScenario XML or EXCEL file name. 
+#' 
+#' When passing a scenario in a EXCEL file it should follow the default format 
+#' described in the \code{\link{sdLoadScenario}} documentation.
+#' All the scenario elements of this list must be named with the model ID that 
+#' will use it.
+#' @param method The integrator to be used in the simulation,
+#' a string ("lsoda", "lsode", "lsodes","lsodar","vode", "daspk", "euler",
+#' "rk4", "ode23", "ode45", "radau", "bdf", "bdf_d", "adams", "impAdams" or
+#' "impAdams_d"). Default value is "lsoda".
+#' 
+#' When running with support to events the given method must
+#' be one of the following routines, which have root-finding capability:
+#' \code{\link[deSolve]{lsoda}}, \code{\link[deSolve]{lsode}} or
+#' \code{\link[deSolve]{radau}}; If the given method is different from any of
+#' these three routines the simulator will run with the default method
+#' "lsoda".
+#' 
+#' See the \code{\link[deSolve]{ode}} and the \code{\link[deSolve]{events}}
+#' details section for more information.
+#' @param from The starting value of the time sequence. Numeric of
+#' length 1.
+#' @param to The end (maximal) value of the time sequence. Numeric of length 1.
+#' @param by number: increment of the time sequence.
+#' @param timeSeriesDirectory The directory where time series inputs are stored 
+#' (when passing the time series inputs via external text files).
+#' @param varNames logical: if \code{TRUE} the return value is a list with two
+#' elements - the \code{coupledScenario} containing the built coupled
+#' scenario object and the \code{varNames} containing a list of all the
+#' \code{scenarios} variables names; if \code{FALSE} the return value is just
+#' the coupled scenario object, the default.
+#' @return Either the coupled scenario object with all variables named with 
+#' the prefix 'ModelId.' followed by the original variable name or, if 
+#' \code{varNames} is \code{TRUE}, a list with two
+#' elements - the \code{coupledScenario} containing the built coupled
+#' scenario object and the \code{varNames} containing a list of all the
+#' \code{scenarios} variables names.
+#' @examples
+#' ## Let's build a coupled scenario for the Lotka-Volterra example model 
+#' # presented in the help('sdCoupledModel')
+#' 
+#' # create the Prey model variables and scenario
+#' stPrey <- list(P = 1)
+#' parsPrey      <- list(rG = 1.0,      
+#'                       K  = 10)
+#' inpPrey <- list(IngestC = 0)
+#' 
+#' preyScen <- sdScenario(scenarioId = "preyScen",
+#'                        state = stPrey,
+#'                        parameter = parsPrey,
+#'                        input = inpPrey)
+#'                        
+#' # create the Consumer model variables and scenario
+#' stConsumer <- list(C = 2)
+#' parsConsumer  <- list(rI = 0.2,
+#'                       rM = 0.2 ,   
+#'                       AE = 0.5) 
+#' inpConsumer <- list(P = 0)
+#' 
+#' consumerScen <- sdScenario(scenarioId = "consumerScen",
+#'                            state = stConsumer,
+#'                            parameter = parsConsumer,
+#'                            input = inpConsumer)
+#'                            
+#' ## Create the coupled scenario and print it
+#' coupledLvScen <- sdBuildCoupledScenario(
+#'   coupledScenarioId = "LVcoupled",
+#'   scenarios = c(Prey = preyScen, 
+#'                 Consumer = consumerScen), 
+#'   method = "lsoda",
+#'   from = 0,
+#'   to = 200,
+#'   by = 1) 
+#' print(coupledLvScen)  
+#' ## this scenario can be used to simulate the coupled Lotka-Volterra Model
+#' # in a different environment by setting different values for the variables 
+#' # and passing it via the argument 'scenario' to the sdSimulate function           
+sdBuildCoupledScenario = function(coupledScenarioId = NULL,
+                                scenarios = NULL,
+                                method = c("lsoda", "lsode", "lsodes", "lsodar", 
+                                           "vode", "daspk", "euler", "rk4", 
+                                           "ode23", "ode45", "radau", "bdf", 
+                                           "bdf_d", "adams", "impAdams", 
+                                           "impAdams_d"),
+                                from = NULL,
+                                to = NULL,
+                                by = NULL,
+                                timeSeriesDirectory = "",
+                                varNames = FALSE)
+{
+  if (!is.null(from) && !is.null(to) && !is.null(by))
+    times <- list(from = from, to = to, by = by)
+  else
+    times <- NULL
+  
+  componentsId <- names(scenarios)
+  
+  if (is.null(componentsId) || any(componentsId == ""))
+    sdCoupledModelMsg$sdBuildCoupledScenario1()
+  
+  # build default scenario concatanating the components default scenario
+  stComponents <- list()
+  ctComponents <- list()
+  inpComponents <- list()
+  parComponents <- list()
+  swComponents <- list()
+  unitComponents <- list()
+  descriptionComponents <- list()
+  interpolComponents <- list()
+  
+  modelVarNames <- list()
+  
+  # trim the components names
+  componentsId <- gsub(" ", "", componentsId, fixed = TRUE)
+  for (modelId in componentsId)
+  {
+    scenComponent <- scenarios[[modelId]]
+    
+    if (is.character(scenComponent))
+      scenComponent <- sdLoadScenario(file = scenComponent, 
+                                    timeSeriesDirectory = timeSeriesDirectory)
+    
+    if (!inherits(scenComponent, "sdScenarioClass"))
+    {
+      sdCoupledModelMsg$sdBuildCoupledScenario2(scenComponent, modelId)
+      next
+    }
+    
+    if (length(scenComponent$state) > 0)
+      stComponents[[modelId]] <- scenComponent$state
+    
+    if (length(scenComponent$constant) > 0)
+      ctComponents[[modelId]] <- scenComponent$constant
+    
+    if (length(scenComponent$input) > 0)
+      inpComponents[[modelId]] <- scenComponent$input[
+        !(names(scenComponent$input) %in% c("interpolation_", "fun_"))]
+    
+    if (length(scenComponent$input$interpolation_) > 0)
+      interpolComponents[[modelId]] <-
+        scenComponent$input$interpolation_
+    
+    if (length(scenComponent$parameter) > 0)
+      parComponents[[modelId]] <- scenComponent$parameter
+    
+    if (length(scenComponent$switch) > 0)
+      swComponents[[modelId]] <- scenComponent$switch
+    
+    if (length(scenComponent$unit) > 0)
+      unitComponents[[modelId]] <- scenComponent$unit
+    
+    if (length(scenComponent$description) > 0)
+      descriptionComponents[[modelId]] <-
+        scenComponent$description
+    
+    modelVarNames[[modelId]] <- c(
+      names(stComponents[[modelId]]),
+      names(ctComponents[[modelId]]),
+      names(inpComponents[[modelId]]),
+      names(parComponents[[modelId]]),
+      names(swComponents[[modelId]]))
+  }
+  
+  coupledScenario <- sdScenario(
+    scenarioId = coupledScenarioId,
+    method = method[[1]],
+    times = times,
+    state = unlist(stComponents, recursive = FALSE),
+    constant = unlist(ctComponents, recursive = FALSE),
+    input = unlist(inpComponents, recursive = FALSE),
+    interpolation = as.list(unlist(interpolComponents)),
+    parameter = unlist(parComponents, recursive = FALSE),
+    switch = unlist(swComponents, recursive = FALSE),
+    unit = unlist(unitComponents, recursive = FALSE),
+    description = unlist(descriptionComponents, recursive = FALSE),
+    timeSeriesDirectory = timeSeriesDirectory)
+  
+  if (!varNames)
+    return(coupledScenario)
+  else
+    return(list(coupledScenario = coupledScenario, varNames = modelVarNames))
+}
+
+#' Class Representation of a Coupled System Dynamics Model
+#'
+#' Represents a coupled system dynamics model made up of instanced
+#' \code{\link{sdModelClass}}, \code{\link{sdStaticModelClass}} and/or 
+#' \code{\link{sdCoupledModelClass}} components and a list of connections that 
+#' define the flow of information between components. 
+#' The \code{connections} list determines loops of information feedback and 
+#' circular causality for conceptualizing the structure of a complex system and 
+#' for communicating model-based insights.
+#' The complex system is solved by integrating all the coupled system components
+#' simultaneously as one, updating the connections at each time step.
+#' 
+#' To create an object use the constructor \code{\link{sdCoupledModel}}.
+#' 
+#' To load a model from a XML file use the \code{\link{sdLoadModel}} function.
+#' 
+#' To simulate a model in different scenarios use the \code{\link{sdSimulate}}
+#' function. Make sure to build the default coupled scenario before 
+#' running the simulation or some computation time will be spent running the 
+#' \code{\link{sdBuildCoupledScenario}} function to build it.
+#' 
+#' The object fields not declared in this documentation are automatically
+#' generated by the \code{$buildCoupledModel} method to be used by the package
+#' during simulations, e.g. the lists with all the components functions, 
+#' the vectors representing the connections (eqConnections and stConnections) 
+#' and the list with the components variables indexes (indexComponents).
+#'
+#' @field coupledModelId A string with the coupled model identification. Any 
+#' non-word character will be removed and the result will be converted to a 
+#' valid name (see \code{\link[base]{make.names}}).
+#' @field coupledModelDescription A string with the coupled model description.
+#' @field components A list of \code{\link{sdModelClass}}, 
+#' \code{\link{sdStaticModelClass}} and/or \code{\link{sdCoupledModelClass}} 
+#' objects. 
+#' 
+#' The models must have different \code{ID}'s that will be used as unique 
+#' identifiers, otherwise only the last model added with the same ID will be 
+#' kept.  
+#' @field connections A list of vectors that specifies the connections. 
+#' 
+#' Each vector represents a connection, it must have 5 elements and be defined 
+#' as:
+#' 
+#' c(ID, Component 1, Input 1, Component 2, Output 2). 
+#' 
+#' Where ID: is the 
+#' connection identification; Component 1: is the identification of the receiver 
+#' component; Input 1: is the name of the input variable from the receiver 
+#' component (component 1); Component 2: is the identification of the sender 
+#' component; and Output 2: is the name of the connected state variable or, 
+#' auxiliary or algebraic, equation with prefix st$, aux$ or eq$, respectively, 
+#' indicating the output type from the sender component (Component 2), e.g. 
+#' st$<varName>, aux$<eqName> or eq$<eqName>.
+#' @field defaultCoupledScenario The default coupled scenario, a 
+#' \code{\link{sdScenarioClass}} object. Uses the method
+#' \code{$buildCoupledModel} to automatically build it by merging the 
+#' components default scenarios. See \code{\link{sdBuildCoupledScenario}} for 
+#' more information about how these merge occures.
+#' @section Methods Definition:
+#' \describe{
+#' \item{\code{$initialize(coupledModelId = NULL, 
+#' coupledModelDescription = NULL, components = NULL, connections = NULL)}}{
+#' Class constructor. Define the base components and connections of the coupled 
+#' system dynamics model. 
+#' The \code{coupledModelId} is mandatory, if missing a default timestamp ID 
+#' will be created.
+#'
+#' \strong{Arguments}
+#'
+#' \emph{See the Fields section above for the arguments descriptions.}
+#' }
+#'
+#' \item{\code{$print()}}{A short print of the object fields.}
+#'
+#' \item{\code{$addComponent(...)}}{Add extra components to the coupled system
+#' dynamics model.
+#'
+#' \strong{Arguments}
+#'
+#' \describe{
+#' \item{...}{A character string with a model XML file name or a 
+#' \code{\link{sdModelClass}}, \code{\link{sdStaticModelClass}} and/or 
+#' \code{\link{sdCoupledModelClass}} objects already initialized. The
+#' models must have different \code{ID}'s to be used as unique
+#' identifiers. Only one component by ID is stored.}}}
+#'
+#' \item{\code{$removeComponent(...)}}{Remove the specified components from the
+#' coupled system dynamics model and all connections involving them.
+#'
+#' \strong{Arguments}
+#'
+#' \describe{
+#' \item{...}{Character objects containing the model IDs to be removed. If 
+#' missing all components will be removed.}
+#' }}
+#'
+#' \item{\code{$addConnection(...)}}{Add extra connections to the
+#' coupled system dynamics model.
+#'
+#' \strong{Arguments}
+#'
+#' \describe{
+#' \item{...}{Connection vectors with 5 character elements. See more details in 
+#' the connections field section above.}
+#' }}
+#'
+#' \item{\code{$removeConnection(...)}}{Remove the specified connections
+#' from the model \code{connections} list.
+#'
+#' \strong{Arguments}
+#'
+#' \describe{
+#' \item{...}{Character objects containing the connections ID's to be removed.
+#' If missing all the connections will be removed.}
+#' }}
+#'
+#' \item{\code{$buildCoupledModel(coupledScenarioId = NULL,
+#' method = NULL, from = NULL, to = NULL, by = NULL, 
+#' timeSeriesDirectory = "")}}{Build the default coupled scenario by merging the 
+#' components default scenarios (see \code{\link{sdBuildCoupledScenario}}), 
+#' initialize the coupled auxiliary and/or algebraic equations, build the 
+#' vectors representing the connections (\code{eqConnections} and 
+#' \code{stConnections}) and the list with the components variables indexes 
+#' (\code{indexComponents}). The arguments \code{from}, \code{to} and \code{by}
+#' must be present to define the simulation time sequence.
+#' 
+#' If the components have support to events and no component defined an event
+#' function the simulation will stop in the first root, otherwise the
+#' corresponding event function will be trigged.
+#' 
+#' Use regular expressions to update the components equations with the name
+#' of the coupled scenario variables.
+#'
+#' \strong{Arguments}
+#'
+#' \describe{
+#' \item{coupledScenarioId}{A character object with the coupled scenario ID. If 
+#' missing a default timestamp ID will be created.}
+#' \item{method}{The integrator to be used in the simulation,
+#' a string ("lsoda", "lsode", "lsodes","lsodar","vode", "daspk", "euler",
+#' "rk4", "ode23", "ode45", "radau", "bdf", "bdf_d", "adams", "impAdams" or
+#' "impAdams_d"). Default value is "lsoda".
+#' 
+#' When running with support to events the given method must
+#' be one of the following routines, which have root-finding capability:
+#' \code{\link[deSolve]{lsoda}}, \code{\link[deSolve]{lsode}} or
+#' \code{\link[deSolve]{radau}}; If the given method is different from any of
+#' these three routines the simulator will run with the default method
+#' "lsoda".
+#' 
+#' See the \code{\link[deSolve]{ode}} and the \code{\link[deSolve]{events}}
+#' details section for more information.}
+#' \item{from}{The starting value of the time sequence. Numeric of length 1.}
+#' \item{to}{The end (maximal) value of the time sequence. Numeric of length 1.}
+#' \item{by}{number: increment of the time sequence.}
+#' \item{timeSeriesDirectory}{The directory where time series inputs are stored 
+#' (when passing the time series inputs via external text files).}
+#' }
+#' }
+#' 
+#' \item{\code{$isBuild()}}{Test if the coupled model was already built and not
+#' modified. Return a logical object.
+#' }
+#'
+#' \item{\code{$validateODE(scenario = NULL, verbose = FALSE, 
+#' timeSeriesDirectory = "")}}{Execute the first step of the coupled model 
+#' simulation in the default scenario or merged with a given one. 
+#' Check for possible incorrect return values and variables in the components 
+#' definitions and warn the user. 
+#'
+#' \strong{Arguments}
+#'
+#' \describe{
+#' \item{scenario}{A coupled scenario object (see 
+#' \code{\link{sdBuildCoupledScenario}}), or a list of sdScenario objects and/or 
+#' character strings with a sdScenario XML or EXCEL file name - the
+#' elements of this list must be named with the model ID that represent's it.
+#' If missing validate the model using the default scenario.}
+#' \item{verbose}{Logical: If \code{TRUE} provides additional details as to what 
+#' the computer is doing. Default = \code{FALSE}.}
+#' \item{timeSeriesDirectory}{The directory where time series inputs are stored 
+#' (when passing the time series inputs via external text files).}
+#' }}
+#'
+#' \item{\code{$saveToXml(file = "sdCoupledModel.xml")}}{Save the components 
+#' and the connections in a XML file.
+#'
+#' \strong{Arguments}
+#'
+#' \describe{
+#' \item{file}{A character object naming the file to save to. The file extension
+#' must be included in the file name, e.g. '.xml'.}
+#' }}
+#' }
+#' @examples 
+#' # The Lotka-Volterra consumer-prey model implemented as a coupled model with
+#' # the components being the population models of a prey and a consumer and a
+#' # static model for the environment capacity
+#' 
+#' # set the time sequence and use the default method
+#' times <- list(from = 0, to = 200, by = 1)
+#' 
+#' # Prey model variables and ode function
+#' stPrey <- list(P = 1)
+#' parsPrey      <- list(rG = 1.0)
+#' inpPrey <- list(ingestC = 0,
+#'                 envCapacity = 1)
+#' auxPrey <- list(GrowthP = "par$rG * st$P * inp$envCapacity")
+#' descriptionsPrey <- list(P = "population of preys",
+#'                          rG = "growth rate of prey",   
+#'                          ingestC = "Consumer ingestion",
+#'                          envCapacity = "available environment capacity")
+#' 
+#' LVodePrey <- function(t, st, ct, par, inp, sw, aux) 
+#' {
+#'   dP    <- aux$GrowthP - inp$ingestC
+#'   
+#'   return(list(c(dP)))
+#' }
+#' 
+#' # create the component prey model
+#' prey <- sdModel(modelId = "Prey",
+#'                 defaultScenario = sdScenario(scenarioId = "preyScen",
+#'                                              times = times,
+#'                                              state = stPrey,
+#'                                              parameter = parsPrey,
+#'                                              input = inpPrey,
+#'                                              description = descriptionsPrey),
+#'                 aux = auxPrey,
+#'                 DifferentialEquations = LVodePrey)
+#' 
+#' # Consumer model variables and ode function
+#' stConsumer <- list(C = 2)
+#' parsConsumer  <- list(rI = 0.2,
+#'                       rM = 0.2 ,   
+#'                       aE = 0.5) 
+#' inpConsumer <- list(P = 0)
+#' auxConsumer <- list(ingestC = "par$rI * inp$P * st$C",
+#'                     "mortC <- par$rM * st$C")
+#' descriptionsConsumer <- list(C = "population of consumer",
+#'                              rM = "mortality rate of consumer", 
+#'                              aE = "assimilation efficiency",
+#'                              rI = "rate of ingestion",
+#'                              P = "population of preys")
+#' 
+#' LVodeConsumer <- function(t, st, ct, par, inp, sw, aux) 
+#' {
+#'   dC    <- aux$ingestC * par$aE - aux$mortC
+#'   
+#'   return(list(c(dC)))
+#' }
+#' 
+#' # create the component consumer model
+#' consumer <- sdModel(modelId = "Consumer",
+#'                     defaultScenario = sdScenario(
+#'                       scenarioId = "consumerScen",
+#'                       times = times,
+#'                       state = stConsumer,
+#'                       parameter = parsConsumer,
+#'                       input = inpConsumer,
+#'                       description = descriptionsConsumer),
+#'                     aux = auxConsumer,
+#'                     DifferentialEquations = LVodeConsumer)
+#' 
+#' # Environment model variables and algebraic equations
+#' parEnv <- data.frame(Variable = c("K"),
+#'                     Value = c(10),
+#'                     Description =c("carrying capacity"))
+#' inpEnv <- data.frame(Variable = c("P"),
+#'                     Value = c(1),
+#'                     Description = c("Population size"))
+#' eqEnvironment <- list(regulatingCapacity = "1 - inp$P/par$K")  
+#' 
+#' # create the component environment capacity model
+#' environmentCap <- sdStaticModel(staticModelId = "Environment",
+#'                              defaultScenario = sdScenario(
+#'                                scenarioId = "EnvironmentScen",
+#'                                parameter = parEnv,
+#'                                input = inpEnv,
+#'                                times = times),
+#'                              equations = eqEnvironment)                   
+#' 
+#' # create the coupled model connections list 
+#' # conP: inform the consumer model about the amount of preys; 
+#' # conIngestC: inform the prey model about the consumer ingestion;
+#' # conPEnv: inform the environment model about the amount of preys and
+#' # conEnvCapacity: inform the prey model about the available environment capacity
+#' lvConnections <- list(
+#'   c("conP", "Consumer", "P", "Prey", "st$P"),
+#'   c("conIngestC", "Prey", "ingestC", "Consumer", "aux$ingestC"),
+#'   c("conPEnv", "Environment", "P", "Prey", "st$P"),
+#'   c("conEnvCapacity", "Prey", "envCapacity", "Environment", "eq$regulatingCapacity"))
+#' 
+#' # Create the Lotka-Volterra coupled model
+#' coupledLV <- sdCoupledModel(coupledModelId = "LVCoupled",
+#'                             components = c(prey, consumer, environmentCap),
+#'                             connections = lvConnections,
+#'                             coupledModelDescription = 
+#'   "Lotka-Volterra Equations implemented as a coupled model")
+#' # build the coupled model and validate it
+#' coupledLV$buildCoupledModel(coupledScenarioId = "lvScenCoupled", 
+#'                             from = 0, 
+#'                             to = 200, 
+#'                             by = 1)
+#' coupledLV$validateODE(verbose = TRUE)
+#' 
+#' # simulate the coupled model and plot the results
+#' outclv <- sdSimulate(model = coupledLV)
+#' outclv$plot("Prey.P Environment.regulatingCapacity", "Prey.P Consumer.C", 
+#'             main = c("Coupled Prey Regulated by Environment Capacity",
+#'                      "Coupled Prey and Consumer by Lotka-Volterra"),
+#'             multipleYAxis = TRUE)
+sdCoupledModelClass <- R6::R6Class(
+  classname = "sdCoupledModelClass",
+  public = list(
+    # Class Public Methods
+    initialize = function(coupledModelId = NULL,
+                          coupledModelDescription = NULL,
+                          components = NULL,
+                          connections = NULL)
+    {
+      if (!missing(coupledModelId) && !is.null(coupledModelId))
+        self$coupledModelId <- coupledModelId
+      else
+        self$coupledModelId <- NULL
+      
+      if (!missing(components) && !is.null(components))
+      {
+        if (is.list(components))
+        {
+          for (model in components)
+            self$addComponent(model)
+        }
+        else
+          self$addComponent(components)
+      }
+      
+      if (!missing(connections) && !is.null(connections))
+      {
+        if (is.list(connections))
+        {
+          for (con in connections)
+            self$addConnection(con)
+        }
+        else
+          self$addConnection(connections)
+      }
+      
+      if (!missing(coupledModelDescription) &&
+          !is.null(coupledModelDescription))
+        self$coupledModelDescription <- coupledModelDescription
+    },
+    print = function()
+    {
+      cat("\n<sdCoupledModel ID = ",
+          private$pcoupledModelId,
+          ">\n",
+          sep = "")
+      cat(indent("$coupledModelDescription", indent = 4), sep = "\n")
+      cat(indent(private$pcoupledModelDescription, indent = 4), sep = "\n")
+      cat("\n")
+      
+      cat(indent("$components", indent = 4), sep = "\n")
+      cat(indent(private$pcomponentsId, indent = 4), sep = "\n")
+      cat("\n")
+      
+      cat(indent("$connections", indent = 4), sep = "\n")
+      cat(indent(capture.output(private$pconnections), indent = 4), sep = "\n")
+      cat("\n")
+      
+      cat(indent("$defaultCoupledScenario", indent = 4), sep = "\n")
+      if (private$flagBuild)
+        cat(indent(capture.output(private$pdefaultCoupledScenario), indent = 4), 
+            sep = "\n")
+      else
+        cat(indent("Not built.", indent = 4), sep = "\n")
+      cat("\n")
+    },
+    addComponent = function(...)
+    {
+      components <- list(...)
+      
+      for (model in components)
+      {
+        if (is.character(model))
+          model <- sdLoadModel(file = model)
+        
+        # only add sdModel's or sdStaticModel's
+        if (inherits(model, "sdModelClass"))
+        {
+          id <- gsub(" ", "", model$modelId, fixed = TRUE)
+          if (any(grepl(pattern = paste0("^",id,"."), 
+                        x = private$pcomponentsId, perl = TRUE)) ||
+              id %in% private$pcomponentsId)
+          {
+            sdCoupledModelMsg$addComponent1(private$pcoupledModelId, id)
+            
+            self$removeComponent(c(private$pcomponentsId[
+              grepl(pattern = paste0("^",id,"."), 
+                    x = private$pcomponentsId, perl = TRUE)], id))
+          }
+          private$pcomponentsId <- c(private$pcomponentsId, id)
+          private$pcomponents[[id]] <- model$clone(deep = TRUE)
+          private$pcomponentsEquations[[id]] <- model$DifferentialEquations
+          private$pcomponentsInitVars[[id]] <- model$InitVars
+          private$pcomponentsPostProcessVars[[id]] <- model$PostProcessVars
+          
+          if (is.function(model$RootSpecification) || 
+              is.numeric(model$RootSpecification))
+          {
+            private$pcomponentsRootSpecification[[id]] <- 
+              model$RootSpecification
+            private$pcomponentsEventFunction[[id]] <- model$EventFunction
+          }
+          else if (is.data.frame(model$RootSpecification))
+          {
+            rootdf <- model$RootSpecification
+            rootdf$var <- paste0(id, ".", as.character(rootdf$var))
+            # convert the columns for errors prevention
+            rootdf$method <- lapply(as.character(rootdf$method), 
+                                    type.convert, as.is = TRUE)
+            rootdf$time <- as.numeric(rootdf$time)
+            rootdf$value <- as.numeric(rootdf$value)
+            
+            private$pcomponentsRootSpecification[[id]] <- rootdf
+            private$pcomponentsEventFunction[[id]] <- rootdf
+          }
+          
+          private$pcomponentsAux[[id]] <- model$aux
+          private$pcomponentsGlobal[[id]] <- model$GlobalFunctions
+        }
+        else if (inherits(model, "sdStaticModelClass"))
+        {
+          id <- gsub(" ", "", model$staticModelId, fixed = TRUE)
+          if (any(grepl(pattern = paste0("^",id,"."), 
+                        x = private$pcomponentsId, perl = TRUE)) ||
+              id %in% private$pcomponentsId)
+          {
+            sdCoupledModelMsg$addComponent1(private$pcoupledModelId, id)
+            
+            self$removeComponent(c(private$pcomponentsId[
+              grepl(pattern = paste0("^",id,"."), 
+                    x = private$pcomponentsId, perl = TRUE)], id))
+          }
+          private$pcomponentsId <- c(private$pcomponentsId, id)
+          private$pcomponents[[id]] <- model$clone(deep = TRUE)
+          private$pcomponentsInitVars[[id]] <- model$InitVars
+          
+          private$pcomponentsAux[[id]] <- model$equations
+          private$pcomponentsGlobal[[id]] <- model$GlobalFunctions
+        }
+        else if (inherits(model, "sdCoupledModelClass"))
+        {
+          id <- gsub(" ", "", model$coupledModelId, fixed = TRUE)
+          if (any(grepl(pattern = paste0("^",id,"."), 
+                        x = private$pcomponentsId, perl = TRUE)) ||
+              id %in% private$pcomponentsId)
+          {
+            sdCoupledModelMsg$addComponent1(private$pcoupledModelId, id)
+            
+            self$removeComponent(c(private$pcomponentsId[
+              grepl(pattern = paste0("^",id,"."), 
+                    x = private$pcomponentsId, perl = TRUE)], id))
+          }
+          
+          # add the components with the coupled model id as prefix
+          for (j in seq_along(model$components))
+          {
+            comp <- model$components[[j]]$clone(deep = TRUE)
+            if (!is.null(comp$modelId))
+              comp$modelId <- paste0(model$coupledModelId, ".", comp$modelId)
+            else if(!is.null(comp$staticModelId))
+              comp$staticModelId <- paste0(model$coupledModelId, ".", 
+                                           comp$staticModelId)
+            
+            self$addComponent(comp)
+          }
+          
+          # add the connections
+          for (con in model$connections)
+          {
+            con[[2]] <- paste0(model$coupledModelId, ".", con[[2]])
+            con[[4]] <- paste0(model$coupledModelId, ".", con[[4]])
+            
+            # private$pconnections[[con[[1]]]] <- con
+            self$addConnection(con)
+          }
+        }
+        else
+          sdCoupledModelMsg$addComponent2(private$pcoupledModelId,
+                                          typeof(model))
+        
+        invisible()
+      }
+      # merge the components auxs
+      private$pcomponentsAux <- lapply(unlist(private$pcomponentsAux, 
+                                              recursive = FALSE), 
+                                       as.expression)
+      private$flagBuild = FALSE
+    },
+    removeComponent = function(...)
+    {
+      componentName <- gsub(" ", "", unlist(list(...)), fixed = TRUE)
+      
+      # remove the models from all lists
+      private$pcomponentsId <- private$pcomponentsId[
+        !(private$pcomponentsId %in% componentName)]
+      
+      private$pcomponents <- private$pcomponents[
+        !(names(private$pcomponents) %in% componentName)]
+      
+      private$pcomponentsEquations <- private$pcomponentsEquations[
+          !(names(private$pcomponentsEquations) %in% componentName)]
+      
+      private$pcomponentsInitVars <- private$pcomponentsInitVars[
+        !(names(private$pcomponentsInitVars) %in% componentName)]
+      
+      private$pcomponentsPostProcessVars <- private$pcomponentsPostProcessVars[
+          !(names(private$pcomponentsPostProcessVars) %in% componentName)]
+      
+      private$pcomponentsRootSpecification <- 
+        private$pcomponentsRootSpecification[
+          !(names(private$pcomponentsRootSpecification) %in% componentName)]
+      
+      private$pcomponentsEventFunction <- private$pcomponentsEventFunction[
+          !(names(private$pcomponentsEventFunction) %in% componentName)]
+      
+      for (model in componentName)
+        private$pcomponentsAux <-  private$pcomponentsAux[
+          !grepl(paste0("^", model, "\\."), 
+                 names(private$pcomponentsAux))]
+      
+      private$pcomponentsGlobal <- private$pcomponentsGlobal[
+          !(names(private$pcomponentsGlobal) %in% componentName)]
+      
+      # remove the connections involving the removed model
+      connections <- private$pconnections
+      if (!is.null(connections) && length(connections) > 0)
+      {
+        for (model in componentName)
+        {
+          remCon <- sapply(1:length(connections), function(i)
+          {
+            if (model %in% connections[[i]])
+              return(connections[[i]][[1]])
+          })
+          
+          if (length(remCon) > 0)
+            self$removeConnection(remCon)
+        }
+      }
+      private$flagBuild = FALSE
+    },
+    addConnection = function(...)
+    {
+      connections <- list(...)
+      
+      for (con in connections)
+      {
+        if (length(con) != 5)
+          sdCoupledModelMsg$addConnection1(private$pcoupledModelId, con)
+        else if (!grepl(pattern = "^(aux\\$|st\\$|eq\\$)", x = con[[5]], 
+                        perl = TRUE))
+          sdCoupledModelMsg$addConnection2(private$pcoupledModelId, con)
+        else
+        {
+          # add connection
+          if (con[[1]] %in% names(private$pconnections))
+            sdCoupledModelMsg$addConnection3(private$pcoupledModelId, con[[1]])
+            
+          private$pconnections[[con[[1]]]] <- con
+          
+        }
+      }
+      
+      private$flagBuild = FALSE
+    },
+    removeConnection = function(...)
+      # ... = cons ids
+    {
+      connectionsId <- unlist(list(...))
+      auxComponents <- private$pcomponentsAux
+      
+      # refactor the aux lists removing the connection dependency
+      for (conId in connectionsId)
+      {
+        con <- private$pconnections[[conId]]
+        if (!is.null(con))
+        {
+          id <- con[[1]]
+          m1 <- con[[2]]
+          in1 <- con[[3]]
+          m2 <- con[[4]]
+          out2 <- strsplit(con[[5]], "$", fixed = TRUE)[[1]]
+          
+          # remove the aux connection from the equations list using regex
+          if (out2[[1]] %in% c("aux", "eq"))
+          {
+            auxComponents[grepl(paste0("^", m1, "\\."),
+                                names(auxComponents))] <- 
+              lapply(auxComponents[grepl(paste0("^", m1, "\\."),
+                    names(auxComponents))], function(x)
+            {
+              gsub(pattern = paste0(out2[[1]], "\\$", m2, ".", out2[[2]]),
+                   replacement = paste0("inp$", m1, ".", in1),
+                   x = toString(as.expression(x)), perl = TRUE)
+            })
+            
+            private$auxCon <- private$auxCon[names(private$auxCon) 
+                                             !=  paste0(m1, ".", in1)]
+          }
+          else
+            private$stCon <- private$stCon[names(private$stCon) 
+                                             !=  paste0(m1, ".", in1)]
+        }
+      }
+      # refactor the auxliary list without sorting
+      private$pcomponentsAux <- sdInitEquations(auxComponents, eqName = "NULL")
+      
+      # remove the connections with id in the connecitonId vector
+      private$pconnections <- private$pconnections[!(names(private$pconnections) 
+                                                   %in% connectionsId)]
+      private$flagBuild = FALSE
+    },
+    validateODE = function(scenario = NULL, verbose = FALSE,
+                           timeSeriesDirectory = "")
+    {
+      if (!self$isBuild)
+        sdCoupledModelMsg$validateODE1(private$pcoupledModelId)
+      
+      # simulate the coupled model first time step
+      # Get components functions
+      componentsEquations <- private$pcomponentsEquations
+      namesCompEqs <- names(private$pcomponentsEquations)
+      componentsInitVars <- private$pcomponentsInitVars
+      componentsRootSpecification <- private$pcomponentsRootSpecification
+      componentsEventFunction <- private$pcomponentsEventFunction
+      eq <- aux <- private$pcomponentsAux
+      componentsId <- private$pcomponentsId
+      iComps <- private$pindexComponents
+      
+      # Get variables from default scenario
+      defaultScenario <- self$defaultCoupledScenario
+      st <- defaultScenario$state
+      ct <- defaultScenario$constant
+      par <- defaultScenario$parameter
+      inp <- defaultScenario$input
+      sw <- defaultScenario$switch
+      times <- defaultScenario$times
+      
+      # Merge default variables with scenario variables
+      if (!is.null(scenario))
+      {
+        if (is.list(scenario))
+          scenario <-
+            sdBuildCoupledScenario(coupledScenarioId = "coupledScen",
+                                 scenarios = scenario,
+                                 timeSeriesDirectory = timeSeriesDirectory)
+        
+        if (inherits(scenario, "sdScenarioClass"))
+        {
+          st  <- MergeLists(scenario$state, st, "state")
+          ct  <- MergeLists(scenario$constant, ct, "constant")
+          par <-
+            MergeLists(scenario$parameter, par, "parameter")
+          inp <- MergeLists(scenario$input, inp, "input")
+          sw  <- MergeLists(scenario$switch, sw, "switch")
+          times <- MergeLists(scenario$times, times, "times")
+        }
+        else
+          sdCoupledModelMsg$validateODE2(private$pcoupledModelId, 
+                                         typeof(scenario))
+      }
+      
+      # Run the model Init Vars
+      modelInit <- list()
+      for (modelId in names(componentsInitVars))
+      {
+        # run the init vars
+        if (!is.null(componentsInitVars[[modelId]]))
+        {
+          if (inherits(private$pcomponents[[modelId]], "sdModelClass"))
+            modelInitVars <- componentsInitVars[[modelId]](
+              st = st[iComps$st[[modelId]]],
+              ct = ct[iComps$ct[[modelId]]],
+              par = par[iComps$par[[modelId]]],
+              inp = inp[iComps$inp[[modelId]]],
+              sw = sw[iComps$sw[[modelId]]],
+              aux = aux[iComps$aux[[modelId]]])
+          else if (inherits(private$pcomponents[[modelId]], 
+                            "sdStaticModelClass"))
+            modelInitVars <- componentsInitVars[[modelId]](
+              ct = ct[iComps$ct[[modelId]]],
+              par = par[iComps$par[[modelId]]],
+              inp = inp[iComps$inp[[modelId]]],
+              sw = sw[iComps$sw[[modelId]]],
+              eq = aux[iComps$aux[[modelId]]])
+          
+          #concatenate the initVars return
+          modelInit$st <- c(modelInit$st, modelInitVars$st)
+          modelInit$ct <- c(modelInit$ct, modelInitVars$ct)
+          modelInit$par <- c(modelInit$par, modelInitVars$par)
+          modelInit$inp <- c(modelInit$inp, modelInitVars$inp[
+            !(names(modelInitVars$inp) %in% c("interpolation_", "fun_"))])
+          modelInit$sw <- c(modelInit$sw, modelInitVars$sw)
+        }
+      }
+      if (length(modelInit) > 0)
+      {
+        st  <- MergeLists(modelInit$st, st, "coupledState")
+        ct  <- MergeLists(modelInit$ct, ct, "coupledConstant")
+        par <- MergeLists(modelInit$par, par, "coupledParameter")
+        inp <- MergeLists(modelInit$inp, inp, "coupledInput")
+        sw  <- MergeLists(modelInit$sw, sw, "coupledSwitch")
+      }
+      
+      # get the connections list
+      stCon <- private$stCon
+      auxCon <- private$auxCon
+      # get the aux connections index
+      conAux <- match(unlist(auxCon, use.names = FALSE), names(aux))
+      conAuxInps <- match(names(auxCon), names(inp))
+      # get the connected st index and the connected inp index
+      conSt <- match(unlist(stCon, use.names = FALSE), names(st))
+      conStInps <- match(names(stCon), names(inp))
+      
+      if (!is.null(times) && length(unlist(times)) > 0)
+        t <- times[[1]]
+      else
+      {
+        sdCoupledModelMsg$validateODE3(private$pcoupledModelId)
+        t <- 0
+      }
+      
+      lsVars <- list()
+      # Create new environment to store variables that will be validated
+      # and set the coupled env as its parent environment
+      j <- 1
+      while (!is.function(private$pcomponentsEquations[[j]]) && 
+             j <= length(private$pcomponentsEquations)) 
+        j++
+      if (j > length(private$pcomponentsEquations)) # only static models
+        j <- 1
+      env <- new.env(parent = environment(private$pcomponentsEquations[[j]]))
+      
+      # replace original function with test function
+      for (i in 1:length(componentsEquations)) 
+      {
+        mId <- namesCompEqs[[i]]
+        lsVars[[mId]] <- c()
+        bodyStr <- as.character(body(componentsEquations[[i]]))
+        bodyStr <- gsub("(?<!<)<-", "<<-", bodyStr, perl = TRUE)
+        bodyStr <- gsub("->(?!>)", "->>", bodyStr, perl = TRUE)
+        bodyStr <- paste(bodyStr[2:length(bodyStr)], collapse = "\n")
+        body(componentsEquations[[i]]) <- 
+          parse(text = paste("{", bodyStr, "}", sep = "\n"))
+        lsVars[[mId]] <- c(lsVars[[mId]],
+                           all.vars(body(componentsEquations[[i]])))
+        environment(componentsEquations[[i]]) <- env
+      }
+      
+      # Create test variables in env
+      for (var in unlist(lsVars, use.names = FALSE))
+        assign(var, "\\0", envir = env)
+      
+      # stores the model definitions result
+      dState <- c()
+      dAux <- list()
+      
+      # evaluate time series varibles 
+      # compute the time series in the inputs
+      for (var in names(inp$fun_))
+      {
+        if (!is.null(inp$fun_[[var]]))
+          inp[[var]] <- inp$fun_[[var]](t)
+        else
+          inp[[var]] <- NULL
+      }
+      # make the connections using the transformation vector
+      inp[conStInps] <- st[conSt]
+      
+      auxenv <- new.env()
+      appendEnv(auxenv, environment(private$pcomponentsEquations[[j]]))
+      # evaluate the auxiliary variables and update the aux list
+      for (auxVar in names(aux))
+      {
+        eq[[auxVar]] <- aux[[auxVar]] <- tryCatch(
+          {
+            eval(aux[[auxVar]],
+                 envir = auxenv)
+          },
+          error = function(e)
+          {
+            sdCoupledModelMsg$validateODE4(private$pcoupledModelId, auxVar, e)
+            invisible(numeric(0))
+          })
+        
+        if (is.null(aux[[auxVar]]) || is.na(aux[[auxVar]]) ||
+            length(aux[[auxVar]]) == 0 || is.infinite(aux[[auxVar]]))
+          sdCoupledModelMsg$validateODE5(private$pcoupledModelId, aux, auxVar)
+      }
+      # make the aux connection
+      inp[conAuxInps] <- aux[conAux]
+      
+      # run the components model definitions
+      dState <- vector("numeric", length = length(st))
+      names(dState) <- names(st)
+      for (i in seq_along(namesCompEqs))
+      {
+        # run the model definition
+        mDef <- tryCatch(
+          {
+            componentsEquations[[i]](t = t, 
+                                     st = st[iComps$st[[namesCompEqs[[i]]]]], 
+                                     ct = ct[iComps$ct[[namesCompEqs[[i]]]]], 
+                                     par = par[iComps$par[[namesCompEqs[[i]]]]],
+                                     inp = inp[iComps$inp[[namesCompEqs[[i]]]]], 
+                                     sw = sw[iComps$sw[[namesCompEqs[[i]]]]], 
+                                     aux = aux[iComps$aux[[namesCompEqs[[i]]]]])
+          },
+          error = function(e)
+          {
+            sdCoupledModelMsg$validateODE6(private$pcoupledModelId, 
+                                           namesCompEqs[[i]], e)
+            return(invisible(NULL))
+          })
+        
+        if (length(unlist(mDef[[1]])) == 0)
+          mDef[[1]] <- c()
+        
+        # concatenate the states derivatives
+        dState[iComps$st[[namesCompEqs[[i]]]]] <- mDef[[1]]
+        # concatenate the global auxiliary values
+        mAux <- mDef[-1]
+        
+        if (length(mAux) > 0)
+          # there is auxiliary values
+        {
+          names(mAux)[names(mAux) == ""] <- "noname"
+          names(mAux) <- paste0(namesCompEqs[[i]], ".", names(mAux))
+          dAux <- append(dAux, mAux)
+        }
+      }
+      res <- list(c(dState), dAux, aux)
+      
+      # Display warnings if any variables during the Model Definition
+      # execution are NULL, numeric(0), Inf or NA
+      for (modelId in namesCompEqs)
+      {
+        for (x in lsVars[[modelId]])
+        {
+          var <- mget(x, envir = environment(componentsEquations[[modelId]]),
+                      ifnotfound = "\\1", inherits = TRUE)[[1]]
+          
+          if (is.function(var) || is.environment(var))
+          {
+            # do nothing
+          }
+          else if ( (is.list(var) && length(var) > 0) || 
+                    ( is.vector(var) && length(var) > 1 )) 
+          {
+            xUnlist <- unlist(var, recursive = TRUE)
+            for (i in 1:length(xUnlist))
+            {
+              if (is.function(xUnlist[[i]]) || is.environment(xUnlist[[i]]) ||
+                  is.language(xUnlist[[i]]))
+                next # do nothing
+              else if (is.null(xUnlist[[i]]))
+                sdCoupledModelMsg$validateODE7(private$pcoupledModelId, modelId, 
+                                               names(xUnlist)[[i]], x, "NULL")
+              else if (length(xUnlist[[i]]) == 0 && is.numeric(xUnlist[[i]]))
+                sdCoupledModelMsg$validateODE7(private$pcoupledModelId, modelId, 
+                                               names(xUnlist)[[i]], x, 
+                                               "numeric(0)")
+              else if (is.na(xUnlist[[i]]))
+                sdCoupledModelMsg$validateODE7(private$pcoupledModelId, modelId, 
+                                               names(xUnlist)[[i]], x, "NA")
+              else if (is.infinite(xUnlist[[i]]))
+                sdCoupledModelMsg$validateODE7(private$pcoupledModelId, modelId, 
+                                               names(xUnlist)[[i]], x, "Inf")
+            } 
+          }
+          else if (x %in% c('st', 'ct', 'par', 'inp', 'sw', 'aux'))
+            next # do nothing if an arg is empty
+          else if (is.null(unlist(var)))
+            sdCoupledModelMsg$validateODE8(private$pcoupledModelId, modelId, x, 
+                                           "NULL")
+          else if (length(var) == 0 && is.numeric(var))
+            sdCoupledModelMsg$validateODE8(private$pcoupledModelId, modelId, x, 
+                                           "numeric(0)")
+          else if (is.na(unlist(var)))
+            sdCoupledModelMsg$validateODE8(private$pcoupledModelId, modelId, x, 
+                                           "NA")
+          else if (is.infinite(unlist(var)))
+            sdCoupledModelMsg$validateODE8(private$pcoupledModelId, modelId, x, 
+                                           "Inf")
+        }
+      }
+      
+      # Check the return of Model Definition contains invalid values
+      if (is.list(res))
+      {
+        dRes <- res[[1]]
+        
+        if (!is.numeric(dRes))
+          sdCoupledModelMsg$validateODE9(private$pcoupledModelId, typeof(dRes))
+        
+        if (length(dRes) != length(st))
+          sdCoupledModelMsg$validateODE10(private$pcoupledModelId, dRes,
+                                          length(st))
+      }
+      else
+        sdCoupledModelMsg$validateODE11(private$pcoupledModelId, typeof(res))
+      
+      if (verbose)
+        sdCoupledModelMsg$validateODE12(private$pcoupledModelId)
+    },
+    buildCoupledModel = function(coupledScenarioId = NULL,
+                                           method = c("lsoda", "lsode", 
+                                                      "lsodes", "lsodar", 
+                                                      "vode", "daspk",
+                                                      "euler", "rk4", "ode23", 
+                                                      "ode45", "radau", 
+                                                      "bdf", "bdf_d", "adams", 
+                                                      "impAdams", "impAdams_d"),
+                                           from = NULL,
+                                           to = NULL,
+                                           by = NULL,
+                                 timeSeriesDirectory = "")
+    {
+      if (length(private$pcomponentsId) == 0)
+      {
+        sdCoupledModelMsg$buildCoupledModel1(private$pcoupledModelId)
+        
+        return(invisible(NULL))
+      }
+      
+      # build default scenario concatanating the components default scenario
+      componentsIds <- private$pcomponentsId
+      scenComponents <- list()
+      auxsNames <- list()
+      
+      for (modelId in componentsIds)
+      {
+        if (!is.null(private$pcomponents[[modelId]]$defaultScenario))
+          scenComponents[[modelId]] <-
+            private$pcomponents[[modelId]]$defaultScenario$clone()
+      }
+      
+      defaultCoupledScenarioVars <- sdBuildCoupledScenario(
+        coupledScenarioId = coupledScenarioId,
+        scenarios = scenComponents,
+        method = method[[1]],
+        from = from,
+        to = to,
+        by = by,
+        varNames = TRUE,
+        timeSeriesDirectory = timeSeriesDirectory)
+      private$pdefaultCoupledScenario <-
+        defaultCoupledScenarioVars$coupledScenario
+      
+      # build the components list of indexes
+      indexComponents <- list(st = list(), ct = list(), inp = list(), 
+                              par = list(), ts = list(), sw = list(), 
+                              aux = list())
+      namesSt <- names(defaultCoupledScenarioVars$coupledScenario$state)
+      namesCt <- names(defaultCoupledScenarioVars$coupledScenario$constant)
+      namesInp <- names(defaultCoupledScenarioVars$coupledScenario$input)
+      namesTs <- names(defaultCoupledScenarioVars$coupledScenario$input$fun_)
+      namesPar <- names(defaultCoupledScenarioVars$coupledScenario$parameter)
+      namesSw <- names(defaultCoupledScenarioVars$coupledScenario$switch)
+      
+      coupledEnv <- new.env(parent = baseenv())
+      # get all the components variables names and substitute in the components
+      # functions for the coupled names (concatenated with the model ID)
+      # reset the enviromnet of all components functions with the coupled env
+      componentsVarNames <- defaultCoupledScenarioVars$varNames
+      for (modelId in componentsIds)
+      {
+        componentsVarNames[[modelId]] <- c(
+          componentsVarNames[[modelId]],
+          gsub(pattern = paste0("^",modelId,"\\."), replacement = "", 
+               x = names(private$pcomponentsAux)[
+                 grepl(paste0("^", modelId, "\\."),
+                       names(private$pcomponentsAux))]),
+          names(private$pcomponentsGlobal[[modelId]]))
+        
+        if (is.function(private$pcomponentsEquations[[modelId]]))
+        {
+          private$pcomponentsEquations[[modelId]] <-
+            replaceCoupledVarsNames(
+              func = private$pcomponentsEquations[[modelId]],
+              componentsVarNames = componentsVarNames[[modelId]],
+              modelId = modelId)
+          
+          environment(private$pcomponentsEquations[[modelId]]) <-
+            coupledEnv
+        }
+        
+        if (is.function(private$pcomponentsInitVars[[modelId]]))
+        {
+          private$pcomponentsInitVars[[modelId]] <-
+            replaceCoupledVarsNames(
+              func = private$pcomponentsInitVars[[modelId]],
+              componentsVarNames = componentsVarNames[[modelId]],
+              modelId = modelId)
+          
+          environment(private$pcomponentsInitVars[[modelId]]) <-
+            coupledEnv
+        }
+        
+        if (is.function(private$pcomponentsPostProcessVars[[modelId]]))
+        {
+          private$pcomponentsPostProcessVars[[modelId]] <-
+            replaceCoupledVarsNames(
+              func = private$pcomponentsPostProcessVars[[modelId]],
+              componentsVarNames = componentsVarNames[[modelId]],
+              modelId = modelId)
+          
+          environment(private$pcomponentsPostProcessVars[[modelId]]) <-
+            coupledEnv
+        }
+        
+        if (is.function(private$pcomponentsRootSpecification[[modelId]]))
+        {
+          private$pcomponentsRootSpecification[[modelId]] <-
+          replaceCoupledVarsNames(
+            func = private$pcomponentsRootSpecification[[modelId]],
+            componentsVarNames = componentsVarNames[[modelId]],
+            modelId = modelId)
+          
+          environment(private$pcomponentsRootSpecification[[modelId]]) <-
+            coupledEnv
+        }
+        
+        if (is.function(private$pcomponentsEventFunction[[modelId]]))
+        {
+          private$pcomponentsEventFunction[[modelId]] <-
+          replaceCoupledVarsNames(
+            func = private$pcomponentsEventFunction[[modelId]],
+            componentsVarNames = componentsVarNames[[modelId]],
+            modelId = modelId)
+          
+          environment(private$pcomponentsEventFunction[[modelId]]) <-
+            coupledEnv
+        }
+        
+        private$pcomponentsAux[grepl(paste0("^", modelId, "\\."),
+                                     names(private$pcomponentsAux))] <-
+          replaceCoupledVarsNames(
+            listExp = private$pcomponentsAux[
+              grepl(paste0("^", modelId, "\\."),
+                    names(private$pcomponentsAux))],
+            componentsVarNames = componentsVarNames[[modelId]],
+            modelId = modelId)
+        
+        if (length(private$pcomponentsGlobal[[modelId]]) > 0)
+        {
+          for (i in 1:length(private$pcomponentsGlobal[[modelId]]))
+          {
+            if (is.function(private$pcomponentsGlobal[[modelId]][[i]]))
+            {
+              private$pcomponentsGlobal[[modelId]][[i]] <-
+                replaceCoupledVarsNames(
+                func = private$pcomponentsGlobal[[modelId]][[i]],
+                componentsVarNames = componentsVarNames[[modelId]],
+                modelId = modelId)
+              
+              environment(private$pcomponentsGlobal[[modelId]][[i]]) <-
+                coupledEnv
+            }
+            else if (is.expression(private$pcomponentsGlobal[[modelId]][[i]]))
+              private$pcomponentsGlobal[[modelId]][[i]] <-
+                replaceCoupledVarsNames(
+                listExp = private$pcomponentsGlobal[[modelId]][[i]],
+                componentsVarNames = componentsVarNames[[modelId]],
+                modelId = modelId)
+          }
+        }
+        
+        # set each component variables indexes
+        indexComponents$st[[modelId]] <- match(
+          namesSt[grepl(paste0("^", modelId, "\\."), namesSt)], namesSt)
+        indexComponents$ct[[modelId]] <- match(
+          namesCt[grepl(paste0("^", modelId, "\\."), namesCt)], namesCt)
+        indexComponents$inp[[modelId]] <- match(
+          namesInp[grepl(paste0("^", modelId, "\\."), namesInp)], namesInp)
+        indexComponents$ts[[modelId]] <- match(
+          namesTs[grepl(paste0("^", modelId, "\\."), namesTs)], namesTs)
+        indexComponents$par[[modelId]] <- match(
+          namesPar[grepl(paste0("^", modelId, "\\."), namesPar)], namesPar)
+        indexComponents$sw[[modelId]] <- match(
+          namesSw[grepl(paste0("^", modelId, "\\."), namesSw)], namesSw)
+      }
+      
+      # add the global function to the coupled env
+      appendEnv(coupledEnv, 
+                as.list(unlist(private$pcomponentsGlobal, 
+                               recursive = FALSE)))
+      
+      stComponents <- defaultCoupledScenarioVars$coupledScenario$state
+      inpComponents <- defaultCoupledScenarioVars$coupledScenario$input
+      auxComponents <- private$pcomponentsAux
+      
+      # build the auxliary eq and state vars connections list
+      eqConnections <- list()
+      stConnections <- list()
+      
+      # Build the transformation vectors from the given connections
+      connections <- private$pconnections
+      if (!is.null(connections) && length(connections) > 0)
+      {
+        for (con in connections)
+        {
+          id <- con[[1]]
+          m1 <- con[[2]]
+          in1 <- con[[3]]
+          m2 <- con[[4]]
+          out2 <- strsplit(con[[5]], "$", fixed = TRUE)[[1]]
+          
+          if (!(m1 %in% componentsIds))
+            sdCoupledModelMsg$buildCoupledModel2(private$pcoupledModelId, m1, 
+                                                 id)
+          else if (!(m2 %in% componentsIds))
+            sdCoupledModelMsg$buildCoupledModel2(private$pcoupledModelId, m2, 
+                                                 id)
+          else if (!(paste0(m1, ".", in1) %in% names(inpComponents)))
+            sdCoupledModelMsg$buildCoupledModel3(private$pcoupledModelId, 
+                                                 "input", in1, m1, id)
+          else if (!(out2[[1]] %in% c("aux", "st", "eq")))
+            sdCoupledModelMsg$buildCoupledModel4(private$pcoupledModelId, m2, 
+                                                 id)
+          else if (out2[[1]] == "st" && !(paste0(m2, ".", out2[[2]]) %in% 
+                                          names(stComponents)))
+            sdCoupledModelMsg$buildCoupledModel3(private$pcoupledModelId, 
+                                                 "state", out2[[2]], m2, id)
+          else if (out2[[1]] %in% c("aux", "eq") && 
+                   !(paste0(m2, ".", out2[[2]]) %in% names(auxComponents)))
+            sdCoupledModelMsg$buildCoupledModel3(private$pcoupledModelId, 
+                                                 "equation", out2[[2]], m2, id)
+          else
+          {
+            # check connections unit
+            u1 <- defaultCoupledScenarioVars$coupledScenario$unit[[
+              paste0(m1, ".", in1)]]
+            u2 <- defaultCoupledScenarioVars$coupledScenario$unit[[
+              paste0(m2, ".", out2[[2]])]]
+            if (!is.null(u1) &&
+                !is.null(u2) && toupper(u1) != toupper(u2))
+              sdCoupledModelMsg$buildCoupledModel5(private$pcoupledModelId, in1, 
+                                                   u1, m1, out2, u2, m2, id)
+            else  # make connection
+            {
+              if (out2[[1]] == "st")
+              {
+                if (!is.null(stConnections[[paste0(m1, ".", in1)]]))
+                  sdCoupledModelMsg$buildCoupledModel6(private$pcoupledModelId, 
+                                                       m1, in1, 
+                                                       "state variable")
+                
+                stConnections[paste0(m1, ".", in1)] <- paste0(m2,".", out2[[2]])
+              }
+              else if (out2[[1]] %in% c("aux","eq"))
+              {
+                if (!is.null(eqConnections[[paste0(m1, ".", in1)]]))
+                  sdCoupledModelMsg$buildCoupledModel6(private$pcoupledModelId, 
+                                                       m1, in1, 
+                                                       "equation")
+                
+                eqConnections[paste0(m1, ".", in1)] <- paste0(m2, ".", 
+                                                               out2[[2]])
+                # substitute the connected inp <- aux
+                auxComponents <- lapply(auxComponents, function(x)
+                  {
+                    gsub(pattern = paste0("inp\\$", m1, ".", in1, 
+                                          "|inp\\[(\\'|\\\")", m1, ".", in1,
+                                          "\b(\\'|\\\")\\]|inp\\[\\[(\\'|\\\")",
+                                          m1, ".", in1, "\b(\\'|\\\")\\]\\]"),
+                         replacement = paste0(out2[[1]], "$", 
+                                              m2, ".", out2[[2]]),
+                         x = toString(as.expression(x)), perl = TRUE)
+                })
+              }
+            }
+          }
+        }
+      }
+      # sort the auxliary equations and the connection matrix
+      auxComponents <- sdInitEquations(auxComponents)
+      private$pcomponentsAux <- auxComponents
+      
+      # set index list for the equations
+      namesAux <- names(auxComponents)
+      for (modelId in componentsIds)
+        indexComponents$aux[[modelId]] <- match(
+          namesAux[grepl(paste0("^", modelId, "\\."), namesAux)], namesAux)
+      # set the index list
+      private$pindexComponents <- indexComponents
+      
+      private$auxCon <- eqConnections
+      private$stCon <- stConnections
+      
+      private$flagBuild <- TRUE
+    },
+    saveToXml = function(file = "sdCoupledModel.xml")
+    {
+      # save model to XML
+      doc = XML::newXMLDoc()
+      rootsdCoupledModel <- XML::newXMLNode("sdCoupledModel", doc = doc)
+      
+      lCoupledModel <-
+        list(
+          coupledModelId = private$pcoupledModelId,
+          coupledModelDescription = private$pcoupledModelDescription,
+          connections = private$pconnections
+        )
+      ListToXML(rootsdCoupledModel, lCoupledModel)
+      
+      # add the components
+      components <- XML::newXMLNode("components")
+      componentsXML <- lapply(private$pcomponents, function(x)
+      {
+        x$saveToXml()
+      })
+      XML::addChildren(components, kids = componentsXML)
+      XML::addChildren(rootsdCoupledModel, kids = list(components))
+      
+      if (!missing(file))
+        cat(XML::saveXML(doc, encoding = "UTF-8", 
+                         prefix = xmlPrefix(),
+                         indent = TRUE),  file = file) 
+      
+      return(invisible(rootsdCoupledModel))
+    }
+  ),
+  active = list(
+    coupledModelId = function(coupledModelId)
+    {
+      if (missing(coupledModelId))
+        return(private$pcoupledModelId)
+      else if (is.null(coupledModelId))
+      {
+        coupledModelId <- gsub("\\s|\\W", "", paste("coupledModel", Sys.Date()), 
+                               perl = TRUE)
+        sdCoupledModelMsg$coupledModelId1(coupledModelId)
+      }
+      else if (!is.character(coupledModelId))
+      {
+        coupledModelId <- gsub("\\s|\\W", "", paste("coupledModel", Sys.Date()), 
+                               perl = TRUE)
+        sdCoupledModelMsg$coupledModelId2(coupledModelId)
+      }
+      
+      private[["pcoupledModelId"]] <- make.names(gsub("\\s|\\W", "", 
+                                                      coupledModelId, 
+                                           perl = TRUE))
+    },
+    coupledModelDescription = function(coupledModelDescription)
+    {
+      if (missing(coupledModelDescription))
+        return(private$pcoupledModelDescription)
+      # set description
+      else if (is.character(coupledModelDescription)) 
+        private$pcoupledModelDescription <- coupledModelDescription
+      else
+        sdCoupledModelMsg$coupledModelDescription(private$pcoupledModelId)
+    },
+    defaultCoupledScenario = function()
+    {
+      if (private$flagBuild)
+        return(private$pdefaultCoupledScenario)
+      else
+        sdCoupledModelMsg$defaultCoupledScenario(private$pcoupledModelId)
+    },
+    components = function()
+    {
+      return(private$pcomponents)
+    },
+    componentsId = function()
+    {
+      return(private$pcomponentsId)
+    },
+    componentsEquations = function()
+    {
+      return(private$pcomponentsEquations)
+    },
+    componentsInitVars = function()
+    {
+      return(private$pcomponentsInitVars)
+    },
+    componentsPostProcessVars = function()
+    {
+      return(private$pcomponentsPostProcessVars)
+    },
+    componentsRootSpecification = function()
+    {
+      return(private$pcomponentsRootSpecification)
+    },
+    componentsEventFunction = function()
+    {
+      return(private$pcomponentsEventFunction)
+    },
+    componentsAux = function()
+    {
+      return(private$pcomponentsAux)
+    },
+    componentsGlobal = function()
+    {
+      return(private$pcomponentsGlobal)
+    },
+    connections = function()
+    {
+      return(private$pconnections)
+    },
+    eqConnections = function()
+    {
+      # check if the matrix exist - flagBuild = TRUE
+      if (private$flagBuild)
+        return(private$auxCon)
+      else
+        sdCoupledModelMsg$connectionsList(private$pcoupledModelId, 
+                                          "equations")
+      return(invisible(NULL))
+    },
+    stConnections = function()
+    {
+      # check if the matrix exist - flagBuild = TRUE
+      if (private$flagBuild)
+        return(private$stCon)
+      else
+        sdCoupledModelMsg$connectionsList(private$pcoupledModelId, 
+                                          "state")
+      return(invisible(NULL))
+    },
+    indexComponents = function()
+    {
+      # check if the matrix exist - flagBuild = TRUE
+      if (private$flagBuild)
+        return(private$pindexComponents)
+      else
+        sdCoupledModelMsg$indexComponents(private$pcoupledModelId)
+      return(invisible(NULL))
+    },
+    isBuild = function()
+    {
+      return(private$flagBuild)
+    }
+  ),
+  private = list(
+    # Class Private Atributes
+    pcoupledModelId = NULL,
+    pcoupledModelDescription = NULL,
+    pdefaultCoupledScenario = NULL,
+    pindexComponents = NULL,
+    pcomponents = list(),
+    pcomponentsId = list(),
+    pconnections = list(),
+    auxCon = NULL,
+    stCon = NULL,
+    flagBuild = FALSE,
+    pcomponentsEquations = list(),
+    pcomponentsInitVars = list(),
+    pcomponentsPostProcessVars = list(),
+    pcomponentsRootSpecification = list(),
+    pcomponentsEventFunction = list(),
+    pcomponentsAux = list(),
+    pcomponentsGlobal = list()
+  )
+)

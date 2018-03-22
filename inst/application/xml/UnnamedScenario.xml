@@ -1,0 +1,15 @@
+<?sdsim about='R package for modeling and simulation of system dynamics' version='0.1' date='2018-01-08'?>
+<sdScenario>
+  <scenarioId>Unnamed Scenario</scenarioId>
+    <times/>
+    <method/>
+    <state/>
+    <constant/>
+    <input/>
+    <interpolation/>
+    <parameter/>
+    <switch/>
+    <plotConfig/>
+    <unit/>
+    <description/>
+</sdScenario>

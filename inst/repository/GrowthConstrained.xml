@@ -1,0 +1,79 @@
+<?sdsim about='R package for modeling and simulation of system dynamics' version='0.1'?>
+<sdModel>
+  <modelId>GrowthConstrained</modelId>
+  <modelDescription>The model captures the growth and decline dynamics of a company discovering a 
+  new oil field, where the stock of oil could potentially last for up to 
+  200 years. Source: System Dynamics Modeling with R, Jim Duggan, 2016</modelDescription>
+  <DifferentialEquations>function (t, st, ct, par, inp, sw, aux) 
+{
+    dS &lt;- aux$investment - aux$depreciation
+    dR &lt;- -aux$extraction
+    return(list(c(dS, dR)))
+}</DifferentialEquations>
+  <InitVars>NULL</InitVars>
+  <PostProcessVars>NULL</PostProcessVars>
+  <RootSpecification/>
+  <EventFunction>NULL</EventFunction>
+  <aux>
+    <extrEfficiency>inp$fun_$efficiency(st$resource)</extrEfficiency>
+    <extraction>aux$extrEfficiency * st$capital</extraction>
+    <totalRevenue>ct$revenuePerUnit * aux$extraction</totalRevenue>
+    <capitalCosts>st$capital * 0.1</capitalCosts>
+    <profit>aux$totalRevenue - aux$capitalCosts</profit>
+    <capitalFunds>ct$fractionReinvested * aux$profit</capitalFunds>
+    <maximumInvestment>aux$capitalFunds/ct$costPerInvestment</maximumInvestment>
+    <desiredInvestment>st$capital * ct$desiredGrowth</desiredInvestment>
+    <investment>min(aux$maximumInvestment, aux$desiredInvestment)</investment>
+    <depreciation>st$capital * ct$depreciation</depreciation>
+  </aux>
+  <globalFunctions/>
+  <defaultScenario>
+    <scenarioId>GrowthNonRenewableStock</scenarioId>
+    <times>
+      <from>0</from>
+      <to>200</to>
+      <by>0.25</by>
+    </times>
+    <method>euler</method>
+    <state>
+      <capital>5</capital>
+      <resource>1000</resource>
+    </state>
+    <constant>
+      <desiredGrowth>0.07</desiredGrowth>
+      <depreciation>0.05</depreciation>
+      <costPerInvestment>2</costPerInvestment>
+      <fractionReinvested>0.12</fractionReinvested>
+      <revenuePerUnit>3</revenuePerUnit>
+    </constant>
+    <input>
+      <efficiency>data.frame(Variable = c(0,100,200,300,400,500,600,700,800,900,1000), Value = c(0,0.25,0.45,0.63,0.75,0.85,0.92,0.96,0.98,0.99,1))</efficiency>
+    </input>
+    <interpolation>
+      <efficiency>linear</efficiency>
+    </interpolation>
+    <parameter/>
+    <switch/>
+    <unit>
+      <time>year</time>
+      <capital>$</capital>
+      <resource>kg</resource>
+      <desiredGrowth>dimensionless</desiredGrowth>
+      <depreciation>dimensionless</depreciation>
+      <costPerInvestment>$</costPerInvestment>
+      <fractionReinvested>dimensionless</fractionReinvested>
+      <revenuePerUnit>$ / kg</revenuePerUnit>
+      <efficiency>kg / $</efficiency>
+    </unit>
+    <description>
+      <capital>capital stock</capital>
+      <resource>resource stock</resource>
+      <desiredGrowth>Desired investment represents the target investment rate for capital, in order to stimulate growth.</desiredGrowth>
+      <depreciation>Depreciation of resource</depreciation>
+      <costPerInvestment>cost per unit of investment</costPerInvestment>
+      <fractionReinvested>A fixed percentage of profits</fractionReinvested>
+      <revenuePerUnit>the amount extracted times revenue per unit extracted</revenuePerUnit>
+      <efficiency>This extraction rate depends on the amount of available capital, which is multiplied by the extraction efficiency per unit of capital</efficiency>
+    </description>
+  </defaultScenario>
+</sdModel>

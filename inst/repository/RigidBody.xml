@@ -1,0 +1,76 @@
+<?sdsim about='R package for modeling and simulation of system dynamics' version='0.1'?>
+<sdModel>
+  <modelId>RigidBody</modelId>
+  <modelDescription>Source: Soetaert K., Cash J., Mazzia F. - Solving Differential Equations in R-Springer(2012)&#13;
+A standard test problem for non-stiff solvers, as proposed by Krogh. It describes the Euler equations of a rigid body without external forces.&#13;
+The three dependent variables (x , y , z) are the coordinates of the rotation vector, while I1, I2 and I3 are the principal moments of inertia.&#13;
+</modelDescription>
+  <DifferentialEquations>function (t, st, ct, par, inp, sw, aux) 
+{
+    dX &lt;- par$k1 * st$y * st$z
+    dY &lt;- par$k2 * st$x * st$z
+    dZ &lt;- par$k3 * st$x * st$y
+    return(list(c(dX, dY, dZ)))
+}</DifferentialEquations>
+  <InitVars>function (st, ct, par, inp, sw, aux) 
+{
+    par$k1 &lt;- (par$I2 - par$I3)/par$I1
+    par$k2 &lt;- (par$I3 - par$I1)/par$I2
+    par$k3 &lt;- (par$I1 - par$I2)/par$I3
+    return(list(st = st, ct = ct, inp = inp, par = par, sw = sw))
+}</InitVars>
+  <PostProcessVars>NULL</PostProcessVars>
+  <RootSpecification>NULL</RootSpecification>
+  <EventFunction>NULL</EventFunction>
+  <aux/>
+  <defaultScenario>
+    <scenarioId>DefaultScenario</scenarioId>
+    <times>
+      <from>0</from>
+      <to>20</to>
+      <by>0.01</by>
+    </times>
+    <method>ode45</method>
+    <state>
+      <x>1</x>
+      <y>0.1</y>
+      <z>0.9</z>
+    </state>
+    <constant/>      
+    <input/>
+    <interpolation/>
+    <parameter>
+      <I1>0.5</I1>
+      <I2>2</I2>
+      <I3>3</I3>
+      <k1>0</k1>
+      <k2>0</k2>
+      <k3>0</k3>
+    </parameter>
+    <switch/>
+    <plotConfig/>
+    <unit>
+      <time>second</time>
+      <x>meter</x>
+      <y>meter</y>
+      <z>meter</z>
+      <I1>kilogram * meter ^ 2</I1>
+      <I2>kilogram * meter ^ 2</I2>
+      <I3>kilogram * meter ^ 2</I3>
+      <k1>dimensionless</k1>
+      <k2>dimensionless</k2>
+      <k3>dimensionless</k3>
+    </unit>
+    <description>
+      <x>x coordinate of the rotation vector</x>
+      <y>y coordinate of the rotation vector</y>
+      <z>z coordinate of the rotation vector</z>
+      <I1>principal moment of inertia on x</I1>
+      <I2>principal moment of inertia on y</I2>
+      <I3>principal moment of inertia on z</I3>
+      <k1>x derivative parameter computed as: (I2 - I3)/I1</k1>
+      <k2>y derivative parameter computed as: (I3 - I1)/I2</k2>
+      <k3>z derivative parameter computed as: (I1 - I2)/I3</k3>
+    </description>
+  </defaultScenario>
+</sdModel>
