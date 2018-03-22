@@ -489,32 +489,47 @@ sdModelClass <- R6::R6Class(
       if (is.null(private$pDifferentialEquations))
         sdModelMsg$validateODE0(private$pmodelId)
       
-      times <- private$pdefaultScenario$times # initial time
-      st <- private$pdefaultScenario$state 
-      ct <- private$pdefaultScenario$constant
-      par <- private$pdefaultScenario$parameter
-      inp <- private$pdefaultScenario$input
-      sw <- private$pdefaultScenario$switch
-      aux <- private$paux
+      # get the model scenario 
+      defaultScenario <- private$pdefaultScenario$clone(deep = TRUE)
       
-      # Merge default variables with scenario variables
+      # overwrite default variables with the given scenario values
       if (!is.null(scenario))
       {
-        scenarioState <- scenario$state
-        scenarioConstant <- scenario$constant
-        scenarioParameter <- scenario$parameter
-        scenarioInput <- scenario$input
-        scenarioSwitch <- scenario$switch
-        scenarioTimes <- scenario$times
-        scenarioMethod <- scenario$method
+        if (is.character(scenario))
+          scenario <- sdLoadScenario(file = scenario)
         
-        st <- MergeLists(scenarioState, st, "state")
-        ct <- MergeLists(scenarioConstant, ct, "constant")
-        par <- MergeLists(scenarioParameter, par, "parameter")
-        inp <- MergeLists(scenarioInput, inp, "input")
-        sw <- MergeLists(scenarioSwitch, sw, "switch")
-        times <- MergeLists(scenarioTimes, times, "times")
+        if (inherits(scenario, "sdScenarioClass"))
+        {
+          if (length(scenario$state) > 0)
+            defaultScenario$addState(scenario$state, verbose = verbose)
+          if (length(scenario$constant) > 0)
+            defaultScenario$addConstant(scenario$constant, verbose = verbose)
+          if (length(scenario$input) > 0)
+            defaultScenario$addInput(
+              scenario$input[!(names(scenario$input) %in% c("interpolation_", 
+                                                            "fun_"))],
+              interpolation = scenario$input[["interpolation_"]],
+              verbose = verbose)
+          if (length(scenario$parameter) > 0)
+            defaultScenario$addParameter(scenario$parameter, verbose = verbose)
+          if (length(scenario$switch) > 0)
+            defaultScenario$addSwitch(scenario$switch, verbose = verbose)
+          if (!is.null(scenario$times))
+            defaultScenario$times <- scenario$times
+        }
+        else
+          sdModelMsg$validateODE12(private$pmodelId, typeof(scenario))
       }
+      
+      # Get variables from default scenario
+      st <- defaultScenario$state
+      ct <- defaultScenario$constant
+      par <- defaultScenario$parameter
+      inp <- defaultScenario$input
+      sw <- defaultScenario$switch
+      times <- defaultScenario$times
+      
+      aux <- private$paux
       
       if (!is.null(times) && length(unlist(times)) > 0)
         t <- times[[1]]

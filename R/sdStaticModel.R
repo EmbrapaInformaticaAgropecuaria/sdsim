@@ -280,29 +280,47 @@ sdStaticModelClass <- R6::R6Class(
       if (is.null(private$pdefaultScenario))
         sdStaticModelMsg$validate0(private$pstaticModelId, equationsVar, e)
       
-      times <- private$pdefaultScenario$times # initial time
-      ct <- private$pdefaultScenario$constant
-      par <- private$pdefaultScenario$parameter
-      inp <- private$pdefaultScenario$input
-      sw <- private$pdefaultScenario$switch
-      eq <- private$pequations
+      # get the model scenario 
+      defaultScenario <- private$pdefaultScenario$clone(deep = TRUE)
       
-      # Merge default variables with scenario variables
+      # overwrite default variables with the given scenario values
       if (!is.null(scenario))
       {
-        scenarioConstant <- scenario$constant
-        scenarioParameter <- scenario$parameter
-        scenarioInput <- scenario$input
-        scenarioSwitch <- scenario$switch
-        scenarioTimes <- scenario$times
-        scenarioMethod <- scenario$method
+        if (is.character(scenario))
+          scenario <- sdLoadScenario(file = scenario)
         
-        ct <- MergeLists(scenarioConstant, ct, "constant")
-        par <- MergeLists(scenarioParameter, par, "parameter")
-        inp <- MergeLists(scenarioInput, inp, "input")
-        sw <- MergeLists(scenarioSwitch, sw, "switch")
-        times <- MergeLists(scenarioTimes, times, "times")
+        if (inherits(scenario, "sdScenarioClass"))
+        {
+          if (length(scenario$constant) > 0)
+            defaultScenario$addConstant(scenario$constant, verbose = verbose)
+          if (length(scenario$input) > 0)
+            defaultScenario$addInput(
+              scenario$input[!(names(scenario$input) %in% c("interpolation_", 
+                                                            "fun_"))],
+              interpolation = scenario$input[["interpolation_"]],
+              verbose = verbose)
+          if (length(scenario$parameter) > 0)
+            defaultScenario$addParameter(scenario$parameter, verbose = verbose)
+          if (length(scenario$switch) > 0)
+            defaultScenario$addSwitch(scenario$switch, verbose = verbose)
+          if (!is.null(scenario$times))
+            defaultScenario$times <- scenario$times
+          if (!is.null(scenario$method))
+            defaultScenario$method <- scenario$method
+        }
+        else
+          sdStaticModelMsg$validate5(private$pstaticModelId, 
+                                           typeof(scenario))
       }
+      
+      # Get variables from default scenario
+      ct <- defaultScenario$constant
+      par <- defaultScenario$parameter
+      inp <- defaultScenario$input
+      sw <- defaultScenario$switch
+      times <- defaultScenario$times
+
+      eq <- private$pequations
       
       if (!is.null(times) && length(unlist(times)) > 0)
         t <- times[[1]]

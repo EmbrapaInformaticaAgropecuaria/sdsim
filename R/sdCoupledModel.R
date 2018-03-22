@@ -599,7 +599,7 @@ sdCoupledModelClass <- R6::R6Class(
                     x = private$pcomponentsId, perl = TRUE)], id))
           }
           else if (id == private$pcoupledModelId)
-          {
+          { # check if id is equal the coupled model id
             sdCoupledModelMsg$addComponent0(private$pcoupledModelId, id)
             next()
           }
@@ -854,38 +854,51 @@ sdCoupledModelClass <- R6::R6Class(
       componentsId <- private$pcomponentsId
       iComps <- private$pindexComponents
       
-      # Get variables from default scenario
-      defaultScenario <- self$defaultCoupledScenario
+      # get the model scenario 
+      defaultScenario <- self$defaultCoupledScenario$clone(deep = TRUE)
+      
+      # overwrite default variables with the given scenario values
+      if (!is.null(scenario))
+      {
+        # convert list of scenarios to coupled scenario
+        if (is.list(scenario))
+          scenario <- sdBuildCoupledScenario(coupledScenarioId = "coupledScen", 
+                                             scenarios = scenario)
+        else if (is.character(scenario))
+          scenario <- sdLoadScenario(file = scenario)
+        
+        if (inherits(scenario, "sdScenarioClass"))
+        {
+          if (length(scenario$state) > 0)
+            defaultScenario$addState(scenario$state, verbose = verbose)
+          if (length(scenario$constant) > 0)
+            defaultScenario$addConstant(scenario$constant, verbose = verbose)
+          if (length(scenario$input) > 0)
+            defaultScenario$addInput(
+              scenario$input[!(names(scenario$input) %in% c("interpolation_", 
+                                                            "fun_"))],
+              interpolation = scenario$input[["interpolation_"]],
+              verbose = verbose)
+          if (length(scenario$parameter) > 0)
+            defaultScenario$addParameter(scenario$parameter, verbose = verbose)
+          if (length(scenario$switch) > 0)
+            defaultScenario$addSwitch(scenario$switch, verbose = verbose)
+          if (!is.null(scenario$times))
+            defaultScenario$times <- scenario$times
+          if (!is.null(scenario$method))
+            defaultScenario$method <- scenario$method
+        }
+        else
+          sdCoupledModelMsg$validateODE2(private$pcoupledModelId, 
+                                         typeof(scenario))
+      }
+      # get model variables
       st <- defaultScenario$state
       ct <- defaultScenario$constant
       par <- defaultScenario$parameter
       inp <- defaultScenario$input
       sw <- defaultScenario$switch
       times <- defaultScenario$times
-      
-      # Merge default variables with scenario variables
-      if (!is.null(scenario))
-      {
-        if (is.list(scenario))
-          scenario <-
-            sdBuildCoupledScenario(coupledScenarioId = "coupledScen",
-                                 scenarios = scenario,
-                                 timeSeriesDirectory = timeSeriesDirectory)
-        
-        if (inherits(scenario, "sdScenarioClass"))
-        {
-          st  <- MergeLists(scenario$state, st, "state")
-          ct  <- MergeLists(scenario$constant, ct, "constant")
-          par <-
-            MergeLists(scenario$parameter, par, "parameter")
-          inp <- MergeLists(scenario$input, inp, "input")
-          sw  <- MergeLists(scenario$switch, sw, "switch")
-          times <- MergeLists(scenario$times, times, "times")
-        }
-        else
-          sdCoupledModelMsg$validateODE2(private$pcoupledModelId, 
-                                         typeof(scenario))
-      }
       
       # Run the model Init Vars
       modelInit <- list()

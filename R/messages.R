@@ -510,6 +510,13 @@ sdModelMsg$validateODE11 <- function(pmodelId)
   message("sdsim::validateODE - Model '", pmodelId, 
           "' Ordinary Differential Equations Validated.")
 
+sdModelMsg$validateODE12 <- function(pmodelId, typeofscen) 
+  warning("sdsim::validateODE - Model '", pmodelId, 
+          "' validation: Scenario argument of type '", typeofscen, 
+          "' discarted. It must be a valid sdScenarioClass object or ", 
+          "a character string with a scenario XML or EXCEL file name.", 
+          call. = F)
+
 sdModelMsg$description <- function(pmodelId)
   warning("sdsim::description - Model '", pmodelId, "' get descriptions: ",
           "No default scenario was added, could not get the desription list.", 
@@ -762,6 +769,13 @@ sdStaticModelMsg$validate3 <- function(pstaticModelId, equationsVar, eqValue)
 sdStaticModelMsg$validate4 <- function(pstaticModelId)
   message("sdsim::validateAlgebraicEquations Static Model '", pstaticModelId, 
           "' Algebraic Equations Validated.")
+
+sdStaticModelMsg$validate5 <- function(pstaticModelId, typeofscen) 
+  warning("sdsim::validateAlgebraicEquations Model '", pstaticModelId, 
+          "' validation: Scenario argument of type '", typeofscen, 
+          "' discarted. It must be a valid sdScenarioClass object or ", 
+          "a character string with a scenario XML or EXCEL file name.", 
+          call. = F)
 
 sdStaticModelMsg$description <- function(pstaticModelId)
   warning("sdsim::description - Static Model '", pstaticModelId, 
