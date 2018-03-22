@@ -1102,16 +1102,6 @@ sdScenarioClass <- R6::R6Class(
           #     || is.language(varList[[var]]) || !is.na(varList[[var]]))
           if (!is.null(varList[[var]]))
           {
-            if (verbose)
-            {
-              if (varType %in% c("description", "unit"))
-                sdScenarioMsg$addVar4(private$pscenarioId, varType, var, 
-                                      varList[[var]])
-              else
-                sdScenarioMsg$addVar5(private$pscenarioId, varType, var, 
-                                      varList[[var]])
-            }
-            
             # check for duplicates
             if (var %in% names(private[[paste0("p", varType)]]))
             {
@@ -1130,6 +1120,18 @@ sdScenarioClass <- R6::R6Class(
                   private[["pinput"]][["interpolation_"]] <- NULL
                   private[["pinput"]][["fun_"]] <- NULL
                 }
+              }
+            }
+            else
+            {
+              if (verbose)
+              {
+                if (varType %in% c("description", "unit"))
+                  sdScenarioMsg$addVar4(private$pscenarioId, varType, var, 
+                                        varList[[var]])
+                else
+                  sdScenarioMsg$addVar5(private$pscenarioId, varType, var, 
+                                        varList[[var]])
               }
             }
             
