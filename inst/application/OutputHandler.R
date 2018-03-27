@@ -145,7 +145,9 @@ RenderCustomPlot <- function(simData, input, output) {
             ylab <- NULL
           
           type <- switch(input$plotType, "line" = "l", "point" = "p")
-          out$plot(variables, xlab = xlab, ylab = ylab, multipleYAxis = input$multipleAxisToggle, main = main, type = type, units = T)
+          out$plot(variables, xlab = xlab, ylab = ylab, 
+                   multipleYAxis = input$multipleAxisToggle, 
+                   main = main, type = type, units = input$showUnitToggle)
         }
       },
       error = function(e) {},
