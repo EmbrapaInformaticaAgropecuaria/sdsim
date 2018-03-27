@@ -219,7 +219,7 @@ LoadScenario <- function(scenarioName, simData, session, input, output,
         scenario <- ParseXlsx(scenarioName)
       }
       
-      if(!is.null(replaceId)) {
+      if(!is.null(replaceId) && replaceId != "") {
         scenario$scenarioId <- replaceId
       }
       

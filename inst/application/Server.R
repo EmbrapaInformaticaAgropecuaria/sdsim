@@ -10,14 +10,6 @@ source("ModelImport.R", local = TRUE)
 server <- shinyServer(function(input, output, session) { 
   nTableRows <- 50
   
-  observeEvent(input$testButton, {
-    # msg <- list("a", "b")
-    # session$sendCustomMessage("disableElement", "testButton")
-    simdata <<- reactiveValuesToList(simData)
-    # 
-    # gmodel <<- AssembleModel(simData, input, timeSeriesDirectory)
-  })
-  
   # Reactive list containing the models, scenarios and simulation results
   simData <- reactiveValues()
   simData$models <- list()

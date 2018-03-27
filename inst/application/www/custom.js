@@ -37,10 +37,12 @@ Shiny.addCustomMessageHandler("shinyLog", function(value) {
   console.log(value)
 });
 
+// Update simulation progress
 Shiny.addCustomMessageHandler("updateSimulationProgress", function(progress) {
   simulationProgress.innerHTML = "Simulation Progress: " + progress + "%";
 });
 
+// Display message when a model is loaded
 Shiny.addCustomMessageHandler("loadedModelMessage", function(value) {
   if(value !== null) {
     loadedModelMessage.innerText = value[0];
@@ -53,6 +55,7 @@ Shiny.addCustomMessageHandler("loadedModelMessage", function(value) {
   }
 });
 
+// Display message when a scenario is loaded
 Shiny.addCustomMessageHandler("loadedScenarioMessage", function(value) {
   if(value !== null) {
     loadedScenarioMessage.innerText = value[0];
@@ -65,6 +68,7 @@ Shiny.addCustomMessageHandler("loadedScenarioMessage", function(value) {
   }
 });
 
+// Display message when a model ID is changed
 Shiny.addCustomMessageHandler("updatedModelIdMessage", function(value) {
   updatedModelIdMessage.innerText = value[0];
 
@@ -75,6 +79,7 @@ Shiny.addCustomMessageHandler("updatedModelIdMessage", function(value) {
   }
 });
 
+// Display message when a scenario ID is changed
 Shiny.addCustomMessageHandler("updatedScenarioIdMessage", function(value) {
   updatedScenarioIdMessage.innerText = value[0];
 
@@ -139,6 +144,11 @@ Shiny.addCustomMessageHandler("confirmOverwrite", function(value) {
   var choice = confirm(value.message)
   Shiny.onInputChange(value.responseInputName, [choice, Math.random()]);
 })
+
+// Sends alert containing message
+Shiny.addCustomMessageHandler("sendAlert", function(message) {
+  alert(message);
+})
                 
 // Disables multiple axis button if there are less than 2 variables selected
 multipleAxisToggle.disabled = true;
@@ -180,14 +190,15 @@ $(document).on("shiny:inputchanged", function(event) {
 // Confirmation message before erasing scenario
 $(document).on("shiny:inputchanged", function(event) {
   if (event.name === "deleteScenario") {
-    var r = confirm("This will erase your current scenario.\nAre you sure you want to continue?");
-    
-    if (r === false) {
+    if(selectScenario.value === "Default") {
+      alert("The model's default scenario cannot be deleted!")
       event.preventDefault();
+    } else {
+      var r = confirm("This will erase your current scenario.\nAre you sure you want to continue?");
+    
+      if (r === false) {
+        event.preventDefault();
+      }
     }
   }
-});
-
-Shiny.addCustomMessageHandler("testmsg", function(value) {
-  editModelId.click();
 });
