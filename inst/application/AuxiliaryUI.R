@@ -56,6 +56,14 @@ function (st, ct, par, inp, sw, aux) {
   return(list(st = st, ct = ct, inp = inp, par = par, sw = sw))
 }"
 
+staticParmInitExampleStr <- "# Source: Soetaert_K.,_Cash_J.,_Mazzia_F.-Solving_Differential_ Equations_in_R-Springer(2012)
+function (st, ct, par, inp, sw, aux) {
+  # Calculate new variable mu2 in constants list
+  ct$mu2 = 1 - ct$mu1
+  
+  # Return altered state list and/or vars list
+  return(list(st = st, ct = ct, inp = inp, par = par, sw = sw))
+}"
 rootExampleStr <- "# Source: Soetaert_K.,_Cash_J.,_Mazzia_F.-Solving_Differential_ Equations_in_R-Springer(2012)
 function(t, st, ct, par, inp, sw, aux) {
   # 'Bounce' when height equals 0
@@ -85,7 +93,7 @@ f2 = function(x, y) {
 globalCallExampleStr <- '# Differential Equations function
 function (t, st, ct, par, inp, sw, aux) {
   # Calling global function f2
-  dy1 = f2(1, 2)
+  dy1 = f2(st$z, 2)
   
   return(list(c(dy1)))
 }'
