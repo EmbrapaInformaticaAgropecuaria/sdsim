@@ -214,9 +214,9 @@ simulationPage <- shinydashboard::tabItem(
           "Plots",
           div(textInput("plotTitle", "Plot Title", placeholder = "Optional"),
               style = "display: inline-block;vertical-align:top; width: 250px; padding: 0px;"),
-          div(textInput("plotXLabel", "X Axis Label", placeholder = "Optional"),
+          div(textInput("plotXLabel", "X-Axis Label", placeholder = "Optional"),
               style = "display: inline-block;vertical-align:top; width: 250px; padding: 0px;"),
-          div(textInput("plotYLabel", "Y Axis Label(s)", placeholder = "Optional"),
+          div(textInput("plotYLabel", "Y-Axis Label(s)", placeholder = "Optional"),
               style = "display: inline-block;vertical-align:top; width: 250px; padding: 0px;"),
           
           br(),
@@ -237,21 +237,21 @@ simulationPage <- shinydashboard::tabItem(
           
           div(
             radioButtons("plotType", 
-                         "Choose The Plot Type", 
+                         "Plot Type", 
                          choices = c("line", "point"),
                          inline = T),
             style = "display: inline-block;vertical-align:top; 
             width: 250px; padding: 0px;"),
           div(
             checkboxInput("showUnitToggle",
-                          "Display variable's units",
+                          "Display Variable's Units",
                           value = T),
             style = "display: inline-block;vertical-align:top; 
             width: 250px; padding-top: 15px;"),
           div(
             id = "multipleAxisTooltipDiv",
             checkboxInput("multipleAxisToggle",
-                          "Display multiple Y-Axis",
+                          "Display Multiple Y-Axis",
                           value = T),
             style = "display: inline-block;vertical-align:top; 
             padding-top: 15px;"),
@@ -414,14 +414,15 @@ scenarioPage <- shinydashboard::tabItem(
                typing its name in the value field."),
             h5("The inputs that contain time series have its
                values interpolated. The interpolation methods available are:"),
-            tags$ul(style = "columns: 100px",
-                    tags$li("linear"),
-                    tags$li("constant"),
-                    tags$li("fmm"),
-                    tags$li("natural"),
-                    tags$li("periodic"),
-                    tags$li("monoH.FC"),
-                    tags$li("hyman")
+            tags$ul(
+              tags$li("linear"),
+              tags$li("constant"),
+              tags$li("fmm"),
+              tags$li("natural"),
+              tags$li("periodic"),
+              tags$li("monoH.FC"),
+              tags$li("hyman"),
+              style = "columns: 100px"
             ),
             h5("The inputs must be declared one per sheet line. The sheet's 
                columns represent:"),
@@ -513,15 +514,15 @@ DifferentialEquationsPage <- shinydashboard::tabItem(
                 tags$ul(h5("function(t, st, ct, par, inp, sw, aux)")),
                 h5("Where,"),
                 tags$ul(
-                  tags$li(h5("t: the current time instant in the 
-                                                         integration;")),
-                  tags$li(h5("st: a list with the current estimate of 
-                                                         the variables in the ODE system;")),
-                  tags$li(h5("ct: a list of constants;")),
-                  tags$li(h5("par: a list of parameters;")),
-                  tags$li(h5("inp: a list of inputs;")),
-                  tags$li(h5("sw: a list of switches;")),
-                  tags$li(h5("aux: a list of auxiliary variables."))
+                  tags$li("t: the current time instant in the 
+                                                         integration;"),
+                  tags$li("st: a list with the current estimate of 
+                                                         the variables in the ODE system;"),
+                  tags$li("ct: a list of constants;"),
+                  tags$li("par: a list of parameters;"),
+                  tags$li("inp: a list of inputs;"),
+                  tags$li("sw: a list of switches;"),
+                  tags$li("aux: a list of auxiliary variables.")
                 ),
                 h5("The return value of this function must be a list, 
                    of which the first element is a vector containing the 
@@ -559,13 +560,13 @@ DifferentialEquationsPage <- shinydashboard::tabItem(
                 tags$ul(h5("function(st, ct, par, inp, sw, aux)")),
                 h5("Where,"),
                 tags$ul(
-                  tags$li(h5("st: a list with the initial values of 
-                                                         state variables")),
-                  tags$li(h5("ct: a list of constants;")),
-                  tags$li(h5("par: a list of parameters;")),
-                  tags$li(h5("inp: a list of inputs;")),
-                  tags$li(h5("sw: a list of switches;")),
-                  tags$li(h5("aux: a list of auxiliary variables."))
+                  tags$li("st: a list with the initial values of 
+                                                         state variables"),
+                  tags$li("ct: a list of constants;"),
+                  tags$li("par: a list of parameters;"),
+                  tags$li("inp: a list of inputs;"),
+                  tags$li("sw: a list of switches;"),
+                  tags$li("aux: a list of auxiliary variables.")
                 ),
                 h5("The return value of InitVars is a list 
                    containing the modified variable lists.
@@ -598,15 +599,15 @@ DifferentialEquationsPage <- shinydashboard::tabItem(
                 tags$ul(h5("function(t, st, ct, par, inp, sw, aux)")),
                 h5("Where,"),
                 tags$ul(
-                  tags$li(h5("t: the current time instant in the 
-                             integration;")),
-                  tags$li(h5("st: a list with the current estimate 
-                             of the variables in the ODE system;")),
-                  tags$li(h5("ct: a list of constants;")),
-                  tags$li(h5("par: a list of parameters;")),
-                  tags$li(h5("inp: a list of inputs;")),
-                  tags$li(h5("sw: a list of switches;")),
-                  tags$li(h5("aux: a list of auxiliary variables."))
+                  tags$li("t: the current time instant in the 
+                             integration;"),
+                  tags$li("st: a list with the current estimate 
+                             of the variables in the ODE system;"),
+                  tags$li("ct: a list of constants;"),
+                  tags$li("par: a list of parameters;"),
+                  tags$li("inp: a list of inputs;"),
+                  tags$li("sw: a list of switches;"),
+                  tags$li("aux: a list of auxiliary variables.")
                 ),
                 h5("If no EventFunction is defined, when a root is found 
                    the simulation stops."),
@@ -640,15 +641,15 @@ DifferentialEquationsPage <- shinydashboard::tabItem(
                 tags$ul(h5("function(t, st, ct, par, inp, sw, aux)")),
                 h5("Where,"),
                 tags$ul(
-                  tags$li(h5("t: the current time instant in the 
-                             integration;")),
-                  tags$li(h5("st: a list with the current estimate of 
-                             the variables in the ODE system;")),
-                  tags$li(h5("ct: a list of constants;")),
-                  tags$li(h5("par: a list of parameters;")),
-                  tags$li(h5("inp: a list of inputs;")),
-                  tags$li(h5("sw: a list of switches;")),
-                  tags$li(h5("aux: a list of auxiliary variables."))
+                  tags$li("t: the current time instant in the 
+                             integration;"),
+                  tags$li("st: a list with the current estimate of 
+                             the variables in the ODE system;"),
+                  tags$li("ct: a list of constants;"),
+                  tags$li("par: a list of parameters;"),
+                  tags$li("inp: a list of inputs;"),
+                  tags$li("sw: a list of switches;"),
+                  tags$li("aux: a list of auxiliary variables.")
                 ),
                 h5("It should return the state-values (some of which might
                    have been modified by the function), as a vector with 
@@ -685,15 +686,15 @@ DifferentialEquationsPage <- shinydashboard::tabItem(
                 h5("The parameters available to be used in the auxiliary
                    equations are:"),
                 tags$ul(
-                  tags$li(h5("t: the current time instant in the 
-                             integration;")),
-                  tags$li(h5("st: a list with the current estimate of 
-                             the variables in the ODE system;")),
-                  tags$li(h5("ct: a list of constants;")),
-                  tags$li(h5("par: a list of parameters;")),
-                  tags$li(h5("inp: a list of inputs;")),
-                  tags$li(h5("sw: a list of switches;")),
-                  tags$li(h5("aux: a list of auxiliary variables."))
+                  tags$li("t: the current time instant in the 
+                             integration;"),
+                  tags$li("st: a list with the current estimate of 
+                             the variables in the ODE system;"),
+                  tags$li("ct: a list of constants;"),
+                  tags$li("par: a list of parameters;"),
+                  tags$li("inp: a list of inputs;"),
+                  tags$li("sw: a list of switches;"),
+                  tags$li("aux: a list of auxiliary variables.")
                 ),
                 h5("The auxiliary variables will be automatically
                    calculated at each step of the simulation, and the aux
@@ -774,14 +775,14 @@ DifferentialEquationsPage <- shinydashboard::tabItem(
                    simulation."),
                 h5("The parameters available to be used in the equations are:"),
                 tags$ul(
-                  tags$li(h5("t: the current time instant in the 
-                             integration;")),
-                  tags$li(h5("ct: a list of constants;")),
-                  tags$li(h5("par: a list of parameters;")),
-                  tags$li(h5("inp: a list of inputs;")),
-                  tags$li(h5("sw: a list of switches;")),
-                  tags$li(h5("equations: a list of containing the results
-                             after evaluation."))
+                  tags$li("t: the current time instant in the 
+                             integration;"),
+                  tags$li("ct: a list of constants;"),
+                  tags$li("par: a list of parameters;"),
+                  tags$li("inp: a list of inputs;"),
+                  tags$li("sw: a list of switches;"),
+                  tags$li("equations: a list of containing the results
+                             after evaluation.")
                 ),
                 h5("The equations will be automatically
                    calculated at each step of the simulation, and the equations
@@ -808,11 +809,11 @@ DifferentialEquationsPage <- shinydashboard::tabItem(
                 tags$ul(h5("function(ct, par, inp, sw, aux)")),
                 h5("Where,"),
                 tags$ul(
-                  tags$li(h5("ct: a list of constants;")),
-                  tags$li(h5("par: a list of parameters;")),
-                  tags$li(h5("inp: a list of inputs;")),
-                  tags$li(h5("sw: a list of switches;")),
-                  tags$li(h5("aux: a list of auxiliary variables."))
+                  tags$li("ct: a list of constants;"),
+                  tags$li("par: a list of parameters;"),
+                  tags$li("inp: a list of inputs;"),
+                  tags$li("sw: a list of switches;"),
+                  tags$li("aux: a list of auxiliary variables.")
                 ),
                 h5("The return value of InitVars is a list 
                    containing the modified variable lists.
@@ -1136,7 +1137,86 @@ helpPage <- shinydashboard::tabItem(
       h5("Saving the current scenario into a XML or xlsx file can be done by 
          clicking the folder button and downloading the file. This file 
          can be used to load the scenario back to the application. It 
-         can also be loaded to R, using the sdsim package.")
+         can also be loaded to R, using the sdsim package."),
+      br(),
+      h4(strong("Simulation")),
+      h5("After models are loaded, they can be simulated in the \"Simulation\" 
+         menu, located at the sidebar."),
+      br(),
+      h5(strong("Parameters")),
+      h5("The integration method can be chosen under \"Method\". The available
+         methods are:"),
+      tags$ul(
+        tags$li("lsoda"),
+        tags$li("lsode"),
+        tags$li("lsodes"),
+        tags$li("lsodar"),
+        tags$li("vode"),
+        tags$li("daspk"),
+        tags$li("euler"),
+        tags$li("rk4 (Runge-Kutta)"),
+        tags$li("ode23"),
+        tags$li("ode45"),
+        tags$li("radau"),
+        tags$li("bdf"),
+        tags$li("bdf_d"),
+        tags$li("adams"),
+        tags$li("impAdams"),
+        tags$li("impAdams_d"),
+        style = "columns: 130px;"
+      ),
+      h5("Models that require events cannot work with some of the methods. The
+         available methods for models with events are:"),
+      tags$ul(
+        tags$li("lsoda"),
+        tags$li("lsode"),
+        tags$li("lsodes"),
+        tags$li("lsodar"),
+        tags$li("radau"),
+        style = "columns: 130px;"
+      ),
+      h5("The simulation times can be set under \"Initial Time\", determines 
+         time when the simulations begins, usually 0, \"Final 
+         Time\", determines when the simulation ends, and \"Time Step\", the
+         interval between each step of the simulation."),
+      br(),
+      h5(strong("Execution")),
+      h5("The currently selected model can be simulated with the currently
+         selected scenario by pressing the \"Start Simulation\" button. If
+         any errors or warnings occur during the simulation, they will be
+         logged and displayed inside a text panel."),
+      h5("The button \"Start Simulation\" can be used to simulate the currently
+         selected model with the currently selected scenario."),
+      br(),
+      h5(strong("Results")),
+      h5("The simulation results are displayed under the \"Trajectory\" tab, 
+         which contains three other tabs: \"Result\", where the trajectory of 
+         the state variables is displayed; \"Auxiliary Variables\", where the 
+         trajectory of the auxiliary variables is displayed; and \"Time 
+         Series\", where the trajectory of time series inputs is displayed. Each
+         trajectory can be saved using the button \"Export CSV\" located at the 
+         bottom of each of these tabs."),
+      h5("The simulation results can be plotted using the \"Plot\" tab. The
+         plot parameters are:"),
+      tags$ul(
+        tags$li("Plot Title: The text displayed at the top of the plot."),
+        tags$li("X-Axis Label: The text displayed under the horizontal axis."),
+        tags$li("Y-Axis Label: The text displayed to the left of the vertical
+                axis."),
+        tags$li("Y-Axis Variables: One or more variables that will be 
+                plotted."),
+        tags$li("X-Axis Variable: The variable that will be represented as the
+                X-Axis."),
+        tags$li("Plot Type: Choose if the plot is drawn using points or line."),
+        tags$li("Display Variable's Units: Choose if the variable's units are
+                displayed at the side of the Y-Axis Label."),
+        tags$li("Display Multiple Y-Axis: This is only used for plots with more 
+                than one variable. Choose if each variable is plotted 
+                using different Y-Axis value intervals, or if all variables are
+                plotted using the same Y-Axis value interval. This can be
+                enabled if the difference of value between the plotted variables
+                is too large.")
+      )
     )
   )
 )
