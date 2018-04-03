@@ -1009,8 +1009,8 @@ sdSimulate <- function(model,
     createCoupledFuncEval <- CreateCoupledFuncEval
     
     j <- 1
-    while (!is.function(componentsEquations[[j]]) && 
-           j <= length(componentsEquations)) 
+    while (j <= length(componentsEquations) &&
+           !is.function(componentsEquations[[j]])) 
       j++
     if (j > length(componentsEquations)) # only static models
       j <- 1

@@ -964,8 +964,8 @@ sdCoupledModelClass <- R6::R6Class(
       # Create new environment to store variables that will be validated
       # and set the coupled env as its parent environment
       j <- 1
-      while (!is.function(private$pcomponentsEquations[[j]]) && 
-             j <= length(private$pcomponentsEquations)) 
+      while (j <= length(private$pcomponentsEquations) &&
+             !is.function(private$pcomponentsEquations[[j]])) 
         j++
       if (j > length(private$pcomponentsEquations)) # only static models
         j <- 1
