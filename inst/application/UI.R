@@ -140,8 +140,9 @@ simulationPage <- shinydashboard::tabItem(
       br(), # newline
       
       div(
-        id = "simulationParametersDiv",
         div(
+          
+          id = "methodInputDiv",
           selectInput("method", "Method", 
                       c("lsoda", "lsode", "lsodes", "lsodar", "vode",
                         "daspk", "euler", "rk4", "ode23", "ode45", 
@@ -1191,11 +1192,11 @@ helpPage <- shinydashboard::tabItem(
       h5(strong("Results")),
       h5("The simulation results are displayed under the \"Trajectory\" tab, 
          which contains three other tabs: \"Result\", where the trajectory of 
-         the state variables is displayed; \"Auxiliary Variables\", where the 
-         trajectory of the auxiliary variables is displayed; and \"Time 
-         Series\", where the trajectory of time series inputs is displayed. Each
-         trajectory can be saved using the button \"Export CSV\" located at the 
-         bottom of each of these tabs."),
+         the state variables or algebraic equations are displayed; \"Auxiliary 
+         Variables\", where the trajectory of the auxiliary variables is 
+         displayed; and \"Time Series\", where the trajectory of time series 
+         inputs is displayed. Each trajectory can be saved using the button 
+         \"Export CSV\" located at the bottom of each of these tabs."),
       h5("The simulation results can be plotted using the \"Plot\" tab. The
          plot parameters are:"),
       tags$ul(
