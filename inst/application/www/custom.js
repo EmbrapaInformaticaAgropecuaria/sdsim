@@ -168,11 +168,11 @@ multipleAxisTooltipDiv.onclick = function() {
   }
 }
 
-// Show tooltip when trying to change multiple axis settings with only one variable
-editScenarioIdDiv.onclick = function() {
-  if(editScenarioId.disabled) {
-    editScenarioIdDiv.setAttribute("error-tooltip", "Cannot change the Default scenario ID!");
-    setTimeout(function() {editScenarioIdDiv.removeAttribute("error-tooltip")}, 2500);
+// Show tooltip when trying to change method on static models
+methodInputDiv.onclick = function() {
+  if(method.disabled) {
+    methodInputDiv.setAttribute("error-tooltip", "Static models do not use integration method!");
+    setTimeout(function() {methodInputDiv.removeAttribute("error-tooltip")}, 2500);
   }
 }
 

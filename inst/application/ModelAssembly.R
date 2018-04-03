@@ -274,14 +274,16 @@ UpdateModelData <- function(simData, input) {
     } 
   }
   
-  # Update method and times, except for static model scenarios
+  # Update method, except for static model scenarios
   if(currentModel$type != "static") {
     # Update current scenario
     currentScenario$method <- input$method
-    currentScenario$from <- input$initialTime
-    currentScenario$to <- input$finalTime
-    currentScenario$by <- input$step
   }
+  
+  # Update times
+  currentScenario$from <- input$initialTime
+  currentScenario$to <- input$finalTime
+  currentScenario$by <- input$step
   
   if(!is.null(simData$changed$state) && simData$changed$state) {
     currentScenario$state <- RhandsonToDF(input$state, trimWhites = c("Variable", "Value"))

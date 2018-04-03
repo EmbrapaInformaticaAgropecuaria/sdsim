@@ -365,7 +365,7 @@ UpdateLoadedModel <- function(simData, session, input, output, nTableRows = 50) 
     # Hide coupled model panel
     session$sendCustomMessage("hideElement", "coupledModelPage")
     # Unhide method, initialTime, finalTime and step inputs
-    session$sendCustomMessage("unhideElement", "simulationParametersDiv")
+    session$sendCustomMessage("enableElement", "method")
     
     # Clear other model UI's
     ClearStaticModelUI(simData, session, input, output)
@@ -395,7 +395,7 @@ UpdateLoadedModel <- function(simData, session, input, output, nTableRows = 50) 
     # Hide coupled model panel
     session$sendCustomMessage("hideElement", "coupledModelPage")
     # Hide method, initialTime, finalTime and step inputs
-    session$sendCustomMessage("hideElement", "simulationParametersDiv")
+    session$sendCustomMessage("disableElement", "method")
     
     # Clear other model UI's
     ClearAtomicModelUI(simData, session, input, output)
@@ -421,7 +421,7 @@ UpdateLoadedModel <- function(simData, session, input, output, nTableRows = 50) 
     # Unhide coupled model panel
     session$sendCustomMessage("unhideElement", "coupledModelPage")
     # Unhide method, initialTime, finalTime and step inputs
-    session$sendCustomMessage("unhideElement", "simulationParametersDiv")
+    session$sendCustomMessage("enableElement", "method")
     
     # Clear other model UI's
     ClearAtomicModelUI(simData, session, input, output)

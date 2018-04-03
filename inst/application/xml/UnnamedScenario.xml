@@ -1,8 +1,12 @@
 <?sdsim about='R package for modeling and simulation of system dynamics' version='0.1' date='2018-01-08'?>
 <sdScenario>
   <scenarioId>Unnamed Scenario</scenarioId>
-    <times/>
-    <method/>
+    <times>
+      <from>0</from>
+      <to>100</to>
+      <by>0.1</by>
+    </times>
+    <method>none</method>
     <state/>
     <constant/>
     <input/>
