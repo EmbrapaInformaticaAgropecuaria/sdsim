@@ -1011,7 +1011,7 @@ sdSimulate <- function(model,
     j <- 1
     while (j <= length(componentsEquations) &&
            !is.function(componentsEquations[[j]])) 
-      j++
+      j <- j + 1
     if (j > length(componentsEquations)) # only static models
       j <- 1
     

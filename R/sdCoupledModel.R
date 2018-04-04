@@ -545,6 +545,8 @@ sdCoupledModelClass <- R6::R6Class(
       if (!missing(coupledModelDescription) &&
           !is.null(coupledModelDescription))
         self$coupledModelDescription <- coupledModelDescription
+      
+      private$pcoupledEnv <- new.env(parent = baseenv())
     },
     print = function()
     {
@@ -951,47 +953,14 @@ sdCoupledModelClass <- R6::R6Class(
       conStInps <- match(names(stCon), names(inp))
       
       if (!is.null(times) && length(unlist(times)) > 0)
+      {
         t <- times[[1]]
-      else
+      } 
+      else 
       {
         sdCoupledModelMsg$validateODE3(private$pcoupledModelId)
         t <- 0
       }
-      
-      lsVars <- list()
-      # Create new environment to store variables that will be validated
-      # and set the coupled env as its parent environment
-      j <- 1
-      while (j <= length(private$pcomponentsEquations) &&
-             !is.function(private$pcomponentsEquations[[j]])) 
-        j++
-      if (j > length(private$pcomponentsEquations)) # only static models
-        j <- 1
-      env <- new.env(parent = environment(private$pcomponentsEquations[[j]]))
-      
-      # replace original function with test function
-      for (i in 1:length(componentsEquations)) 
-      {
-        mId <- namesCompEqs[[i]]
-        lsVars[[mId]] <- c()
-        bodyStr <- as.character(body(componentsEquations[[i]]))
-        bodyStr <- gsub("(?<!<)<-", "<<-", bodyStr, perl = TRUE)
-        bodyStr <- gsub("->(?!>)", "->>", bodyStr, perl = TRUE)
-        bodyStr <- paste(bodyStr[2:length(bodyStr)], collapse = "\n")
-        body(componentsEquations[[i]]) <- 
-          parse(text = paste("{", bodyStr, "}", sep = "\n"))
-        lsVars[[mId]] <- c(lsVars[[mId]],
-                           all.vars(body(componentsEquations[[i]])))
-        environment(componentsEquations[[i]]) <- env
-      }
-      
-      # Create test variables in env
-      for (var in unlist(lsVars, use.names = FALSE))
-        assign(var, "\\0", envir = env)
-      
-      # stores the model definitions result
-      dState <- c()
-      dAux <- list()
       
       # evaluate time series varibles 
       # compute the time series in the inputs
@@ -1006,7 +975,8 @@ sdCoupledModelClass <- R6::R6Class(
       inp[conStInps] <- st[conSt]
       
       auxenv <- new.env()
-      appendEnv(auxenv, environment(private$pcomponentsEquations[[j]]))
+      appendEnv(auxenv, private$pcoupledEnv)
+      
       # evaluate the auxiliary variables and update the aux list
       for (auxVar in names(aux))
       {
@@ -1028,115 +998,147 @@ sdCoupledModelClass <- R6::R6Class(
       # make the aux connection
       inp[conAuxInps] <- aux[conAux]
       
-      # run the components model definitions
-      dState <- vector("numeric", length = length(st))
-      names(dState) <- names(st)
-      for (i in seq_along(namesCompEqs))
+      if (length(private$pcomponentsEquations) > 0) # at least one atomic model components
       {
-        # run the model definition
-        mDef <- tryCatch(
-          {
-            componentsEquations[[i]](t = t, 
-                                     st = st[iComps$st[[namesCompEqs[[i]]]]], 
-                                     ct = ct[iComps$ct[[namesCompEqs[[i]]]]], 
-                                     par = par[iComps$par[[namesCompEqs[[i]]]]],
-                                     inp = inp[iComps$inp[[namesCompEqs[[i]]]]], 
-                                     sw = sw[iComps$sw[[namesCompEqs[[i]]]]], 
-                                     aux = aux[iComps$aux[[namesCompEqs[[i]]]]])
-          },
-          error = function(e)
-          {
-            sdCoupledModelMsg$validateODE6(private$pcoupledModelId, 
-                                           namesCompEqs[[i]], e)
-            return(invisible(NULL))
-          })
+        # Create new environment to store variables that will be validated
+        # and set the coupled env as its parent environment
+        env <- new.env(parent = private$pcoupledEnv)
+        lsVars <- list()
         
-        if (length(unlist(mDef[[1]])) == 0)
-          mDef[[1]] <- c()
-        
-        # concatenate the states derivatives
-        dState[iComps$st[[namesCompEqs[[i]]]]] <- mDef[[1]]
-        # concatenate the global auxiliary values
-        mAux <- mDef[-1]
-        
-        if (length(mAux) > 0)
-          # there is auxiliary values
+        # replace original function with test function
+        for (i in 1:length(componentsEquations)) 
         {
-          names(mAux)[names(mAux) == ""] <- "noname"
-          names(mAux) <- paste0(namesCompEqs[[i]], ".", names(mAux))
-          dAux <- append(dAux, mAux)
+          mId <- namesCompEqs[[i]]
+          lsVars[[mId]] <- c()
+          bodyStr <- as.character(body(componentsEquations[[i]]))
+          bodyStr <- gsub("(?<!<)<-", "<<-", bodyStr, perl = TRUE)
+          bodyStr <- gsub("->(?!>)", "->>", bodyStr, perl = TRUE)
+          bodyStr <- paste(bodyStr[2:length(bodyStr)], collapse = "\n")
+          body(componentsEquations[[i]]) <- 
+            parse(text = paste("{", bodyStr, "}", sep = "\n"))
+          lsVars[[mId]] <- c(lsVars[[mId]],
+                             all.vars(body(componentsEquations[[i]])))
+          environment(componentsEquations[[i]]) <- env
         }
-      }
-      res <- list(c(dState), dAux, aux)
-      
-      # Display warnings if any variables during the Model Definition
-      # execution are NULL, numeric(0), Inf or NA
-      for (modelId in namesCompEqs)
-      {
-        for (x in lsVars[[modelId]])
+        
+        # Create test variables in env
+        for (var in unlist(lsVars, use.names = FALSE))
+          assign(var, "\\0", envir = env)
+        
+        # stores the model definitions result
+        dState <- c()
+        dAux <- list()
+        
+        # run the components model definitions
+        dState <- vector("numeric", length = length(st))
+        names(dState) <- names(st)
+        for (i in seq_along(namesCompEqs))
         {
-          var <- mget(x, envir = environment(componentsEquations[[modelId]]),
-                      ifnotfound = "\\1", inherits = TRUE)[[1]]
-          
-          if (is.function(var) || is.environment(var))
-          {
-            # do nothing
-          }
-          else if ( (is.list(var) && length(var) > 0) || 
-                    ( is.vector(var) && length(var) > 1 )) 
-          {
-            xUnlist <- unlist(var, recursive = TRUE)
-            for (i in 1:length(xUnlist))
+          # run the model definition
+          mDef <- tryCatch(
             {
-              if (is.function(xUnlist[[i]]) || is.environment(xUnlist[[i]]) ||
-                  is.language(xUnlist[[i]]))
-                next # do nothing
-              else if (is.null(xUnlist[[i]]))
-                sdCoupledModelMsg$validateODE7(private$pcoupledModelId, modelId, 
-                                               names(xUnlist)[[i]], x, "NULL")
-              else if (length(xUnlist[[i]]) == 0 && is.numeric(xUnlist[[i]]))
-                sdCoupledModelMsg$validateODE7(private$pcoupledModelId, modelId, 
-                                               names(xUnlist)[[i]], x, 
-                                               "numeric(0)")
-              else if (is.na(xUnlist[[i]]))
-                sdCoupledModelMsg$validateODE7(private$pcoupledModelId, modelId, 
-                                               names(xUnlist)[[i]], x, "NA")
-              else if (is.infinite(xUnlist[[i]]))
-                sdCoupledModelMsg$validateODE7(private$pcoupledModelId, modelId, 
-                                               names(xUnlist)[[i]], x, "Inf")
-            } 
+              componentsEquations[[i]](t = t, 
+                                       st = st[iComps$st[[namesCompEqs[[i]]]]], 
+                                       ct = ct[iComps$ct[[namesCompEqs[[i]]]]], 
+                                       par = par[iComps$par[[namesCompEqs[[i]]]]],
+                                       inp = inp[iComps$inp[[namesCompEqs[[i]]]]], 
+                                       sw = sw[iComps$sw[[namesCompEqs[[i]]]]], 
+                                       aux = aux[iComps$aux[[namesCompEqs[[i]]]]])
+            },
+            error = function(e)
+            {
+              sdCoupledModelMsg$validateODE6(private$pcoupledModelId, 
+                                             namesCompEqs[[i]], e)
+              return(invisible(NULL))
+            })
+          
+          if (length(unlist(mDef[[1]])) == 0)
+            mDef[[1]] <- c()
+          
+          # concatenate the states derivatives
+          dState[iComps$st[[namesCompEqs[[i]]]]] <- mDef[[1]]
+          # concatenate the global auxiliary values
+          mAux <- mDef[-1]
+          
+          if (length(mAux) > 0)
+            # there is auxiliary values
+          {
+            names(mAux)[names(mAux) == ""] <- "noname"
+            names(mAux) <- paste0(namesCompEqs[[i]], ".", names(mAux))
+            dAux <- append(dAux, mAux)
           }
-          else if (x %in% c('st', 'ct', 'par', 'inp', 'sw', 'aux'))
-            next # do nothing if an arg is empty
-          else if (is.null(unlist(var)))
-            sdCoupledModelMsg$validateODE8(private$pcoupledModelId, modelId, x, 
-                                           "NULL")
-          else if (length(var) == 0 && is.numeric(var))
-            sdCoupledModelMsg$validateODE8(private$pcoupledModelId, modelId, x, 
-                                           "numeric(0)")
-          else if (is.na(unlist(var)))
-            sdCoupledModelMsg$validateODE8(private$pcoupledModelId, modelId, x, 
-                                           "NA")
-          else if (is.infinite(unlist(var)))
-            sdCoupledModelMsg$validateODE8(private$pcoupledModelId, modelId, x, 
-                                           "Inf")
         }
-      }
-      
-      # Check the return of Model Definition contains invalid values
-      if (is.list(res))
-      {
-        dRes <- res[[1]]
+        res <- list(c(dState), dAux, aux)
         
-        if (!is.numeric(dRes))
-          sdCoupledModelMsg$validateODE9(private$pcoupledModelId, typeof(dRes))
+        # Display warnings if any variables during the Model Definition
+        # execution are NULL, numeric(0), Inf or NA
+        for (modelId in namesCompEqs)
+        {
+          for (x in lsVars[[modelId]])
+          {
+            var <- mget(x, envir = environment(componentsEquations[[modelId]]),
+                        ifnotfound = "\\1", inherits = TRUE)[[1]]
+            
+            if (is.function(var) || is.environment(var))
+            {
+              # do nothing
+            }
+            else if ( (is.list(var) && length(var) > 0) || 
+                      ( is.vector(var) && length(var) > 1 )) 
+            {
+              xUnlist <- unlist(var, recursive = TRUE)
+              for (i in 1:length(xUnlist))
+              {
+                if (is.function(xUnlist[[i]]) || is.environment(xUnlist[[i]]) ||
+                    is.language(xUnlist[[i]]))
+                  next # do nothing
+                else if (is.null(xUnlist[[i]]))
+                  sdCoupledModelMsg$validateODE7(private$pcoupledModelId, modelId, 
+                                                 names(xUnlist)[[i]], x, "NULL")
+                else if (length(xUnlist[[i]]) == 0 && is.numeric(xUnlist[[i]]))
+                  sdCoupledModelMsg$validateODE7(private$pcoupledModelId, modelId, 
+                                                 names(xUnlist)[[i]], x, 
+                                                 "numeric(0)")
+                else if (is.na(xUnlist[[i]]))
+                  sdCoupledModelMsg$validateODE7(private$pcoupledModelId, modelId, 
+                                                 names(xUnlist)[[i]], x, "NA")
+                else if (is.infinite(xUnlist[[i]]))
+                  sdCoupledModelMsg$validateODE7(private$pcoupledModelId, modelId, 
+                                                 names(xUnlist)[[i]], x, "Inf")
+              } 
+            }
+            else if (x %in% c('st', 'ct', 'par', 'inp', 'sw', 'aux'))
+              next # do nothing if an arg is empty
+            else if (is.null(unlist(var)))
+              sdCoupledModelMsg$validateODE8(private$pcoupledModelId, modelId, x, 
+                                             "NULL")
+            else if (length(var) == 0 && is.numeric(var))
+              sdCoupledModelMsg$validateODE8(private$pcoupledModelId, modelId, x, 
+                                             "numeric(0)")
+            else if (is.na(unlist(var)))
+              sdCoupledModelMsg$validateODE8(private$pcoupledModelId, modelId, x, 
+                                             "NA")
+            else if (is.infinite(unlist(var)))
+              sdCoupledModelMsg$validateODE8(private$pcoupledModelId, modelId, x, 
+                                             "Inf")
+          }
+        }
         
-        if (length(dRes) != length(st))
-          sdCoupledModelMsg$validateODE10(private$pcoupledModelId, dRes,
-                                          length(st))
+        # Check the return of Model Definition contains invalid values
+        if (is.list(res))
+        {
+          dRes <- res[[1]]
+          
+          if (!is.numeric(dRes))
+            sdCoupledModelMsg$validateODE9(private$pcoupledModelId, typeof(dRes))
+          
+          if (length(dRes) != length(st))
+            sdCoupledModelMsg$validateODE10(private$pcoupledModelId, dRes,
+                                            length(st))
+        }
+        else
+          sdCoupledModelMsg$validateODE11(private$pcoupledModelId, typeof(res))
       }
-      else
-        sdCoupledModelMsg$validateODE11(private$pcoupledModelId, typeof(res))
       
       if (verbose)
         sdCoupledModelMsg$validateODE12(private$pcoupledModelId)
@@ -1195,7 +1197,12 @@ sdCoupledModelClass <- R6::R6Class(
       namesPar <- names(defaultCoupledScenarioVars$coupledScenario$parameter)
       namesSw <- names(defaultCoupledScenarioVars$coupledScenario$switch)
       
-      coupledEnv <- new.env(parent = baseenv())
+      coupledEnv <- private$pcoupledEnv
+      # clean coupledEnv
+      envData <- ls(coupledEnv)
+      if (length(envData) > 0)
+        rm(envData, envir = coupledEnv)
+      
       # get all the components variables names and substitute in the components
       # functions for the coupled names (concatenated with the model ID)
       # reset the enviromnet of all components functions with the coupled env
@@ -1589,6 +1596,7 @@ sdCoupledModelClass <- R6::R6Class(
     pcomponentsRootSpecification = list(),
     pcomponentsEventFunction = list(),
     pcomponentsAux = list(),
-    pcomponentsGlobal = list()
+    pcomponentsGlobal = list(),
+    pcoupledEnv = NULL
   )
 )
