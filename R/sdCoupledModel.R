@@ -606,6 +606,7 @@ sdCoupledModelClass <- R6::R6Class(
           
           private$pcomponentsId <- c(private$pcomponentsId, id)
           private$pcomponents[[id]] <- model$clone(deep = TRUE)
+          private$pcomponentsClass[[id]] <- class(model)[[1]]
           private$pcomponentsEquations[[id]] <- model$DifferentialEquations
           private$pcomponentsInitVars[[id]] <- model$InitVars
           private$pcomponentsPostProcessVars[[id]] <- model$PostProcessVars
@@ -655,6 +656,7 @@ sdCoupledModelClass <- R6::R6Class(
           
           private$pcomponentsId <- c(private$pcomponentsId, id)
           private$pcomponents[[id]] <- model$clone(deep = TRUE)
+          private$pcomponentsClass[[id]] <- class(model)[[1]]
           private$pcomponentsInitVars[[id]] <- model$InitVars
           
           private$pcomponentsAux[[id]] <- model$equations
@@ -1510,6 +1512,10 @@ sdCoupledModelClass <- R6::R6Class(
     {
       return(private$pcomponentsId)
     },
+    componentsClass = function()
+    {
+      return(private$pcomponentsClass)
+    },
     componentsEquations = function()
     {
       return(private$pcomponentsEquations)
@@ -1586,12 +1592,13 @@ sdCoupledModelClass <- R6::R6Class(
     pcoupledModelDescription = NULL,
     pdefaultCoupledScenario = NULL,
     pindexComponents = NULL,
-    pcomponents = list(),
-    pcomponentsId = list(),
     pconnections = list(),
     auxCon = NULL,
     stCon = NULL,
     flagBuild = FALSE,
+    pcomponents = list(),
+    pcomponentsId = list(),
+    pcomponentsClass = list(),
     pcomponentsEquations = list(),
     pcomponentsInitVars = list(),
     pcomponentsPostProcessVars = list(),

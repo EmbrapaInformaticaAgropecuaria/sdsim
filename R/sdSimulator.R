@@ -1063,7 +1063,7 @@ sdSimulate <- function(model,
       conStInps <- match(names(model$stConnections), names(inp))
       
       # check if the match outputed any NA values
-      
+      compIndex <- model$indexComponents
       DifferentialEquationsCoupledEval <- createCoupledFuncEval(
         componentsId = names(componentsEquations),
         funcs = componentsEquations,
@@ -1071,7 +1071,7 @@ sdSimulate <- function(model,
         conStInps = conStInps,
         conAux = conAux,
         conAuxInps = conAuxInps,
-        compIndex = model$indexComponents,
+        compIndex = compIndex,
         lenst = length(st),
         ct = ct,
         par = par,
@@ -1121,7 +1121,7 @@ sdSimulate <- function(model,
           conStInps = conStInps,
           conAux = conAux,
           conAuxInps = conAuxInps,
-          compIndex = model$indexComponents,
+          compIndex = compIndex,
           ct = ct,
           par = par,
           inp = inp,
@@ -1183,8 +1183,17 @@ sdSimulate <- function(model,
         auxTrajectory <-
           as.data.frame(outTrajectory[, c(1, iAuxBegin:ncol(outTrajectory))])
         
+        # separate the algebraic equations
+        staticComponents <- names(
+          which(model$componentsClass == "sdStaticModelClass"))
+        
         outTrajectory <-
-          as.data.frame(outTrajectory[, 1:(iAuxBegin - 1)])
+          as.data.frame(outTrajectory[, c(1:(iAuxBegin - 1), 
+          unlist(compIndex$aux[staticComponents]) + iAuxBegin - 2 +
+            length(auxTrajectory) - length(aux))])
+        
+        auxTrajectory[unlist(compIndex$aux[staticComponents]) + 
+                        length(auxTrajectory) - length(aux)] <- NULL
       }
       else
       {
