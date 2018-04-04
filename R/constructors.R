@@ -312,7 +312,7 @@ sdLoadModel <- function(file, repository = F,
       loadedScen <- model$defaultScenario
       
       model$defaultScenario <- sdScenario(
-        scenarioId = loadedScen$scenarioId,
+        scenarioId = "Default",
         times = loadedScen$times,
         method = loadedScen$method,
         state = loadedScen$state,
@@ -369,7 +369,7 @@ sdLoadModel <- function(file, repository = F,
           loadedScen <- x$defaultScenario
           
           x$defaultScenario <- 
-            sdScenario(scenarioId = loadedScen$scenarioId,
+            sdScenario(scenarioId = "Default",
                        times = loadedScen$times,
                        method = loadedScen$method,
                        state = loadedScen$state,
@@ -440,7 +440,7 @@ sdLoadModel <- function(file, repository = F,
       loadedScen <- model$defaultScenario
       
       model$defaultScenario <- sdScenario(
-        scenarioId = loadedScen$scenarioId,
+        scenarioId = "Default",
         times = loadedScen$times,
         method = loadedScen$method,
         state = NULL,

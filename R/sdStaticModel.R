@@ -476,6 +476,7 @@ sdStaticModelClass <- R6::R6Class(
             sdStaticModelMsg$defaultscenario1(private$pstaticModelId)
           }
           private$pdefaultScenario <- dfScen
+          private$pdefaultScenario$scenarioId <- "Default"
         }
         else 
           sdStaticModelMsg$defaultscenario2(private$pstaticModelId)

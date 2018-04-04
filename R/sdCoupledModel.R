@@ -19,6 +19,10 @@
 #' described in the \code{\link{sdLoadScenario}} documentation.
 #' All the scenario elements of this list must be named with the model ID that 
 #' will use it.
+#' @param from The starting value of the time sequence. Numeric of
+#' length 1.
+#' @param to The end (maximal) value of the time sequence. Numeric of length 1.
+#' @param by number: increment of the time sequence.
 #' @param method The integrator to be used in the simulation,
 #' a string ("lsoda", "lsode", "lsodes","lsodar","vode", "daspk", "euler",
 #' "rk4", "ode23", "ode45", "radau", "bdf", "bdf_d", "adams", "impAdams" or
@@ -33,10 +37,6 @@
 #' 
 #' See the \code{\link[deSolve]{ode}} and the \code{\link[deSolve]{events}}
 #' details section for more information.
-#' @param from The starting value of the time sequence. Numeric of
-#' length 1.
-#' @param to The end (maximal) value of the time sequence. Numeric of length 1.
-#' @param by number: increment of the time sequence.
 #' @param timeSeriesDirectory The directory where time series inputs are stored 
 #' (when passing the time series inputs via external text files).
 #' @param varNames logical: if \code{TRUE} the return value is a list with two
@@ -92,14 +92,14 @@
 #' # and passing it via the argument 'scenario' to the sdSimulate function           
 sdBuildCoupledScenario = function(coupledScenarioId = NULL,
                                 scenarios = NULL,
+                                from = NULL,
+                                to = NULL,
+                                by = NULL,
                                 method = c("lsoda", "lsode", "lsodes", "lsodar", 
                                            "vode", "daspk", "euler", "rk4", 
                                            "ode23", "ode45", "radau", "bdf", 
                                            "bdf_d", "adams", "impAdams", 
                                            "impAdams_d"),
-                                from = NULL,
-                                to = NULL,
-                                by = NULL,
                                 timeSeriesDirectory = "",
                                 varNames = FALSE)
 {
@@ -312,9 +312,9 @@ sdBuildCoupledScenario = function(coupledScenarioId = NULL,
 #' If missing all the connections will be removed.}
 #' }}
 #'
-#' \item{\code{$buildCoupledModel(coupledScenarioId = NULL,
-#' method = NULL, from = NULL, to = NULL, by = NULL, 
-#' timeSeriesDirectory = "")}}{Build the default coupled scenario by merging the 
+#' \item{\code{$buildCoupledModel(from = NULL, to = NULL, by = NULL, 
+#' method = NULL, timeSeriesDirectory = "")}}{Build the default coupled scenario 
+#' by merging the 
 #' components default scenarios (see \code{\link{sdBuildCoupledScenario}}), 
 #' initialize the coupled auxiliary and/or algebraic equations, build the 
 #' vectors representing the connections (\code{eqConnections} and 
@@ -332,8 +332,9 @@ sdBuildCoupledScenario = function(coupledScenarioId = NULL,
 #' \strong{Arguments}
 #'
 #' \describe{
-#' \item{coupledScenarioId}{A character object with the coupled scenario ID. If 
-#' missing a default timestamp ID will be created.}
+#' \item{from}{The starting value of the time sequence. Numeric of length 1.}
+#' \item{to}{The end (maximal) value of the time sequence. Numeric of length 1.}
+#' \item{by}{number: increment of the time sequence.}
 #' \item{method}{The integrator to be used in the simulation,
 #' a string ("lsoda", "lsode", "lsodes","lsodar","vode", "daspk", "euler",
 #' "rk4", "ode23", "ode45", "radau", "bdf", "bdf_d", "adams", "impAdams" or
@@ -348,9 +349,6 @@ sdBuildCoupledScenario = function(coupledScenarioId = NULL,
 #' 
 #' See the \code{\link[deSolve]{ode}} and the \code{\link[deSolve]{events}}
 #' details section for more information.}
-#' \item{from}{The starting value of the time sequence. Numeric of length 1.}
-#' \item{to}{The end (maximal) value of the time sequence. Numeric of length 1.}
-#' \item{by}{number: increment of the time sequence.}
 #' \item{timeSeriesDirectory}{The directory where time series inputs are stored 
 #' (when passing the time series inputs via external text files).}
 #' }
@@ -1143,17 +1141,16 @@ sdCoupledModelClass <- R6::R6Class(
       if (verbose)
         sdCoupledModelMsg$validateODE12(private$pcoupledModelId)
     },
-    buildCoupledModel = function(coupledScenarioId = NULL,
-                                           method = c("lsoda", "lsode", 
-                                                      "lsodes", "lsodar", 
-                                                      "vode", "daspk",
-                                                      "euler", "rk4", "ode23", 
-                                                      "ode45", "radau", 
-                                                      "bdf", "bdf_d", "adams", 
-                                                      "impAdams", "impAdams_d"),
-                                           from = NULL,
-                                           to = NULL,
-                                           by = NULL,
+    buildCoupledModel = function(from = NULL,
+                                 to = NULL,
+                                 by = NULL,
+                                 method = c("lsoda", "lsode", 
+                                            "lsodes", "lsodar", 
+                                            "vode", "daspk",
+                                            "euler", "rk4", "ode23", 
+                                            "ode45", "radau", 
+                                            "bdf", "bdf_d", "adams", 
+                                            "impAdams", "impAdams_d"),
                                  timeSeriesDirectory = "")
     {
       if (length(private$pcomponentsId) == 0)
@@ -1176,7 +1173,7 @@ sdCoupledModelClass <- R6::R6Class(
       }
       
       defaultCoupledScenarioVars <- sdBuildCoupledScenario(
-        coupledScenarioId = coupledScenarioId,
+        coupledScenarioId = "Default",
         scenarios = scenComponents,
         method = method[[1]],
         from = from,

@@ -802,7 +802,10 @@ sdModelClass <- R6::R6Class(
         
         # scenario must be a scenario object 
         if (inherits(defaultScenario, "sdScenarioClass"))
+        {
           private$pdefaultScenario <- defaultScenario$clone()
+          private$pdefaultScenario$scenarioId <- "Default"
+        }
         else 
           sdModelMsg$defaultScenario(private$pmodelId)
       }

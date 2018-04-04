@@ -15,11 +15,10 @@ AssembleModel <- function(simData, input, timeSeriesDirectory,
   } else if (model$type == "coupled") {
     modelObj <- AssembleCoupledModel(model, simData, timeSeriesDirectory)
 
-    modelObj$buildCoupledModel(coupledScenarioId = "defaultScenario",
-                               method = input$method,
-                               from = as.numeric(input$initialTime),
+    modelObj$buildCoupledModel(from = as.numeric(input$initialTime),
                                to = as.numeric(input$finalTime),
                                by = as.numeric(input$step),
+                               method = input$method,
                                timeSeriesDirectory = timeSeriesDirectory)
     return(modelObj)
   }
