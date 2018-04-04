@@ -443,18 +443,18 @@ sdStaticModelClass <- R6::R6Class(
         return(private$pstaticModelId)
       else if (is.null(staticModelId))
       {
-        staticModelId <- gsub("\\s|\\W", "", paste("model", Sys.Date()), 
+        staticModelId <- gsub("\\s", "", paste("model", Sys.Date()), 
                               perl = T)
         sdStaticModelMsg$staticModelId1(staticModelId)
       }
       else if (!is.character(staticModelId))
       {
-        staticModelId <- gsub("\\s|\\W", "", paste("model", Sys.Date()), 
+        staticModelId <- gsub("\\s", "", paste("model", Sys.Date()), 
                               perl = T)
         sdStaticModelMsg$staticModelId2(staticModelId)
       }
       
-      private[["pstaticModelId"]] <- make.names(gsub("\\s|\\W", "", 
+      private[["pstaticModelId"]] <- make.names(gsub("\\s", "", 
                                                      staticModelId, 
                                           perl = T))
     },

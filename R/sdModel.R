@@ -774,17 +774,17 @@ sdModelClass <- R6::R6Class(
         return(private$pmodelId)
       else if (is.null(modelId))
       {
-        modelId <- gsub("\\s|\\W", "", paste("model", Sys.Date()), perl = TRUE)
+        modelId <- gsub("\\s", "", paste("model", Sys.Date()), perl = TRUE)
         sdModelMsg$modelId1(modelId)
       }
       else if (!is.character(modelId))
       {
-        modelId <- gsub("\\s|\\W", "", paste("model", Sys.Date()), perl = TRUE)
+        modelId <- gsub("\\s", "", paste("model", Sys.Date()), perl = TRUE)
         sdModelMsg$modelId2(modelId)
       }
       
       # set character ID
-      private[["pmodelId"]] <- make.names(gsub("\\s|\\W", "", modelId, 
+      private[["pmodelId"]] <- make.names(gsub("\\s", "", modelId, 
                                                perl = TRUE))
     },
     DifferentialEquations = function()

@@ -1199,9 +1199,7 @@ sdCoupledModelClass <- R6::R6Class(
       
       coupledEnv <- private$pcoupledEnv
       # clean coupledEnv
-      envData <- ls(coupledEnv)
-      if (length(envData) > 0)
-        rm(envData, envir = coupledEnv)
+      rm(list = ls(coupledEnv), envir = coupledEnv)
       
       # get all the components variables names and substitute in the components
       # functions for the coupled names (concatenated with the model ID)
@@ -1472,18 +1470,18 @@ sdCoupledModelClass <- R6::R6Class(
         return(private$pcoupledModelId)
       else if (is.null(coupledModelId))
       {
-        coupledModelId <- gsub("\\s|\\W", "", paste("coupledModel", Sys.Date()), 
+        coupledModelId <- gsub("\\s", "", paste("coupledModel", Sys.Date()), 
                                perl = TRUE)
         sdCoupledModelMsg$coupledModelId1(coupledModelId)
       }
       else if (!is.character(coupledModelId))
       {
-        coupledModelId <- gsub("\\s|\\W", "", paste("coupledModel", Sys.Date()), 
+        coupledModelId <- gsub("\\s", "", paste("coupledModel", Sys.Date()), 
                                perl = TRUE)
         sdCoupledModelMsg$coupledModelId2(coupledModelId)
       }
       
-      private[["pcoupledModelId"]] <- make.names(gsub("\\s|\\W", "", 
+      private[["pcoupledModelId"]] <- make.names(gsub("\\s", "", 
                                                       coupledModelId, 
                                            perl = TRUE))
     },
