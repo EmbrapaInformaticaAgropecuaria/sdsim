@@ -844,7 +844,7 @@ sdSimulate <- function(model,
   else if (inherits(model, "sdCoupledModelClass"))
   {
     # Try to build the coupled model if it is not built
-    if (!model$isBuild)
+    if (!model$isBuilt)
     {
       model$buildCoupledModel(
         coupledScenarioId = "coupledScen",
@@ -853,7 +853,7 @@ sdSimulate <- function(model,
         by = by,
         method = method)
       
-      if (!model$isBuild)
+      if (!model$isBuilt)
         sdSimulatorMsg$sdSimulateCoupled1(model$coupledModelId)
     }
     

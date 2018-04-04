@@ -354,7 +354,7 @@ sdBuildCoupledScenario = function(coupledScenarioId = NULL,
 #' }
 #' }
 #' 
-#' \item{\code{$isBuild()}}{Test if the coupled model was already built and not
+#' \item{\code{$isBuilt()}}{Test if the coupled model was already built and not
 #' modified. Return a logical object.
 #' }
 #'
@@ -840,7 +840,7 @@ sdCoupledModelClass <- R6::R6Class(
     validateODE = function(scenario = NULL, verbose = FALSE,
                            timeSeriesDirectory = "")
     {
-      if (!self$isBuild)
+      if (!self$isBuilt)
         sdCoupledModelMsg$validateODE1(private$pcoupledModelId)
       
       # simulate the coupled model first time step
@@ -1573,9 +1573,13 @@ sdCoupledModelClass <- R6::R6Class(
         sdCoupledModelMsg$indexComponents(private$pcoupledModelId)
       return(invisible(NULL))
     },
-    isBuild = function()
+    isBuilt = function()
     {
       return(private$flagBuild)
+    },
+    modelEnv = function()
+    {
+      return(private$pcoupledEnv)
     }
   ),
   private = list(
