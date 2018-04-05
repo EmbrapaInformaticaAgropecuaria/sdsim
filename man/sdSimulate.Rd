@@ -5,7 +5,7 @@
 \title{Simulate System Dynamics Models and Static Models}
 \usage{
 sdSimulate(model, scenario = NULL, from = NULL, to = NULL, by = NULL,
-  method = NULL, validateModel = F, events = T, maxroots = 100,
+  method = NULL, verifyModel = F, events = T, maxroots = 100,
   terminalroot = NULL, ties = "notordered", storeAuxTrajectory = T,
   storeTimeSeriesTrajectory = F, verbose = F)
 }
@@ -50,9 +50,6 @@ these three routines the simulator will run with the default method
 See the \code{\link[deSolve]{ode}} and the \code{\link[deSolve]{events}}
 details section for more information.}
 
-\item{validateModel}{logical: if \code{TRUE} run the \code{model} object 
-validation before the simulation. Default is \code{FALSE}.}
-
 \item{events}{logical: if \code{TRUE} run the simulation with support to
 events (only if the \code{model} have a root specification); if \code{FALSE} 
 do not run the simulation with support to events. Default is \code{TRUE}.}
@@ -80,6 +77,9 @@ performance). Default is \code{FALSE}.}
 
 \item{verbose}{Logical: If \code{TRUE} provides additional details as to what 
 the computer is doing. Default is \code{FALSE}.}
+
+\item{validateModel}{logical: if \code{TRUE} run the \code{model} object 
+validation before the simulation. Default is \code{FALSE}.}
 }
 \value{
 A \code{\link{sdOutput}} object initialized with the simulation 

@@ -134,9 +134,9 @@ from the model \code{connections} list.
 If missing all the connections will be removed.}
 }}
 
-\item{\code{$buildCoupledModel(coupledScenarioId = NULL,
-method = NULL, from = NULL, to = NULL, by = NULL, 
-timeSeriesDirectory = "")}}{Build the default coupled scenario by merging the 
+\item{\code{$buildCoupledModel(from = NULL, to = NULL, by = NULL, 
+method = NULL, timeSeriesDirectory = "")}}{Build the default coupled scenario 
+by merging the 
 components default scenarios (see \code{\link{sdBuildCoupledScenario}}), 
 initialize the coupled auxiliary and/or algebraic equations, build the 
 vectors representing the connections (\code{eqConnections} and 
@@ -154,8 +154,9 @@ of the coupled scenario variables.
 \strong{Arguments}
 
 \describe{
-\item{coupledScenarioId}{A character object with the coupled scenario ID. If 
-missing a default timestamp ID will be created.}
+\item{from}{The starting value of the time sequence. Numeric of length 1.}
+\item{to}{The end (maximal) value of the time sequence. Numeric of length 1.}
+\item{by}{number: increment of the time sequence.}
 \item{method}{The integrator to be used in the simulation,
 a string ("lsoda", "lsode", "lsodes","lsodar","vode", "daspk", "euler",
 "rk4", "ode23", "ode45", "radau", "bdf", "bdf_d", "adams", "impAdams" or
@@ -170,19 +171,16 @@ these three routines the simulator will run with the default method
 
 See the \code{\link[deSolve]{ode}} and the \code{\link[deSolve]{events}}
 details section for more information.}
-\item{from}{The starting value of the time sequence. Numeric of length 1.}
-\item{to}{The end (maximal) value of the time sequence. Numeric of length 1.}
-\item{by}{number: increment of the time sequence.}
 \item{timeSeriesDirectory}{The directory where time series inputs are stored 
 (when passing the time series inputs via external text files).}
 }
 }
 
-\item{\code{$isBuild()}}{Test if the coupled model was already built and not
+\item{\code{$isBuilt()}}{Test if the coupled model was already built and not
 modified. Return a logical object.
 }
 
-\item{\code{$validateODE(scenario = NULL, verbose = FALSE, 
+\item{\code{$verifyModel(scenario = NULL, verbose = FALSE, 
 timeSeriesDirectory = "")}}{Execute the first step of the coupled model 
 simulation in the default scenario or merged with a given one. 
 Check for possible incorrect return values and variables in the components 
@@ -324,7 +322,7 @@ coupledLV$buildCoupledModel(coupledScenarioId = "lvScenCoupled",
                             from = 0, 
                             to = 200, 
                             by = 1)
-coupledLV$validateODE(verbose = TRUE)
+coupledLV$verifyModel(verbose = TRUE)
 
 # simulate the coupled model and plot the results
 outclv <- sdSimulate(model = coupledLV)

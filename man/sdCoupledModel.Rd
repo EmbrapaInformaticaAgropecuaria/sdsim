@@ -133,7 +133,7 @@ coupledLV$buildCoupledModel(coupledScenarioId = "lvScenCoupled",
                             from = 0, 
                             to = 200, 
                             by = 1)
-coupledLV$validateODE(verbose = TRUE)
+coupledLV$verifyModel(verbose = TRUE)
 
 # simulate the coupled model and plot the results
 outclv <- sdSimulate(model = coupledLV)

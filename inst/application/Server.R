@@ -717,7 +717,7 @@ server <- shinyServer(function(input, output, session) {
                                  from = as.numeric(input$initialTime),
                                  to = as.numeric(input$finalTime),
                                  by = as.numeric(input$step),
-                                 validateModel = T)
+                                 verifyModel = T)
         
         simData$models[[simData$currentModelId]]$out <- out
         

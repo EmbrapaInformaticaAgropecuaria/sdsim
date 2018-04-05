@@ -103,7 +103,7 @@ envCapacity <- sdStaticModel(staticModelId = "EnvironmentCapacity",
                              defaultScenario = envScen,
                              equations = algEqEnvironment)
 # validate the equations and simulate the model
-envCapacity$validateAlgebraicEquations()
+envCapacity$verifyModel()
 outEnvCapacity <- sdSimulate(envCapacity)
 print(outEnvCapacity)
 

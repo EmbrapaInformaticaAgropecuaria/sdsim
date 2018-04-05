@@ -156,7 +156,7 @@
 #' 
 #' \item{\code{$print()}}{Print the object fields.}
 #' 
-#' \item{\code{$validateODE(scenario = NULL, verbose = F)}}{
+#' \item{\code{$verifyModel(scenario = NULL, verbose = F)}}{
 #' Execute the model simulation first step in the default scenario or merged 
 #' with a given one. Check for possible incorrect variables and warn the user.
 #' 
@@ -234,7 +234,7 @@
 #'               aux = aux)
 #'               
 #' # validate the model ode
-#' lv$validateODE(verbose = TRUE)
+#' lv$verifyModel(verbose = TRUE)
 #' 
 #' # simulate the model and plot the results
 #' outlv <- sdSimulate(model = lv, storeAuxTrajectory = TRUE)
@@ -478,16 +478,16 @@ sdModelClass <- R6::R6Class(
           sep = "\n")
       cat("\n")
     },
-    validateODE = function(scenario = NULL, verbose = F)
+    verifyModel = function(scenario = NULL, verbose = F)
     {
       # run the aux and model definition validation
       if (is.null(private$pdefaultScenario) && 
           !is.null(private$pdefaultScenario$state) && 
           length(private$pdefaultScenario$state) > 0)
-        sdModelMsg$validateODE1(private$pmodelId)
+        sdModelMsg$verifyModel1(private$pmodelId)
       
       if (is.null(private$pDifferentialEquations))
-        sdModelMsg$validateODE0(private$pmodelId)
+        sdModelMsg$verifyModel0(private$pmodelId)
       
       # get the model scenario 
       defaultScenario <- private$pdefaultScenario$clone(deep = TRUE)
@@ -518,7 +518,7 @@ sdModelClass <- R6::R6Class(
             defaultScenario$times <- scenario$times
         }
         else
-          sdModelMsg$validateODE12(private$pmodelId, typeof(scenario))
+          sdModelMsg$verifyModel12(private$pmodelId, typeof(scenario))
       }
       
       # Get variables from default scenario
@@ -535,7 +535,7 @@ sdModelClass <- R6::R6Class(
         t <- times[[1]]
       else
       {
-        sdModelMsg$validateODE2(private$pmodelId)
+        sdModelMsg$verifyModel2(private$pmodelId)
         t <- 0
       }
       
@@ -573,13 +573,13 @@ sdModelClass <- R6::R6Class(
           },
           error = function(e)
           {
-            sdModelMsg$validateODE3(private$pmodelId, auxVar, e)
+            sdModelMsg$verifyModel3(private$pmodelId, auxVar, e)
             return(invisible(numeric(0)))
           })
         
         if (is.null(aux[[auxVar]]) || is.na(aux[[auxVar]]) ||
             length(aux[[auxVar]]) == 0 || is.infinite(aux[[auxVar]]))
-          sdModelMsg$validateODE4(private$pmodelId, auxVar, 
+          sdModelMsg$verifyModel4(private$pmodelId, auxVar, 
                                   capture.output(aux[[auxVar]]))
       }
       
@@ -616,7 +616,7 @@ sdModelClass <- R6::R6Class(
         },
         error = function(e)
         {
-          sdModelMsg$validateODE5(private$pmodelId, e)
+          sdModelMsg$verifyModel5(private$pmodelId, e)
           return(invisible(NULL))
         })
       
@@ -642,16 +642,16 @@ sdModelClass <- R6::R6Class(
               # do nothing
             }
             else if (is.null(xUnlist[[i]]))
-              sdModelMsg$validateODE6(private$pmodelId, names(xUnlist)[[i]], x, 
+              sdModelMsg$verifyModel6(private$pmodelId, names(xUnlist)[[i]], x, 
                                       "NULL")
             else if (length(var) == 0 && is.numeric(var))
-              sdModelMsg$validateODE6(private$pmodelId, names(xUnlist)[[i]], x, 
+              sdModelMsg$verifyModel6(private$pmodelId, names(xUnlist)[[i]], x, 
                                       "numeric(0)")
             else if (is.na(xUnlist[[i]]))
-              sdModelMsg$validateODE6(private$pmodelId, names(xUnlist)[[i]], x, 
+              sdModelMsg$verifyModel6(private$pmodelId, names(xUnlist)[[i]], x, 
                                       "NA")
             else if (is.infinite(xUnlist[[i]]))
-              sdModelMsg$validateODE6(private$pmodelId, names(xUnlist)[[i]], x, 
+              sdModelMsg$verifyModel6(private$pmodelId, names(xUnlist)[[i]], x, 
                                       "Inf")
           } 
         }
@@ -659,13 +659,13 @@ sdModelClass <- R6::R6Class(
         { # do nothing if an arg is empty
         }
         else if (is.null(unlist(var)))
-          sdModelMsg$validateODE7(private$pmodelId, x, "NULL") 
+          sdModelMsg$verifyModel7(private$pmodelId, x, "NULL") 
         else if (length(var) == 0 && is.numeric(var))
-          sdModelMsg$validateODE7(private$pmodelId, x, "numeric(0)") 
+          sdModelMsg$verifyModel7(private$pmodelId, x, "numeric(0)") 
         else if (is.na(unlist(var)))
-          sdModelMsg$validateODE7(private$pmodelId, x, "NA") 
+          sdModelMsg$verifyModel7(private$pmodelId, x, "NA") 
         else if (is.infinite(unlist(var)))
-          sdModelMsg$validateODE7(private$pmodelId, x, "Inf") 
+          sdModelMsg$verifyModel7(private$pmodelId, x, "Inf") 
       })
       
       # Check the return of Model Definition contains invalid values
@@ -674,16 +674,16 @@ sdModelClass <- R6::R6Class(
         dRes <- res[[1]]
         
         if (!is.numeric(dRes))
-          sdModelMsg$validateODE8(private$pmodelId, typeof(dRes)) 
+          sdModelMsg$verifyModel8(private$pmodelId, typeof(dRes)) 
         
         if (length(dRes) != length(st))
-          sdModelMsg$validateODE9(private$pmodelId, dRes, length(st)) 
+          sdModelMsg$verifyModel9(private$pmodelId, dRes, length(st)) 
       }
       else
-        sdModelMsg$validateODE10(private$pmodelId, typeof(res)) 
+        sdModelMsg$verifyModel10(private$pmodelId, typeof(res)) 
       
       if (verbose)
-        sdModelMsg$validateODE11(private$pmodelId) 
+        sdModelMsg$verifyModel11(private$pmodelId) 
     },
     saveToXml = function(file = "sdModel.xml")
     {

@@ -184,7 +184,7 @@
 #'               aux = aux)
 #'               
 #' # validate the model ode
-#' lv$validateODE(verbose = TRUE)
+#' lv$verifyModel(verbose = TRUE)
 #' 
 #' # simulate the model and plot the results
 #' outlv <- sdSimulate(model = lv, storeAuxTrajectory = TRUE)
@@ -589,7 +589,7 @@ sdLoadModel <- function(file, repository = F,
 #'                             from = 0, 
 #'                             to = 200, 
 #'                             by = 1)
-#' coupledLV$validateODE(verbose = TRUE)
+#' coupledLV$verifyModel(verbose = TRUE)
 #' 
 #' # simulate the coupled model and plot the results
 #' outclv <- sdSimulate(model = coupledLV)
@@ -697,7 +697,7 @@ sdCoupledModel <- function(coupledModelId = NULL,
 #'                              defaultScenario = envScen,
 #'                              equations = algEqEnvironment)
 #' # validate the equations and simulate the model
-#' envCapacity$validateAlgebraicEquations()
+#' envCapacity$verifyModel()
 #' outEnvCapacity <- sdSimulate(envCapacity)
 #' print(outEnvCapacity)
 #' 

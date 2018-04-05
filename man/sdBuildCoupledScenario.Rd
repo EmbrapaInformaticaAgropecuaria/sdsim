@@ -4,10 +4,10 @@
 \alias{sdBuildCoupledScenario}
 \title{Builds a Coupled Scenario}
 \usage{
-sdBuildCoupledScenario(coupledScenarioId = NULL, scenarios,
-  method = c("lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk", "euler",
-  "rk4", "ode23", "ode45", "radau", "bdf", "bdf_d", "adams", "impAdams",
-  "impAdams_d"), from = NULL, to = NULL, by = NULL,
+sdBuildCoupledScenario(coupledScenarioId = NULL, scenarios = NULL,
+  from = NULL, to = NULL, by = NULL, method = c("lsoda", "lsode",
+  "lsodes", "lsodar", "vode", "daspk", "euler", "rk4", "ode23", "ode45",
+  "radau", "bdf", "bdf_d", "adams", "impAdams", "impAdams_d"),
   timeSeriesDirectory = "", varNames = FALSE)
 }
 \arguments{
@@ -21,6 +21,13 @@ When passing a scenario in a EXCEL file it should follow the default format
 described in the \code{\link{sdLoadScenario}} documentation.
 All the scenario elements of this list must be named with the model ID that 
 will use it.}
+
+\item{from}{The starting value of the time sequence. Numeric of
+length 1.}
+
+\item{to}{The end (maximal) value of the time sequence. Numeric of length 1.}
+
+\item{by}{number: increment of the time sequence.}
 
 \item{method}{The integrator to be used in the simulation,
 a string ("lsoda", "lsode", "lsodes","lsodar","vode", "daspk", "euler",
@@ -36,13 +43,6 @@ these three routines the simulator will run with the default method
 
 See the \code{\link[deSolve]{ode}} and the \code{\link[deSolve]{events}}
 details section for more information.}
-
-\item{from}{The starting value of the time sequence. Numeric of
-length 1.}
-
-\item{to}{The end (maximal) value of the time sequence. Numeric of length 1.}
-
-\item{by}{number: increment of the time sequence.}
 
 \item{timeSeriesDirectory}{The directory where time series inputs are stored 
 (when passing the time series inputs via external text files).}

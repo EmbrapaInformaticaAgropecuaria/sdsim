@@ -98,7 +98,7 @@ Class constructor. Sets the static model definition fields.
 
 \item{\code{$print()}}{Print the object fields.}
 
-\item{\code{$validateAlgebraicEquations(scenario = NULL, verbose = F)}}{
+\item{\code{$verifyModel(scenario = NULL, verbose = F)}}{
 Execute the model simulation first step in the default scenario or merged 
 with a given one. Check for possible incorrect variables and warn the user.
 
@@ -152,7 +152,7 @@ envCapacity <- sdStaticModel(staticModelId = "EnvironmentCapacity",
                              defaultScenario = envScen,
                              equations = algEqEnvironment)
 # validate the equations and simulate the model
-envCapacity$validateAlgebraicEquations()
+envCapacity$verifyModel()
 outEnvCapacity <- sdSimulate(envCapacity)
 print(outEnvCapacity)
 

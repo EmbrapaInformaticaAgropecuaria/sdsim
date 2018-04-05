@@ -686,7 +686,7 @@ sdRunApp <- function(launch.browser = T, port = getOption("shiny.port"),
 #' arenstorf <- sdLoadModel(file = "Arenstorf", repository = TRUE) 
 #' 
 #' # validate the model, simulate it and plot the coordinates result
-#' arenstorf$validateODE(verbose = TRUE)
+#' arenstorf$verifyModel(verbose = TRUE)
 #' outaren <- sdSimulate(arenstorf)
 #' outaren$plot("y1 ~ y2")
 sdRepository <- function()

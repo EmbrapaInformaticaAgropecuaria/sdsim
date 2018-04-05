@@ -183,7 +183,7 @@ Class constructor. Sets the model definition fields.
 
 \item{\code{$print()}}{Print the object fields.}
 
-\item{\code{$validateODE(scenario = NULL, verbose = F)}}{
+\item{\code{$verifyModel(scenario = NULL, verbose = F)}}{
 Execute the model simulation first step in the default scenario or merged 
 with a given one. Check for possible incorrect variables and warn the user.
 
@@ -263,7 +263,7 @@ lv <- sdModel(modelId = "Lotka-Volterra", defaultScenario = lvscen,
               aux = aux)
               
 # validate the model ode
-lv$validateODE(verbose = TRUE)
+lv$verifyModel(verbose = TRUE)
 
 # simulate the model and plot the results
 outlv <- sdSimulate(model = lv, storeAuxTrajectory = TRUE)

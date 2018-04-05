@@ -358,7 +358,7 @@ sdBuildCoupledScenario = function(coupledScenarioId = NULL,
 #' modified. Return a logical object.
 #' }
 #'
-#' \item{\code{$validateODE(scenario = NULL, verbose = FALSE, 
+#' \item{\code{$verifyModel(scenario = NULL, verbose = FALSE, 
 #' timeSeriesDirectory = "")}}{Execute the first step of the coupled model 
 #' simulation in the default scenario or merged with a given one. 
 #' Check for possible incorrect return values and variables in the components 
@@ -498,7 +498,7 @@ sdBuildCoupledScenario = function(coupledScenarioId = NULL,
 #'                             from = 0, 
 #'                             to = 200, 
 #'                             by = 1)
-#' coupledLV$validateODE(verbose = TRUE)
+#' coupledLV$verifyModel(verbose = TRUE)
 #' 
 #' # simulate the coupled model and plot the results
 #' outclv <- sdSimulate(model = coupledLV)
@@ -839,11 +839,11 @@ sdCoupledModelClass <- R6::R6Class(
                                                    %in% connectionsId)]
       private$flagBuild = FALSE
     },
-    validateODE = function(scenario = NULL, verbose = FALSE,
+    verifyModel = function(scenario = NULL, verbose = FALSE,
                            timeSeriesDirectory = "")
     {
       if (!self$isBuilt)
-        sdCoupledModelMsg$validateODE1(private$pcoupledModelId)
+        sdCoupledModelMsg$verifyModel1(private$pcoupledModelId)
       
       # simulate the coupled model first time step
       # Get components functions
@@ -891,7 +891,7 @@ sdCoupledModelClass <- R6::R6Class(
             defaultScenario$method <- scenario$method
         }
         else
-          sdCoupledModelMsg$validateODE2(private$pcoupledModelId, 
+          sdCoupledModelMsg$verifyModel2(private$pcoupledModelId, 
                                          typeof(scenario))
       }
       # get model variables
@@ -960,7 +960,7 @@ sdCoupledModelClass <- R6::R6Class(
       } 
       else 
       {
-        sdCoupledModelMsg$validateODE3(private$pcoupledModelId)
+        sdCoupledModelMsg$verifyModel3(private$pcoupledModelId)
         t <- 0
       }
       
@@ -989,13 +989,13 @@ sdCoupledModelClass <- R6::R6Class(
           },
           error = function(e)
           {
-            sdCoupledModelMsg$validateODE4(private$pcoupledModelId, auxVar, e)
+            sdCoupledModelMsg$verifyModel4(private$pcoupledModelId, auxVar, e)
             invisible(numeric(0))
           })
         
         if (is.null(aux[[auxVar]]) || is.na(aux[[auxVar]]) ||
             length(aux[[auxVar]]) == 0 || is.infinite(aux[[auxVar]]))
-          sdCoupledModelMsg$validateODE5(private$pcoupledModelId, aux, auxVar)
+          sdCoupledModelMsg$verifyModel5(private$pcoupledModelId, aux, auxVar)
       }
       # make the aux connection
       inp[conAuxInps] <- aux[conAux]
@@ -1049,7 +1049,7 @@ sdCoupledModelClass <- R6::R6Class(
             },
             error = function(e)
             {
-              sdCoupledModelMsg$validateODE6(private$pcoupledModelId, 
+              sdCoupledModelMsg$verifyModel6(private$pcoupledModelId, 
                                              namesCompEqs[[i]], e)
               return(invisible(NULL))
             })
@@ -1095,33 +1095,33 @@ sdCoupledModelClass <- R6::R6Class(
                     is.language(xUnlist[[i]]))
                   next # do nothing
                 else if (is.null(xUnlist[[i]]))
-                  sdCoupledModelMsg$validateODE7(private$pcoupledModelId, modelId, 
+                  sdCoupledModelMsg$verifyModel7(private$pcoupledModelId, modelId, 
                                                  names(xUnlist)[[i]], x, "NULL")
                 else if (length(xUnlist[[i]]) == 0 && is.numeric(xUnlist[[i]]))
-                  sdCoupledModelMsg$validateODE7(private$pcoupledModelId, modelId, 
+                  sdCoupledModelMsg$verifyModel7(private$pcoupledModelId, modelId, 
                                                  names(xUnlist)[[i]], x, 
                                                  "numeric(0)")
                 else if (is.na(xUnlist[[i]]))
-                  sdCoupledModelMsg$validateODE7(private$pcoupledModelId, modelId, 
+                  sdCoupledModelMsg$verifyModel7(private$pcoupledModelId, modelId, 
                                                  names(xUnlist)[[i]], x, "NA")
                 else if (is.infinite(xUnlist[[i]]))
-                  sdCoupledModelMsg$validateODE7(private$pcoupledModelId, modelId, 
+                  sdCoupledModelMsg$verifyModel7(private$pcoupledModelId, modelId, 
                                                  names(xUnlist)[[i]], x, "Inf")
               } 
             }
             else if (x %in% c('st', 'ct', 'par', 'inp', 'sw', 'aux'))
               next # do nothing if an arg is empty
             else if (is.null(unlist(var)))
-              sdCoupledModelMsg$validateODE8(private$pcoupledModelId, modelId, x, 
+              sdCoupledModelMsg$verifyModel8(private$pcoupledModelId, modelId, x, 
                                              "NULL")
             else if (length(var) == 0 && is.numeric(var))
-              sdCoupledModelMsg$validateODE8(private$pcoupledModelId, modelId, x, 
+              sdCoupledModelMsg$verifyModel8(private$pcoupledModelId, modelId, x, 
                                              "numeric(0)")
             else if (is.na(unlist(var)))
-              sdCoupledModelMsg$validateODE8(private$pcoupledModelId, modelId, x, 
+              sdCoupledModelMsg$verifyModel8(private$pcoupledModelId, modelId, x, 
                                              "NA")
             else if (is.infinite(unlist(var)))
-              sdCoupledModelMsg$validateODE8(private$pcoupledModelId, modelId, x, 
+              sdCoupledModelMsg$verifyModel8(private$pcoupledModelId, modelId, x, 
                                              "Inf")
           }
         }
@@ -1132,18 +1132,18 @@ sdCoupledModelClass <- R6::R6Class(
           dRes <- res[[1]]
           
           if (!is.numeric(dRes))
-            sdCoupledModelMsg$validateODE9(private$pcoupledModelId, typeof(dRes))
+            sdCoupledModelMsg$verifyModel9(private$pcoupledModelId, typeof(dRes))
           
           if (length(dRes) != length(st))
-            sdCoupledModelMsg$validateODE10(private$pcoupledModelId, dRes,
+            sdCoupledModelMsg$verifyModel10(private$pcoupledModelId, dRes,
                                             length(st))
         }
         else
-          sdCoupledModelMsg$validateODE11(private$pcoupledModelId, typeof(res))
+          sdCoupledModelMsg$verifyModel11(private$pcoupledModelId, typeof(res))
       }
       
       if (verbose)
-        sdCoupledModelMsg$validateODE12(private$pcoupledModelId)
+        sdCoupledModelMsg$verifyModel12(private$pcoupledModelId)
     },
     buildCoupledModel = function(from = NULL,
                                  to = NULL,

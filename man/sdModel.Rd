@@ -209,7 +209,7 @@ lv <- sdModel(modelId = "Lotka-Volterra", defaultScenario = lvscen,
               aux = aux)
               
 # validate the model ode
-lv$validateODE(verbose = TRUE)
+lv$verifyModel(verbose = TRUE)
 
 # simulate the model and plot the results
 outlv <- sdSimulate(model = lv, storeAuxTrajectory = TRUE)

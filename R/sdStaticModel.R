@@ -77,7 +77,7 @@
 #' 
 #' \item{\code{$print()}}{Print the object fields.}
 #' 
-#' \item{\code{$validateAlgebraicEquations(scenario = NULL, verbose = F)}}{
+#' \item{\code{$verifyModel(scenario = NULL, verbose = F)}}{
 #' Execute the model simulation first step in the default scenario or merged 
 #' with a given one. Check for possible incorrect variables and warn the user.
 #' 
@@ -129,7 +129,7 @@
 #'                              defaultScenario = envScen,
 #'                              equations = algEqEnvironment)
 #' # validate the equations and simulate the model
-#' envCapacity$validateAlgebraicEquations()
+#' envCapacity$verifyModel()
 #' outEnvCapacity <- sdSimulate(envCapacity)
 #' print(outEnvCapacity)
 #' 
@@ -274,7 +274,7 @@ sdStaticModelClass <- R6::R6Class(
           sep = "\n")
       cat("\n")
     },
-    validateAlgebraicEquations = function(scenario = NULL, verbose = F)
+    verifyModel = function(scenario = NULL, verbose = F)
     {
       # run the equations and model definition validation
       if (is.null(private$pdefaultScenario))
