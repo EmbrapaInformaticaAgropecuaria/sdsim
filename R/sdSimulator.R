@@ -280,9 +280,9 @@ CreateCoupledRootEventFunc <-
 #' with the given \code{scenario}. A wrapper around the 
 #' \code{\link[deSolve]{ode}} solver.
 #' 
-#' If performance is crucial remember to garantee that the following logical 
-#' parameters are set to FALSE: verifyModel, storeAuxTrajectory, 
-#' storeTimeSeriesTrajectory, verbose.
+#' If performance is crucial remember to garantee that the model is already 
+#' verified and the following logical parameters are set to FALSE: 
+#' storeAuxTrajectory, storeTimeSeriesTrajectory, verbose.
 #'
 #' @param model A \code{\link{sdModelClass}}, a 
 #' \code{\link{sdCoupledModelClass}} or a \code{\link{sdStaticModelClass}} 
@@ -318,8 +318,6 @@ CreateCoupledRootEventFunc <-
 #' 
 #' See the \code{\link[deSolve]{ode}} and the \code{\link[deSolve]{events}}
 #' details section for more information.
-#' @param verifyModel logical: if \code{TRUE} run the \code{model} object 
-#' validation before the simulation. Default is \code{FALSE}.
 #' @param events logical: if \code{TRUE} run the simulation with support to
 #' events (only if the \code{model} have a root specification); if \code{FALSE} 
 #' do not run the simulation with support to events. Default is \code{TRUE}.
@@ -348,7 +346,7 @@ CreateCoupledRootEventFunc <-
 #' bb <- sdLoadModel(file = "BouncingBall", repository = TRUE)
 #' 
 #' # simulate the model with validation and plot the results
-#' outbb <- sdSimulate(model = bb, verifyModel = TRUE, verbose = TRUE)
+#' outbb <- sdSimulate(model = bb, verbose = TRUE)
 #' outbb$plot("height speed", multipleYAxis = TRUE, units = TRUE)
 #' 
 #' # simualte the Bouncing Ball model in a different scenario with the 
@@ -364,7 +362,6 @@ sdSimulate <- function(model,
                        to = NULL,
                        by = NULL,
                        method = NULL,
-                       verifyModel = F,
                        events = T,
                        maxroots = 100,
                        terminalroot = NULL,
@@ -385,7 +382,7 @@ sdSimulate <- function(model,
     if (is.null(model$DifferentialEquations))
       sdSimulatorMsg$sdSimulateAtomic7(model$modelId)
     
-    if (verifyModel)
+    if (!model$isVerified)
       model$verifyModel(scenario, verbose = verbose)
     
     # Get model functions
@@ -688,7 +685,7 @@ sdSimulate <- function(model,
   }
   else if (inherits(model, "sdStaticModelClass"))
   {
-    if (verifyModel)
+    if (!model$isVerified)
       model$verifyModel(scenario, verbose = verbose)
     
     # Get model attributes
@@ -858,7 +855,7 @@ sdSimulate <- function(model,
       scenario <- sdBuildCoupledScenario(coupledScenarioId = "coupledScen", 
                                          scenarios = scenario)
     
-    if (verifyModel)
+    if (!model$isVerified)
       model$verifyModel(scenario = scenario, verbose = verbose)
     
     # Get model functions

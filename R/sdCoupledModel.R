@@ -712,7 +712,7 @@ sdCoupledModelClass <- R6::R6Class(
       private$pcomponentsAux <- lapply(unlist(private$pcomponentsAux, 
                                               recursive = FALSE), 
                                        as.expression)
-      private$flagBuild = FALSE
+      private$flagBuild <- private$flagVerify <- FALSE
       invisible()
     },
     removeComponent = function(...)
@@ -766,7 +766,7 @@ sdCoupledModelClass <- R6::R6Class(
             self$removeConnection(remCon)
         }
       }
-      private$flagBuild = FALSE
+      private$flagBuild <- private$flagVerify <- FALSE
     },
     addConnection = function(...)
     {
@@ -790,7 +790,7 @@ sdCoupledModelClass <- R6::R6Class(
         }
       }
       
-      private$flagBuild = FALSE
+      private$flagBuild <- private$flagVerify <- FALSE
     },
     removeConnection = function(...)
       # ... = cons ids
@@ -837,7 +837,7 @@ sdCoupledModelClass <- R6::R6Class(
       # remove the connections with id in the connecitonId vector
       private$pconnections <- private$pconnections[!(names(private$pconnections) 
                                                    %in% connectionsId)]
-      private$flagBuild = FALSE
+      private$flagVerify <- private$flagBuild <- FALSE
     },
     verifyModel = function(scenario = NULL, verbose = FALSE,
                            timeSeriesDirectory = "")
@@ -1144,6 +1144,8 @@ sdCoupledModelClass <- R6::R6Class(
       
       if (verbose)
         sdCoupledModelMsg$verifyModel12(private$pcoupledModelId)
+      
+      private$flagVerify <- TRUE
     },
     buildCoupledModel = function(from = NULL,
                                  to = NULL,
@@ -1584,6 +1586,10 @@ sdCoupledModelClass <- R6::R6Class(
     modelEnv = function()
     {
       return(private$pcoupledEnv)
+    },
+    isVerified = function()
+    {
+      return(private$flagVerify)
     }
   ),
   private = list(
@@ -1596,6 +1602,7 @@ sdCoupledModelClass <- R6::R6Class(
     auxCon = NULL,
     stCon = NULL,
     flagBuild = FALSE,
+    flagVerify = FALSE,
     pcomponents = list(),
     pcomponentsId = list(),
     pcomponentsClass = list(),

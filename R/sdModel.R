@@ -424,6 +424,8 @@ sdModelClass <- R6::R6Class(
       
       if (!missing(modelDescription) && !is.null(modelDescription))
         self$modelDescription <- modelDescription
+      
+      private$flagVerify <- FALSE
     },
     print = function()
     {
@@ -684,6 +686,8 @@ sdModelClass <- R6::R6Class(
       
       if (verbose)
         sdModelMsg$verifyModel11(private$pmodelId) 
+      
+      private$flagVerify <- TRUE
     },
     saveToXml = function(file = "sdModel.xml")
     {
@@ -805,6 +809,7 @@ sdModelClass <- R6::R6Class(
         {
           private$pdefaultScenario <- defaultScenario$clone()
           private$pdefaultScenario$scenarioId <- "Default"
+          private$flagVerify <- FALSE
         }
         else 
           sdModelMsg$defaultScenario(private$pmodelId)
@@ -845,6 +850,10 @@ sdModelClass <- R6::R6Class(
         else
           sdModelMsg$modelDescription(private$pmodelId)
       }
+    },
+    isVerified = function()
+    {
+      return(private$flagVerify)
     }
   ),
   private = list(
@@ -858,7 +867,8 @@ sdModelClass <- R6::R6Class(
     pEventFunction = NULL,
     pdefaultScenario = NULL,
     pglobalFunctions = list(),
-    paux = list()
+    paux = list(),
+    flagVerify = FALSE
   ))
 
 

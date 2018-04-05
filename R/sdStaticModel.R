@@ -240,6 +240,8 @@ sdStaticModelClass <- R6::R6Class(
       
       if (!missing(staticModelDescription) && !is.null(staticModelDescription))
         self$staticModelDescription <- (staticModelDescription)
+      
+      private$flagVerify <- FALSE
     },
     print = function()
     {
@@ -375,6 +377,8 @@ sdStaticModelClass <- R6::R6Class(
       
       if (verbose)
         sdStaticModelMsg$validate4(private$pstaticModelId)
+      
+      private$flagVerify <- TRUE
     },
     saveToXml = function(file = "sdStaticModel.xml")
     {
@@ -477,6 +481,7 @@ sdStaticModelClass <- R6::R6Class(
           }
           private$pdefaultScenario <- dfScen
           private$pdefaultScenario$scenarioId <- "Default"
+          private$flagVerify <- FALSE
         }
         else 
           sdStaticModelMsg$defaultscenario2(private$pstaticModelId)
@@ -504,6 +509,10 @@ sdStaticModelClass <- R6::R6Class(
         else
           sdStaticModelMsg$staticModelDescription(private$pstaticModelId)
       }
+    },
+    isVerified = function()
+    {
+      return(private$flagVerify)
     }
   ),
   private = list(
@@ -514,5 +523,6 @@ sdStaticModelClass <- R6::R6Class(
     pInitVars = NULL,
     pdefaultScenario = NULL,
     pglobalFunctions = list(),
-    pequations = list()
+    pequations = list(),
+    flagVerify = FALSE
   ))
