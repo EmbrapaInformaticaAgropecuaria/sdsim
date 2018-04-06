@@ -379,6 +379,7 @@ sdSimulate <- function(model,
   # If the model is atomic
   if (inherits(model, "sdModelClass"))
   {
+    # stop if model is empty
     if (is.null(model$DifferentialEquations))
       sdSimulatorMsg$sdSimulateAtomic7(model$modelId)
     
@@ -685,13 +686,18 @@ sdSimulate <- function(model,
   }
   else if (inherits(model, "sdStaticModelClass"))
   {
-    if (!model$isVerified)
-      model$verifyModel(scenario, verbose = verbose)
-    
     # Get model attributes
     equations <- model$equations
     InitVars <- model$InitVars
     globalfuns <- model$GlobalFunctions
+    
+    # stop if model is empty
+    if (length(equations) == 0)
+      sdSimulatorMsg$sdSimulateStatic0(model$staticModelId)
+    
+    if (!model$isVerified)
+      model$verifyModel(scenario, verbose = verbose)
+    
     
     # get the simulation scenario
     if (!is.null(model$defaultScenario))
@@ -835,12 +841,10 @@ sdSimulate <- function(model,
     # Try to build the coupled model if it is not built
     if (!model$isBuilt)
     {
-      model$buildCoupledModel(
-        coupledScenarioId = "coupledScen",
-        from = from,
-        to = to,
-        by = by,
-        method = method)
+      model$buildCoupledModel(from = from,
+                              to = to,
+                              by = by,
+                              method = method)
       
       if (!model$isBuilt)
         sdSimulatorMsg$sdSimulateCoupled1(model$coupledModelId)

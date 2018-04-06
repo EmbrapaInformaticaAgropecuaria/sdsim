@@ -305,8 +305,12 @@ sdCoupledModelMsg$verifyModel12 <- function(pcoupledModelId)
   message("sdsim::verifyModel - Coupled Model '", pcoupledModelId, 
           "' Ordinary Differential Equations Validated.")
 
+sdCoupledModelMsg$buildCoupledModel0 <- function(pcoupledModelId)
+  stop("sdsim::buildCoupledModel - Coupled Model '", pcoupledModelId, 
+       "' build error: the components are empty.", call. = F)
+
 sdCoupledModelMsg$buildCoupledModel1 <- function(pcoupledModelId)
-  warning("sdsim::buildCoupledModel - Coupled Model '", pcoupledModelId, 
+  stop("sdsim::buildCoupledModel - Coupled Model '", pcoupledModelId, 
           "' build error: no component was added. Add a component ", 
           "before building the coupled model.", call. = F)
 
@@ -862,8 +866,12 @@ sdSimulatorMsg$sdSimulateAtomic6 <- function(modelId, typeofscen)
 
 sdSimulatorMsg$sdSimulateAtomic7 <- function(modelId)
   stop("sdsim::sdSimulate - Simulation of the model '", modelId,
-       "' aborted: No differential equations function was set.", 
+       "' aborted: No differential equations function, model is empty.", 
        call. = F)
+
+sdSimulatorMsg$sdSimulateStatic0 <- function(staticModelId)
+  stop("sdsim::sdSimulate - Simulation of the static model '", staticModelId,
+       "' aborted: No algebraic equations, model is empty.", call. = F)
 
 sdSimulatorMsg$sdSimulateStatic1 <- function(staticModelId)
   stop("sdsim::sdSimulate - Simulation of the static model '", staticModelId,

@@ -1160,12 +1160,8 @@ sdCoupledModelClass <- R6::R6Class(
                                  timeSeriesDirectory = "")
     {
       if (length(private$pcomponentsId) == 0)
-      {
         sdCoupledModelMsg$buildCoupledModel1(private$pcoupledModelId)
-        
-        return(invisible(NULL))
-      }
-      
+
       # build default scenario concatanating the components default scenario
       componentsIds <- private$pcomponentsId
       scenComponents <- list()
@@ -1311,6 +1307,11 @@ sdCoupledModelClass <- R6::R6Class(
                 modelId = modelId)
           }
         }
+        
+        # stop if components are empty
+        if (length(private$pcomponentsEquations) == 0 && 
+            length(private$pcomponentsAux) == 0)
+          sdCoupledModelMsg$buildCoupledModel0(private$pcoupledModelId)  
         
         # set each component variables indexes
         indexComponents$st[[modelId]] <- match(
