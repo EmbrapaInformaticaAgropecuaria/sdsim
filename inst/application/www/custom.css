@@ -1,3 +1,7 @@
+.shiny-output-error-validation {
+  color: #0027ce;
+}
+
 .selectize-dropdown {
   width: 211px; 
   top: 34px;
@@ -17,15 +21,15 @@
   font-size: 25px;
 }
 
-.skin-blue .main-header .navbar {
+.skin-green .main-header .navbar {
   background-color: var(--main-color);
 }
 
-.skin-blue .main-header .logo, .skin-blue .main-header .logo:hover {
+.skin-green .main-header .logo, .skin-green .main-header .logo:hover {
   background-color: var(--logo-color);
 }
 
-.skin-blue .main-header .navbar .sidebar-toggle:hover {
+.skin-green .main-header .navbar .sidebar-toggle:hover {
   background-color: var(--main-color);
 }
 
@@ -37,7 +41,7 @@
     border: 1px solid var(--main-color);
 }
 
-.skin-blue .left-side, .skin-blue .main-sidebar, .skin-blue .wrapper {
+.skin-green .left-side, .skin-green .main-sidebar, .skin-green .wrapper {
   background-color: var(--sidebar-color);
 }
 
