@@ -1,12 +1,45 @@
 RenderDataTables <- function(simData, output) {
   # Render output datatable
-  output$outTrajectory <- renderDataTable({
+  outData <- reactive({
     out <- simData$models[[simData$currentModelId]]$out
-    if(!is.null(out)) {
-      return(out$outTrajectory)
-    } else {
-      NULL
-    }
+    validate(
+      need(!is.null(out), "")
+    )
+    validate(
+      need(!is.null(out$outTrajectory), "No results no display.")
+    )
+    
+    out$outTrajectory
+  })
+  
+  auxData <- reactive({
+    out <- simData$models[[simData$currentModelId]]$out
+    validate(
+      need(!is.null(out), "")
+    )
+    validate(
+      need(!is.null(out$auxTrajectory), 
+           "The simulated model doesn't have any auxiliary variables.")
+    )
+    
+    out$auxTrajectory
+  })
+  
+  inpData <- reactive({
+    out <- simData$models[[simData$currentModelId]]$out
+    validate(
+      need(!is.null(out), "")
+    )
+    validate(
+      need(!is.null(out$inpTrajectory), 
+           "The simulated model doesn't have any time series.")
+    )
+    
+    out$inpTrajectory
+  })
+  
+  output$outTrajectory <- renderDataTable({
+    outData()
   }, options = list(
     lengthMenu = c(5, 10, 25, 100, 250),
     pageLength = 10,
@@ -15,12 +48,7 @@ RenderDataTables <- function(simData, output) {
   
   # Render auxiliaries datatable
   output$auxTrajectory <- renderDataTable({
-    out <- simData$models[[simData$currentModelId]]$out
-    if(!is.null(out)) {
-      out$auxTrajectory
-    } else {
-      NULL
-    }
+    auxData()
   }, options = list(
     lengthMenu = c(5, 10, 25, 100, 250),
     pageLength = 10,
@@ -29,12 +57,7 @@ RenderDataTables <- function(simData, output) {
   
   # Render time series datatable
   output$inpTrajectory <- renderDataTable({
-    out <- simData$models[[simData$currentModelId]]$out
-    if(!is.null(out)) {
-      out$timeSeriesTrajectory
-    } else {
-      NULL
-    }
+    inpData()
   }, options = list(
     lengthMenu = c(5, 10, 25, 100, 250),
     pageLength = 10,
@@ -120,38 +143,54 @@ TrajectoriesDownloadHandler <- function(simData, output) {
 }
 
 RenderCustomPlot <- function(simData, input, output) {
+  plotData <- reactive({
+    out <- simData$models[[simData$currentModelId]]$out
+    validate(
+      need(length(input$selVarPlot) > 0, 
+           "Select the variables to be plotted.")
+    )
+    out
+  })
+  
   # Render custom plot
   output$customPlot <- renderPlot({
-      tryCatch({
-        out <- simData$models[[simData$currentModelId]]$out
-        SavePlotConfig(simData, input)
-        if(!is.null(out) && length(input$selVarPlot) > 0) {
-          variables <- paste(input$selVarPlot, collapse = " ")
-          variables <- paste(variables, "~" ,input$selectXAxisPlot)
-          
-          if(!is.null(input$plotTitle) && input$plotTitle != "")
-            main <- input$plotTitle 
-          else 
-            main <- NULL
-          
-          if(!is.null(input$plotXLabel) && input$plotXLabel != "")
-            xlab <- input$plotXLabel 
-          else 
-            xlab <- NULL
-          
-          if(!is.null(input$plotYLabel) && input$plotYLabel != "")
-            ylab <- strsplit(input$plotYLabel, ",") 
-          else 
-            ylab <- NULL
-          
-          type <- switch(input$plotType, "line" = "l", "point" = "p")
-          out$plot(variables, xlab = xlab, ylab = ylab, 
-                   multipleYAxis = input$multipleAxisToggle, 
-                   main = main, type = type, units = input$showUnitToggle)
-        }
-      },
-      error = function(e) {},
-      warning = function(w) {})
+    tryCatch({
+      out <- plotData()
+      
+      SavePlotConfig(simData, input)
+      if(!is.null(out) && length(input$selVarPlot) > 0) {
+        variables <- paste(input$selVarPlot, collapse = " ")
+        variables <- paste(variables, "~" ,input$selectXAxisPlot)
+        
+        if(!is.null(input$plotTitle) && input$plotTitle != "")
+          main <- input$plotTitle 
+        else 
+          main <- NULL
+        
+        if(!is.null(input$plotXLabel) && input$plotXLabel != "")
+          xlab <- input$plotXLabel 
+        else 
+          xlab <- NULL
+        
+        if(!is.null(input$plotYLabel) && input$plotYLabel != "")
+          ylab <- strsplit(input$plotYLabel, ",") 
+        else 
+          ylab <- NULL
+        
+        type <- switch(input$plotType, "line" = "l", "point" = "p")
+        
+        plot(out, variables, xlab = xlab, ylab = ylab,
+             multipleYAxis = input$multipleAxisToggle,
+             main = main, type = type, units = input$showUnitToggle)
+      }
+      
+    },
+    error = function(e) {
+      plotData()
+    },
+    warning = function(w) {
+      plotData()
+    })
   })
 }
 
