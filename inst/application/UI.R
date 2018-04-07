@@ -260,6 +260,10 @@ simulationPage <- shinydashboard::tabItem(
             "input.selVarPlot != 'No Variables Available' && input.selVarPlot != null",
             plotOutput("customPlot"),
             actionButton(inputId = "savePlot", "Save Plot")
+          ),
+          conditionalPanel(
+            "input.selVarPlot == 'No Variables Available'",
+            h5("No Variables to Plot, you must first simulate a model.")
           )
         )
       )
@@ -1203,7 +1207,9 @@ helpPage <- shinydashboard::tabItem(
         tags$li("Plot Title: The text displayed at the top of the plot."),
         tags$li("X-Axis Label: The text displayed under the horizontal axis."),
         tags$li("Y-Axis Label: The text displayed to the left of the vertical
-                axis."),
+                axis. If there are multiple Y-Axis variables, the label of each
+                axis can be separated by commas. Example: 'Variable X, 
+                Variable Y, Variable Z'"),
         tags$li("Y-Axis Variables: One or more variables that will be 
                 plotted."),
         tags$li("X-Axis Variable: The variable that will be represented as the
@@ -1269,5 +1275,6 @@ body <- shinydashboard::dashboardBody(
 ui <- shinydashboard::dashboardPage(
   header,
   sidebar,
-  body
+  body,
+  skin = "green"
 )
