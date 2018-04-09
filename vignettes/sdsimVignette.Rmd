@@ -39,8 +39,8 @@ The package defines an easy-to-learn structure that encapsulates in self-contain
 </center>
 
 
-* The package sdsim supports atomic models of ODE, static models of algebraic equations and the coupling of any class of model that make it possible, in a innovative way, to represent a more complex system with communication between its components [@ZEIGLER]. To facilitate debug all the models have a structure validation method [@validation] that warn the user about any implementation error found in the equations evaluation for the first time step.
-* Through an object oriented approach the package encapsulates all the equations and functions that defines a model in a single object, which also contains a scenario object to store all the data, variables and values, that defines the system environment. The sdsim classes were implemented using the R package R6[@R6] and uses its support to active binding to allow a simple access and assignment of the objects fields. The package export factory functions to facilitate the instantiation of objects, which can be saved in an Extensible Markup Language (XML) [@XML] for structured documentation that is easy to share and reuse.
+* The package sdsim supports atomic models of ODE, static models of algebraic equations and the coupling of any class of model that make it possible, in a innovative way, to represent a more complex system with communication between its components [@ZEIGLER]. To facilitate debug all the models have a structure verifying method [@validation] that warn the user about any implementation error found in the equations evaluation for the first time step.
+* Through an object oriented approach the package encapsulates all the equations and functions that defines a model in a single object, which also contains a scenario object to store all the data, variables and values, that defines the default system environment. The sdsim classes were implemented using the R package R6[@R6], with inheritance (superclasses) between the models to allow approaching new paradigms and with support to active binding to allow a simple access and assignment of the objects fields. The package export factory functions to facilitate the instantiation of objects, which can be saved in an Extensible Markup Language (XML) [@XML] for structured documentation that is easy to share and reuse.
 * The scenario was implemented as an independent object to make it possible to use different assumptions and get different forecasts for the same model object. This confers the flexibility to adapt of the sdsim composable model structure, which allows the same model to be reused with different scenarios in distinct simulations.
 * The simulation result is stored in an output object with visualization methods, both graphical and summarized, to help in the analysis of the results. The simulation output can be saved together with the model and scenario that generated it, ensuring reproducibility.
 * To make the package usable for different users background a graphical user interface (GUI) application was developed with the shiny web application framework [@SHINY]. All the package functionalities are available in the sdsim web application, facilitating familiarization with the package structure without being limited by a more advance knowledge of the R programming language.
@@ -167,7 +167,7 @@ print(lv)
 With the Lotka-Volterra model object initialized we can validate it's equations using the appropriate object method and then safely execute the simulation. This is done in the next chunk of code and the last ten lines of the outputted simulation trajectories is shown in a short print of the result object with the simulation diagnostics.
 
 ```{r LVsimulation, dependson=c(-1), cache=TRUE}
-lv$validateODE(verbose = TRUE)
+lv$verifyModel(verbose = TRUE)
 
 outlv <- sdSimulate(model = lv)
 print(outlv)
