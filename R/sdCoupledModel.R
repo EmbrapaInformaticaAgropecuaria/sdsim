@@ -494,8 +494,7 @@ sdBuildCoupledScenario = function(coupledScenarioId = NULL,
 #'                             coupledModelDescription = 
 #'   "Lotka-Volterra Equations implemented as a coupled model")
 #' # build the coupled model and validate it
-#' coupledLV$buildCoupledModel(coupledScenarioId = "lvScenCoupled", 
-#'                             from = 0, 
+#' coupledLV$buildCoupledModel(from = 0, 
 #'                             to = 200, 
 #'                             by = 1)
 #' coupledLV$verifyModel(verbose = TRUE)

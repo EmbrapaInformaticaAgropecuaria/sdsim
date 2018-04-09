@@ -5,8 +5,8 @@
 \title{Simulate System Dynamics Models and Static Models}
 \usage{
 sdSimulate(model, scenario = NULL, from = NULL, to = NULL, by = NULL,
-  method = NULL, verifyModel = F, events = T, maxroots = 100,
-  terminalroot = NULL, ties = "notordered", storeAuxTrajectory = T,
+  method = NULL, events = T, maxroots = 100, terminalroot = NULL,
+  ties = "notordered", storeAuxTrajectory = T,
   storeTimeSeriesTrajectory = F, verbose = F)
 }
 \arguments{
@@ -77,9 +77,6 @@ performance). Default is \code{FALSE}.}
 
 \item{verbose}{Logical: If \code{TRUE} provides additional details as to what 
 the computer is doing. Default is \code{FALSE}.}
-
-\item{validateModel}{logical: if \code{TRUE} run the \code{model} object 
-validation before the simulation. Default is \code{FALSE}.}
 }
 \value{
 A \code{\link{sdOutput}} object initialized with the simulation 
@@ -91,16 +88,16 @@ with the given \code{scenario}. A wrapper around the
 \code{\link[deSolve]{ode}} solver.
 }
 \details{
-If performance is crucial remember to garantee that the following logical 
-parameters are set to FALSE: validateModel, storeAuxTrajectory, 
-storeTimeSeriesTrajectory, verbose.
+If performance is crucial remember to garantee that the model is already 
+verified and the following logical parameters are set to FALSE: 
+storeAuxTrajectory, storeTimeSeriesTrajectory, verbose.
 }
 \examples{
 # Load the Bouncing Ball model from the sdsim repository
 bb <- sdLoadModel(file = "BouncingBall", repository = TRUE)
 
 # simulate the model with validation and plot the results
-outbb <- sdSimulate(model = bb, validateModel = TRUE, verbose = TRUE)
+outbb <- sdSimulate(model = bb, verbose = TRUE)
 outbb$plot("height speed", multipleYAxis = TRUE, units = TRUE)
 
 # simualte the Bouncing Ball model in a different scenario with the 

@@ -129,8 +129,7 @@ coupledLV <- sdCoupledModel(coupledModelId = "LVCoupled",
                             connections = lvConnections,
                             "Lotka-Volterra Equations implemented as coupled model")
 # build the coupled model and validate it
-coupledLV$buildCoupledModel(coupledScenarioId = "lvScenCoupled", 
-                            from = 0, 
+coupledLV$buildCoupledModel(from = 0, 
                             to = 200, 
                             by = 1)
 coupledLV$verifyModel(verbose = TRUE)
