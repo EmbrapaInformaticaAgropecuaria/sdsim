@@ -144,12 +144,11 @@ TrajectoriesDownloadHandler <- function(simData, output) {
 
 RenderCustomPlot <- function(simData, input, output) {
   plotData <- reactive({
-    out <- simData$models[[simData$currentModelId]]$out
     validate(
       need(length(input$selVarPlot) > 0, 
            "Select the variables to be plotted.")
     )
-    out
+    simData$models[[simData$currentModelId]]$out
   })
   
   # Render custom plot
@@ -179,9 +178,13 @@ RenderCustomPlot <- function(simData, input, output) {
         
         type <- switch(input$plotType, "line" = "l", "point" = "p")
         
+        multipleYAxis <- input$multipleAxisToggle
+        
+        showUnits <- input$showUnitToggle
+        
         plot(out, variables, xlab = xlab, ylab = ylab,
-             multipleYAxis = input$multipleAxisToggle,
-             main = main, type = type, units = input$showUnitToggle)
+             multipleYAxis = multipleYAxis,
+             main = main, type = type, units = showUnits)
       }
       
     },

@@ -129,6 +129,13 @@ execSim.onclick = function() {
   execSim.disabled = true;
 }
 
+// Temporarily disables simulation button when the selected model or scenario is changed
+Shiny.addCustomMessageHandler("delayExecSim", function(value) {
+  var panel = document.getElementById("execSim");
+  panel.disabled = true;
+  setTimeout(function() {panel.disabled = false;}, value);
+})
+  
 // Displays the simulation progress onscreen and re-enables the simulation button
 Shiny.addCustomMessageHandler("runningSimulation", function(value) {
   simulationProgress.hidden = !value;
@@ -176,25 +183,26 @@ methodInputDiv.onclick = function() {
   }
 }
 
-// Confirmation message before erasing model
+// Trigger event when a shiny input is changed
 $(document).on("shiny:inputchanged", function(event) {
+  var r;
+  var panel;
+  // Confirmation message before erasing model
   if (event.name === "deleteModel") {
-    var r = confirm("This will erase your current model.\nAre you sure you want to continue?");
+    r = confirm("This will erase your current model.\nAre you sure you want to continue?");
     
     if (r === false) {
       event.preventDefault();
     }
   }
-});
-
-// Confirmation message before erasing scenario
-$(document).on("shiny:inputchanged", function(event) {
+  
+  // Confirmation message before erasing scenario
   if (event.name === "deleteScenario") {
     if(selectScenario.value === "Default") {
       alert("The model's default scenario cannot be deleted!")
       event.preventDefault();
     } else {
-      var r = confirm("This will erase your current scenario.\nAre you sure you want to continue?");
+      r = confirm("This will erase your current scenario.\nAre you sure you want to continue?");
     
       if (r === false) {
         event.preventDefault();

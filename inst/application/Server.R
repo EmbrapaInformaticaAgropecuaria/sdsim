@@ -60,6 +60,9 @@ server <- shinyServer(function(input, output, session) {
   })
   
   observeEvent(input$selectModel, {
+    # Temporarily disables simulation button
+    session$sendCustomMessage("delayExecSim", 1400)
+    
     # Update simData changes if switching models
     # Observer is also activated when a model is loaded, but should not update
     # When a model is loaded simData$currentModelId is equal to input$selectModel
@@ -77,6 +80,9 @@ server <- shinyServer(function(input, output, session) {
   })
   
   observeEvent(input$selectScenario, {
+    # Temporarily disables simulation button
+    session$sendCustomMessage("delayExecSim", 1400)
+    
     if(!is.null(simData$models[[simData$currentModelId]]$currentScenarioId) &&
       simData$models[[simData$currentModelId]]$currentScenarioId != input$selectScenario)
       UpdateModelData(simData, input)

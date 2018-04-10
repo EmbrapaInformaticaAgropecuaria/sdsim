@@ -257,7 +257,7 @@ simulationPage <- shinydashboard::tabItem(
             style = "display: inline-block;vertical-align:top; 
             padding-top: 15px;"),
           conditionalPanel(
-            "input.selVarPlot != 'No Variables Available' && input.selVarPlot != null",
+            "input.selVarPlot != 'No Variables Available'",
             plotOutput("customPlot"),
             actionButton(inputId = "savePlot", "Save Plot")
           ),
