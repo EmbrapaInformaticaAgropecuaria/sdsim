@@ -39,8 +39,8 @@ The package defines an easy-to-learn structure that encapsulates in self-contain
 </center>
 
 
-* The package sdsim supports atomic models of ODE, static models of algebraic equations and the coupling of any class of model that make it possible, in a innovative way, to represent a more complex system with communication between its components [@ZEIGLER]. To facilitate debug all the models have a structure verifying method [@validation] that warn the user about any implementation error found in the equations evaluation for the first time step.
-* Through an object oriented approach the package encapsulates all the equations and functions that defines a model in a single object, which also contains a scenario object to store all the data, variables and values, that defines the default system environment. The sdsim classes were implemented using the R package R6[@R6], with inheritance (superclasses) between the models to allow approaching new paradigms and with support to active binding to allow a simple access and assignment of the objects fields. The package export factory functions to facilitate the instantiation of objects, which can be saved in an Extensible Markup Language (XML) [@XML] for structured documentation that is easy to share and reuse.
+* The package sdsim supports atomic models of ODE, static models of algebraic equations and the coupling of any class of model that make it possible, in a innovative way, to represent a more complex system with communication between its components [@ZEIGLER]. To facilitate debug all the models have a structure verifying method [@validation] that warn the user about any implementation error found in the equations evaluation in the time sequence first step.
+* Through an object oriented approach the package encapsulates all the equations and functions that defines a model in a single object, which also contains a scenario object to store all the data, variables and values, that defines the model default environment. The sdsim classes were implemented using the R package R6[@R6], using inheritance (superclass) between the models to allow approaching new paradigms and with support to active binding to allow a simple access and assignment of the objects fields. The package export factory functions to facilitate the instantiation of objects, which can be saved in an Extensible Markup Language (XML) [@XML] for structured documentation that is easy to share and reuse.
 * The scenario was implemented as an independent object to make it possible to use different assumptions and get different forecasts for the same model object. This confers the flexibility to adapt of the sdsim composable model structure, which allows the same model to be reused with different scenarios in distinct simulations.
 * The simulation result is stored in an output object with visualization methods, both graphical and summarized, to help in the analysis of the results. The simulation output can be saved together with the model and scenario that generated it, ensuring reproducibility.
 * To make the package usable for different users background a graphical user interface (GUI) application was developed with the shiny web application framework [@SHINY]. All the package functionalities are available in the sdsim web application, facilitating familiarization with the package structure without being limited by a more advance knowledge of the R programming language.
@@ -50,14 +50,14 @@ The package defines an easy-to-learn structure that encapsulates in self-contain
 
 ## Example Using sdsim
 
-The model of the Lotka-Volterra equations presented in the deSolve package [@deSolve] will be implemented here using the package sdsim structure.
+The model of the Lotka-Volterra equations presented in the deSolve package [@deSolve] will be implemented here using the package sdsim structure. This model consist of a population of preys and a population of consumers coexisting in the same environment.
 
 The Lotka-Volterra Model is defined by the following equations:
 
 $$dP    = growthP - ingestC$$
 $$dC    = ingestC * AE - mortC$$
 
-Where *dP* is the rate of change in the prey population and *dC* is the rate of change in the consumer population. The *growthP*, *ingestC* and *mortC* are auxiliary equations that help to compute the derivatives values and also store useful information. The auxiliary equations are defined as:
+Where *dP* is the rate of change in the prey population and *dC* is the rate of change in the consumer population. The *growthP*, *ingestC* and *mortC* are auxiliary equations that simplify, help to compute the derivatives values and also store useful information about the system behaviour. The auxiliary equations are defined as:
 
 $$ingestC = rI * P * C$$
 $$capacityRegulation = 1 - P/K$$
@@ -72,7 +72,7 @@ The sdsim atomic system dynamics model class named *sdModelClass* have the follo
 
 - *modelId*: a string with a valid name for the model identification, uses the function *make.names* [@RCoreTeam] to make syntactically valid names.
 - *modelDescription*: a string with a breath description of the model.
-- *defaultScenario*: The model default scenario object. It should contain all the model variables initialized with default values that ensures the model simulation.
+- *defaultScenario*: The model default scenario object. It should contain all the model variables initialized with default values that ensures the model simulation and exemplifies its behaviour.
 - *aux*: A list with the model auxiliary equations in strings or R-expressions written in R-format to assist in the *DifferentialEquations* computation.
 - *DifferentialEquations*: An R-function that computes the values of the state variables derivatives in the ODE system (the model definition) at each time step of the simulation.
 - *InitVars*: An R-function that initialize or change the initial state values and/or other model variables before the solver call when running a simulation. It can be used, for example, to compute some dependent parameter variables or the initial state values.
@@ -83,7 +83,7 @@ The sdsim atomic system dynamics model class named *sdModelClass* have the follo
 
 To define the example model we need a scenario object, a function to compute the derivatives of the ODE system and a list of auxiliary equations to help in this computation.
 
-At first, we will create the scenario that represents an environment for the Lotka-Volterra model. This model have two type of variables, the initial state of the system and the parameters, with descriptions and units. The scenario also stores some simulation configurations, the time sequence and the integrator method. The following chunk of code initialize the default scenario for this model.
+We will begin creating the scenario that represents an environment for the Lotka-Volterra model. This model have two type of variables, the initial state of the system and the parameters, with descriptions and units. The scenario also stores some simulation configurations, the time sequence and the integrator method. The following chunk of code initialize the default scenario for this model.
 
 ```{r LVscenario, cache=TRUE}
 library(sdsim)
@@ -133,15 +133,15 @@ Next we will create the auxiliary equations and the *differentialEquation* funct
 Where:
 
 - *t*: is the current time point in the integration;
-- *st*: is a list with the current estimate of the state variables in the ODE system;
-- *ct*: is a list with the model constant variables;
-- *par*: is a list with the model parameter variables;
-- *inp*: is a list with the model input variables and any time series variables;
-- *sw*: is  list with the model switch variables and;
-- *aux*: is a list with the predecessors model auxiliary equations, following the sorted list, evaluated for the current time step.
+- *st*: is a list with the current estimative of the state variables in the ODE system;
+- *ct*: is a list with the model scenario constant variables;
+- *par*: is a list with the model scenario parameter variables;
+- *inp*: is a list with the model scenario input variables, it should include any exougenous source such as time series;
+- *sw*: is  list with the model scenario switch variables and;
+- *aux*: is a list with the model auxiliary equations evaluated for the current time step (t).
 - *return value*: a list, whose first element is a vector containing the derivatives of the state variables with respect to time, as defined by the **ode** function.
 
-These arguments are also available for the auxiliary equations expressions list, that can be defined in a list of strings or expressions which will be evaluated at each time step before the *differentialEquation* function call.
+These arguments are also available for the auxiliary equations definition using a list of strings or expressions which will be evaluated at each time step before the *differentialEquation* function call.
 
 The model is defined as follow.
 
@@ -164,7 +164,7 @@ lv <- sdModel(modelId = "LotkaVolterra",
 print(lv)
 ```
 
-With the Lotka-Volterra model object initialized we can validate it's equations using the appropriate object method and then safely execute the simulation. This is done in the next chunk of code and the last ten lines of the outputted simulation trajectories is shown in a short print of the result object with the simulation diagnostics.
+With the Lotka-Volterra model object initialized we can verify its equations using the appropriate object method and then safely execute the simulation. This is done in the next chunk of code and the last ten lines of the outputted simulation trajectories are shown in a short print of the result object with the simulation diagnostics.
 
 ```{r LVsimulation, dependson=c(-1), cache=TRUE}
 lv$verifyModel(verbose = TRUE)
@@ -181,11 +181,11 @@ outlv$plot("P C",
            multipleYAxis = TRUE)
 ```
 
-The output results could also be summarized and the trajectories fully printed for more accurate tabular visualization.
+Through the object methods the output result could also be summarized and the trajectories fully printed for more accurate tabular visualization.
 
 ### sdsim Performance
 
-Using the package *microbenchmark* [@microbenchmark] the performance of the Lotka-Volterra model implemented here was compared with the original implementation by the deSolve package. The simulation time elapse of the two implementations in a computer with 7.7 GiB of RAM memory and processor Intel® Core™ i7 CPU 870 @ 2.93GHz × 8 is compared in the following table.
+Using the package *microbenchmark* [@microbenchmark] the performance of the Lotka-Volterra model implemented here was compared with the original implementation by the deSolve package. The simulation time elapse of the two implementations in a computer with 7.7 GiB of RAM memory and processor Intel® Core™ i7 CPU 870 @ 2.93GHz × 8 are compared in the following table.
 
 
 | Package | Median | Unit |
@@ -201,7 +201,7 @@ Even though this overhead means loss of efficiency the sdsim package compensates
 
 ### Implementing a Static Model
 
-A static model calculates the system in equilibrium, and thus is time-invariant. The sdsim static (or steady-state, no state variables) object model consists of algebraic equations and a default scenario describing the system environment (variables and values). In this definition a static model provides the system response to a specific set of input conditions. If there is no variant input, as a time series or results from a dynamic model, the evaluation of the algebraic equations will be constant.
+A static model calculates the system in equilibrium, and thus is time-invariant. The sdsim static (or steady-state, no state variables) object model consists of algebraic equations and a default scenario describing the system environment (variables and values). In this definition a static model provides the system response to a specific set of input conditions. If there is no exogenous source input, such as a time series or results from a dynamic model, the evaluation of the algebraic equations will be constant.
 
 The following variables are available in the algebraic equations evaluation:
 
@@ -258,15 +258,17 @@ The result show that 90% of the environment is still available for population gr
 
 A scenario represents the variables and values that constitute a system environment [@scenario], and that are used to compute the equations of a model. It also stores configurations for a simulation, e.g. the time sequence and the integrator method. 
 
-The sdsim models have a default scenario that should contain all the model variables initialized with default values that ensure their simulation. The models composability capacity allow in simulations their combination with a range of scenarios, which overwrite the values of the model default scenario (see example in the following subsection [Using Excel Files]).
+The sdsim models have a default scenario to store all the system variables that need to be measured and that should be initialized with default values to ensure a simulation. The default scenario serve as a use case of the model and should exemplify its behaviour. The package composability specification allow the combination of a model with a range of scenarios of interest in different simulations, these given scenarios overwrite the values of the model default scenario variables to represent each different aimed purpose and observation (see example in the following subsection [Using Excel Files]).
 
 The sdsim package defines a scenario through the following type of variables:
 
 - state: The default initial state values for the ODE system. The state variables are used to describe the mathematical "state" of a dynamic system. The continuous rate of change of these variables is determined by the model *DifferentialEquations* function. Not present in static models.
 - constant: The model constant values that are immutable between simulations and inaccessible for statistical calibration.
 - parameter: The model parameters that are only constant during one simulation.
-- input: The model inputs that are exogenous variables or time series variables.
+- input: The model inputs that are exogenous variables, such as coupled or time series variables.
 - switch: The model switches that assists in any kind of selection.
+
+The scenario elements notation were organized by types to make it easier to determine each variable role in a system of interest. The understandability of a model can be increased when the modeler makes use of these different types of variables to define how each variable behave, influence and fit into a system. The learnability of a shared model can be eased if one can visualize just by looking to the system equations what each variable represent and how they interact to generate the behavior of the system dynamics being studied.
 
 There are four possible ways of defining a scenario in the sdsim package: (1) using *lists*; (2) using the object methods; (3) using *data.frames*; or (4) using an Excel file. The first way was demonstrated in the previous example and simple consist of passing to the factory function a named list for each type of variable, including the descriptions and units. The other three ways will be described in the next subsections by redefining the default scenario of the Lotka-Volterra example.
 
@@ -300,7 +302,7 @@ lvScenario$setTimeSequence(by = 1)
 print(lvScenario)
 ```
 
-The scenario fields are implemented as an active binding [@RCoreTeam], meaning they are associated with a function but are accessed as common items. This way the package enforces valid assignment to the object fields.
+The scenario fields are implemented as an active binding [@RCoreTeam], meaning that they are associated with a function but are accessed as common items. This way the package enforces valid assignment to the object fields.
 
 ## Using *Data.frames*
 
@@ -400,10 +402,9 @@ outlv$plot("P C",
            multipleYAxis = TRUE)
 ```
 
-When a specific scenario is passed to the simulator it is merged with the model default scenario, meaning that all the variables present in the given scenario will overwrite the default values in the simulation. 
+The scenarios of interest passed to the simulator function along with a model should not contain all the variables that compose the model default scenario. Instead it should contain only the variables of need to the analysis, guaranteeing that the computation time will be spent updating only the necessary variables without modifying others that will keep their default values.
 
 In the example above all the sheets except the *state* sheet could be deleted from the Excel file to save some computation time since they were not modified and the default values were still used.
-
 
 # Exploring the Output Visualization
 
@@ -411,7 +412,9 @@ The sdsim simulation output object obtained with the sdsim simulator function co
 
 It has methods for saving the output with the model and scenario that generated it, for plotting the stored trajectories and also for summarizing them.
 
-The output plot can be configured with a character formula that indicates the variables trajectories to be used. The sdsim plot formula follow the standard:
+The output plot can automatically show all the output trajectory variables in separate charts or be personalized with a character formula to indicate the variables trajectories to be used and combined in each chart axis to suit the user analysis.
+
+The sdsim plot formula follow the standard:
 
 > "y ~ x"
 
