@@ -124,7 +124,7 @@ AssembleAtomicModel <- function(model, timeSeriesDirectory, progressFunction = N
     unit = auxUnits,
     description = auxDescriptions)
   
-  modelObj <- sdsim::sdModel(
+  modelObj <- sdsim::sdAtomicModel(
     modelId = model$modelId,
     DifferentialEquations = DifferentialEquations,
     defaultScenario = defaultScenarioObj,
