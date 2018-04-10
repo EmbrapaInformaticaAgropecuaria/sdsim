@@ -294,7 +294,7 @@ sdOutputClass <- R6::R6Class(
       data <- private[["poutTrajectory"]]
       
       # retrieve the model default scenario
-      if (inherits(private$pmodel, "sdAtomicModelClass") || 
+      if (inherits(private$pmodel, "sdAtomicModel") || 
           inherits(private$pmodel, "sdStaticModelClass"))
         dfscen <- private$pmodel$defaultScenario
       else if (inherits(private$pmodel, "sdCoupledModelClass"))
