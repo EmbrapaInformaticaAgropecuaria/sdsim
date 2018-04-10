@@ -284,7 +284,7 @@ CreateCoupledRootEventFunc <-
 #' verified and the following logical parameters are set to FALSE: 
 #' storeAuxTrajectory, storeTimeSeriesTrajectory, verbose.
 #'
-#' @param model A \code{\link{sdModelClass}}, a 
+#' @param model A \code{\link{sdAtomicModelClass}}, a 
 #' \code{\link{sdCoupledModelClass}} or a \code{\link{sdStaticModelClass}} 
 #' object.
 #' @param scenario A \code{\link{sdScenarioClass}} object or a character string 
@@ -377,7 +377,7 @@ sdSimulate <- function(model,
   methodArg <- method
   
   # If the model is atomic
-  if (inherits(model, "sdModelClass"))
+  if (inherits(model, "sdAtomicModel"))
   {
     # stop if model is empty
     if (is.null(model$DifferentialEquations))
@@ -405,7 +405,7 @@ sdSimulate <- function(model,
         if (is.character(scenario))
           scenario <- sdLoadScenario(file = scenario)
         
-        if (inherits(scenario, "sdScenarioClass"))
+        if (inherits(scenario, "sdScenario"))
         {
           if (length(scenario$state) > 0)
             defaultScenario$addState(scenario$state, verbose = verbose)
@@ -953,7 +953,7 @@ sdSimulate <- function(model,
       # run the init vars
       if (!is.null(componentsInitVars[[modelId]]))
       {
-        if (inherits(model$components[[modelId]], "sdModelClass"))
+        if (inherits(model$components[[modelId]], "sdAtomicModelClass"))
           modelInitVars <-
             componentsInitVars[[modelId]](
               st = st[model$indexComponents$st[[modelId]]],
@@ -1237,4 +1237,6 @@ sdSimulate <- function(model,
     
     return(output)
   }
+  else
+    stop(sdSimulatorMsg$sdSimulate, call. = F)
 }

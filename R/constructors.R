@@ -1,6 +1,6 @@
 #' Creates an Atomic System Dynamics Model Object
 #' 
-#' A factory function that creates a \code{\link{sdModelClass}} object from 
+#' A factory function that creates a \code{\link{sdAtomicModelClass}} object from 
 #' functions that describe the changes in the system states in response to 
 #' external actions and other system flows, and a default scenario describing 
 #' the system environment (variables and default values). 
@@ -179,9 +179,12 @@
 #'                      unit = parsUnits, description = parsDescription)
 #' 
 #' # create the model object
-#' lv <- sdModel(modelId = "Lotka-Volterra", defaultScenario = lvscen, 
-#'               DifferentialEquations = LVode,
-#'               aux = aux)
+# lv <- sdAtomicModel(
+#   modelId = "Lotka-Volterra",
+#   defaultScenario = lvscen,
+#   DifferentialEquations = LVode,
+#   aux = aux
+# )
 #'               
 #' # validate the model ode
 #' lv$verifyModel(verbose = TRUE)
@@ -191,36 +194,38 @@
 #' outlv$plot("P C", multipleYAxis = TRUE, 
 #'            main = "Prey and Consumer by Lotka-Volterra")
 #' outlv$saveSimulationTrajectories(path = "LV") 
-#' @return A \code{\link{sdModelClass}} object.
-sdModel <- function(modelId = NULL,
-                    modelDescription = NULL,
-                    defaultScenario = NULL,
-                    aux = NULL,
-                    DifferentialEquations = NULL, 
-                    InitVars = NULL,
-                    PostProcessVars = NULL, 
-                    RootSpecification = NULL, 
-                    EventFunction = NULL,
-                    globalFunctions = NULL)
+#' @return A \code{\link{sdAtomicModelClass}} object.
+sdAtomicModel <- function(modelId = NULL,
+                          modelDescription = NULL,
+                          defaultScenario = NULL,
+                          aux = NULL,
+                          DifferentialEquations = NULL, 
+                          InitVars = NULL,
+                          PostProcessVars = NULL, 
+                          RootSpecification = NULL, 
+                          EventFunction = NULL,
+                          globalFunctions = NULL)
 {
   # create a new model
-  model <- sdModelClass$new(modelId = modelId,
-                            DifferentialEquations = DifferentialEquations,
-                            modelDescription = modelDescription,
-                            defaultScenario = defaultScenario,
-                            InitVars = InitVars,
-                            PostProcessVars = PostProcessVars, 
-                            RootSpecification = RootSpecification, 
-                            EventFunction = EventFunction,
-                            aux = aux,
-                            globalFunctions = globalFunctions)
+  model <- sdAtomicModelClass$new(
+    modelId = modelId,
+    DifferentialEquations = DifferentialEquations,
+    modelDescription = modelDescription,
+    defaultScenario = defaultScenario,
+    InitVars = InitVars,
+    PostProcessVars = PostProcessVars, 
+    RootSpecification = RootSpecification, 
+    EventFunction = EventFunction,
+    aux = aux,
+    globalFunctions = globalFunctions
+  )
   
   return(model)
 }
 
 #' Loads a Model from a XML File
 #' 
-#' A factory function that creates \code{\link{sdModelClass}}, 
+#' A factory function that creates \code{\link{sdAtomicModelClass}}, 
 #' \code{\link{sdCoupledModelClass}} or \code{\link{sdStaticModelClass}} object 
 #' from a XML file or from the package 
 #' repository (see the available models in the \code{\link{sdRepository}} 
@@ -238,7 +243,7 @@ sdModel <- function(modelId = NULL,
 #' complete list of valid names for loading existing models. Default is FALSE.
 #' @param timeSeriesDirectory The directory where time series inputs are stored 
 #' (when passing the time series inputs via external files).
-#' @return A \code{\link{sdModelClass}}, a \code{\link{sdCoupledModelClass}} or 
+#' @return A \code{\link{sdAtomicModelClass}}, a \code{\link{sdCoupledModelClass}} or 
 #' a \code{\link{sdStaticModelClass}} object.
 #' @examples 
 #' # Load the Bouncing Ball model from the sdsim repository
@@ -297,6 +302,9 @@ sdLoadModel <- function(file, repository = F,
   #             "sdsim version is: ", packageVersion("sdsim"))
   # }
   
+  
+  modelTags <- names(XML::xmlChildren(model))
+  # class(sdAtomicModel)[[1]] %in% modelTags
   # convert the xml to list
   model <- XML::xmlToList(model)
   
@@ -327,17 +335,19 @@ sdLoadModel <- function(file, repository = F,
     }
     
     # creat a new model
-    model <- sdModelClass$new(modelId = model$modelId,
-                              DifferentialEquations = StringToFun(model$DifferentialEquations),
-                              defaultScenario = model$defaultScenario,
-                              InitVars = StringToFun(model$InitVars),
-                              PostProcessVars = StringToFun(model$PostProcessVars),
-                              RootSpecification = model$RootSpecification,
-                              EventFunction = StringToFun(model$EventFunction),
-                              aux = model$aux ,
-                              modelDescription = model$modelDescription,
-                              globalFunctions = lapply(model$globalFunctions, 
-                                                       StringToFun))
+    model <- sdAtomicModelClass$new(
+      modelId = model$modelId,
+      DifferentialEquations = StringToFun(model$DifferentialEquations),
+      defaultScenario = model$defaultScenario,
+      InitVars = StringToFun(model$InitVars),
+      PostProcessVars = StringToFun(model$PostProcessVars),
+      RootSpecification = model$RootSpecification,
+      EventFunction = StringToFun(model$EventFunction),
+      aux = model$aux ,
+      modelDescription = model$modelDescription,
+      globalFunctions = lapply(model$globalFunctions, 
+                               StringToFun)
+    )
     
     return(model)
   }
@@ -362,7 +372,7 @@ sdLoadModel <- function(file, repository = F,
       # convert the components
       model$components <- lapply(model$components, function(x)
       {
-        # convert each component to a sdModel object
+        # convert each component to a sdAtomicModel object
         if (is.list(x))
         { 
           # create the default scenario
@@ -383,7 +393,7 @@ sdLoadModel <- function(file, repository = F,
                        timeSeriesDirectory = timeSeriesDirectory)
           
           if (!is.null(x$modelId))  # create a sd atomic model
-            component <- sdModelClass$new(
+            component <- sdAtomicModelClass$new(
               modelId = x$modelId,
               DifferentialEquations = StringToFun(x$DifferentialEquations),
               defaultScenario = x$defaultScenario,
@@ -474,7 +484,7 @@ sdLoadModel <- function(file, repository = F,
 #' 
 #' A factory function that creates a \code{\link{sdCoupledModelClass}} object 
 #' made up of instanced
-#' \code{\link{sdModelClass}}, \code{\link{sdStaticModelClass}} and/or 
+#' \code{\link{sdAtomicModelClass}}, \code{\link{sdStaticModelClass}} and/or 
 #' \code{\link{sdCoupledModelClass}} components and a list of connections that 
 #' define the flow of information between components.
 #'  
@@ -493,7 +503,7 @@ sdLoadModel <- function(file, repository = F,
 #' valid name (see \code{\link[base]{make.names}}).
 #' @param coupledModelDescription A character string with the coupled model 
 #' description.
-#' @param components A list of \code{\link{sdModelClass}}, 
+#' @param components A list of \code{\link{sdAtomicModelClass}}, 
 #' \code{\link{sdStaticModelClass}} and/or \code{\link{sdCoupledModelClass}} 
 #' objects. 
 #' 
@@ -538,14 +548,16 @@ sdLoadModel <- function(file, repository = F,
 #' }
 #' 
 #' # create the component prey model
-#' prey <- sdModel(modelId = "Prey",
-#'                 defaultScenario = sdScenario(scenarioId = "preyScen",
-#'                                              times = times,
-#'                                              state = stPrey,
-#'                                              parameter = parsPrey,
-#'                                              input = inpPrey),
-#'                 aux = auxPrey,
-#'                 DifferentialEquations = LVodePrey)
+# prey <- sdAtomicModel(
+#   modelId = "Prey",
+#   defaultScenario = sdScenario(scenarioId = "preyScen",
+#                                times = times,
+#                                state = stPrey,
+#                                parameter = parsPrey,
+#                                input = inpPrey),
+#   aux = auxPrey,
+#   DifferentialEquations = LVodePrey
+# )
 #' 
 #' # Consumer model variables and ode function
 #' stConsumer <- list(C = 2)
@@ -564,14 +576,17 @@ sdLoadModel <- function(file, repository = F,
 #' }
 #' 
 #' # create the component consumer model
-#' consumer <- sdModel(modelId = "Consumer",
-#'                     defaultScenario = sdScenario(scenarioId = "consumerScen",
-#'                                                  times = times,
-#'                                                  state = stConsumer,
-#'                                                  parameter = parsConsumer,
-#'                                                  input = inpConsumer),
-#'                     aux = auxConsumer,
-#'                     DifferentialEquations = LVodeConsumer)
+# consumer <- sdAtomicModel(
+#   modelId = "Consumer",
+#   defaultScenario = sdScenario(
+#     scenarioId = "consumerScen",
+#     times = times,
+#     state = stConsumer,
+#     parameter = parsConsumer,
+#     input = inpConsumer),
+#   aux = auxConsumer,
+#   DifferentialEquations = LVodeConsumer
+# )
 #' 
 #' # create the coupled model connections list 
 #' # conP: inform the consumer model about the amount of preys and 

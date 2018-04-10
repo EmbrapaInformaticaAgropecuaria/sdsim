@@ -137,6 +137,7 @@
 #' # and therefore will only be simulated for the first time step if not coupled
 sdStaticModelClass <- R6::R6Class(
   classname = "sdStaticModelClass",
+  inherit = sdModelClass,
   public = list(
     # Class Public Atributes
     initialize = function(staticModelId,

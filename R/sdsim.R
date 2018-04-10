@@ -27,7 +27,7 @@
 #' \code{\link{sdRunApp}} for launching the sdsim application for atomic models; 
 #' a shiny server interface,
 #' 
-#' \code{\link{sdModel}} for creating an atomic system dynamics model object, 
+#' \code{\link{sdAtomicModel}} for creating an atomic system dynamics model object, 
 #' 
 #' \code{\link{sdStaticModel}} for creating a static system model object, 
 #' 

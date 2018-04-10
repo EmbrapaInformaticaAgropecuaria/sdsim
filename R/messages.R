@@ -836,6 +836,9 @@ sdStaticModelMsg$staticModelDescription <- function(pstaticModelId)
 ##
 sdSimulatorMsg <- new.env()
 
+sdSimulatorMsg$sdSimulate <- paste("sdsim::sdSimulate - Simulation aborted:",
+       "Invalid model class. See help('sdLoadModel') for available classes.")
+
 sdSimulatorMsg$sdSimulate <- function()
   stop("sdsim::sdSimulate - Simulation aborted: ",
        "A model must be informed to run the simulation.", call. = F)

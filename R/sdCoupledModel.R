@@ -199,7 +199,7 @@ sdBuildCoupledScenario = function(coupledScenarioId = NULL,
 #' Class Representation of a Coupled System Dynamics Model
 #'
 #' Represents a coupled system dynamics model made up of instanced
-#' \code{\link{sdModelClass}}, \code{\link{sdStaticModelClass}} and/or 
+#' \code{\link{sdAtomicModelClass}}, \code{\link{sdStaticModelClass}} and/or 
 #' \code{\link{sdCoupledModelClass}} components and a list of connections that 
 #' define the flow of information between components. 
 #' The \code{connections} list determines loops of information feedback and 
@@ -227,7 +227,7 @@ sdBuildCoupledScenario = function(coupledScenarioId = NULL,
 #' non-word character will be removed and the result will be converted to a 
 #' valid name (see \code{\link[base]{make.names}}).
 #' @field coupledModelDescription A string with the coupled model description.
-#' @field components A list of \code{\link{sdModelClass}}, 
+#' @field components A list of \code{\link{sdAtomicModelClass}}, 
 #' \code{\link{sdStaticModelClass}} and/or \code{\link{sdCoupledModelClass}} 
 #' objects. 
 #' 
@@ -277,7 +277,7 @@ sdBuildCoupledScenario = function(coupledScenarioId = NULL,
 #'
 #' \describe{
 #' \item{...}{A character string with a model XML file name or a 
-#' \code{\link{sdModelClass}}, \code{\link{sdStaticModelClass}} and/or 
+#' \code{\link{sdAtomicModelClass}}, \code{\link{sdStaticModelClass}} and/or 
 #' \code{\link{sdCoupledModelClass}} objects already initialized. The
 #' models must have different \code{ID}'s to be used as unique
 #' identifiers. Only one component by ID is stored.}}}
@@ -415,15 +415,18 @@ sdBuildCoupledScenario = function(coupledScenarioId = NULL,
 #' }
 #' 
 #' # create the component prey model
-#' prey <- sdModel(modelId = "Prey",
-#'                 defaultScenario = sdScenario(scenarioId = "preyScen",
-#'                                              times = times,
-#'                                              state = stPrey,
-#'                                              parameter = parsPrey,
-#'                                              input = inpPrey,
-#'                                              description = descriptionsPrey),
-#'                 aux = auxPrey,
-#'                 DifferentialEquations = LVodePrey)
+# prey <- sdAtomicModel(
+#   modelId = "Prey",
+#   defaultScenario = sdScenario(
+#     scenarioId = "preyScen",
+#     times = times,
+#     state = stPrey,
+#     parameter = parsPrey,
+#     input = inpPrey,
+#     description = descriptionsPrey),
+#   aux = auxPrey,
+#   DifferentialEquations = LVodePrey
+# )
 #' 
 #' # Consumer model variables and ode function
 #' stConsumer <- list(C = 2)
@@ -447,16 +450,18 @@ sdBuildCoupledScenario = function(coupledScenarioId = NULL,
 #' }
 #' 
 #' # create the component consumer model
-#' consumer <- sdModel(modelId = "Consumer",
-#'                     defaultScenario = sdScenario(
-#'                       scenarioId = "consumerScen",
-#'                       times = times,
-#'                       state = stConsumer,
-#'                       parameter = parsConsumer,
-#'                       input = inpConsumer,
-#'                       description = descriptionsConsumer),
-#'                     aux = auxConsumer,
-#'                     DifferentialEquations = LVodeConsumer)
+# consumer <- sdAtomicModel(
+#   modelId = "Consumer",
+#   defaultScenario = sdScenario(
+#     scenarioId = "consumerScen",
+#     times = times,
+#     state = stConsumer,
+#     parameter = parsConsumer,
+#     input = inpConsumer,
+#     description = descriptionsConsumer),
+#   aux = auxConsumer,
+#   DifferentialEquations = LVodeConsumer
+# )
 #' 
 #' # Environment model variables and algebraic equations
 #' parEnv <- data.frame(Variable = c("K"),
@@ -507,6 +512,7 @@ sdBuildCoupledScenario = function(coupledScenarioId = NULL,
 #'             multipleYAxis = TRUE)
 sdCoupledModelClass <- R6::R6Class(
   classname = "sdCoupledModelClass",
+  inherit = sdModelClass,
   public = list(
     # Class Public Methods
     initialize = function(coupledModelId = NULL,
@@ -582,8 +588,8 @@ sdCoupledModelClass <- R6::R6Class(
         if (is.character(model))
           model <- sdLoadModel(file = model)
         
-        # only add sdModel's or sdStaticModel's
-        if (inherits(model, "sdModelClass"))
+        # only add sdAtomicModel's or sdStaticModel's
+        if (inherits(model, "sdAtomicModelClass"))
         {
           id <- model$modelId
           # check if id already exist in components id
@@ -908,7 +914,7 @@ sdCoupledModelClass <- R6::R6Class(
         # run the init vars
         if (!is.null(componentsInitVars[[modelId]]))
         {
-          if (inherits(private$pcomponents[[modelId]], "sdModelClass"))
+          if (inherits(private$pcomponents[[modelId]], "sdAtomicModelClass"))
             modelInitVars <- componentsInitVars[[modelId]](
               st = st[iComps$st[[modelId]]],
               ct = ct[iComps$ct[[modelId]]],

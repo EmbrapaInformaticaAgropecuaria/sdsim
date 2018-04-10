@@ -13,7 +13,7 @@
 #' @field outputId The output id, generated in the initialization as: 
 #' "Simulation Output " + Sys.time(). 
 #' @field model The model simulated. A \code{\link{sdStaticModelClass}}, a 
-#' \code{\link{sdModelClass}} or a \code{\link{sdCoupledModelClass}} object.
+#' \code{\link{sdAtomicModelClass}} or a \code{\link{sdCoupledModelClass}} object.
 #' @field scenario The \code{\link{sdScenarioClass}} object used in the 
 #' simulation, if any.
 #' @field outTrajectory In case of a \code{\link{sdStaticModelClass}}: 
@@ -24,7 +24,7 @@
 #' the time sequence values. The names of the \code{eq} list will be 
 #' used to label the columns of the algebraic equations data.frame.
 #' 
-#' In case of a \code{\link{sdModelClass}} or a 
+#' In case of a \code{\link{sdAtomicModelClass}} or a 
 #' \code{\link{sdCoupledModelClass}}: a 
 #' data.frame with the ODE output of the simulation. This data.frame have up to 
 #' as many rows as elements in the time sequence and as many columns as 
@@ -35,7 +35,7 @@
 #' the integrator returns with an unrecoverable error. 
 #' If the \code{state} list and the auxiliary values have a names attribute, 
 #' they will be used to label the columns of the output data.frame. 
-#' @field auxTrajectory Just in case of a \code{\link{sdModelClass}} or a 
+#' @field auxTrajectory Just in case of a \code{\link{sdAtomicModelClass}} or a 
 #' \code{\link{sdCoupledModelClass}}:
 #' A data.frame with the auxiliary equations trajectories 
 #' of the simulation. This data.frame have up to as many rows as elements in the 
@@ -204,8 +204,8 @@ sdOutputClass <- R6::R6Class(
     print = function()
     {
       cat("\n<SDOutput ")
-      if (inherits(private$pmodel, "sdModelClass"))
-        cat("sdModel ID = ", private$pmodel$modelId, sep = "")
+      if (inherits(private$pmodel, "sdAtomicModelClass"))
+        cat("sdAtomicModel ID = ", private$pmodel$modelId, sep = "")
       else if (inherits(private$pmodel, "sdCoupledModelClass"))
         cat("sdCoupledModel ID = ", private$pmodel$coupledModelId, sep = "")
       else if (inherits(private$pmodel, "sdStaticModelClass"))
@@ -294,7 +294,7 @@ sdOutputClass <- R6::R6Class(
       data <- private[["poutTrajectory"]]
       
       # retrieve the model default scenario
-      if (inherits(private$pmodel, "sdModelClass") || 
+      if (inherits(private$pmodel, "sdAtomicModelClass") || 
           inherits(private$pmodel, "sdStaticModelClass"))
         dfscen <- private$pmodel$defaultScenario
       else if (inherits(private$pmodel, "sdCoupledModelClass"))
@@ -555,7 +555,7 @@ sdOutputClass <- R6::R6Class(
                   row.names = F)
       
       # save model and scenario
-      if (inherits(private$pmodel, "sdModelClass"))
+      if (inherits(private$pmodel, "sdAtomicModelClass"))
         private$pmodel$saveToXml(paste0(path, "/", private$pmodel$modelId, 
                                         ".xml"))
       else if (inherits(private$pmodel, "sdCoupledModelClass"))
