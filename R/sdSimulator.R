@@ -680,14 +680,14 @@ sdSimulate <- function(model,
       model = model,
       scenario = scenario,
       diagnostics = diagnostics,
-      postProcess = postProcess)
+      postProcessValue = postProcess)
     
     return(output)
   }
   else if (inherits(model, sdStaticModelClass$classname))
   {
     # Get model attributes
-    equations <- model$equations
+    equations <- model$algebraicEquations
     InitVars <- model$InitVars
     globalfuns <- model$GlobalFunctions
     
@@ -832,11 +832,11 @@ sdSimulate <- function(model,
       model = model,
       scenario = scenario,
       diagnostics = NULL,
-      postProcess = NULL)
+      postProcessValue = NULL)
     
     return(output)
   }
-  else if (inherits(model, "sdCoupledModelClass"))
+  else if (inherits(model, sdCoupledModelClass$classname))
   {
     # Try to build the coupled model if it is not built
     if (!model$isBuilt)
@@ -847,16 +847,16 @@ sdSimulate <- function(model,
                               method = method)
       
       if (!model$isBuilt)
-        sdSimulatorMsg$sdSimulateCoupled1(model$coupledModelId)
+        sdSimulatorMsg$sdSimulateCoupled1(model$id)
     }
     
     if (length(model$componentsEquations) == 0 && 
         length(model$componentsAux) == 0)
-      sdSimulatorMsg$sdSimulateCoupled0(model$coupledModelId)
+      sdSimulatorMsg$sdSimulateCoupled0(model$id)
     
     # convert list of scenarios to coupled scenario
     if (is.list(scenario))
-      scenario <- sdBuildCoupledScenario(coupledScenarioId = "coupledScen", 
+      scenario <- sdBuildCoupledScenario(id = "coupledScen", 
                                          scenarios = scenario)
     
     if (!model$isVerified)
@@ -873,10 +873,10 @@ sdSimulate <- function(model,
     componentsId <- model$componentsId
     
     # get the simulation scenario
-    if (!is.null(model$defaultCoupledScenario))
+    if (!is.null(model$defaultScenario))
     {
       # get the model scenario 
-      defaultScenario <- model$defaultCoupledScenario$clone(deep = TRUE)
+      defaultScenario <- model$defaultScenario$clone(deep = TRUE)
       
       # overwrite default variables with the given scenario values
       if (!is.null(scenario))
@@ -906,7 +906,7 @@ sdSimulate <- function(model,
             defaultScenario$method <- scenario$method
         }
         else
-          sdSimulatorMsg$sdSimulateAtomic6(model$coupledModelId, 
+          sdSimulatorMsg$sdSimulateAtomic6(model$id, 
                                            typeof(scenario))
       }
     }
@@ -915,13 +915,13 @@ sdSimulate <- function(model,
       if (is.character(scenario))
         scenario <- sdLoadScenario(file = scenario)
       
-      if (inherits(scenario, "sdScenario"))
+      if (inherits(scenario, sdScenarioClass$classname))
         defaultScenario <- scenario
       else
-        sdSimulatorMsg$sdSimulateAtomic0(model$coupledModelId)
+        sdSimulatorMsg$sdSimulateAtomic0(model$id)
     }
     else
-      sdSimulatorMsg$sdSimulateAtomic0(model$coupledModelId)
+      sdSimulatorMsg$sdSimulateAtomic0(model$id)
     
     # get model variables
     st <- defaultScenario$state
@@ -944,7 +944,7 @@ sdSimulate <- function(model,
     
     # verify time sequence
     if (is.null(times) || !all(c("from", "to", "by") %in% names(times)))
-      sdSimulatorMsg$sdSimulateCoupled3(model$coupledModelId)
+      sdSimulatorMsg$sdSimulateCoupled3(model$id)
     
     # Run the model Init Vars
     modelInit <- list()
@@ -1040,17 +1040,17 @@ sdSimulate <- function(model,
         model = model,
         scenario = scenario,
         diagnostics = NULL,
-        postProcess = NULL)
+        postProcessValue = NULL)
     }
     else # at least one atomic component
     {
       if (is.null(method))
       {
-        sdSimulatorMsg$sdSimulateAtomic5(model$coupledModelId)
+        sdSimulatorMsg$sdSimulateAtomic5(model$id)
         method <- "lsoda"
       }
       if (is.null(st) || length(st) == 0)
-        sdSimulatorMsg$sdSimulateCoupled4(model$coupledModelId)
+        sdSimulatorMsg$sdSimulateCoupled4(model$id)
       
       createCoupledFuncEval <- CreateCoupledFuncEval
       
@@ -1108,7 +1108,7 @@ sdSimulate <- function(model,
             (!is.vector(method) ||
              !method %in% c("lsoda", "lsode", "radau")))
         {
-          sdSimulatorMsg$sdSimulateCoupled5(model$coupledModelId)
+          sdSimulatorMsg$sdSimulateCoupled5(model$id)
           method <- "lsoda"
         }
         
@@ -1218,7 +1218,7 @@ sdSimulate <- function(model,
                                                  sw),
             error = function(e)
             {
-              sdSimulatorMsg$sdSimulateCoupled6(model$coupledModelId, modelId)
+              sdSimulatorMsg$sdSimulateCoupled6(model$id, modelId)
               return(NULL)
             })
       }
@@ -1233,7 +1233,7 @@ sdSimulate <- function(model,
         model = model,
         scenario = scenario,
         diagnostics = diagnostics,
-        postProcess = postProcess)
+        postProcessValue = postProcess)
     }
     
     return(output)

@@ -5,7 +5,7 @@
 \title{Creates Static Model Object}
 \usage{
 sdStaticModel(id = NULL, description = NULL, defaultScenario = NULL,
-  equations = NULL, InitVars = NULL, globalFunctions = NULL)
+  algebraicEquations = NULL, InitVars = NULL, globalFunctions = NULL)
 }
 \arguments{
 \item{id}{A character string with the model ID. Any non-word 
@@ -19,7 +19,7 @@ character will be removed and the result will be converted to a valid name
 It should contain all the model variables initialized with default values 
 that ensures the model simulation.}
 
-\item{equations}{(Optional) A list with the model algebraic equations in 
+\item{algebraicEquations}{A list with the model algebraic equations in 
 strings or R-expressions written in R-format. 
 
 They have access to the following variables: (t, ct, par, inp, sw, eq). 
@@ -100,7 +100,7 @@ envScen <- sdScenario(id = "EnvironmentCapacityScen",
 # create the static model of an environment capacity
 envCapacity <- sdStaticModel(id = "EnvironmentCapacity",
                              defaultScenario = envScen,
-                             equations = algEqEnvironment)
+                             algebraicEquations = algEqEnvironment)
 # validate the equations and simulate the model
 envCapacity$verifyModel()
 outEnvCapacity <- sdSimulate(envCapacity)

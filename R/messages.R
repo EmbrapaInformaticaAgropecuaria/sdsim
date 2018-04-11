@@ -373,8 +373,8 @@ sdCoupledModelMsg$coupledModelDescription <- function(pcoupledModelId)
           "The model description must be a string. No description was set.", 
           call. = F)
 
-sdCoupledModelMsg$defaultCoupledScenario <- function(pcoupledModelId)
-  warning("sdsim::defaultCoupledScenario - Coupled Model '", pcoupledModelId, 
+sdCoupledModelMsg$defaultScenario <- function(pcoupledModelId)
+  warning("sdsim::defaultScenario - Coupled Model '", pcoupledModelId, 
           "' get default scenario: The default coupled scenario must be built ",
           "to retrieve it. Build it with the method $buildCoupledModel ",
           "(see help('sdCoupledModelClass')).", call. = F)

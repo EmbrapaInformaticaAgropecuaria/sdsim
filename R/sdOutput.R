@@ -52,7 +52,7 @@
 #' @field diagnostics A string with the simulation diagnostics, e.g. 
 #' number of steps taken, the last step size, root informations, etc. See
 #' \code{\link[deSolve]{diagnostics}} for more informations.
-#' @field postProcess The return value of the \code{model} 
+#' @field postProcessValue The return value of the \code{model} 
 #' \code{PostProcessVars} function.
 #'
 #' @section Public Methods Definition:  
@@ -129,8 +129,9 @@
 #' from the \code{\link[grDevices]{colors}} function will be used.}
 #' }}
 #' 
-#' \item{\code{$saveSimulationTrajectories(path = "directory")}}{Save the 
-#' simulation trajectories to text files, and the model and the scenario to XML 
+#' \item{\code{$saveSimulationOutput(path = "directory", scenarioXlsx = TRUE)}}{
+#' Save the simulation trajectories to text files, the model to XML and the 
+#' scenario to Xlsx or XML 
 #' files inside the \code{path} directory.
 #' 
 #' \strong{Arguments}
@@ -139,6 +140,8 @@
 #' \item{path}{A string with the directory name to save the files. If missing 
 #' uses the \code{outputId} to name the created directory in the current working
 #' directory.}
+#' \item{scenarioXlsx}{Logical; If TRUE, save the scenario to a xlsx file; If 
+#' FALSE save the scenario to a XML file. Default is TRUE.}
 #' }}
 #' } 
 #' @name sdOutput
@@ -170,13 +173,13 @@
 #'              main = "Rotation Coordinates Derivatives")
 #' 
 #' # save the simulation trajectories for further use
-#' outaren$saveSimulationTrajectories("Arenstorf")
+#' outaren$saveSimulationOutput("Arenstorf")
 sdOutputClass <- R6::R6Class(
   classname = "sdOutput",
   public = list(
     initialize = function(outTrajectory, auxTrajectory, 
                           timeSeriesTrajectory, model, scenario, diagnostics, 
-                          postProcess)
+                          postProcessValue)
     {
       if (!missing(outTrajectory))
         private[["poutTrajectory"]] <- outTrajectory
@@ -196,8 +199,8 @@ sdOutputClass <- R6::R6Class(
       if (!missing(diagnostics))
         private[["pdiag"]] <- diagnostics
       
-      if (!missing(postProcess))
-        private[["ppostProcess"]] <- postProcess
+      if (!missing(postProcessValue))
+        private[["ppostProcessValue"]] <- postProcessValue
       
       private$poutputId <- paste0("Simulation Output ", Sys.time())
     },
@@ -291,11 +294,7 @@ sdOutputClass <- R6::R6Class(
       data <- private[["poutTrajectory"]]
       
       # retrieve the model default scenario
-      if (inherits(private$pmodel, "sdAtomicModel") || 
-          inherits(private$pmodel, "sdStaticModelClass"))
-        dfscen <- private$pmodel$defaultScenario
-      else if (inherits(private$pmodel, "sdCoupledModelClass"))
-        dfscen <- private$pmodel$defaultCoupledScenario
+      dfscen <- private$pmodel$defaultScenario
       
       # all the labels must be provided, or any will be used
       if (!is.null(xlab) && length(which) != length(xlab))
@@ -527,7 +526,7 @@ sdOutputClass <- R6::R6Class(
       
       invisible(plots)
     },
-    saveSimulationTrajectories = function(path = "directory")
+    saveSimulationOutput = function(path = "directory", scenarioXlsx = TRUE)
     {
       if (missing(path))
         path <- private$poutputId
@@ -555,9 +554,16 @@ sdOutputClass <- R6::R6Class(
                                         ".xml"))
       
       if (!is.null(private$pscenario))
-        private$pscenario$saveXml(paste0(path, "/", 
+      {
+        if (scenarioXlsx)
+          private$pscenario$saveXlsx(paste0(path, "/", 
+                                           private$pscenario$id, 
+                                           ".xlsx"))
+        else
+          private$pscenario$saveXml(paste0(path, "/", 
                                            private$pscenario$id, 
                                            ".xml"))
+      }
     }
   ),
   active = list(
@@ -587,9 +593,9 @@ sdOutputClass <- R6::R6Class(
         return(NULL)
       return(private[["ptimeSeriesTrajectory"]])
     },
-    PostProcess = function()
+    PostProcessValue = function()
     {
-      return(private[["ppostProcess"]])
+      return(private[["ppostProcessValue"]])
     },
     diagnostics = function()
     {
@@ -607,7 +613,7 @@ sdOutputClass <- R6::R6Class(
     poutTrajectory = NULL,
     pauxTrajectory = NULL,
     ptimeSeriesTrajectory = NULL,
-    ppostProcess = NULL,
+    ppostProcessValue = NULL,
     pmodel = NULL,
     pscenario = NULL,
     pdiag = NULL

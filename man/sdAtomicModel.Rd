@@ -212,5 +212,5 @@ lv$verifyModel(verbose = TRUE)
 outlv <- sdSimulate(model = lv, storeAuxTrajectory = TRUE)
 outlv$plot("P C", multipleYAxis = TRUE, 
            main = "Prey and Consumer by Lotka-Volterra")
-outlv$saveSimulationTrajectories(path = "LV") 
+outlv$saveSimulationOutput(path = "LV") 
 }

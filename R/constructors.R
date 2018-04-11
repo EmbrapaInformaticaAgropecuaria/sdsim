@@ -193,7 +193,7 @@
 #' outlv <- sdSimulate(model = lv, storeAuxTrajectory = TRUE)
 #' outlv$plot("P C", multipleYAxis = TRUE, 
 #'            main = "Prey and Consumer by Lotka-Volterra")
-#' outlv$saveSimulationTrajectories(path = "LV") 
+#' outlv$saveSimulationOutput(path = "LV") 
 #' @return A \code{\link{sdAtomicModelClass}} object.
 sdAtomicModel <- function(id = NULL,
                           description = NULL,
@@ -351,10 +351,9 @@ sdLoadModel <- function(file, repository = F,
     {
       # get the components Ids
       componentsId <- lapply(model$components, function(x) x$id)
-      names(model$components) <- componentsId
       
       # convert the components
-      model$components <- lapply(names(model$components), function(i)
+      model$components <- lapply(seq_along(model$components), function(i)
       {
         # convert each component to a model object
         x <- model$components[[i]]
@@ -374,8 +373,8 @@ sdLoadModel <- function(file, repository = F,
                      unit = loadedScen$unit,
                      description = loadedScen$description,
                      timeSeriesDirectory = timeSeriesDirectory)
-        
-        if (i == sdAtomicModelClass$classname)  # create a sd atomic model
+        # create a sd atomic model
+        if (names(model$components)[[i]] == sdAtomicModelClass$classname) 
           component <- sdAtomicModelClass$new(
             id = x$id,
             description = x$description,
@@ -387,12 +386,13 @@ sdLoadModel <- function(file, repository = F,
             EventFunction = StringToFun(x$EventFunction),
             aux = x$aux,
             globalFunctions = lapply(x$globalFunctions, StringToFun))
-        else if (i == sdStaticModelClass$classname) # create a static model
+        # create a static model
+        else if (names(model$components)[[i]] == sdStaticModelClass$classname) 
           component <- sdStaticModelClass$new(
             id = x$id,
             description = x$description,
             InitVars = StringToFun(x$InitVars),
-            equations = x$equations,
+            algebraicEquations = x$algebraicEquations,
             defaultScenario = x$defaultScenario,
             globalFunctions = lapply(x$globalFunctions, StringToFun))
         else
@@ -413,8 +413,8 @@ sdLoadModel <- function(file, repository = F,
     
     # creat a new coupled model
     coupledModel <- sdCoupledModelClass$new(
-      coupledModelId = model$coupledModelId,
-      coupledModelDescription = model$coupledModelDescription,
+      id = model$id,
+      description = model$description,
       components = model$components,
       connections = model$connections)
     
@@ -450,7 +450,7 @@ sdLoadModel <- function(file, repository = F,
     model <- sdStaticModelClass$new(id = model$id,
                                     defaultScenario = model$defaultScenario,
                                     InitVars = StringToFun(model$InitVars),
-                                    equations = model$equations,
+                                    algebraicEquations = model$algebraicEquations,
                                     description = 
                                       model$description,
                                     globalFunctions = lapply(model$globalFunctions, 
@@ -480,10 +480,10 @@ sdLoadModel <- function(file, repository = F,
 #' \code{\link{sdBuildCoupledScenario}} function. Make sure to build it before 
 #' running the simulation to save some computation time.
 #' 
-#' @param coupledModelId A character string with the coupled model ID. Any 
+#' @param id A character string with the coupled model ID. Any 
 #' non-word character will be removed and the result will be converted to a 
 #' valid name (see \code{\link[base]{make.names}}).
-#' @param coupledModelDescription A character string with the coupled model 
+#' @param description A character string with the coupled model 
 #' description.
 #' @param components A list of \code{\link{sdAtomicModelClass}}, 
 #' \code{\link{sdStaticModelClass}} and/or \code{\link{sdCoupledModelClass}} 
@@ -577,7 +577,7 @@ sdLoadModel <- function(file, repository = F,
 #'                       c("conIngestC", "Prey", "IngestC", "Consumer", "aux$IngestC"))
 #' 
 #' # Create the Lotka-Volterra coupled model
-#' coupledLV <- sdCoupledModel(coupledModelId = "LVCoupled",
+#' coupledLV <- sdCoupledModel(id = "LVCoupled",
 #'                             components = c(prey, consumer),
 #'                             connections = lvConnections,
 #'                             "Lotka-Volterra Equations implemented as coupled model")
@@ -592,14 +592,14 @@ sdLoadModel <- function(file, repository = F,
 #' outclv$plot("Prey.P Consumer.C", 
 #'             main = "Coupled Prey and Consumer by Lotka-Volterra",
 #'             multipleYAxis = TRUE)
-sdCoupledModel <- function(coupledModelId = NULL,
-                           coupledModelDescription = NULL,
+sdCoupledModel <- function(id = NULL,
+                           description = NULL,
                            components = NULL,
                            connections = NULL)
 {
   # creat a new model
-  coupledModel <- sdCoupledModelClass$new(coupledModelId = coupledModelId,
-                                          coupledModelDescription = coupledModelDescription,
+  coupledModel <- sdCoupledModelClass$new(id = id,
+                                          description = description,
                                           components = components,
                                           connections = connections)
   
@@ -627,7 +627,7 @@ sdCoupledModel <- function(coupledModelId = NULL,
 #' \code{\link{sdScenarioClass}} object without state variables. 
 #' It should contain all the model variables initialized with default values 
 #' that ensures the model simulation.
-#' @param equations (Optional) A list with the model algebraic equations in 
+#' @param algebraicEquations A list with the model algebraic equations in 
 #' strings or R-expressions written in R-format. 
 #' 
 #' They have access to the following variables: (t, ct, par, inp, sw, eq). 
@@ -691,7 +691,7 @@ sdCoupledModel <- function(coupledModelId = NULL,
 #' # create the static model of an environment capacity
 #' envCapacity <- sdStaticModel(id = "EnvironmentCapacity",
 #'                              defaultScenario = envScen,
-#'                              equations = algEqEnvironment)
+#'                              algebraicEquations = algEqEnvironment)
 #' # validate the equations and simulate the model
 #' envCapacity$verifyModel()
 #' outEnvCapacity <- sdSimulate(envCapacity)
@@ -702,7 +702,7 @@ sdCoupledModel <- function(coupledModelId = NULL,
 sdStaticModel <- function(id = NULL,
                           description = NULL,
                           defaultScenario = NULL,
-                          equations = NULL,
+                          algebraicEquations = NULL,
                           InitVars = NULL,
                           globalFunctions = NULL)
 {
@@ -711,7 +711,7 @@ sdStaticModel <- function(id = NULL,
     id = id,
     description = description,
     InitVars = InitVars,
-    equations = equations,
+    algebraicEquations = algebraicEquations,
     defaultScenario = defaultScenario,
     globalFunctions = globalFunctions)
   

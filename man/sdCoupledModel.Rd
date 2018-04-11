@@ -4,15 +4,15 @@
 \alias{sdCoupledModel}
 \title{Creates a Coupled System Dynamics Model}
 \usage{
-sdCoupledModel(coupledModelId = NULL, coupledModelDescription = NULL,
-  components = NULL, connections = NULL)
+sdCoupledModel(id = NULL, description = NULL, components = NULL,
+  connections = NULL)
 }
 \arguments{
-\item{coupledModelId}{A character string with the coupled model ID. Any 
+\item{id}{A character string with the coupled model ID. Any 
 non-word character will be removed and the result will be converted to a 
 valid name (see \code{\link[base]{make.names}}).}
 
-\item{coupledModelDescription}{A character string with the coupled model 
+\item{description}{A character string with the coupled model 
 description.}
 
 \item{components}{A list of \code{\link{sdAtomicModelClass}}, 
@@ -108,7 +108,7 @@ lvConnections <- list(c("conP", "Consumer", "P", "Prey", "st$P"),
                       c("conIngestC", "Prey", "IngestC", "Consumer", "aux$IngestC"))
 
 # Create the Lotka-Volterra coupled model
-coupledLV <- sdCoupledModel(coupledModelId = "LVCoupled",
+coupledLV <- sdCoupledModel(id = "LVCoupled",
                             components = c(prey, consumer),
                             connections = lvConnections,
                             "Lotka-Volterra Equations implemented as coupled model")

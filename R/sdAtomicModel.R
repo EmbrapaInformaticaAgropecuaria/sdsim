@@ -240,7 +240,7 @@
 #' outlv <- sdSimulate(model = lv, storeAuxTrajectory = TRUE)
 #' outlv$plot("P C", multipleYAxis = TRUE, 
 #'            main = "Prey and Consumer by Lotka-Volterra")
-#' outlv$saveSimulationTrajectories(path = "LV")
+#' outlv$saveSimulationOutput(path = "LV")
 #' 
 #' ## HOW TO LOAD A MODEL FROM THE REPOSITORY
 #' ## Load the Rigid Body Model
@@ -452,6 +452,7 @@ sdAtomicModelClass <- R6::R6Class(
       
       cat(indent("$description", indent = 4), sep = "\n")
       cat(indent(private$pdescription, indent = 4), sep = "\n")
+      cat("\n")
       
       if (!is.null(modelStr[["DifferentialEquations"]]))
       {

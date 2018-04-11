@@ -67,7 +67,7 @@
 #' @section Public Methods Definition:  
 #' \describe{
 #' \item{\code{$initialize(id, description, InitVars, 
-#' equations, defaultScenario, globalFunctions)}}{
+#' algebraicEquations, defaultScenario, globalFunctions)}}{
 #' Class constructor. Sets the static model definition fields.
 #' 
 #' \strong{Arguments}
@@ -127,7 +127,7 @@
 #' # create the static model of an environment capacity
 #' envCapacity <- sdStaticModel(id = "EnvironmentCapacity",
 #'                              defaultScenario = envScen,
-#'                              equations = algEqEnvironment)
+#'                              algebraicEquations = algEqEnvironment)
 #' # validate the equations and simulate the model
 #' envCapacity$verifyModel()
 #' outEnvCapacity <- sdSimulate(envCapacity)
@@ -143,7 +143,7 @@ sdStaticModelClass <- R6::R6Class(
     initialize = function(id,
                           description,
                           defaultScenario,
-                          equations,
+                          algebraicEquations,
                           InitVars,
                           globalFunctions)
     {
@@ -168,24 +168,24 @@ sdStaticModelClass <- R6::R6Class(
           sdStaticModelMsg$initialize1(id)
       }
       
-      if (!missing(equations) && !is.null(equations)) # set equations
+      if (!missing(algebraicEquations) && !is.null(algebraicEquations)) # set algebraicEquations
       {
-        # If equations is a list
-        if (is.list(equations))
+        # If algebraicEquations is a list
+        if (is.list(algebraicEquations))
         {
-          equations <- tryCatch(sdInitEquations(equations, eqName = "eq"),
+          algebraicEquations <- tryCatch(sdInitEquations(algebraicEquations, eqName = "eq"),
                                 error = function(e)
                                 {
                                   sdStaticModelMsg$initialize2(id, e)
                                   return(list())
                                 })
         }
-        # If equations is a string containing a file path
-        else if (is.character(equations) && nchar(equations) <= 255 && 
-                 file.exists(equations))
+        # If algebraicEquations is a string containing a file path
+        else if (is.character(algebraicEquations) && nchar(algebraicEquations) <= 255 && 
+                 file.exists(algebraicEquations))
         {
-          equations <- paste(readLines(equations), collapse = "\n")
-          equations <- tryCatch(sdInitEquations(equations, eqName = "eq"),
+          algebraicEquations <- paste(readLines(algebraicEquations), collapse = "\n")
+          algebraicEquations <- tryCatch(sdInitEquations(algebraicEquations, eqName = "eq"),
                                 error = function(e)
                                 {
                                   sdStaticModelMsg$initialize2(id, e)
@@ -194,10 +194,10 @@ sdStaticModelClass <- R6::R6Class(
         }
         else
         {
-          equations <- list()
+          algebraicEquations <- list()
           sdStaticModelMsg$initialize3(id)
         }
-        private$pequations <- equations
+        private$palgebraicEquations <- algebraicEquations
       }
       
       # Create new environment for model functions
@@ -248,7 +248,7 @@ sdStaticModelClass <- R6::R6Class(
     {
       # convert all the attributes to string 
       modelStr <- list()
-      modelStr$equations <- lapply(private$pequations, toString)
+      modelStr$algebraicEquations <- lapply(private$palgebraicEquations, toString)
       modelStr$InitVars <- FunToString(private$pInitVars)
       modelStr$globalFunctions <- private$pglobalFunctions
       
@@ -260,9 +260,10 @@ sdStaticModelClass <- R6::R6Class(
       
       cat(indent("$description", indent = 4), sep = "\n")
       cat(indent(private$pdescription, indent = 4), sep = "\n")
+      cat("\n")
       
-      if (length(modelStr[["equations"]]) > 0)
-        cat(indent(capture.output(modelStr["equations"]), indent = 4), sep = "\n")
+      if (length(modelStr[["algebraicEquations"]]) > 0)
+        cat(indent(capture.output(modelStr["algebraicEquations"]), indent = 4), sep = "\n")
       
       if (!is.null(modelStr[["InitVars"]]))
       {
@@ -326,7 +327,7 @@ sdStaticModelClass <- R6::R6Class(
       sw <- defaultScenario$switch
       times <- defaultScenario$times
 
-      eq <- private$pequations
+      eq <- private$palgebraicEquations
       
       if (!is.null(times) && length(unlist(times)) > 0)
         t <- times[[1]]
@@ -401,7 +402,7 @@ sdStaticModelClass <- R6::R6Class(
       lModel <- list(id = private$pid      ,
                      description = private$pdescription,
                      InitVars = FunToString(private$pInitVars),
-                     equations = private$pequations,
+                     algebraicEquations = private$palgebraicEquations,
                      globalFunctions = globalFunctions)
       invisible(ListToXML(rootsdModel, lModel))
       
@@ -456,9 +457,9 @@ sdStaticModelClass <- R6::R6Class(
     {
       return(private$pglobalFunctions)
     },
-    equations = function()
+    algebraicEquations = function()
     {
-      return(private$pequations)
+      return(private$palgebraicEquations)
     },
     isVerified = function()
     {
@@ -471,6 +472,6 @@ sdStaticModelClass <- R6::R6Class(
     pInitVars = NULL,
     pdefaultScenario = NULL,
     pglobalFunctions = list(),
-    pequations = list(),
+    palgebraicEquations = list(),
     flagVerify = FALSE
   ))

@@ -38,11 +38,11 @@ and the list with the components variables indexes (indexComponents).
 \section{Fields}{
 
 \describe{
-\item{\code{coupledModelId}}{A string with the coupled model identification. Any 
+\item{\code{id}}{A string with the coupled model identification. Any 
 non-word character will be removed and the result will be converted to a 
 valid name (see \code{\link[base]{make.names}}).}
 
-\item{\code{coupledModelDescription}}{A string with the coupled model description.}
+\item{\code{description}}{A string with the coupled model description.}
 
 \item{\code{components}}{A list of \code{\link{sdAtomicModelClass}}, 
 \code{\link{sdStaticModelClass}} and/or \code{\link{sdCoupledModelClass}} 
@@ -68,7 +68,7 @@ auxiliary or algebraic, equation with prefix st$, aux$ or eq$, respectively,
 indicating the output type from the sender component (Component 2), e.g. 
 st$<varName>, aux$<eqName> or eq$<eqName>.}
 
-\item{\code{defaultCoupledScenario}}{The default coupled scenario, a 
+\item{\code{defaultScenario}}{The default coupled scenario, a 
 \code{\link{sdScenarioClass}} object. Uses the method
 \code{$buildCoupledModel} to automatically build it by merging the 
 components default scenarios. See \code{\link{sdBuildCoupledScenario}} for 
@@ -78,11 +78,11 @@ more information about how these merge occures.}
 \section{Methods Definition}{
 
 \describe{
-\item{\code{$initialize(coupledModelId = NULL, 
-coupledModelDescription = NULL, components = NULL, connections = NULL)}}{
+\item{\code{$initialize(id = NULL, 
+description = NULL, components = NULL, connections = NULL)}}{
 Class constructor. Define the base components and connections of the coupled 
 system dynamics model. 
-The \code{coupledModelId} is mandatory, if missing a default timestamp ID 
+The \code{id} is mandatory, if missing a default timestamp ID 
 will be created.
 
 \strong{Arguments}
@@ -279,7 +279,7 @@ environmentCap <- sdStaticModel(id = "Environment",
                                parameter = parEnv,
                                input = inpEnv,
                                times = times),
-                             equations = eqEnvironment)                   
+                             algebraicEquations = eqEnvironment)                   
 
 # create the coupled model connections list 
 # conP: inform the consumer model about the amount of preys; 
@@ -293,10 +293,10 @@ lvConnections <- list(
   c("conEnvCapacity", "Prey", "envCapacity", "Environment", "eq$regulatingCapacity"))
 
 # Create the Lotka-Volterra coupled model
-coupledLV <- sdCoupledModel(coupledModelId = "LVCoupled",
+coupledLV <- sdCoupledModel(id = "LVCoupled",
                             components = c(prey, consumer, environmentCap),
                             connections = lvConnections,
-                            coupledModelDescription = 
+                            description = 
   "Lotka-Volterra Equations implemented as a coupled model")
 # build the coupled model and validate it
 coupledLV$buildCoupledModel(from = 0, 

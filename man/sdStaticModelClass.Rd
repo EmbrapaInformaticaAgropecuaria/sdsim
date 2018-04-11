@@ -88,7 +88,7 @@ model. They can be called by their names in the list.}
   
 \describe{
 \item{\code{$initialize(id, description, InitVars, 
-equations, defaultScenario, globalFunctions)}}{
+algebraicEquations, defaultScenario, globalFunctions)}}{
 Class constructor. Sets the static model definition fields.
 
 \strong{Arguments}
@@ -150,7 +150,7 @@ envScen <- sdScenario(id = "EnvironmentCapacityScen",
 # create the static model of an environment capacity
 envCapacity <- sdStaticModel(id = "EnvironmentCapacity",
                              defaultScenario = envScen,
-                             equations = algEqEnvironment)
+                             algebraicEquations = algEqEnvironment)
 # validate the equations and simulate the model
 envCapacity$verifyModel()
 outEnvCapacity <- sdSimulate(envCapacity)

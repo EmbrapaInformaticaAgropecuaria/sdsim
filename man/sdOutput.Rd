@@ -73,7 +73,7 @@ will be used to label the columns of the time series data.frame.}
 number of steps taken, the last step size, root informations, etc. See
 \code{\link[deSolve]{diagnostics}} for more informations.}
 
-\item{\code{postProcess}}{The return value of the \code{model} 
+\item{\code{postProcessValue}}{The return value of the \code{model} 
 \code{PostProcessVars} function.}
 }}
 
@@ -152,8 +152,9 @@ to be plotted is greater than the length of the selected colors, extra colors
 from the \code{\link[grDevices]{colors}} function will be used.}
 }}
 
-\item{\code{$saveSimulationTrajectories(path = "directory")}}{Save the 
-simulation trajectories to text files, and the model and the scenario to XML 
+\item{\code{$saveSimulationOutput(path = "directory", scenarioXlsx = TRUE)}}{
+Save the simulation trajectories to text files, the model to XML and the 
+scenario to Xlsx or XML 
 files inside the \code{path} directory.
 
 \strong{Arguments}
@@ -162,6 +163,8 @@ files inside the \code{path} directory.
 \item{path}{A string with the directory name to save the files. If missing 
 uses the \code{outputId} to name the created directory in the current working
 directory.}
+\item{scenarioXlsx}{Logical; If TRUE, save the scenario to a xlsx file; If 
+FALSE save the scenario to a XML file. Default is TRUE.}
 }}
 }
 }
@@ -194,6 +197,6 @@ outaren$plot("dy1 dy2", multipleYAxis = TRUE,
              main = "Rotation Coordinates Derivatives")
 
 # save the simulation trajectories for further use
-outaren$saveSimulationTrajectories("Arenstorf")
+outaren$saveSimulationOutput("Arenstorf")
 }
 \keyword{datasets}

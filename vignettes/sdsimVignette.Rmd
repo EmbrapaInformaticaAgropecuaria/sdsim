@@ -571,7 +571,7 @@ coupledLV <- sdCoupledModel(coupledModelId = "LVCoupled",
                             "Lotka-Volterra Equations implemented as a coupled model")
 
 # build the coupled model and print it
-coupledLV$buildCoupledModel(coupledScenarioId = "lvScenCoupled",
+coupledLV$buildCoupledModel(id = "lvScenCoupled",
                             from = 0,
                             to = 200,
                             by = 1)
@@ -615,19 +615,19 @@ The next chunk of code creates a coupled scenario for the Lotka-Volterra example
 
 ```{r coupledScen}
 # creates a scenario for the prey model
-preyScen <- sdScenario(scenarioId = "coupledPreyScen",
+preyScen <- sdScenario(id = "coupledPreyScen",
                        state = list(P = 5))
 
 # creates a scenario for the consumer model
-consumerScen <- sdScenario(scenarioId = "coupledConsumerScen",
+consumerScen <- sdScenario(id = "coupledConsumerScen",
                            state = list(C = 6))
 
 # creates a scenario for the environment model
-environmentScen <- sdScenario(scenarioId = "coupledEnvScen",
+environmentScen <- sdScenario(id = "coupledEnvScen",
                               parameter = list(K = 15))
 
 # creates the coupled scenario
-coupledLvScen <- sdBuildCoupledScenario(coupledScenarioId = "LVCoupledScen",
+coupledLvScen <- sdBuildCoupledScenario(id = "LVCoupledScen",
                                         scenarios = list(Prey = preyScen,
                                                          Consumer = consumerScen,
                                                          Environment = environmentScen),

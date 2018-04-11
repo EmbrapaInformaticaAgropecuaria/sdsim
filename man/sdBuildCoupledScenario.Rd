@@ -4,14 +4,14 @@
 \alias{sdBuildCoupledScenario}
 \title{Builds a Coupled Scenario}
 \usage{
-sdBuildCoupledScenario(coupledScenarioId = NULL, scenarios = NULL,
-  from = NULL, to = NULL, by = NULL, method = c("lsoda", "lsode",
-  "lsodes", "lsodar", "vode", "daspk", "euler", "rk4", "ode23", "ode45",
-  "radau", "bdf", "bdf_d", "adams", "impAdams", "impAdams_d"),
-  timeSeriesDirectory = "", varNames = FALSE)
+sdBuildCoupledScenario(id = NULL, scenarios = NULL, from = NULL,
+  to = NULL, by = NULL, method = c("lsoda", "lsode", "lsodes", "lsodar",
+  "vode", "daspk", "euler", "rk4", "ode23", "ode45", "radau", "bdf", "bdf_d",
+  "adams", "impAdams", "impAdams_d"), timeSeriesDirectory = "",
+  varNames = FALSE)
 }
 \arguments{
-\item{coupledScenarioId}{A string with the coupled scenario ID. If missing a
+\item{id}{A string with the coupled scenario ID. If missing a
 default timestamp ID will be created.}
 
 \item{scenarios}{A named list of not empty \code{\link{sdScenarioClass}} 
@@ -101,7 +101,7 @@ consumerScen <- sdScenario(id = "consumerScen",
                            
 ## Create the coupled scenario and print it
 coupledLvScen <- sdBuildCoupledScenario(
-  coupledScenarioId = "LVcoupled",
+  id = "LVcoupled",
   scenarios = c(Prey = preyScen, 
                 Consumer = consumerScen), 
   method = "lsoda",
