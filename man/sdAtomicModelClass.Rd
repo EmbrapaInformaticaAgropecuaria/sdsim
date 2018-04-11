@@ -197,7 +197,7 @@ the default scenario.}
 the computer is doing. Default = \code{FALSE}.}
 }}
  
-\item{\code{$saveToXml(file = "sdAtomicModel.xml")}}{Save the model functions in a 
+\item{\code{$saveXml(file = "sdAtomicModel.xml")}}{Save the model functions in a 
 XML file.
 
 \strong{Arguments}

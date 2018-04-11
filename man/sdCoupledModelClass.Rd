@@ -200,7 +200,7 @@ the computer is doing. Default = \code{FALSE}.}
 (when passing the time series inputs via external text files).}
 }}
 
-\item{\code{$saveToXml(file = "sdCoupledModel.xml")}}{Save the components 
+\item{\code{$saveXml(file = "sdCoupledModel.xml")}}{Save the components 
 and the connections in a XML file.
 
 \strong{Arguments}
@@ -273,7 +273,7 @@ inpEnv <- data.frame(Variable = c("P"),
 eqEnvironment <- list(regulatingCapacity = "1 - inp$P/par$K")  
 
 # create the component environment capacity model
-environmentCap <- sdStaticModel(staticModelId = "Environment",
+environmentCap <- sdStaticModel(id = "Environment",
                              defaultScenario = sdScenario(
                                id = "EnvironmentScen",
                                parameter = parEnv,

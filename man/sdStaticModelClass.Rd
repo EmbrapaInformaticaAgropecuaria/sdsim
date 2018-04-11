@@ -32,11 +32,11 @@ therefore the simulation will only run for the initial time.
 \section{Fields}{
 
 \describe{
-\item{\code{staticModelId}}{A string with the model identification. Any non-word 
+\item{\code{id}}{A string with the model identification. Any non-word 
 character will be removed and the result will be converted to a valid name 
 (see \code{\link[base]{make.names}}).}
 
-\item{\code{staticModelDescription}}{A string with the model description.}
+\item{\code{description}}{A string with the model description.}
 
 \item{\code{defaultScenario}}{The model default scenario, a 
 \code{\link{sdScenarioClass}} object without state variables. 
@@ -87,7 +87,7 @@ model. They can be called by their names in the list.}
 \section{Public Methods Definition}{
   
 \describe{
-\item{\code{$initialize(staticModelId, staticModelDescription, InitVars, 
+\item{\code{$initialize(id, description, InitVars, 
 equations, defaultScenario, globalFunctions)}}{
 Class constructor. Sets the static model definition fields.
 
@@ -112,7 +112,7 @@ the default scenario.}
 the computer is doing. Default = \code{FALSE}.}
 }}
  
-\item{\code{$saveToXml(file = "sdStaticModel.xml")}}{Save the model equations
+\item{\code{$saveXml(file = "sdStaticModel.xml")}}{Save the model equations
 and functions in a XML file.
 
 \strong{Arguments}
@@ -148,7 +148,7 @@ envScen <- sdScenario(id = "EnvironmentCapacityScen",
                       times = list(from = 0, to = 200, by = 1))
 
 # create the static model of an environment capacity
-envCapacity <- sdStaticModel(staticModelId = "EnvironmentCapacity",
+envCapacity <- sdStaticModel(id = "EnvironmentCapacity",
                              defaultScenario = envScen,
                              equations = algEqEnvironment)
 # validate the equations and simulate the model

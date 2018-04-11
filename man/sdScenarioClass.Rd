@@ -321,7 +321,7 @@ must be included in the file name, e.g. '.xlsx'.}
 \item{colWidth}{The Excel columns width.}
 }}
 
-\item{\code{$saveToXml(file = "sdScenario.xml")}}{Save the scenario variables 
+\item{\code{$saveXml(file = "sdScenario.xml")}}{Save the scenario variables 
 in a XML file. This format is \strong{not} recommended for user modification.
 
 \strong{Arguments}

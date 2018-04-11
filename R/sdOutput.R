@@ -172,7 +172,7 @@
 #' # save the simulation trajectories for further use
 #' outaren$saveSimulationTrajectories("Arenstorf")
 sdOutputClass <- R6::R6Class(
-  classname = "sdOutputClass",
+  classname = "sdOutput",
   public = list(
     initialize = function(outTrajectory, auxTrajectory, 
                           timeSeriesTrajectory, model, scenario, diagnostics, 
@@ -203,22 +203,19 @@ sdOutputClass <- R6::R6Class(
     },
     print = function()
     {
-      cat("\n<SDOutput ")
-      if (inherits(private$pmodel, "sdAtomicModel"))
-        cat("sdAtomicModel ID = ", private$pmodel$id, sep = "")
-      else if (inherits(private$pmodel, "sdCoupledModelClass"))
-        cat("sdCoupledModel ID = ", private$pmodel$coupledModelId, sep = "")
-      else if (inherits(private$pmodel, "sdStaticModelClass"))
-        cat("sdStaticModel ID = ", private$pmodel$staticModelId, sep = "")
+      cat("<", class(self)[[1]], ">\n", sep = "")
+      cat(indent(paste0("$",class(private$pmodel)[[1]]), indent = 4), sep = "\n")
+      cat(indent(private$pmodel$id, indent = 4), sep = "\n")
+      cat("\n")
       
       if (!is.null(private$pscenario))
-        cat(" sdScenario ID = ", private$pscenario$id, ">\n\n", 
-            sep = "")
-      else 
-        cat(">\n\n")
-      
+      {
+        cat(indent("$sdScenario", indent = 4), sep = "\n")
+        cat(indent(private$pscenario$id, indent = 4), sep = "\n")
+        cat("\n")
+      }
       # static models do not have diagnostics
-      if (!inherits(private$pmodel, "sdStaticModelClass"))
+      if (!inherits(private$pmodel, sdStaticModelClass$classname))
       {
         cat(indent("$Simulation Diagnostics", indent = 4))
         cat(indent(private$pdiag, indent = 4))
@@ -237,7 +234,7 @@ sdOutputClass <- R6::R6Class(
       if (!is.null(private[["pauxTrajectory"]]))
       {
         # static models do not have auxiliaries
-        if (!inherits(private$pmodel, "sdStaticModelClass"))
+        if (!inherits(private$pmodel, sdStaticModelClass$classname))
         {
           cat(indent("$Auxiliary Trajectories", indent = 4), sep = "\n")
           cat(indent(paste(capture.output(tail(private[["pauxTrajectory"]], n = 10, 
@@ -544,8 +541,7 @@ sdOutputClass <- R6::R6Class(
                   file = paste0(path, "/outputTrajectory.csv"),
                   row.names = F)
       
-      if (!is.null(private$pauxTrajectory) &&
-          !inherits(private$pmodel, "sdStaticModelClass"))
+      if (!is.null(private$pauxTrajectory))
         write.csv(x = private$pauxTrajectory, 
                   file = paste0(path, "/auxTrajectory.csv"), row.names = F)
       

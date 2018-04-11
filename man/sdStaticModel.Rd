@@ -4,16 +4,15 @@
 \alias{sdStaticModel}
 \title{Creates Static Model Object}
 \usage{
-sdStaticModel(staticModelId = NULL, staticModelDescription = NULL,
-  defaultScenario = NULL, equations = NULL, InitVars = NULL,
-  globalFunctions = NULL)
+sdStaticModel(id = NULL, description = NULL, defaultScenario = NULL,
+  equations = NULL, InitVars = NULL, globalFunctions = NULL)
 }
 \arguments{
-\item{staticModelId}{A character string with the model ID. Any non-word 
+\item{id}{A character string with the model ID. Any non-word 
 character will be removed and the result will be converted to a valid name 
 (see \code{\link[base]{make.names}}).}
 
-\item{staticModelDescription}{A string with the model description.}
+\item{description}{A string with the model description.}
 
 \item{defaultScenario}{The model default scenario, a 
 \code{\link{sdScenarioClass}} object without state variables. 
@@ -99,7 +98,7 @@ envScen <- sdScenario(id = "EnvironmentCapacityScen",
                       times = list(from = 0, to = 200, by = 1))
 
 # create the static model of an environment capacity
-envCapacity <- sdStaticModel(staticModelId = "EnvironmentCapacity",
+envCapacity <- sdStaticModel(id = "EnvironmentCapacity",
                              defaultScenario = envScen,
                              equations = algEqEnvironment)
 # validate the equations and simulate the model

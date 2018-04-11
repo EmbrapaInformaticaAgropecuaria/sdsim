@@ -350,17 +350,7 @@ sdLoadModel <- function(file, repository = F,
     if (!is.null(model$components))
     {
       # get the components Ids
-      componentsId <- lapply(model$components, function(x)
-      {
-        x$id
-        # if (is.list(x))
-        # {
-        #   if (!is.null(x$modelId))
-        #     x$modelId
-        #   else
-        #     x$staticModelId
-        # }
-      })
+      componentsId <- lapply(model$components, function(x) x$id)
       names(model$components) <- componentsId
       
       # convert the components
@@ -399,8 +389,8 @@ sdLoadModel <- function(file, repository = F,
             globalFunctions = lapply(x$globalFunctions, StringToFun))
         else if (i == sdStaticModelClass$classname) # create a static model
           component <- sdStaticModelClass$new(
-            staticModelId = x$staticModelId,
-            staticModelDescription = x$staticModelDescription,
+            id = x$id,
+            description = x$description,
             InitVars = StringToFun(x$InitVars),
             equations = x$equations,
             defaultScenario = x$defaultScenario,
@@ -457,12 +447,12 @@ sdLoadModel <- function(file, repository = F,
     }
     
     # creat a new model
-    model <- sdStaticModelClass$new(staticModelId = model$staticModelId,
+    model <- sdStaticModelClass$new(id = model$id,
                                     defaultScenario = model$defaultScenario,
                                     InitVars = StringToFun(model$InitVars),
                                     equations = model$equations,
-                                    staticModelDescription = 
-                                      model$staticModelDescription,
+                                    description = 
+                                      model$description,
                                     globalFunctions = lapply(model$globalFunctions, 
                                                              StringToFun))
     
@@ -629,10 +619,10 @@ sdCoupledModel <- function(coupledModelId = NULL,
 #' To simulate a model in different scenarios use the \code{\link{sdSimulate}}
 #' function.
 #' 
-#' @param staticModelId A character string with the model ID. Any non-word 
+#' @param id A character string with the model ID. Any non-word 
 #' character will be removed and the result will be converted to a valid name 
 #' (see \code{\link[base]{make.names}}).
-#' @param staticModelDescription A string with the model description.
+#' @param description A string with the model description.
 #' @param defaultScenario The model default scenario, a 
 #' \code{\link{sdScenarioClass}} object without state variables. 
 #' It should contain all the model variables initialized with default values 
@@ -699,7 +689,7 @@ sdCoupledModel <- function(coupledModelId = NULL,
 #'                       times = list(from = 0, to = 200, by = 1))
 #' 
 #' # create the static model of an environment capacity
-#' envCapacity <- sdStaticModel(staticModelId = "EnvironmentCapacity",
+#' envCapacity <- sdStaticModel(id = "EnvironmentCapacity",
 #'                              defaultScenario = envScen,
 #'                              equations = algEqEnvironment)
 #' # validate the equations and simulate the model
@@ -709,8 +699,8 @@ sdCoupledModel <- function(coupledModelId = NULL,
 #' 
 #' # note that static models without time series variables have constant result
 #' # and therefore will only be simulated for the first time step if not coupled
-sdStaticModel <- function(staticModelId = NULL,
-                          staticModelDescription = NULL,
+sdStaticModel <- function(id = NULL,
+                          description = NULL,
                           defaultScenario = NULL,
                           equations = NULL,
                           InitVars = NULL,
@@ -718,8 +708,8 @@ sdStaticModel <- function(staticModelId = NULL,
 {
   # create a new model
   model <- sdStaticModelClass$new(
-    staticModelId = staticModelId,
-    staticModelDescription = staticModelDescription,
+    id = id,
+    description = description,
     InitVars = InitVars,
     equations = equations,
     defaultScenario = defaultScenario,

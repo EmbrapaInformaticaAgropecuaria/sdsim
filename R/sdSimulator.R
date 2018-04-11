@@ -684,7 +684,7 @@ sdSimulate <- function(model,
     
     return(output)
   }
-  else if (inherits(model, "sdStaticModelClass"))
+  else if (inherits(model, sdStaticModelClass$classname))
   {
     # Get model attributes
     equations <- model$equations
@@ -693,7 +693,7 @@ sdSimulate <- function(model,
     
     # stop if model is empty
     if (length(equations) == 0)
-      sdSimulatorMsg$sdSimulateStatic0(model$staticModelId)
+      sdSimulatorMsg$sdSimulateStatic0(model$id)
     
     if (!model$isVerified)
       model$verifyModel(scenario, verbose = verbose)
@@ -729,7 +729,7 @@ sdSimulate <- function(model,
             defaultScenario$times <- scenario$times
         }
         else
-          sdSimulatorMsg$sdSimulateAtomic6(model$staticModelId, 
+          sdSimulatorMsg$sdSimulateAtomic6(model$id, 
                                            typeof(scenario))
       }
     }
@@ -741,10 +741,10 @@ sdSimulate <- function(model,
       if (inherits(scenario, "sdScenario"))
         defaultScenario <- scenario
       else
-        sdSimulatorMsg$sdSimulateAtomic0(model$staticModelId)
+        sdSimulatorMsg$sdSimulateAtomic0(model$id)
     }
     else
-      sdSimulatorMsg$sdSimulateAtomic0(model$staticModelId)
+      sdSimulatorMsg$sdSimulateAtomic0(model$id)
     
     # Get variables from default scenario
     ct <- defaultScenario$constant
@@ -763,7 +763,7 @@ sdSimulate <- function(model,
     
     # verify data
     if (is.null(times) || !all(c("from", "to", "by") %in% names(times)))
-      sdSimulatorMsg$sdSimulateStatic1(model$staticModelId)
+      sdSimulatorMsg$sdSimulateStatic1(model$id)
     
     if (!is.null(InitVars))
     {
@@ -962,7 +962,8 @@ sdSimulate <- function(model,
               inp = inp[model$indexComponents$inp[[modelId]]],
               sw = sw[model$indexComponents$sw[[modelId]]],
               aux = aux[model$indexComponents$aux[[modelId]]])
-        else if (inherits(model$components[[modelId]], "sdStaticModelClass"))
+        else if (inherits(model$components[[modelId]], 
+                          sdStaticModelClass$classname))
           modelInitVars <-
             componentsInitVars[[modelId]](
               ct = ct[model$indexComponents$ct[[modelId]]],
@@ -1186,7 +1187,7 @@ sdSimulate <- function(model,
         
         # separate the algebraic equations
         staticComponents <- names(
-          which(model$componentsClass == "sdStaticModelClass"))
+          which(model$componentsClass == sdStaticModelClass$classname))
         
         outTrajectory <-
           as.data.frame(outTrajectory[, c(1:(iAuxBegin - 1), 

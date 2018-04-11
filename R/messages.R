@@ -804,15 +804,6 @@ sdStaticModelMsg$unit <- function(pstaticModelId)
           "No default scenario was set. Could not get the units list.",
           call. = F)
 
-sdStaticModelMsg$staticModelId1 <- function(staticModelId)
-  warning("sdsim::staticModelId - Missing static model ID: It was set to '", 
-          staticModelId, "'.", call. = F)
-
-sdStaticModelMsg$staticModelId2 <- function(staticModelId)
-  warning("sdsim::staticModelId - Invalid static model ID type: ",
-          "The model ID must be a string. It was set to '", staticModelId, "'.", 
-          call. = F)
-
 sdStaticModelMsg$defaultscenario1 <- function(pstaticModelId)
   warning("sdsim::defaultScenario - Static Model '", pstaticModelId, 
           "' set default scenario: ",
@@ -826,11 +817,6 @@ sdStaticModelMsg$defaultscenario2 <- function(pstaticModelId)
           "The default scenario must be a sdScenario object. ", 
           "Create one using the help('sdScenario') or help('sdLoadScenario')",
           "constructors. No default scenario was set.", call. = F)
-
-sdStaticModelMsg$staticModelDescription <- function(pstaticModelId)
-  warning("sdsim::staticModelDescription - Static Model '", pstaticModelId, 
-          "' set description aborted: The model description must be a string.",
-          call. = F)
 
 ## FILE sdSimulator.R
 ##

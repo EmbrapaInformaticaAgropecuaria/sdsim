@@ -30,7 +30,7 @@ repository (see the available models in the \code{\link{sdRepository}}
 documentation).
 }
 \details{
-The XML file must be created with the models object method '$saveToXml' to 
+The XML file must be created with the models object method '$saveXml' to 
 garantee that it will be correctly loaded and validated (by checking the 
 sdsim prefix).
 }
@@ -43,6 +43,6 @@ outbb <- sdSimulate(model = bb)
 outbb$plot("height speed", multipleYAxis = TRUE, units = TRUE)
 
 # save the model to a XML file and reload it
-bb$saveToXml(file = "bb.xml")
+bb$saveXml(file = "bb.xml")
 bb <- sdLoadModel(file = "bb.xml") 
 }

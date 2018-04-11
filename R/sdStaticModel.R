@@ -19,10 +19,10 @@
 #' algebraic equations will always be constant in time during simulations, and 
 #' therefore the simulation will only run for the initial time.
 #' 
-#' @field staticModelId A string with the model identification. Any non-word 
+#' @field id A string with the model identification. Any non-word 
 #' character will be removed and the result will be converted to a valid name 
 #' (see \code{\link[base]{make.names}}).
-#' @field staticModelDescription A string with the model description.
+#' @field description A string with the model description.
 #' @field defaultScenario The model default scenario, a 
 #' \code{\link{sdScenarioClass}} object without state variables. 
 #' It should contain all the model variables initialized with default values 
@@ -66,7 +66,7 @@
 #' model. They can be called by their names in the list.
 #' @section Public Methods Definition:  
 #' \describe{
-#' \item{\code{$initialize(staticModelId, staticModelDescription, InitVars, 
+#' \item{\code{$initialize(id, description, InitVars, 
 #' equations, defaultScenario, globalFunctions)}}{
 #' Class constructor. Sets the static model definition fields.
 #' 
@@ -125,7 +125,7 @@
 #'                       times = list(from = 0, to = 200, by = 1))
 #' 
 #' # create the static model of an environment capacity
-#' envCapacity <- sdStaticModel(staticModelId = "EnvironmentCapacity",
+#' envCapacity <- sdStaticModel(id = "EnvironmentCapacity",
 #'                              defaultScenario = envScen,
 #'                              equations = algEqEnvironment)
 #' # validate the equations and simulate the model
@@ -136,12 +136,12 @@
 #' # note that static models without time series variables have constant result
 #' # and therefore will only be simulated for the first time step if not coupled
 sdStaticModelClass <- R6::R6Class(
-  classname = "sdStaticModelClass",
+  classname = "sdStaticModel",
   inherit = sdModelClass,
   public = list(
     # Class Public Atributes
-    initialize = function(staticModelId,
-                          staticModelDescription,
+    initialize = function(id,
+                          description,
                           defaultScenario,
                           equations,
                           InitVars,
@@ -149,11 +149,11 @@ sdStaticModelClass <- R6::R6Class(
     {
       funDefaultArgs <- c("ct", "par", "inp", "sw", "eq")
       # mandatory parameters
-      if (!missing(staticModelId) && !is.null(staticModelId))
-        self$staticModelId <- (staticModelId)
+      if (!missing(id) && !is.null(id))
+        self$id <- (id)
       else
-        self$staticModelId <- NULL
-      staticModelId <- private$pstaticModelId
+        self$id <- NULL
+      id <- private$pid
       
       if (!missing(defaultScenario) && !is.null(defaultScenario))
         self$defaultScenario <- (defaultScenario) 
@@ -165,7 +165,7 @@ sdStaticModelClass <- R6::R6Class(
             all(funDefaultArgs %in% names(formals(InitVars))))
           private$pInitVars <- InitVars
         else
-          sdStaticModelMsg$initialize1(staticModelId)
+          sdStaticModelMsg$initialize1(id)
       }
       
       if (!missing(equations) && !is.null(equations)) # set equations
@@ -176,7 +176,7 @@ sdStaticModelClass <- R6::R6Class(
           equations <- tryCatch(sdInitEquations(equations, eqName = "eq"),
                                 error = function(e)
                                 {
-                                  sdStaticModelMsg$initialize2(staticModelId, e)
+                                  sdStaticModelMsg$initialize2(id, e)
                                   return(list())
                                 })
         }
@@ -188,14 +188,14 @@ sdStaticModelClass <- R6::R6Class(
           equations <- tryCatch(sdInitEquations(equations, eqName = "eq"),
                                 error = function(e)
                                 {
-                                  sdStaticModelMsg$initialize2(staticModelId, e)
+                                  sdStaticModelMsg$initialize2(id, e)
                                   return(list())
                                 })
         }
         else
         {
           equations <- list()
-          sdStaticModelMsg$initialize3(staticModelId)
+          sdStaticModelMsg$initialize3(id)
         }
         private$pequations <- equations
       }
@@ -219,7 +219,7 @@ sdStaticModelClass <- R6::R6Class(
             if (!is.function(globalFunctions[[i]]))
             {
               remGlobalFun <- c(remGlobalFun, i)
-              sdStaticModelMsg$initialize4(staticModelId, 
+              sdStaticModelMsg$initialize4(id, 
                                            names(globalFunctions)[[i]])
             } 
             else
@@ -236,11 +236,11 @@ sdStaticModelClass <- R6::R6Class(
           private$pglobalFunctions <- globalFunctions
         }
         else
-          sdStaticModelMsg$initialize5(staticModelId)
+          sdStaticModelMsg$initialize5(id)
       }
       
-      if (!missing(staticModelDescription) && !is.null(staticModelDescription))
-        self$staticModelDescription <- (staticModelDescription)
+      if (!missing(description) && !is.null(description))
+        self$description <- (description)
       
       private$flagVerify <- FALSE
     },
@@ -253,10 +253,13 @@ sdStaticModelClass <- R6::R6Class(
       modelStr$globalFunctions <- private$pglobalFunctions
       
       # print the attributes
-      cat("<sdStaticModel ID = ", private$pstaticModelId, ">\n", sep = "")
-      cat(indent("$staticModelDescription", indent = 4), sep = "\n")
-      cat(indent(private$pstaticModelDescription, indent = 4), sep = "\n")
+      cat("<",class(self)[[1]],">\n", sep = "")
+      cat(indent("$id", indent = 4), sep = "\n")
+      cat(indent(private$pid, indent = 4), sep = "\n")
       cat("\n")
+      
+      cat(indent("$description", indent = 4), sep = "\n")
+      cat(indent(private$pdescription, indent = 4), sep = "\n")
       
       if (length(modelStr[["equations"]]) > 0)
         cat(indent(capture.output(modelStr["equations"]), indent = 4), sep = "\n")
@@ -281,7 +284,7 @@ sdStaticModelClass <- R6::R6Class(
     {
       # run the equations and model definition validation
       if (is.null(private$pdefaultScenario))
-        sdStaticModelMsg$validate0(private$pstaticModelId, equationsVar, e)
+        sdStaticModelMsg$validate0(private$pid, equationsVar, e)
       
       # get the model scenario 
       defaultScenario <- private$pdefaultScenario$clone(deep = TRUE)
@@ -312,7 +315,7 @@ sdStaticModelClass <- R6::R6Class(
             defaultScenario$method <- scenario$method
         }
         else
-          sdStaticModelMsg$validate5(private$pstaticModelId, 
+          sdStaticModelMsg$validate5(private$pid, 
                                            typeof(scenario))
       }
       
@@ -329,7 +332,7 @@ sdStaticModelClass <- R6::R6Class(
         t <- times[[1]]
       else
       {
-        sdStaticModelMsg$validate1(private$pstaticModelId)
+        sdStaticModelMsg$validate1(private$pid)
         t <- 0
       }
       
@@ -366,18 +369,18 @@ sdStaticModelClass <- R6::R6Class(
           },
           error = function(e)
           {
-            sdStaticModelMsg$validate2(private$pstaticModelId, equationsVar, e)
+            sdStaticModelMsg$validate2(private$pid, equationsVar, e)
             return(invisible(numeric(0)))
           })
         
         if (is.null(eq[[equationsVar]]) || is.na(eq[[equationsVar]]) ||
             length(eq[[equationsVar]]) == 0 || is.infinite(eq[[equationsVar]]))
-          sdStaticModelMsg$validate3(private$pstaticModelId, equationsVar, 
+          sdStaticModelMsg$validate3(private$pid, equationsVar, 
                                      eq[[equationsVar]])
       }
       
       if (verbose)
-        sdStaticModelMsg$validate4(private$pstaticModelId)
+        sdStaticModelMsg$validate4(private$pid)
       
       private$flagVerify <- TRUE
     },
@@ -385,7 +388,7 @@ sdStaticModelClass <- R6::R6Class(
     {
       # save model to XML
       doc = XML::newXMLDoc()
-      rootsdModel <- XML::newXMLNode("sdStaticModel", doc = doc)
+      rootsdModel <- XML::newXMLNode(class(self)[[1]], doc = doc)
       
       globalFunctions <- lapply(private$pglobalFunctions, function(x)
       {
@@ -395,8 +398,8 @@ sdStaticModelClass <- R6::R6Class(
           return(x)
       })
       
-      lModel <- list(staticModelId = private$pstaticModelId      ,
-                     staticModelDescription = private$pstaticModelDescription,
+      lModel <- list(id = private$pid      ,
+                     description = private$pdescription,
                      InitVars = FunToString(private$pInitVars),
                      equations = private$pequations,
                      globalFunctions = globalFunctions)
@@ -420,50 +423,6 @@ sdStaticModelClass <- R6::R6Class(
     }
   ),
   active = list(
-    description = function(variableName)
-    {
-      "Return the descriptions list or the specified Variable description. 
-      Show a message if the description was not found."
-      if (!is.null(private$pdefaultScenario))
-      {
-        if (missing(variableName))
-          return(private$pdefaultScenario$description)
-      }
-      else
-        sdStaticModelMsg$description(private$pstaticModelId)
-    },
-    unit = function(variableName)
-    {
-      "Return the units list or the specified Variable unit" 
-      if (!is.null(private$pdefaultScenario))
-      {
-        if (missing(variableName))
-          return(private$pdefaultScenario$unit)
-      }
-      else
-        sdStaticModelMsg$unit(private$pstaticModelId)
-    },
-    staticModelId = function(staticModelId)
-    {
-      if (missing(staticModelId))
-        return(private$pstaticModelId)
-      else if (is.null(staticModelId))
-      {
-        staticModelId <- gsub("\\s", "", paste("model", Sys.Date()), 
-                              perl = T)
-        sdStaticModelMsg$staticModelId1(staticModelId)
-      }
-      else if (!is.character(staticModelId))
-      {
-        staticModelId <- gsub("\\s", "", paste("model", Sys.Date()), 
-                              perl = T)
-        sdStaticModelMsg$staticModelId2(staticModelId)
-      }
-      
-      private[["pstaticModelId"]] <- make.names(gsub("\\s", "", 
-                                                     staticModelId, 
-                                          perl = T))
-    },
     defaultScenario = function(defaultScenario)
     {
       if (missing(defaultScenario))
@@ -479,14 +438,14 @@ sdStaticModelClass <- R6::R6Class(
           if (length(dfScen$state) > 0)
           {
             dfScen$removeState()
-            sdStaticModelMsg$defaultscenario1(private$pstaticModelId)
+            sdStaticModelMsg$defaultscenario1(private$pid)
           }
           private$pdefaultScenario <- dfScen
           private$pdefaultScenario$id <- "Default"
           private$flagVerify <- FALSE
         }
         else 
-          sdStaticModelMsg$defaultscenario2(private$pstaticModelId)
+          sdStaticModelMsg$defaultscenario2(private$pid)
       }      
     },
     InitVars = function()
@@ -501,17 +460,6 @@ sdStaticModelClass <- R6::R6Class(
     {
       return(private$pequations)
     },
-    staticModelDescription = function(staticModelDescription)
-    {
-      if (missing(staticModelDescription))
-        return(private$pstaticModelDescription)
-      else {
-        if (is.character(staticModelDescription))
-          private$pstaticModelDescription <- staticModelDescription
-        else
-          sdStaticModelMsg$staticModelDescription(private$pstaticModelId)
-      }
-    },
     isVerified = function()
     {
       return(private$flagVerify)
@@ -519,9 +467,7 @@ sdStaticModelClass <- R6::R6Class(
   ),
   private = list(
     #@@ Class Private Atributes
-    pstaticModelId = NULL,
     pstaticModelEnv = NULL,
-    pstaticModelDescription = NULL,
     pInitVars = NULL,
     pdefaultScenario = NULL,
     pglobalFunctions = list(),
