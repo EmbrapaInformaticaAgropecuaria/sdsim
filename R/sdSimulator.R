@@ -351,7 +351,7 @@ CreateCoupledRootEventFunc <-
 #' 
 #' # simualte the Bouncing Ball model in a different scenario with the 
 #' # coeficient of restitution equals 0.5 and a shorter time sequence
-#' hardBallScen <- sdScenario(scenarioId = "hardBall", 
+#' hardBallScen <- sdScenario(id = "hardBall", 
 #'                            times = list(to = 5),
 #'                            input = list(k = 0.5))
 #' outbbHard <- sdSimulate(model = bb, scenario = hardBallScen)
@@ -405,7 +405,7 @@ sdSimulate <- function(model,
         if (is.character(scenario))
           scenario <- sdLoadScenario(file = scenario)
         
-        if (inherits(scenario, "sdScenarioClass"))
+        if (inherits(scenario, "sdScenario"))
         {
           if (length(scenario$state) > 0)
             defaultScenario$addState(scenario$state, verbose = verbose)
@@ -435,7 +435,7 @@ sdSimulate <- function(model,
       if (is.character(scenario))
         scenario <- sdLoadScenario(file = scenario)
       
-      if (inherits(scenario, "sdScenarioClass"))
+      if (inherits(scenario, "sdScenario"))
         defaultScenario <- scenario
       else
         sdSimulatorMsg$sdSimulateAtomic0(model$id)
@@ -711,7 +711,7 @@ sdSimulate <- function(model,
         if (is.character(scenario))
           scenario <- sdLoadScenario(file = scenario)
         
-        if (inherits(scenario, "sdScenarioClass"))
+        if (inherits(scenario, "sdScenario"))
         {
           if (length(scenario$constant) > 0)
             defaultScenario$addConstant(scenario$constant, verbose = verbose)
@@ -738,7 +738,7 @@ sdSimulate <- function(model,
       if (is.character(scenario))
         scenario <- sdLoadScenario(file = scenario)
       
-      if (inherits(scenario, "sdScenarioClass"))
+      if (inherits(scenario, "sdScenario"))
         defaultScenario <- scenario
       else
         sdSimulatorMsg$sdSimulateAtomic0(model$staticModelId)
@@ -884,7 +884,7 @@ sdSimulate <- function(model,
         if (is.character(scenario))
           scenario <- sdLoadScenario(file = scenario)
         
-        if (inherits(scenario, "sdScenarioClass"))
+        if (inherits(scenario, "sdScenario"))
         {
           if (length(scenario$state) > 0)
             defaultScenario$addState(scenario$state, verbose = verbose)
@@ -915,7 +915,7 @@ sdSimulate <- function(model,
       if (is.character(scenario))
         scenario <- sdLoadScenario(file = scenario)
       
-      if (inherits(scenario, "sdScenarioClass"))
+      if (inherits(scenario, "sdScenario"))
         defaultScenario <- scenario
       else
         sdSimulatorMsg$sdSimulateAtomic0(model$coupledModelId)

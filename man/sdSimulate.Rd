@@ -102,7 +102,7 @@ outbb$plot("height speed", multipleYAxis = TRUE, units = TRUE)
 
 # simualte the Bouncing Ball model in a different scenario with the 
 # coeficient of restitution equals 0.5 and a shorter time sequence
-hardBallScen <- sdScenario(scenarioId = "hardBall", 
+hardBallScen <- sdScenario(id = "hardBall", 
                            times = list(to = 5),
                            input = list(k = 0.5))
 outbbHard <- sdSimulate(model = bb, scenario = hardBallScen)

@@ -389,7 +389,7 @@ With the sdsim load function we are going to reload the modified Excel file to t
 lvScenario <- sdLoadScenario(file = "LVscenario.xlsx")
 
 lvScenario$state <- list(P = 6, C = 5)
-lvScenario$saveToXlsx(file = "LVscenario.xlsx")
+lvScenario$saveXlsx(file = "LVscenario.xlsx")
 ```
 
 

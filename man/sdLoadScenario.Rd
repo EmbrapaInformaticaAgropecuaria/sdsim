@@ -97,7 +97,7 @@ Each sheet must follow this guidelines:
   \code{simulationSheet} that can only have the following 5 (five) hard coded
   variables rows, named as bellow: 
   \enumerate{
-    \item scenarioId - A string with the scenario identification.
+    \item id - A string with the scenario identification.
     \item from - the simulation initial time
     \item to - the simulation final time
     \item by - the simulation time step, increment of the sequence
@@ -134,7 +134,7 @@ details section for more information.
 bb <- sdLoadModel(file = "BouncingBall", repository = TRUE)
 
 # save the bouncing ball default scenario to an EXCEL file
-bb$defaultScenario$saveToXlsx(file = "bb.xlsx")
+bb$defaultScenario$saveXlsx(file = "bb.xlsx")
 
 ## Let's edit the the EXCEL file to define a new scenario where we are 
 # throwing a tennis ball  from our hand to the ground
@@ -149,7 +149,7 @@ bb$defaultScenario$saveToXlsx(file = "bb.xlsx")
 # In the 'simulation' sheet: 
 #  - change the value of the variable 'to' to 8 (it will stop faster)
 #  - change the value of the variable 'by' to 0.001 (more precision)
-#  - change the value of the variable 'scenarioId' to 'TennisBallKicking'
+#  - change the value of the variable 'id' to 'TennisBallKicking'
 # Remove the 'constant' sheet (we will use the default value)
 
 ## Save the modified EXCEL file and reload it

@@ -93,7 +93,7 @@ inpEnv <- data.frame(Variable = c("P"),
 algEqEnvironment <- list(regulatingCapacity = "1 - inp$P/par$K")
 
 # create the environment capacity scenario
-envScen <- sdScenario(scenarioId = "EnvironmentCapacityScen", 
+envScen <- sdScenario(id = "EnvironmentCapacityScen", 
                       parameter = parEnv,
                       input = inpEnv,
                       times = list(from = 0, to = 200, by = 1))

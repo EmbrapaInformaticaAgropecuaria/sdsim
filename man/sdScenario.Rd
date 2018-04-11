@@ -4,16 +4,16 @@
 \alias{sdScenario}
 \title{Creates a Scenario Object}
 \usage{
-sdScenario(scenarioId, times = list(from = 0, to = 100, by = 1),
-  method = c("lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk", "euler",
-  "rk4", "ode23", "ode45", "radau", "bdf", "bdf_d", "adams", "impAdams",
-  "impAdams_d"), state, constant, parameter, input, interpolation, switch, unit,
-  description, timeSeriesDirectory = "", variableCol = "Variable",
-  valueCol = "Value", unitCol = "Unit", descriptionCol = "Description",
+sdScenario(id, times = list(from = 0, to = 100, by = 1), method = c("lsoda",
+  "lsode", "lsodes", "lsodar", "vode", "daspk", "euler", "rk4", "ode23",
+  "ode45", "radau", "bdf", "bdf_d", "adams", "impAdams", "impAdams_d"), state,
+  constant, parameter, input, interpolation, switch, unit, description,
+  timeSeriesDirectory = "", variableCol = "Variable", valueCol = "Value",
+  unitCol = "Unit", descriptionCol = "Description",
   interpolationCol = "Interpolation")
 }
 \arguments{
-\item{scenarioId}{A character string with the scenario ID.}
+\item{id}{A character string with the scenario ID.}
 
 \item{times}{A named list containing three elements to be passed to the
 \code{\link{seq}} function: from - the simulation initial time, to - the 
@@ -173,7 +173,7 @@ times <- list(from = 0, to = 10, by = 0.5)
 method <- "rk4"
               
 # call the constructor to create a scenario from the lists
-dummyScen <- sdScenario(scenarioId = "dummyScenario",
+dummyScen <- sdScenario(id = "dummyScenario",
                         state = st, 
                         input = inp, 
                         interpolation = tsInterpolation,
@@ -229,7 +229,7 @@ ct <- data.frame(Variable = c("c1"),
                  stringsAsFactors = FALSE)
 
 # call the constructor to create a scenario from the data.frames
-dummyScen <- sdScenario(scenarioId = "dummyScenario",
+dummyScen <- sdScenario(id = "dummyScenario",
                         state = st, 
                         input = inp, 
                         constant = ct,

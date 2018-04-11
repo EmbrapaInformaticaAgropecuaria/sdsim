@@ -275,7 +275,7 @@ eqEnvironment <- list(regulatingCapacity = "1 - inp$P/par$K")
 # create the component environment capacity model
 environmentCap <- sdStaticModel(staticModelId = "Environment",
                              defaultScenario = sdScenario(
-                               scenarioId = "EnvironmentScen",
+                               id = "EnvironmentScen",
                                parameter = parEnv,
                                input = inpEnv,
                                times = times),

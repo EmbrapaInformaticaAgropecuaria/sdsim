@@ -253,7 +253,7 @@ LVode <- function(t, st, ct, par, inp, sw, aux)
 }
 
 # create the scenario
-lvscen <- sdScenario(scenarioId = "LVscen", times = times, method = "lsoda",
+lvscen <- sdScenario(id = "LVscen", times = times, method = "lsoda",
                      state = st, parameter = pars, 
                      unit = parsUnits, description = parsDescription)
 

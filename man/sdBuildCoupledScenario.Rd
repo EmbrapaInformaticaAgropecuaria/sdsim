@@ -82,7 +82,7 @@ parsPrey      <- list(rG = 1.0,
                       K  = 10)
 inpPrey <- list(IngestC = 0)
 
-preyScen <- sdScenario(scenarioId = "preyScen",
+preyScen <- sdScenario(id = "preyScen",
                        state = stPrey,
                        parameter = parsPrey,
                        input = inpPrey)
@@ -94,7 +94,7 @@ parsConsumer  <- list(rI = 0.2,
                       AE = 0.5) 
 inpConsumer <- list(P = 0)
 
-consumerScen <- sdScenario(scenarioId = "consumerScen",
+consumerScen <- sdScenario(id = "consumerScen",
                            state = stConsumer,
                            parameter = parsConsumer,
                            input = inpConsumer)

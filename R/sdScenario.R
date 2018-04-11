@@ -17,7 +17,7 @@
 #' To build a coupled scenario use the \code{\link{sdBuildCoupledScenario}} 
 #' function.
 #' 
-#' @field scenarioId A string with the scenario identification. If missing a 
+#' @field id A string with the scenario identification. If missing a 
 #' default timestamp will be created.
 #' @field times A named list containing three elements to be passed to 
 #' the \code{\link{seq}} function: from - the simulation initial time, to - the 
@@ -65,7 +65,7 @@
 #' 
 #' @section Public Methods Definition:  
 #' \describe{
-#' \item{\code{$initialize(scenarioId, times, method, state, constant, 
+#' \item{\code{$initialize(id, times, method, state, constant, 
 #' parameter, input, interpolation, switch, unit, description, 
 #' timeSeriesDirectory = "")}}{
 #' Class constructor. Sets the model definition fields.
@@ -276,7 +276,7 @@
 #'   \item{by}{the time step, increment of the sequence}
 #' }}
 #' 
-#' \item{\code{$scenarioDataFrames()}}{Build the scenario variables data.frames.
+#' \item{\code{$buildDataFrames()}}{Build the scenario variables data.frames.
 #'  
 #' \strong{Returned Value}
 #' 
@@ -284,7 +284,7 @@
 #' data.frames (with variable, value, unit, description and interpolation 
 #' columns)}
 #' 
-#' \item{\code{$saveToXlsx(file = "Scenario.xlsx", colWidth = c(10, 10, 10, 30, 
+#' \item{\code{$saveXlsx(file = "Scenario.xlsx", colWidth = c(10, 10, 10, 30, 
 #' 10))}}{Save the scenario variables in a EXCEL file. This format is 
 #' \strong{recommended} for user modification. It will follow the format present 
 #' in the EXCEL Format section of the \code{\link{sdLoadScenario}} help.
@@ -341,7 +341,7 @@
 #' method <- "rk4"
 #'               
 #' # call the constructor to create a scenario from the lists
-#' dummyScen <- sdScenario(scenarioId = "dummyScenario",
+#' dummyScen <- sdScenario(id = "dummyScenario",
 #'                         state = st, 
 #'                         input = inp, 
 #'                         interpolation = tsInterpolation,
@@ -399,7 +399,7 @@
 #'                  stringsAsFactors = FALSE)
 #'
 #' # call the constructor to create a scenario from the data.frames
-#' dummyScen <- sdScenario(scenarioId = "dummyScenario",
+#' dummyScen <- sdScenario(id = "dummyScenario",
 #'                         state = st, 
 #'                         input = inp, 
 #'                         constant = ct,
@@ -407,10 +407,10 @@
 #'                         method = method) 
 #' print(dummyScen)
 sdScenarioClass <- R6::R6Class(
-  classname = "sdScenarioClass",
+  classname = "sdScenario",
   
   public = list(
-    initialize = function(scenarioId,
+    initialize = function(id,
                           times,
                           method,
                           state,
@@ -427,11 +427,11 @@ sdScenarioClass <- R6::R6Class(
       private[["pFlush"]]()
       
       # Initialize scenario ID
-      if (!missing(scenarioId) && !is.null(scenarioId))
-        self$scenarioId <- scenarioId
+      if (!missing(id) && !is.null(id))
+        self$id <- id
       else
-        self$scenarioId <- NULL
-      scenarioId <- private$pscenarioId
+        self$id <- NULL
+      id <- private$pid
       
       # Initialize state
       if (!missing(state) && !is.null(state) && length(state) > 0)
@@ -439,7 +439,7 @@ sdScenarioClass <- R6::R6Class(
         if (is.list(state) || is.numeric(state))
           self$addState(state, verbose = verbose)
         else
-          sdScenarioMsg$initialize1(scenarioId, "state")
+          sdScenarioMsg$initialize1(id, "state")
       }
       
       # Initialize constant
@@ -448,7 +448,7 @@ sdScenarioClass <- R6::R6Class(
         if (is.list(constant) || is.numeric(constant))
           self$addConstant(constant, verbose = verbose)
         else
-          sdScenarioMsg$initialize1(scenarioId, "constant")
+          sdScenarioMsg$initialize1(id, "constant")
       }
       
       # Initialize input and time series
@@ -458,7 +458,7 @@ sdScenarioClass <- R6::R6Class(
           self$addInput(input, verbose = verbose, interpolation = interpolation,
                         timeSeriesDirectory = timeSeriesDirectory)
         else
-          sdScenarioMsg$initialize2(scenarioId, "input")
+          sdScenarioMsg$initialize2(id, "input")
       }
       
       # Initialize parameter
@@ -467,7 +467,7 @@ sdScenarioClass <- R6::R6Class(
         if (is.list(parameter) || is.numeric(parameter))
           self$addParameter(parameter, verbose = verbose)
         else
-          sdScenarioMsg$initialize1(scenarioId, "parameter")
+          sdScenarioMsg$initialize1(id, "parameter")
       }
       
       # Initialize switch
@@ -476,7 +476,7 @@ sdScenarioClass <- R6::R6Class(
         if (is.list(switch))
           self$addSwitch(switch, verbose = verbose)
         else
-          sdScenarioMsg$initialize2(scenarioId, "switch")
+          sdScenarioMsg$initialize2(id, "switch")
       }
       
       # set units list
@@ -485,7 +485,7 @@ sdScenarioClass <- R6::R6Class(
         if (is.list(unit) || is.character(unit))
           self$addUnit(unit, verbose = verbose)
         else
-          sdScenarioMsg$initialize2(scenarioId, "unit")
+          sdScenarioMsg$initialize2(id, "unit")
       }
       
       # set descriptions list
@@ -495,7 +495,7 @@ sdScenarioClass <- R6::R6Class(
         if (is.list(description) || is.character(description))
           self$addDescription(description, verbose = verbose)
         else
-          sdScenarioMsg$initialize2(scenarioId, "description")
+          sdScenarioMsg$initialize2(id, "description")
       }
       
       # set simulation time sequence
@@ -513,10 +513,18 @@ sdScenarioClass <- R6::R6Class(
     },
     print = function()
     {
-      cat("\n<sdScenario ID = ", private[["pscenarioId"]], ">\n", sep = "")
-      cat(indent(paste(capture.output(self[["scenarioDataFrames"]]()), 
-                       collapse =  "\n"), indent = 4))
+      cat("\n<",class(self)[[1]],">\n", sep = "")
+      cat(indent("$id", indent = 4), sep = "\n")
+      cat(indent(private$pid, indent = 4), sep = "\n")
       cat("\n")
+      
+      scenDF <- self[["buildDataFrames"]](showId = FALSE)
+      if (length(scenDF) > 0)
+      {
+        cat(indent(paste(capture.output(scenDF), 
+                         collapse =  "\n"), indent = 4))
+        cat("\n")
+      }
     },
     saveToXml = function(file = "Scenario.xml")
     {
@@ -550,9 +558,9 @@ sdScenarioClass <- R6::R6Class(
       
       # save scenario to XML
       doc = XML::newXMLDoc()
-      rootScenario <- XML::newXMLNode("sdScenario", doc = doc)
+      rootScenario <- XML::newXMLNode(class(self)[[1]], doc = doc)
       
-      lscenario <- list(scenarioId = private[["pscenarioId"]],
+      lscenario <- list(id = private[["pid"]],
                         times = private[["ptimes"]],
                         method = private[["pmethod"]],
                         state = private[["pstate"]],
@@ -572,10 +580,10 @@ sdScenarioClass <- R6::R6Class(
       
       return(invisible(rootScenario))
     },
-    saveToXlsx = function(file = "Scenario.xlsx", 
+    saveXlsx = function(file = "Scenario.xlsx", 
                           colWidth = c(10, 10, 10, 30, 10))
     {
-      inputData <- self[["scenarioDataFrames"]]()
+      inputData <- self[["buildDataFrames"]]()
       
       # Save to excel
       wb <- openxlsx::createWorkbook()
@@ -597,19 +605,19 @@ sdScenarioClass <- R6::R6Class(
           length(from) == 1 && !is.na(from))
         private[["ptimes"]]$from <- from
       else if (!missing(from) && !is.null(from))
-        sdScenarioMsg$setTimeSequence(private$pscenarioId, "from")
+        sdScenarioMsg$setTimeSequence(private$pid, "from")
       
       if (!missing(to) && is.numeric(to) && 
           length(to) == 1 && !is.na(to))
         private[["ptimes"]]$to <- to
       else if (!missing(to) && !is.null(to))
-        sdScenarioMsg$setTimeSequence(private$pscenarioId, "to")
+        sdScenarioMsg$setTimeSequence(private$pid, "to")
       
       if (!missing(by) && is.numeric(by) && 
           length(by) == 1 && !is.na(by))
         private[["ptimes"]]$by <- by
       else if (!missing(by) && !is.null(by))
-        sdScenarioMsg$setTimeSequence(private$pscenarioId, "by")
+        sdScenarioMsg$setTimeSequence(private$pid, "by")
     },
     # Add variables to the scenario
     addState = function(..., verbose = FALSE, overwrite = FALSE)
@@ -636,7 +644,7 @@ sdScenarioClass <- R6::R6Class(
           (is.null(names(interpolation)) || 
            !all(names(interpolation) %in% names(private[["pinput"]]))))
       {
-        sdScenarioMsg$addInput(private$pscenarioId, names(interpolation), 
+        sdScenarioMsg$addInput(private$pid, names(interpolation), 
                                names(private[["pinput"]]))
         
         interpolation <- interpolation[
@@ -768,7 +776,7 @@ sdScenarioClass <- R6::R6Class(
         private[["premoveVar"]](varList, "unit", verbose = verbose)
       invisible()
     },
-    scenarioDataFrames = function()
+    buildDataFrames = function(showId = TRUE)
     {
       # Create list of data.frames containing variable names and their
       # respective values
@@ -862,37 +870,43 @@ sdScenarioClass <- R6::R6Class(
         }
       }
       
-      # Simulation tab containing method and times values
-      if (is.null(private[["pmethod"]]))
+      # Simulation tab containing id, method and times values
+      if (is.null(private[["pmethod"]])) # no method
         inputData[["simulation"]] <- data.frame(
-          Variable = c(names(private[["ptimes"]]), "scenarioId"), 
-          Value = c(unlist(private[["ptimes"]], use.names = FALSE), 
-                    private$pscenarioId), stringsAsFactors = FALSE)
+          Variable = c(names(private[["ptimes"]])), 
+          Value = c(unlist(private[["ptimes"]], use.names = FALSE)), 
+          stringsAsFactors = FALSE)
       else 
         inputData[["simulation"]] <- data.frame(
-          Variable = c("method", names(private[["ptimes"]]), "scenarioId"), 
+          Variable = c("method", names(private[["ptimes"]])), 
           Value = c(private[["pmethod"]], 
-                    unlist(private[["ptimes"]], use.names = FALSE),
-                    private$pscenarioId), stringsAsFactors = FALSE)
+                    unlist(private[["ptimes"]], use.names = FALSE)), 
+          stringsAsFactors = FALSE)
+      
+      if (showId)
+        inputData[["simulation"]] <- rbind(inputData[["simulation"]], 
+                                           c("id", private$pid))
+      else if (nrow(inputData[["simulation"]]) == 0) # no times or method
+        inputData[["simulation"]] <- NULL
       
       return(inputData)
     }
   ),
   active = list(
-    scenarioId = function(scenarioId)
+    id = function(id)
     {
-      if (missing(scenarioId))
-        return(private[["pscenarioId"]])
+      if (missing(id))
+        return(private[["pid"]])
       else # set
       {
-        if (is.character(scenarioId))
-          private[["pscenarioId"]] <- scenarioId
+        if (is.character(id))
+          private[["pid"]] <- id
         else
         {
-          scenarioId <- paste("scenario", Sys.Date())
-          sdScenarioMsg$scenarioId(scenarioId)
+          id <- paste("scenario", Sys.Date())
+          sdScenarioMsg$id(id)
           
-          private[["pscenarioId"]] <- scenarioId
+          private[["pid"]] <- id
         }
       } 
     },
@@ -950,7 +964,7 @@ sdScenarioClass <- R6::R6Class(
         # SET method
         if (!is.character(method))
         {
-          sdScenarioMsg$method1(private$pscenarioId)
+          sdScenarioMsg$method1(private$pid)
           private[["pmethod"]] <- "lsoda"
         }
         
@@ -962,7 +976,7 @@ sdScenarioClass <- R6::R6Class(
           private[["pmethod"]] <- method
         else
         {
-          sdScenarioMsg$method2(private$pscenarioId)
+          sdScenarioMsg$method2(private$pid)
           private[["pmethod"]] <- "lsoda"
         }
       }
@@ -978,7 +992,7 @@ sdScenarioClass <- R6::R6Class(
                                     times[["to"]], 
                                     times[["by"]])
         else
-          sdScenarioMsg$times(private$pscenarioId)
+          sdScenarioMsg$times(private$pid)
       }
     },
     description = function(descriptions)
@@ -990,7 +1004,7 @@ sdScenarioClass <- R6::R6Class(
         if (is.list(descriptions))
           private[["pdescription"]] <- descriptions
         else
-          sdScenarioMsg$description(private$pscenarioId, typeof(descriptions))
+          sdScenarioMsg$description(private$pid, typeof(descriptions))
       }
     },
     unit = function(units)
@@ -1002,12 +1016,12 @@ sdScenarioClass <- R6::R6Class(
         if (is.list(units))
           private[["punit"]] <- units
         else
-          sdScenarioMsg$unit(private$pscenarioId, typeof(units))
+          sdScenarioMsg$unit(private$pid, typeof(units))
       }
     }
   ),
   private = list(
-    pscenarioId = NULL,
+    pid = NULL,
     pstate = list(),
     pconstant = list(),
     pparameter = list(),
@@ -1019,7 +1033,7 @@ sdScenarioClass <- R6::R6Class(
     ptimes = list(),
     pFlush = function()
     {
-      private[["pscenarioId"]] <- NULL
+      private[["pid"]] <- NULL
       private[["pstate"]] <- list()
       private[["pconstant"]] <- list()
       private[["pinput"]] <- list()
@@ -1077,7 +1091,7 @@ sdScenarioClass <- R6::R6Class(
       
       if (is.null(names(varList)) || all(names(varList) %in% ""))
       {
-        sdScenarioMsg$addVar1(private$pscenarioId)
+        sdScenarioMsg$addVar1(private$pid)
         invisible()
       }
       
@@ -1088,13 +1102,13 @@ sdScenarioClass <- R6::R6Class(
       {
         if (var == "")
         {
-          sdScenarioMsg$addVar2(private$pscenarioId)
+          sdScenarioMsg$addVar2(private$pid)
           next()
         }
         
         if (checkNumeric && !is.numeric(unlist(varList[[var]])))
         {
-          sdScenarioMsg$addVar3(private$pscenarioId, varType, var)
+          sdScenarioMsg$addVar3(private$pid, varType, var)
         }
         else
         {
@@ -1106,7 +1120,7 @@ sdScenarioClass <- R6::R6Class(
             if (var %in% names(private[[paste0("p", varType)]]))
             {
               if (verbose)
-                sdScenarioMsg$addVar6(private$pscenarioId, varType, var, 
+                sdScenarioMsg$addVar6(private$pid, varType, var, 
                                     varList[[var]])
               
               # if it was a ts also remove the previous interpolation and fun
@@ -1127,10 +1141,10 @@ sdScenarioClass <- R6::R6Class(
               if (verbose)
               {
                 if (varType %in% c("description", "unit"))
-                  sdScenarioMsg$addVar4(private$pscenarioId, varType, var, 
+                  sdScenarioMsg$addVar4(private$pid, varType, var, 
                                         varList[[var]])
                 else
-                  sdScenarioMsg$addVar5(private$pscenarioId, varType, var, 
+                  sdScenarioMsg$addVar5(private$pid, varType, var, 
                                         varList[[var]])
               }
             }
@@ -1138,7 +1152,7 @@ sdScenarioClass <- R6::R6Class(
             private[[paste0("p", varType)]][[var]] <- varList[[var]]
           }
           else
-            sdScenarioMsg$addVar7(private$pscenarioId, varType, var)
+            sdScenarioMsg$addVar7(private$pid, varType, var)
         }
       }
       
@@ -1158,7 +1172,7 @@ sdScenarioClass <- R6::R6Class(
       varList <- lapply(varList, function(x)
       {
         if (!is.character(x))
-          sdScenarioMsg$removeVar1(private$pscenarioId, varType, typeof(x))
+          sdScenarioMsg$removeVar1(private$pid, varType, typeof(x))
         else
           x
       })
@@ -1168,7 +1182,7 @@ sdScenarioClass <- R6::R6Class(
         if (!is.null(private[[paste0("p", varType)]][[var]]))
         {
           if (verbose)
-            sdScenarioMsg$removeVar2(private$pscenarioId, varType, var)
+            sdScenarioMsg$removeVar2(private$pid, varType, var)
           
           private[[paste0("p", varType)]][[var]] <- NULL
           
@@ -1193,7 +1207,7 @@ sdScenarioClass <- R6::R6Class(
           }
         }
         else
-          sdScenarioMsg$removeVar3(private$pscenarioId, varType, var)       
+          sdScenarioMsg$removeVar3(private$pid, varType, var)       
       }
     }
   )

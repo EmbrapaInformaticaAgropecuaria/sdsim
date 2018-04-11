@@ -174,7 +174,7 @@
 #' }
 #' 
 #' # create the scenario
-#' lvscen <- sdScenario(scenarioId = "LVscen", times = times, method = "lsoda",
+#' lvscen <- sdScenario(id = "LVscen", times = times, method = "lsoda",
 #'                      state = st, parameter = pars, 
 #'                      unit = parsUnits, description = parsDescription)
 #' 
@@ -315,7 +315,7 @@ sdLoadModel <- function(file, repository = F,
       loadedScen <- model$defaultScenario
       
       model$defaultScenario <- sdScenario(
-        scenarioId = "Default",
+        id = "Default",
         times = loadedScen$times,
         method = loadedScen$method,
         state = loadedScen$state,
@@ -372,7 +372,7 @@ sdLoadModel <- function(file, repository = F,
         loadedScen <- x$defaultScenario
         
         x$defaultScenario <- 
-          sdScenario(scenarioId = "Default",
+          sdScenario(id = "Default",
                      times = loadedScen$times,
                      method = loadedScen$method,
                      state = loadedScen$state,
@@ -442,7 +442,7 @@ sdLoadModel <- function(file, repository = F,
       loadedScen <- model$defaultScenario
       
       model$defaultScenario <- sdScenario(
-        scenarioId = "Default",
+        id = "Default",
         times = loadedScen$times,
         method = loadedScen$method,
         state = NULL,
@@ -542,7 +542,7 @@ sdLoadModel <- function(file, repository = F,
 #' # create the component prey model
 # prey <- sdAtomicModel(
 #   id = "Prey",
-#   defaultScenario = sdScenario(scenarioId = "preyScen",
+#   defaultScenario = sdScenario(id = "preyScen",
 #                                times = times,
 #                                state = stPrey,
 #                                parameter = parsPrey,
@@ -571,7 +571,7 @@ sdLoadModel <- function(file, repository = F,
 # consumer <- sdAtomicModel(
 #   id = "Consumer",
 #   defaultScenario = sdScenario(
-#     scenarioId = "consumerScen",
+#     id = "consumerScen",
 #     times = times,
 #     state = stConsumer,
 #     parameter = parsConsumer,
@@ -693,7 +693,7 @@ sdCoupledModel <- function(coupledModelId = NULL,
 #' algEqEnvironment <- list(regulatingCapacity = "1 - inp$P/par$K")
 #' 
 #' # create the environment capacity scenario
-#' envScen <- sdScenario(scenarioId = "EnvironmentCapacityScen", 
+#' envScen <- sdScenario(id = "EnvironmentCapacityScen", 
 #'                       parameter = parEnv,
 #'                       input = inpEnv,
 #'                       times = list(from = 0, to = 200, by = 1))
@@ -742,7 +742,7 @@ sdStaticModel <- function(staticModelId = NULL,
 #' To build a coupled scenario use the \code{\link{sdBuildCoupledScenario}} 
 #' function.
 #' 
-#' @param scenarioId A character string with the scenario ID.
+#' @param id A character string with the scenario ID.
 #' @param times A named list containing three elements to be passed to the
 #' \code{\link{seq}} function: from - the simulation initial time, to - the 
 #' simulation final time and by - the time step, increment of the sequence (e.g.
@@ -867,7 +867,7 @@ sdStaticModel <- function(staticModelId = NULL,
 #' method <- "rk4"
 #'               
 #' # call the constructor to create a scenario from the lists
-#' dummyScen <- sdScenario(scenarioId = "dummyScenario",
+#' dummyScen <- sdScenario(id = "dummyScenario",
 #'                         state = st, 
 #'                         input = inp, 
 #'                         interpolation = tsInterpolation,
@@ -923,14 +923,14 @@ sdStaticModel <- function(staticModelId = NULL,
 #'                  stringsAsFactors = FALSE)
 #'
 #' # call the constructor to create a scenario from the data.frames
-#' dummyScen <- sdScenario(scenarioId = "dummyScenario",
+#' dummyScen <- sdScenario(id = "dummyScenario",
 #'                         state = st, 
 #'                         input = inp, 
 #'                         constant = ct,
 #'                         times = times,
 #'                         method = method) 
 #' print(dummyScen)
-sdScenario <- function(scenarioId,
+sdScenario <- function(id,
                        times = list(from = 0, to = 100, by = 1),
                        method = c("lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk",
                                   "euler", "rk4", "ode23", "ode45", "radau", 
@@ -954,8 +954,8 @@ sdScenario <- function(scenarioId,
   
   # Update the variables from external files with the given arguments and
   # initialize the object fields
-  if (!missing(scenarioId) && !is.null(scenarioId))
-    loadedScen$scenarioId <- scenarioId
+  if (!missing(id) && !is.null(id))
+    loadedScen$id <- id
   
   if (!missing(times) && !is.null(times)) # set simulation time seq.
     loadedScen$times <- times
@@ -1098,7 +1098,7 @@ sdScenario <- function(scenarioId,
   if (!missing(description) && !is.null(description))
     loadedScen$description <- c(loadedScen$description, description)
   
-  return(sdScenarioClass$new(scenarioId = loadedScen$scenarioId,
+  return(sdScenarioClass$new(id = loadedScen$id,
                              times = loadedScen$times, 
                              method = loadedScen$method,
                              state = loadedScen$state,
@@ -1180,7 +1180,7 @@ sdScenario <- function(scenarioId,
 #'   \code{simulationSheet} that can only have the following 5 (five) hard coded
 #'   variables rows, named as bellow: 
 #'   \enumerate{
-#'     \item scenarioId - A string with the scenario identification.
+#'     \item id - A string with the scenario identification.
 #'     \item from - the simulation initial time
 #'     \item to - the simulation final time
 #'     \item by - the simulation time step, increment of the sequence
@@ -1216,7 +1216,7 @@ sdScenario <- function(scenarioId,
 #' bb <- sdLoadModel(file = "BouncingBall", repository = TRUE)
 #' 
 #' # save the bouncing ball default scenario to an EXCEL file
-#' bb$defaultScenario$saveToXlsx(file = "bb.xlsx")
+#' bb$defaultScenario$saveXlsx(file = "bb.xlsx")
 #' 
 #' ## Let's edit the the EXCEL file to define a new scenario where we are 
 #' # throwing a tennis ball  from our hand to the ground
@@ -1231,7 +1231,7 @@ sdScenario <- function(scenarioId,
 #' # In the 'simulation' sheet: 
 #' #  - change the value of the variable 'to' to 8 (it will stop faster)
 #' #  - change the value of the variable 'by' to 0.001 (more precision)
-#' #  - change the value of the variable 'scenarioId' to 'TennisBallKicking'
+#' #  - change the value of the variable 'id' to 'TennisBallKicking'
 #' # Remove the 'constant' sheet (we will use the default value)
 #' 
 #' ## Save the modified EXCEL file and reload it
@@ -1276,11 +1276,12 @@ sdLoadScenario <- function(file,
         constructorsMsg$sdLoadScenario3(file, w)
       })
     
-    # Check if file is a valid sdsim xml file 
+    # Check if file is a valid sdsim xml file containing a scenario XML
     sdsimprefix <- paste(readLines(file, n = 3), collapse = "\n")
     if (!grepl(pattern = "<\\?sdsim.*version.*\\?>", sdsimprefix, 
-               ignore.case = TRUE))
-      constructorsMsg$sdLoadScenario2()
+               ignore.case = TRUE) ||
+        !(sdScenarioClass$classname %in% names(XML::xmlChildren(loadedScen))))
+      constructorsMsg$sdLoadScenario2(file)
     # else
     # {
     #   # valid prefix, now check version
@@ -1312,7 +1313,7 @@ sdLoadScenario <- function(file,
   else
     constructorsMsg$sdLoadScenario4(file)
   
-  return(sdScenarioClass$new(scenarioId = loadedScen$scenarioId,
+  return(sdScenarioClass$new(id = loadedScen$id,
                              times = loadedScen$times, 
                              method = loadedScen$method,
                              state = loadedScen$state,
@@ -1325,7 +1326,7 @@ sdLoadScenario <- function(file,
                              description = loadedScen$description,
                              timeSeriesDirectory = timeSeriesDirectory))
 }
-# simulationSheet: variables: from, to, by, method, scenarioId
+# simulationSheet: variables: from, to, by, method, id
 # variableCol = "Variable",
 # valueCol = "Value",
 # unitCol = "Unit",

@@ -119,7 +119,7 @@
 #' algEqEnvironment <- list(regulatingCapacity = "1 - inp$P/par$K")
 #' 
 #' # create the environment capacity scenario
-#' envScen <- sdScenario(scenarioId = "EnvironmentCapacityScen", 
+#' envScen <- sdScenario(id = "EnvironmentCapacityScen", 
 #'                       parameter = parEnv,
 #'                       input = inpEnv,
 #'                       times = list(from = 0, to = 200, by = 1))
@@ -292,7 +292,7 @@ sdStaticModelClass <- R6::R6Class(
         if (is.character(scenario))
           scenario <- sdLoadScenario(file = scenario)
         
-        if (inherits(scenario, "sdScenarioClass"))
+        if (inherits(scenario, sdScenarioClass$classname))
         {
           if (length(scenario$constant) > 0)
             defaultScenario$addConstant(scenario$constant, verbose = verbose)
@@ -472,7 +472,7 @@ sdStaticModelClass <- R6::R6Class(
           defaultScenario <- sdLoadScenario(defaultScenario)
         
         # scenario must be a scenario object 
-        if (inherits(defaultScenario, "sdScenarioClass"))
+        if (inherits(defaultScenario, sdScenarioClass$classname))
         {
           dfScen <- defaultScenario$clone()
           if (length(dfScen$state) > 0)
@@ -481,7 +481,7 @@ sdStaticModelClass <- R6::R6Class(
             sdStaticModelMsg$defaultscenario1(private$pstaticModelId)
           }
           private$pdefaultScenario <- dfScen
-          private$pdefaultScenario$scenarioId <- "Default"
+          private$pdefaultScenario$id <- "Default"
           private$flagVerify <- FALSE
         }
         else 

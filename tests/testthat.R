@@ -33,8 +33,12 @@ scen_ob2 <- sdScenario("testScen", input = c(pow = 3))
 
 
 out <- sdSimulate(m)
-
 out2 <- sdSimulate(m, scen_ob)
+
+## Scenario Object
+expect_warning(sdScenario(), "sdsim::id - Invalid scenario ID type: The scenario ID must be a string. It was set to 'scenario 2018-04-11'.",
+               info = "empty scenario with no id")
+expect_is(sdScenario("test id"), "sdScenario")
 
 #regenerate the repository models
 for (i in 1:5)

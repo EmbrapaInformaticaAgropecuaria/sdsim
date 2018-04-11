@@ -340,7 +340,7 @@ LoadModelScenario <- function(file,
       scen$times <- scen$simulation[names(scen$simulation) %in% 
                                         c("from", "to", "by")]
       scen$method <- scen$simulation$method
-      scen$scenarioId <- scen$simulation$scenarioId
+      scen$id <- scen$simulation$id
       scen$simulation <- NULL
       
       # move the times description and units from the 'from', 'to' and 'by'

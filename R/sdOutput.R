@@ -212,7 +212,7 @@ sdOutputClass <- R6::R6Class(
         cat("sdStaticModel ID = ", private$pmodel$staticModelId, sep = "")
       
       if (!is.null(private$pscenario))
-        cat(" sdScenario ID = ", private$pscenario$scenarioId, ">\n\n", 
+        cat(" sdScenario ID = ", private$pscenario$id, ">\n\n", 
             sep = "")
       else 
         cat(">\n\n")
@@ -569,7 +569,7 @@ sdOutputClass <- R6::R6Class(
       
       if (!is.null(private$pscenario))
         private$pscenario$saveToXml(paste0(path, "/", 
-                                           private$pscenario$scenarioId, 
+                                           private$pscenario$id, 
                                            ".xml"))
     }
   ),

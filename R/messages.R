@@ -132,7 +132,7 @@ constructorsMsg$sdLoadScenario1 <- function(file)
   stop("sdsim::sdLoadScenario - Load Scenario aborted: The given file '", file, 
        "' do not exists.", call. = F)
 
-constructorsMsg$sdLoadScenario2 <- function(file, e)
+constructorsMsg$sdLoadScenario2 <- function(file, e = NULL)
   stop("sdsim::sdLoadScenario - Load Scenario '", file, "' aborted: ",
        "The given file is not a valid XML. See help('sdLoadScenario') for ", 
        "the set of rules to encode a sdScenario in EXCEL file or use the ",
@@ -631,8 +631,8 @@ sdScenarioMsg$addInput <- function(pscenarioId, namesInterpol, namesInput)
           capture.output(namesInterpol[!(namesInterpol %in% namesInput)]),
           call. = F)
 
-sdScenarioMsg$scenarioId <- function(scenarioId)
-  warning("sdsim::scenarioId - Invalid scenario ID type: The scenario ID must ",
+sdScenarioMsg$id <- function(scenarioId)
+  warning("sdsim::id - Invalid scenario ID type: The scenario ID must ",
           "be a string. It was set to '", scenarioId, "'.", call. = F)
 
 sdScenarioMsg$method1 <- function(pscenarioId)

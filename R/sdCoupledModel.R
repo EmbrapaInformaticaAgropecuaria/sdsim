@@ -60,7 +60,7 @@
 #'                       K  = 10)
 #' inpPrey <- list(IngestC = 0)
 #' 
-#' preyScen <- sdScenario(scenarioId = "preyScen",
+#' preyScen <- sdScenario(id = "preyScen",
 #'                        state = stPrey,
 #'                        parameter = parsPrey,
 #'                        input = inpPrey)
@@ -72,7 +72,7 @@
 #'                       AE = 0.5) 
 #' inpConsumer <- list(P = 0)
 #' 
-#' consumerScen <- sdScenario(scenarioId = "consumerScen",
+#' consumerScen <- sdScenario(id = "consumerScen",
 #'                            state = stConsumer,
 #'                            parameter = parsConsumer,
 #'                            input = inpConsumer)
@@ -135,7 +135,7 @@ sdBuildCoupledScenario = function(coupledScenarioId = NULL,
       scenComponent <- sdLoadScenario(file = scenComponent, 
                                     timeSeriesDirectory = timeSeriesDirectory)
     
-    if (!inherits(scenComponent, "sdScenarioClass"))
+    if (!inherits(scenComponent, sdScenarioClass$classname))
     {
       sdCoupledModelMsg$sdBuildCoupledScenario2(scenComponent, modelId)
       next
@@ -177,7 +177,7 @@ sdBuildCoupledScenario = function(coupledScenarioId = NULL,
   }
   
   coupledScenario <- sdScenario(
-    scenarioId = coupledScenarioId,
+    id = coupledScenarioId,
     method = method[[1]],
     times = times,
     state = unlist(stComponents, recursive = FALSE),
@@ -418,7 +418,7 @@ sdBuildCoupledScenario = function(coupledScenarioId = NULL,
 # prey <- sdAtomicModel(
 #   id = "Prey",
 #   defaultScenario = sdScenario(
-#     scenarioId = "preyScen",
+#     id = "preyScen",
 #     times = times,
 #     state = stPrey,
 #     parameter = parsPrey,
@@ -453,7 +453,7 @@ sdBuildCoupledScenario = function(coupledScenarioId = NULL,
 # consumer <- sdAtomicModel(
 #   id = "Consumer",
 #   defaultScenario = sdScenario(
-#     scenarioId = "consumerScen",
+#     id = "consumerScen",
 #     times = times,
 #     state = stConsumer,
 #     parameter = parsConsumer,
@@ -475,7 +475,7 @@ sdBuildCoupledScenario = function(coupledScenarioId = NULL,
 #' # create the component environment capacity model
 #' environmentCap <- sdStaticModel(staticModelId = "Environment",
 #'                              defaultScenario = sdScenario(
-#'                                scenarioId = "EnvironmentScen",
+#'                                id = "EnvironmentScen",
 #'                                parameter = parEnv,
 #'                                input = inpEnv,
 #'                                times = times),
@@ -874,7 +874,7 @@ sdCoupledModelClass <- R6::R6Class(
         else if (is.character(scenario))
           scenario <- sdLoadScenario(file = scenario)
         
-        if (inherits(scenario, "sdScenarioClass"))
+        if (inherits(scenario, sdScenarioClass$classname))
         {
           if (length(scenario$state) > 0)
             defaultScenario$addState(scenario$state, verbose = verbose)

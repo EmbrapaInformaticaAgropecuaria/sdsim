@@ -224,7 +224,7 @@
 #' }
 #' 
 #' # create the scenario
-#' lvscen <- sdScenario(scenarioId = "LVscen", times = times, method = "lsoda",
+#' lvscen <- sdScenario(id = "LVscen", times = times, method = "lsoda",
 #'                      state = st, parameter = pars, 
 #'                      unit = parsUnits, description = parsDescription)
 #' 
@@ -445,7 +445,7 @@ sdAtomicModelClass <- R6::R6Class(
       modelStr$globalFunctions <- private$pglobalFunctions
       
       # print the attributes
-      cat("\n<sdAtomicModel>\n", sep = "")
+      cat("\n<",class(self)[[1]],">\n", sep = "")
       cat(indent("$id", indent = 4), sep = "\n")
       cat(indent(private$pid, indent = 4), sep = "\n")
       cat("\n")
@@ -504,7 +504,7 @@ sdAtomicModelClass <- R6::R6Class(
         if (is.character(scenario))
           scenario <- sdLoadScenario(file = scenario)
         
-        if (inherits(scenario, "sdScenarioClass"))
+        if (inherits(scenario, sdScenarioClass$classname))
         {
           if (length(scenario$state) > 0)
             defaultScenario$addState(scenario$state, verbose = verbose)
@@ -767,10 +767,10 @@ sdAtomicModelClass <- R6::R6Class(
           defaultScenario <- sdLoadScenario(defaultScenario)
         
         # scenario must be a scenario object 
-        if (inherits(defaultScenario, "sdScenarioClass"))
+        if (inherits(defaultScenario, sdScenarioClass$classname))
         {
           private$pdefaultScenario <- defaultScenario$clone()
-          private$pdefaultScenario$scenarioId <- "Default"
+          private$pdefaultScenario$id <- "Default"
           private$flagVerify <- FALSE
         }
         else 

@@ -30,7 +30,7 @@ function.
 \section{Fields}{
 
 \describe{
-\item{\code{scenarioId}}{A string with the scenario identification. If missing a 
+\item{\code{id}}{A string with the scenario identification. If missing a 
 default timestamp will be created.}
 
 \item{\code{times}}{A named list containing three elements to be passed to 
@@ -89,7 +89,7 @@ name) and it's value is the variable description.}
 \section{Public Methods Definition}{
   
 \describe{
-\item{\code{$initialize(scenarioId, times, method, state, constant, 
+\item{\code{$initialize(id, times, method, state, constant, 
 parameter, input, interpolation, switch, unit, description, 
 timeSeriesDirectory = "")}}{
 Class constructor. Sets the model definition fields.
@@ -300,7 +300,7 @@ sequence.
   \item{by}{the time step, increment of the sequence}
 }}
 
-\item{\code{$scenarioDataFrames()}}{Build the scenario variables data.frames.
+\item{\code{$buildDataFrames()}}{Build the scenario variables data.frames.
  
 \strong{Returned Value}
 
@@ -308,7 +308,7 @@ A list with the state, constant, parameter, input and switch
 data.frames (with variable, value, unit, description and interpolation 
 columns)}
 
-\item{\code{$saveToXlsx(file = "Scenario.xlsx", colWidth = c(10, 10, 10, 30, 
+\item{\code{$saveXlsx(file = "Scenario.xlsx", colWidth = c(10, 10, 10, 30, 
 10))}}{Save the scenario variables in a EXCEL file. This format is 
 \strong{recommended} for user modification. It will follow the format present 
 in the EXCEL Format section of the \code{\link{sdLoadScenario}} help.
@@ -367,7 +367,7 @@ times <- list(from = 0, to = 10, by = 0.5)
 method <- "rk4"
               
 # call the constructor to create a scenario from the lists
-dummyScen <- sdScenario(scenarioId = "dummyScenario",
+dummyScen <- sdScenario(id = "dummyScenario",
                         state = st, 
                         input = inp, 
                         interpolation = tsInterpolation,
@@ -425,7 +425,7 @@ ct <- data.frame(Variable = c("c1"),
                  stringsAsFactors = FALSE)
 
 # call the constructor to create a scenario from the data.frames
-dummyScen <- sdScenario(scenarioId = "dummyScenario",
+dummyScen <- sdScenario(id = "dummyScenario",
                         state = st, 
                         input = inp, 
                         constant = ct,
