@@ -207,8 +207,8 @@ sdCoupledModelMsg$addComponent1 <- function(pcoupledModelId, id)
 sdCoupledModelMsg$addComponent2 <- function(pcoupledModelId, typeofmodel)
   warning("sdsim::addComponent - Coupled Model '", pcoupledModelId, 
           "' adding component: the argument '...' must be a list of not empty ",
-          "sdModel's, sdStaticModel's, sdCoupledModel's or character XML file ",
-          "names. Component of type ", typeofmodel, " could not be added.", 
+          "sdModel's or character XML file names. Component of type ", 
+          typeofmodel, " could not be added.", 
           call. = F)
 
 sdCoupledModelMsg$addConnection1 <- function(pcoupledModelId, con)
@@ -413,33 +413,33 @@ sdAtomicModelMsg <- new.env()
 sdAtomicModelMsg$initialize1 <- function(modelId)
   warning("sdsim::initialize - Model '", modelId, "' initialization: ", 
           "The DifferentialEquations structure does not match specification. ", 
-          "It must be a function, see help('sdModel').",
+          "It must be a function, see help('sdAtomicModel').",
           "Replacement aborted.", call. = F)
 
 sdAtomicModelMsg$initialize2 <- function(modelId)
   warning("sdsim::initialize - Model '", modelId, "' initialization: ", 
           "The InitVars structure does not match specification. It ", 
-          "must be a function, see help('sdModel').",
+          "must be a function, see help('sdAtomicModel').",
           "Replacement aborted.", call. = F)
 
 sdAtomicModelMsg$initialize3 <- function(modelId)
   warning("sdsim::initialize - Model '", modelId, "' initialization: ",
           "The PostProcessVars structure does not match specification. It ", 
-          "must be a function, see help('sdModel').",
+          "must be a function, see help('sdAtomicModel').",
           "Replacement aborted.", call. = F)
 
 sdAtomicModelMsg$initialize4 <- function(modelId)
   warning("sdsim::initialize - Model '", modelId, "' initialization: ",
           "The RootSpecification structure does not match specification. It ", 
           "must be a data.frame, a numeric vector or a function, ", 
-          "see help('sdModel'). If it is a character or list of ",
+          "see help('sdAtomicModel'). If it is a character or list of ",
           "characters all the components are going to be evaluated or ",
           "converted. Replacement aborted.", call. = F)
 
 sdAtomicModelMsg$initialize5 <- function(modelId)
   warning("sdsim::initialize - Model '", modelId, "' initialization: ",
           "The EventFunction structure does not match specification. It ", 
-          "must be a function, see help('sdModel').",
+          "must be a function, see help('sdAtomicModel').",
           "Replacement aborted.", call. = F)
 
 sdAtomicModelMsg$initialize6 <- function(modelId, e)
@@ -448,7 +448,7 @@ sdAtomicModelMsg$initialize6 <- function(modelId, e)
 
 sdAtomicModelMsg$initialize7 <- function(modelId)
   warning("sdsim::initialize - Model '", modelId, "' Initialization: ",
-          "Invalid auxiliary equations. See help('sdModel') to ", 
+          "Invalid auxiliary equations. See help('sdAtomicModel') to ", 
           "learn the accepted types. Replacement aborted.", call. = F)
 
 sdAtomicModelMsg$initialize8 <- function(modelId, nameGlobalFuni)
@@ -544,13 +544,13 @@ sdAtomicModelMsg$unit <- function(pmodelId)
           "No default scenario was added, could not get the unit list.", 
           call. = F)
 
-sdAtomicModelMsg$modelId1 <- function(modelId)
-  warning("sdsim::modelId - Missing model ID: It was set to '", modelId, "'.", 
-          call. = F)
-
-sdAtomicModelMsg$modelId2 <- function(modelId)
-  warning("sdsim::modelId - Invalid model ID type: The model ID must be a ",
-          "string. It was set to '", modelId, "'.", call. = F)
+# sdAtomicModelMsg$modelId1 <- function(modelId)
+#   warning("sdsim::modelId - Missing model ID: It was set to '", modelId, "'.", 
+#           call. = F)
+# 
+# sdAtomicModelMsg$modelId2 <- function(modelId)
+#   warning("sdsim::modelId - Invalid model ID type: The model ID must be a ",
+#           "string. It was set to '", modelId, "'.", call. = F)
 
 sdAtomicModelMsg$defaultScenario <- function(pmodelId)
   warning("sdsim::defaultScenario - Model '", pmodelId, 

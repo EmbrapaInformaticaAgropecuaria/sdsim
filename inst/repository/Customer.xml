@@ -1,8 +1,8 @@
-<?sdsim about='R package for modeling and simulation of system dynamics' version='0.1'?>
-<sdModel>
-  <modelId>customers</modelId>
-  <modelDescription>In order to demonstrate how a system dynamics model is constructed, a one-stock model of an organization’s customer base is modeled. Given that the customer base is an accumulation, it can be modeled as a stock. The inflow is recruits, and the outflow are losses, also known as the churn rate. The goal of organizations is to limit the losses and maximize the recruits, in order to maintain increasing customers
-levels, and therefore support company growth. Source: System Dynamics Modeling with R, Jim Dugga.</modelDescription>
+<?sdsim about='R package for modeling and simulation of system dynamics' version='0.1' date='2018-04-11'?>
+<sdAtomicModel>
+  <id>customers</id>
+  <description>In order to demonstrate how a system dynamics model is constructed, a one-stock model of an organization’s customer base is modeled. Given that the customer base is an accumulation, it can be modeled as a stock. The inflow is recruits, and the outflow are losses, also known as the churn rate. The goal of organizations is to limit the losses and maximize the recruits, in order to maintain increasing customers
+levels, and therefore support company growth. Source: System Dynamics Modeling with R, Jim Dugga.</description>
   <DifferentialEquations>function (t, st, ct, par, inp, sw, aux) 
 {
     recruits &lt;- st$customers * ct$growth
@@ -10,13 +10,14 @@ levels, and therefore support company growth. Source: System Dynamics Modeling w
     dCustomers &lt;- recruits - losses
     return(list(c(dCustomers)))
 }</DifferentialEquations>
-  <InitVars>NULL</InitVars>
-  <PostProcessVars>NULL</PostProcessVars>
-  <RootSpecification>NULL</RootSpecification>
-  <EventFunction>NULL</EventFunction>
+  <InitVars/>
+  <PostProcessVars/>
+  <RootSpecification/>
+  <EventFunction/>
   <aux/>
+  <globalFunctions/>
   <defaultScenario>
-    <scenarioId>customerScen</scenarioId>
+    <scenarioId>Default</scenarioId>
     <times>
       <from>2015</from>
       <to>2030</to>
@@ -34,17 +35,16 @@ levels, and therefore support company growth. Source: System Dynamics Modeling w
     <interpolation/>
     <parameter/>
     <switch/>
-    <plotConfig/>
     <unit>
-      <time>year</time>
-	  <customers>clients</customers>
-	  <growth>dimensionless</growth>
+      <customers>clients</customers>
       <decline>dimensionless</decline>
-	</unit>
+      <growth>dimensionless</growth>
+      <time>year</time>
+    </unit>
     <description>
-	  <customers>stock of clients</customers>
-	  <growth>rate of clients growth</growth>
+      <customers>stock of clients</customers>
       <decline>rate of clients decline</decline>
-	</description>
+      <growth>rate of clients growth</growth>
+    </description>
   </defaultScenario>
-</sdModel>
+</sdAtomicModel>

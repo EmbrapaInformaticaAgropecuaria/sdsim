@@ -10,10 +10,10 @@
 #' To simulate a model in different scenarios use the \code{\link{sdSimulate}}
 #' function.
 #' 
-#' @param modelId A character string with the model ID. Any non-word character
+#' @param id A character string with the model ID. Any non-word character
 #' will be removed and the result will be converted to a valid name (see 
 #' \code{\link[base]{make.names}}).
-#' @param modelDescription A character string with the model description.
+#' @param description A character string with the model description.
 #' @param defaultScenario The model default scenario, a 
 #' \code{\link{sdScenarioClass}} object. It should contain all the model
 #' variables initialized with default values that ensures the model simulation.
@@ -180,7 +180,7 @@
 #' 
 #' # create the model object
 # lv <- sdAtomicModel(
-#   modelId = "Lotka-Volterra",
+#   id = "Lotka-Volterra",
 #   defaultScenario = lvscen,
 #   DifferentialEquations = LVode,
 #   aux = aux
@@ -195,8 +195,8 @@
 #'            main = "Prey and Consumer by Lotka-Volterra")
 #' outlv$saveSimulationTrajectories(path = "LV") 
 #' @return A \code{\link{sdAtomicModelClass}} object.
-sdAtomicModel <- function(modelId = NULL,
-                          modelDescription = NULL,
+sdAtomicModel <- function(id = NULL,
+                          description = NULL,
                           defaultScenario = NULL,
                           aux = NULL,
                           DifferentialEquations = NULL, 
@@ -208,17 +208,16 @@ sdAtomicModel <- function(modelId = NULL,
 {
   # create a new model
   model <- sdAtomicModelClass$new(
-    modelId = modelId,
+    id = id,
+    description = description,
     DifferentialEquations = DifferentialEquations,
-    modelDescription = modelDescription,
     defaultScenario = defaultScenario,
     InitVars = InitVars,
     PostProcessVars = PostProcessVars, 
     RootSpecification = RootSpecification, 
     EventFunction = EventFunction,
     aux = aux,
-    globalFunctions = globalFunctions
-  )
+    globalFunctions = globalFunctions)
   
   return(model)
 }
@@ -302,17 +301,13 @@ sdLoadModel <- function(file, repository = F,
   #             "sdsim version is: ", packageVersion("sdsim"))
   # }
   
-  
   modelTags <- names(XML::xmlChildren(model))
-  # class(sdAtomicModel)[[1]] %in% modelTags
   # convert the xml to list
   model <- XML::xmlToList(model)
   
   # instanciate the model object
-  if (!is.null(model$modelId))
+  if (sdAtomicModelClass$classname %in% modelTags) # load atomic model
   {
-    # load atomic model
-    
     # create the default scenario
     # convert the types of the xml vars
     if (is.list(model$defaultScenario))
@@ -336,7 +331,7 @@ sdLoadModel <- function(file, repository = F,
     
     # creat a new model
     model <- sdAtomicModelClass$new(
-      modelId = model$modelId,
+      id = model$id,
       DifferentialEquations = StringToFun(model$DifferentialEquations),
       defaultScenario = model$defaultScenario,
       InitVars = StringToFun(model$InitVars),
@@ -344,79 +339,76 @@ sdLoadModel <- function(file, repository = F,
       RootSpecification = model$RootSpecification,
       EventFunction = StringToFun(model$EventFunction),
       aux = model$aux ,
-      modelDescription = model$modelDescription,
+      description = model$description,
       globalFunctions = lapply(model$globalFunctions, 
-                               StringToFun)
-    )
+                               StringToFun))
     
     return(model)
   }
-  else if (!is.null(model$coupledModelId)) 
+  else if (sdCoupledModelClass$classname %in% modelTags) # load coupled model
   {
-    # load coupled model
     if (!is.null(model$components))
     {
       # get the components Ids
       componentsId <- lapply(model$components, function(x)
       {
-        if (is.list(x))
-        {
-          if (!is.null(x$modelId))
-            x$modelId
-          else
-            x$staticModelId
-        }
+        x$id
+        # if (is.list(x))
+        # {
+        #   if (!is.null(x$modelId))
+        #     x$modelId
+        #   else
+        #     x$staticModelId
+        # }
       })
       names(model$components) <- componentsId
       
       # convert the components
-      model$components <- lapply(model$components, function(x)
+      model$components <- lapply(names(model$components), function(i)
       {
-        # convert each component to a sdAtomicModel object
-        if (is.list(x))
-        { 
-          # create the default scenario
-          loadedScen <- x$defaultScenario
-          
-          x$defaultScenario <- 
-            sdScenario(scenarioId = "Default",
-                       times = loadedScen$times,
-                       method = loadedScen$method,
-                       state = loadedScen$state,
-                       constant = loadedScen$constant,
-                       input = loadedScen$input,
-                       interpolation = loadedScen$interpolation,
-                       parameter = loadedScen$parameter,
-                       switch = loadedScen$switch,
-                       unit = loadedScen$unit,
-                       description = loadedScen$description,
-                       timeSeriesDirectory = timeSeriesDirectory)
-          
-          if (!is.null(x$modelId))  # create a sd atomic model
-            component <- sdAtomicModelClass$new(
-              modelId = x$modelId,
-              DifferentialEquations = StringToFun(x$DifferentialEquations),
-              defaultScenario = x$defaultScenario,
-              InitVars = StringToFun(x$InitVars),
-              PostProcessVars = StringToFun(x$PostProcessVars),
-              RootSpecification = x$RootSpecification,
-              EventFunction = StringToFun(x$EventFunction),
-              aux = x$aux ,
-              modelDescription = x$modelDescription,
-              globalFunctions = lapply(x$globalFunctions, StringToFun))
-          else if (!is.null(x$staticModelId)) # create a static model
-            component <- sdStaticModelClass$new(
-              staticModelId = x$staticModelId,
-              staticModelDescription = x$staticModelDescription,
-              InitVars = StringToFun(x$InitVars),
-              equations = x$equations,
-              defaultScenario = x$defaultScenario,
-              globalFunctions = lapply(x$globalFunctions, StringToFun))
-          else
-            component <- NULL
-          
-          component
-        }
+        # convert each component to a model object
+        x <- model$components[[i]]
+        # create the default scenario
+        loadedScen <- x$defaultScenario
+        
+        x$defaultScenario <- 
+          sdScenario(scenarioId = "Default",
+                     times = loadedScen$times,
+                     method = loadedScen$method,
+                     state = loadedScen$state,
+                     constant = loadedScen$constant,
+                     input = loadedScen$input,
+                     interpolation = loadedScen$interpolation,
+                     parameter = loadedScen$parameter,
+                     switch = loadedScen$switch,
+                     unit = loadedScen$unit,
+                     description = loadedScen$description,
+                     timeSeriesDirectory = timeSeriesDirectory)
+        
+        if (i == sdAtomicModelClass$classname)  # create a sd atomic model
+          component <- sdAtomicModelClass$new(
+            id = x$id,
+            description = x$description,
+            DifferentialEquations = StringToFun(x$DifferentialEquations),
+            defaultScenario = x$defaultScenario,
+            InitVars = StringToFun(x$InitVars),
+            PostProcessVars = StringToFun(x$PostProcessVars),
+            RootSpecification = x$RootSpecification,
+            EventFunction = StringToFun(x$EventFunction),
+            aux = x$aux,
+            globalFunctions = lapply(x$globalFunctions, StringToFun))
+        else if (i == sdStaticModelClass$classname) # create a static model
+          component <- sdStaticModelClass$new(
+            staticModelId = x$staticModelId,
+            staticModelDescription = x$staticModelDescription,
+            InitVars = StringToFun(x$InitVars),
+            equations = x$equations,
+            defaultScenario = x$defaultScenario,
+            globalFunctions = lapply(x$globalFunctions, StringToFun))
+        else
+          component <- NULL
+        
+        component
       })
     }
     
@@ -439,7 +431,7 @@ sdLoadModel <- function(file, repository = F,
     
     return(coupledModel)
   } 
-  else if (!is.null(model$staticModelId))
+  else if (sdStaticModelClass$classname %in% modelTags)
   {
     # load static model
     
@@ -549,7 +541,7 @@ sdLoadModel <- function(file, repository = F,
 #' 
 #' # create the component prey model
 # prey <- sdAtomicModel(
-#   modelId = "Prey",
+#   id = "Prey",
 #   defaultScenario = sdScenario(scenarioId = "preyScen",
 #                                times = times,
 #                                state = stPrey,
@@ -577,7 +569,7 @@ sdLoadModel <- function(file, repository = F,
 #' 
 #' # create the component consumer model
 # consumer <- sdAtomicModel(
-#   modelId = "Consumer",
+#   id = "Consumer",
 #   defaultScenario = sdScenario(
 #     scenarioId = "consumerScen",
 #     times = times,

@@ -1,34 +1,34 @@
-<?sdsim about='R package for modeling and simulation of system dynamics' version='0.1'?>
-<sdModel>
-  <modelId>GrowthConstrained</modelId>
-  <modelDescription>The model captures the growth and decline dynamics of a company discovering a 
+<?sdsim about='R package for modeling and simulation of system dynamics' version='0.1' date='2018-04-11'?>
+<sdAtomicModel>
+  <id>GrowthConstrained</id>
+  <description>The model captures the growth and decline dynamics of a company discovering a 
   new oil field, where the stock of oil could potentially last for up to 
-  200 years. Source: System Dynamics Modeling with R, Jim Duggan, 2016</modelDescription>
+  200 years. Source: System Dynamics Modeling with R, Jim Duggan, 2016</description>
   <DifferentialEquations>function (t, st, ct, par, inp, sw, aux) 
 {
     dS &lt;- aux$investment - aux$depreciation
     dR &lt;- -aux$extraction
     return(list(c(dS, dR)))
 }</DifferentialEquations>
-  <InitVars>NULL</InitVars>
-  <PostProcessVars>NULL</PostProcessVars>
+  <InitVars/>
+  <PostProcessVars/>
   <RootSpecification/>
-  <EventFunction>NULL</EventFunction>
+  <EventFunction/>
   <aux>
     <extrEfficiency>inp$fun_$efficiency(st$resource)</extrEfficiency>
+    <capitalCosts>st$capital * 0.1</capitalCosts>
+    <desiredInvestment>st$capital * ct$desiredGrowth</desiredInvestment>
+    <depreciation>st$capital * ct$depreciation</depreciation>
     <extraction>aux$extrEfficiency * st$capital</extraction>
     <totalRevenue>ct$revenuePerUnit * aux$extraction</totalRevenue>
-    <capitalCosts>st$capital * 0.1</capitalCosts>
     <profit>aux$totalRevenue - aux$capitalCosts</profit>
     <capitalFunds>ct$fractionReinvested * aux$profit</capitalFunds>
     <maximumInvestment>aux$capitalFunds/ct$costPerInvestment</maximumInvestment>
-    <desiredInvestment>st$capital * ct$desiredGrowth</desiredInvestment>
     <investment>min(aux$maximumInvestment, aux$desiredInvestment)</investment>
-    <depreciation>st$capital * ct$depreciation</depreciation>
   </aux>
   <globalFunctions/>
   <defaultScenario>
-    <scenarioId>GrowthNonRenewableStock</scenarioId>
+    <scenarioId>Default</scenarioId>
     <times>
       <from>0</from>
       <to>200</to>
@@ -47,7 +47,7 @@
       <revenuePerUnit>3</revenuePerUnit>
     </constant>
     <input>
-      <efficiency>data.frame(Variable = c(0,100,200,300,400,500,600,700,800,900,1000), Value = c(0,0.25,0.45,0.63,0.75,0.85,0.92,0.96,0.98,0.99,1))</efficiency>
+      <efficiency>data.frame(Time = c(0,100,200,300,400,500,600,700,800,900,1000), Value = c(0,0.25,0.45,0.63,0.75,0.85,0.92,0.96,0.98,0.99,1))</efficiency>
     </input>
     <interpolation>
       <efficiency>linear</efficiency>
@@ -55,25 +55,25 @@
     <parameter/>
     <switch/>
     <unit>
-      <time>year</time>
       <capital>$</capital>
-      <resource>kg</resource>
-      <desiredGrowth>dimensionless</desiredGrowth>
-      <depreciation>dimensionless</depreciation>
       <costPerInvestment>$</costPerInvestment>
-      <fractionReinvested>dimensionless</fractionReinvested>
-      <revenuePerUnit>$ / kg</revenuePerUnit>
+      <depreciation>dimensionless</depreciation>
+      <desiredGrowth>dimensionless</desiredGrowth>
       <efficiency>kg / $</efficiency>
+      <fractionReinvested>dimensionless</fractionReinvested>
+      <resource>kg</resource>
+      <revenuePerUnit>$ / kg</revenuePerUnit>
+      <time>year</time>
     </unit>
     <description>
       <capital>capital stock</capital>
-      <resource>resource stock</resource>
-      <desiredGrowth>Desired investment represents the target investment rate for capital, in order to stimulate growth.</desiredGrowth>
-      <depreciation>Depreciation of resource</depreciation>
       <costPerInvestment>cost per unit of investment</costPerInvestment>
-      <fractionReinvested>A fixed percentage of profits</fractionReinvested>
-      <revenuePerUnit>the amount extracted times revenue per unit extracted</revenuePerUnit>
+      <depreciation>Depreciation of resource</depreciation>
+      <desiredGrowth>Desired investment represents the target investment rate for capital, in order to stimulate growth.</desiredGrowth>
       <efficiency>This extraction rate depends on the amount of available capital, which is multiplied by the extraction efficiency per unit of capital</efficiency>
+      <fractionReinvested>A fixed percentage of profits</fractionReinvested>
+      <resource>resource stock</resource>
+      <revenuePerUnit>the amount extracted times revenue per unit extracted</revenuePerUnit>
     </description>
   </defaultScenario>
-</sdModel>
+</sdAtomicModel>

@@ -1,11 +1,11 @@
-<?sdsim about='R package for modeling and simulation of system dynamics' version='0.1'?>
-<SDModel>
-  <modelId>Arenstorf</modelId>
-  <modelDescription>Source: Soetaert K., Cash J., Mazzia F. - Solving Differential Equations in R - Springer(2012)
+<?sdsim about='R package for modeling and simulation of system dynamics' version='0.1' date='2018-04-11'?>
+<sdAtomicModel>
+  <id>Arenstorf</id>
+  <description>Source: Soetaert K., Cash J., Mazzia F. - Solving Differential Equations in R - Springer(2012)
 The Arenstorf problem, from Astronomy, describes the movement of a small body orbiting regularly around two larger objects, such as a spacecraft going between the Earth and the Moon. 
 The two large bodies have mass m1 and m2 and move in a circular rotation (coordinates y1 and y2) in a plane, while the third body has negligible mass and is moving in the same plane.
 It was necessary to solve this problem in order to determine the path that the Apollo spacecraft had to take in its journey between the Earth and the Moon. The problem was solved by Arenstorf and now it is an often used test problem for non-stiff solvers.
-</modelDescription>
+</description>
   <DifferentialEquations>function (t, st, ct, par, inp, sw, aux) 
 {
     dy3 &lt;- st$y1 + 2 * st$dy2 - inp$mu2 * (st$y1 + inp$mu1)/aux$D1 - 
@@ -19,15 +19,16 @@ It was necessary to solve this problem in order to determine the path that the A
     inp$mu2 &lt;- 1 - inp$mu1
     return(list(st = st, ct = ct, inp = inp, par = par, sw = sw))
 }</InitVars>
-  <PostProcessVars>NULL</PostProcessVars>
-  <RootSpecification>NULL</RootSpecification>
-  <EventFunction>NULL</EventFunction>
+  <PostProcessVars/>
+  <RootSpecification/>
+  <EventFunction/>
   <aux>
     <D1>((st$y1 + inp$mu1)^2 + st$y2^2)^(3/2)</D1>
     <D2>((st$y1 - inp$mu2)^2 + st$y2^2)^(3/2)</D2>
   </aux>
+  <globalFunctions/>
   <defaultScenario>
-    <scenarioId>DefaultScenario</scenarioId>
+    <scenarioId>Default</scenarioId>
     <times>
       <from>0</from>
       <to>17.07</to>
@@ -48,23 +49,22 @@ It was necessary to solve this problem in order to determine the path that the A
     <interpolation/>
     <parameter/>
     <switch/>
-    <plotConfig/>
     <unit>
-      <time>second</time>
-      <mu1>dimensionless</mu1>
-      <mu2>dimensionless</mu2>
-      <y1>meter</y1>
-      <y2>meter</y2>
       <dy1>dimensionless</dy1>
       <dy2>dimensionless</dy2>
+      <mu1>dimensionless</mu1>
+      <mu2>dimensionless</mu2>
+      <time>second</time>
+      <y1>meter</y1>
+      <y2>meter</y2>
     </unit>
     <description>
+      <dy1>coordinate y1 first derivative</dy1>
+      <dy2>coordinate y2 first derivative</dy2>
       <mu1>Defined as: m1/(m1 + m2)</mu1>
       <mu2>Defined as: 1 - mu1</mu2>
       <y1>coordinates</y1>
       <y2>coordinates</y2>
-      <dy1>coordinate y1 first derivative</dy1>
-      <dy2>coordinate y2 first derivative</dy2>
     </description>
   </defaultScenario>
-</SDModel>
+</sdAtomicModel>

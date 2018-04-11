@@ -10,7 +10,7 @@ sdSimulate(model, scenario = NULL, from = NULL, to = NULL, by = NULL,
   storeTimeSeriesTrajectory = F, verbose = F)
 }
 \arguments{
-\item{model}{A \code{\link{sdModelClass}}, a 
+\item{model}{A \code{\link{sdAtomicModelClass}}, a 
 \code{\link{sdCoupledModelClass}} or a \code{\link{sdStaticModelClass}} 
 object.}
 

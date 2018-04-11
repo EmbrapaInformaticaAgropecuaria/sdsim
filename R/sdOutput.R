@@ -204,8 +204,8 @@ sdOutputClass <- R6::R6Class(
     print = function()
     {
       cat("\n<SDOutput ")
-      if (inherits(private$pmodel, "sdAtomicModelClass"))
-        cat("sdAtomicModel ID = ", private$pmodel$modelId, sep = "")
+      if (inherits(private$pmodel, "sdAtomicModel"))
+        cat("sdAtomicModel ID = ", private$pmodel$id, sep = "")
       else if (inherits(private$pmodel, "sdCoupledModelClass"))
         cat("sdCoupledModel ID = ", private$pmodel$coupledModelId, sep = "")
       else if (inherits(private$pmodel, "sdStaticModelClass"))
@@ -555,8 +555,8 @@ sdOutputClass <- R6::R6Class(
                   row.names = F)
       
       # save model and scenario
-      if (inherits(private$pmodel, "sdAtomicModelClass"))
-        private$pmodel$saveToXml(paste0(path, "/", private$pmodel$modelId, 
+      if (inherits(private$pmodel, "sdAtomicModel"))
+        private$pmodel$saveToXml(paste0(path, "/", private$pmodel$id, 
                                         ".xml"))
       else if (inherits(private$pmodel, "sdCoupledModelClass"))
         private$pmodel$saveToXml(paste0(path, "/", 

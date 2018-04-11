@@ -381,7 +381,7 @@ sdSimulate <- function(model,
   {
     # stop if model is empty
     if (is.null(model$DifferentialEquations))
-      sdSimulatorMsg$sdSimulateAtomic7(model$modelId)
+      sdSimulatorMsg$sdSimulateAtomic7(model$id)
     
     if (!model$isVerified)
       model$verifyModel(scenario, verbose = verbose)
@@ -405,7 +405,7 @@ sdSimulate <- function(model,
         if (is.character(scenario))
           scenario <- sdLoadScenario(file = scenario)
         
-        if (inherits(scenario, "sdScenario"))
+        if (inherits(scenario, "sdScenarioClass"))
         {
           if (length(scenario$state) > 0)
             defaultScenario$addState(scenario$state, verbose = verbose)
@@ -427,7 +427,7 @@ sdSimulate <- function(model,
             defaultScenario$method <- scenario$method
         }
         else
-          sdSimulatorMsg$sdSimulateAtomic6(model$modelId, typeof(scenario))
+          sdSimulatorMsg$sdSimulateAtomic6(model$id, typeof(scenario))
       }
     }
     else if (!is.null(scenario))
@@ -438,10 +438,10 @@ sdSimulate <- function(model,
       if (inherits(scenario, "sdScenarioClass"))
         defaultScenario <- scenario
       else
-        sdSimulatorMsg$sdSimulateAtomic0(model$modelId)
+        sdSimulatorMsg$sdSimulateAtomic0(model$id)
     }
     else
-      sdSimulatorMsg$sdSimulateAtomic0(model$modelId)
+      sdSimulatorMsg$sdSimulateAtomic0(model$id)
 
     # Get variables from default scenario
     state <- defaultScenario$state
@@ -464,10 +464,10 @@ sdSimulate <- function(model,
     
     # verify data
     if (is.null(times) || !all(c("from", "to", "by") %in% names(times)))
-      sdSimulatorMsg$sdSimulateAtomic2(model$modelId)
+      sdSimulatorMsg$sdSimulateAtomic2(model$id)
     if (is.null(method))
     {
-      sdSimulatorMsg$sdSimulateAtomic5(model$modelId)
+      sdSimulatorMsg$sdSimulateAtomic5(model$id)
       method <- "lsoda"
     }
       
@@ -489,7 +489,7 @@ sdSimulate <- function(model,
     
     # verify state variables
     if (is.null(state) || length(state) == 0)
-      sdSimulatorMsg$sdSimulateAtomic1(model$modelId)
+      sdSimulatorMsg$sdSimulateAtomic1(model$id)
     
     createFuncEval <- CreateFuncEval
     environment(createFuncEval) <- environment(model$DifferentialEquations)
@@ -530,7 +530,7 @@ sdSimulate <- function(model,
             (!is.vector(method) ||
              !method %in% c("lsoda", "lsode", "radau")))
         {
-          sdSimulatorMsg$sdSimulateAtomic3(model$modelId)
+          sdSimulatorMsg$sdSimulateAtomic3(model$id)
           method <- "lsoda"
         }
         RootSpecificationEval <-
@@ -668,7 +668,7 @@ sdSimulate <- function(model,
                         ct, par, inp, sw),
         error = function(e)
         {
-          sdSimulatorMsg$sdSimulateAtomic4(model$modelId, e)
+          sdSimulatorMsg$sdSimulateAtomic4(model$id, e)
           return(NULL)
         })
     
@@ -1045,7 +1045,7 @@ sdSimulate <- function(model,
     {
       if (is.null(method))
       {
-        sdSimulatorMsg$sdSimulateAtomic5(model$modelId)
+        sdSimulatorMsg$sdSimulateAtomic5(model$coupledModelId)
         method <- "lsoda"
       }
       if (is.null(st) || length(st) == 0)

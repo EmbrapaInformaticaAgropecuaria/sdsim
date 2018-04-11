@@ -13,10 +13,10 @@
 #' To simulate a model in different scenarios use the \code{\link{sdSimulate}}
 #' function.
 #' 
-#' @field modelId A string with the model identification. Any non-word character
+#' @field id A string with the model identification. Any non-word character
 #' will be removed and the result will be converted to a valid name (see 
 #' \code{\link[base]{make.names}}).
-#' @field modelDescription A string with the model description.
+#' @field description A string with the model description.
 #' @field defaultScenario The model default scenario, a 
 #' \code{\link{sdScenarioClass}} object. It should contain all the model
 #' variables initialized with default values that ensures the model simulation.
@@ -144,7 +144,7 @@
 #' model. They can be called using the list names.
 #' @section Public Methods Definition:  
 #' \describe{
-#' \item{\code{$initialize(modelId, modelDescription, DifferentialEquations, 
+#' \item{\code{$initialize(id, description, DifferentialEquations, 
 #' InitVars, PostProcessVars, RootSpecification, EventFunction, aux, 
 #' defaultScenario, globalFunctions)}}{
 #' Class constructor. Sets the model definition fields.
@@ -229,7 +229,7 @@
 #'                      unit = parsUnits, description = parsDescription)
 #' 
 #' # create the model object
-#' lv <- sdAtomicModel(modelId = "Lotka-Volterra", defaultScenario = lvscen, 
+#' lv <- sdAtomicModel(id = "Lotka-Volterra", defaultScenario = lvscen, 
 #'               DifferentialEquations = LVode,
 #'               aux = aux)
 #'               
@@ -256,8 +256,8 @@ sdAtomicModelClass <- R6::R6Class(
   inherit = sdModelClass,
   public = list(
     # Class Public Atributes
-    initialize = function(modelId,
-                          modelDescription,
+    initialize = function(id,
+                          description,
                           defaultScenario,
                           aux,
                           DifferentialEquations, 
@@ -269,11 +269,11 @@ sdAtomicModelClass <- R6::R6Class(
     {
       funDefaultArgs <- c("t", "st", "ct", "par", "inp", "sw", "aux")
       # mandatory parameters
-      if (!missing(modelId) && !is.null(modelId))
-        self$modelId <- modelId
+      if (!missing(id) && !is.null(id))
+        self$id <- id
       else
-        self$modelId <- NULL
-      modelId <- private$pmodelId
+        self$id <- NULL
+      id <- private$pid
       
       if (!missing(DifferentialEquations) && !is.null(DifferentialEquations))
       {
@@ -281,7 +281,7 @@ sdAtomicModelClass <- R6::R6Class(
             all(funDefaultArgs %in% names(formals(DifferentialEquations))))
           private$pDifferentialEquations <- DifferentialEquations
         else
-          sdAtomicModelMsg$initialize1(modelId)
+          sdAtomicModelMsg$initialize1(id)
       }
       
       if (!missing(defaultScenario) && !is.null(defaultScenario))
@@ -294,7 +294,7 @@ sdAtomicModelClass <- R6::R6Class(
             all(funDefaultArgs[-1] %in% names(formals(InitVars))))
           private$pInitVars <- InitVars
         else
-          sdAtomicModelMsg$initialize2(modelId)
+          sdAtomicModelMsg$initialize2(id)
       }
       
       if (!missing(PostProcessVars) && !is.null(PostProcessVars))
@@ -304,7 +304,7 @@ sdAtomicModelClass <- R6::R6Class(
                 %in% names(formals(PostProcessVars))))
           private$pPostProcessVars <- PostProcessVars
         else
-          sdAtomicModelMsg$initialize3(modelId)
+          sdAtomicModelMsg$initialize3(id)
       }
       
       if (!missing(RootSpecification) && !is.null(RootSpecification))
@@ -334,7 +334,7 @@ sdAtomicModelClass <- R6::R6Class(
             is.null(RootSpecification))
           private$pRootSpecification <- RootSpecification
         else
-          sdAtomicModelMsg$initialize4(modelId)
+          sdAtomicModelMsg$initialize4(id)
       }
       
       if (!missing(EventFunction) && !is.null(EventFunction))
@@ -343,7 +343,7 @@ sdAtomicModelClass <- R6::R6Class(
             all(funDefaultArgs %in% names(formals(EventFunction))))
           private$pEventFunction <- EventFunction
         else
-          sdAtomicModelMsg$initialize5(modelId)
+          sdAtomicModelMsg$initialize5(id)
       }
       
       # suppressWarnings(sdInitEquations(aux))
@@ -355,7 +355,7 @@ sdAtomicModelClass <- R6::R6Class(
           aux <- tryCatch(sdInitEquations(aux, eqName = "aux"),
                           error = function(e)
                           {
-                            sdAtomicModelMsg$initialize6(modelId, e)
+                            sdAtomicModelMsg$initialize6(id, e)
                             return(list())
                           })
         }
@@ -366,14 +366,14 @@ sdAtomicModelClass <- R6::R6Class(
           aux <- tryCatch(sdInitEquations(aux, eqName = "aux"),
                           error = function(e)
                           {
-                            sdAtomicModelMsg$initialize6(modelId, e)
+                            sdAtomicModelMsg$initialize6(id, e)
                             return(list())
                           })
         }
         else
         {
           aux <- list()
-          sdAtomicModelMsg$initialize7(modelId)
+          sdAtomicModelMsg$initialize7(id)
         }
         private$paux <- aux
       }
@@ -404,7 +404,7 @@ sdAtomicModelClass <- R6::R6Class(
             if (!is.function(globalFunctions[[i]]))
             {
               remGlobalFun <- c(remGlobalFun, i)
-              sdAtomicModelMsg$initialize8(modelId, names(globalFunctions)[[i]])
+              sdAtomicModelMsg$initialize8(id, names(globalFunctions)[[i]])
             } 
             else
             {
@@ -420,11 +420,11 @@ sdAtomicModelClass <- R6::R6Class(
           private$pglobalFunctions <- globalFunctions
         }
         else
-          sdAtomicModelMsg$initialize9(modelId)
+          sdAtomicModelMsg$initialize9(id)
       }
       
-      if (!missing(modelDescription) && !is.null(modelDescription))
-        self$modelDescription <- modelDescription
+      if (!missing(description) && !is.null(description))
+        self$description <- description
       
       private$flagVerify <- FALSE
     },
@@ -445,10 +445,13 @@ sdAtomicModelClass <- R6::R6Class(
       modelStr$globalFunctions <- private$pglobalFunctions
       
       # print the attributes
-      cat("\n<sdAtomicModel ID = ", private$pmodelId, ">\n", sep = "")
-      cat(indent("$modelDescription", indent = 4), sep = "\n")
-      cat(indent(private$pmodelDescription, indent = 4), sep = "\n")
+      cat("\n<sdAtomicModel>\n", sep = "")
+      cat(indent("$id", indent = 4), sep = "\n")
+      cat(indent(private$pid, indent = 4), sep = "\n")
       cat("\n")
+      
+      cat(indent("$description", indent = 4), sep = "\n")
+      cat(indent(private$pdescription, indent = 4), sep = "\n")
       
       if (!is.null(modelStr[["DifferentialEquations"]]))
       {
@@ -487,10 +490,10 @@ sdAtomicModelClass <- R6::R6Class(
       if (is.null(private$pdefaultScenario) && 
           !is.null(private$pdefaultScenario$state) && 
           length(private$pdefaultScenario$state) > 0)
-        sdAtomicModelMsg$verifyModel1(private$pmodelId)
+        sdAtomicModelMsg$verifyModel1(private$pid)
       
       if (is.null(private$pDifferentialEquations))
-        sdAtomicModelMsg$verifyModel0(private$pmodelId)
+        sdAtomicModelMsg$verifyModel0(private$pid)
       
       # get the model scenario 
       defaultScenario <- private$pdefaultScenario$clone(deep = TRUE)
@@ -521,7 +524,7 @@ sdAtomicModelClass <- R6::R6Class(
             defaultScenario$times <- scenario$times
         }
         else
-          sdAtomicModelMsg$verifyModel12(private$pmodelId, typeof(scenario))
+          sdAtomicModelMsg$verifyModel12(private$pid, typeof(scenario))
       }
       
       # Get variables from default scenario
@@ -538,7 +541,7 @@ sdAtomicModelClass <- R6::R6Class(
         t <- times[[1]]
       else
       {
-        sdAtomicModelMsg$verifyModel2(private$pmodelId)
+        sdAtomicModelMsg$verifyModel2(private$pid)
         t <- 0
       }
       
@@ -576,13 +579,13 @@ sdAtomicModelClass <- R6::R6Class(
           },
           error = function(e)
           {
-            sdAtomicModelMsg$verifyModel3(private$pmodelId, auxVar, e)
+            sdAtomicModelMsg$verifyModel3(private$pid, auxVar, e)
             return(invisible(numeric(0)))
           })
         
         if (is.null(aux[[auxVar]]) || is.na(aux[[auxVar]]) ||
             length(aux[[auxVar]]) == 0 || is.infinite(aux[[auxVar]]))
-          sdAtomicModelMsg$verifyModel4(private$pmodelId, auxVar, 
+          sdAtomicModelMsg$verifyModel4(private$pid, auxVar, 
                                   capture.output(aux[[auxVar]]))
       }
       
@@ -619,7 +622,7 @@ sdAtomicModelClass <- R6::R6Class(
         },
         error = function(e)
         {
-          sdAtomicModelMsg$verifyModel5(private$pmodelId, e)
+          sdAtomicModelMsg$verifyModel5(private$pid, e)
           return(invisible(NULL))
         })
       
@@ -645,16 +648,16 @@ sdAtomicModelClass <- R6::R6Class(
               # do nothing
             }
             else if (is.null(xUnlist[[i]]))
-              sdAtomicModelMsg$verifyModel6(private$pmodelId, names(xUnlist)[[i]], x, 
+              sdAtomicModelMsg$verifyModel6(private$pid, names(xUnlist)[[i]], x, 
                                       "NULL")
             else if (length(var) == 0 && is.numeric(var))
-              sdAtomicModelMsg$verifyModel6(private$pmodelId, names(xUnlist)[[i]], x, 
+              sdAtomicModelMsg$verifyModel6(private$pid, names(xUnlist)[[i]], x, 
                                       "numeric(0)")
             else if (is.na(xUnlist[[i]]))
-              sdAtomicModelMsg$verifyModel6(private$pmodelId, names(xUnlist)[[i]], x, 
+              sdAtomicModelMsg$verifyModel6(private$pid, names(xUnlist)[[i]], x, 
                                       "NA")
             else if (is.infinite(xUnlist[[i]]))
-              sdAtomicModelMsg$verifyModel6(private$pmodelId, names(xUnlist)[[i]], x, 
+              sdAtomicModelMsg$verifyModel6(private$pid, names(xUnlist)[[i]], x, 
                                       "Inf")
           } 
         }
@@ -662,13 +665,13 @@ sdAtomicModelClass <- R6::R6Class(
         { # do nothing if an arg is empty
         }
         else if (is.null(unlist(var)))
-          sdAtomicModelMsg$verifyModel7(private$pmodelId, x, "NULL") 
+          sdAtomicModelMsg$verifyModel7(private$pid, x, "NULL") 
         else if (length(var) == 0 && is.numeric(var))
-          sdAtomicModelMsg$verifyModel7(private$pmodelId, x, "numeric(0)") 
+          sdAtomicModelMsg$verifyModel7(private$pid, x, "numeric(0)") 
         else if (is.na(unlist(var)))
-          sdAtomicModelMsg$verifyModel7(private$pmodelId, x, "NA") 
+          sdAtomicModelMsg$verifyModel7(private$pid, x, "NA") 
         else if (is.infinite(unlist(var)))
-          sdAtomicModelMsg$verifyModel7(private$pmodelId, x, "Inf") 
+          sdAtomicModelMsg$verifyModel7(private$pid, x, "Inf") 
       })
       
       # Check the return of Model Definition contains invalid values
@@ -677,16 +680,16 @@ sdAtomicModelClass <- R6::R6Class(
         dRes <- res[[1]]
         
         if (!is.numeric(dRes))
-          sdAtomicModelMsg$verifyModel8(private$pmodelId, typeof(dRes)) 
+          sdAtomicModelMsg$verifyModel8(private$pid, typeof(dRes)) 
         
         if (length(dRes) != length(st))
-          sdAtomicModelMsg$verifyModel9(private$pmodelId, dRes, length(st)) 
+          sdAtomicModelMsg$verifyModel9(private$pid, dRes, length(st)) 
       }
       else
-        sdAtomicModelMsg$verifyModel10(private$pmodelId, typeof(res)) 
+        sdAtomicModelMsg$verifyModel10(private$pid, typeof(res)) 
       
       if (verbose)
-        sdAtomicModelMsg$verifyModel11(private$pmodelId) 
+        sdAtomicModelMsg$verifyModel11(private$pid) 
       
       private$flagVerify <- TRUE
     },
@@ -694,7 +697,7 @@ sdAtomicModelClass <- R6::R6Class(
     {
       # save model to XML
       doc = XML::newXMLDoc()
-      rootsdModel <- XML::newXMLNode("sdAtomicModel", doc = doc)
+      rootsdModel <- XML::newXMLNode(class(self)[[1]], doc = doc)
       
       if (is.function(private$pRootSpecification))
         RootSpecification <- FunToString(private$pRootSpecification)
@@ -722,8 +725,8 @@ sdAtomicModelClass <- R6::R6Class(
           return(x)
       })
       
-      lModel <- list(modelId = private$pmodelId      ,
-                     modelDescription = private$pmodelDescription,
+      lModel <- list(id = private$pid     ,
+                     description = private$pdescription,
                      DifferentialEquations = FunToString(private$pDifferentialEquations),
                      InitVars = FunToString(private$pInitVars),
                      PostProcessVars = FunToString(private$pPostProcessVars),
@@ -750,48 +753,6 @@ sdAtomicModelClass <- R6::R6Class(
     }
   ),
   active = list(
-    description = function(variableName)
-    {
-      "Return the descriptions list or the specified Variable description. 
-      Show a message if the description was not found."
-      if (!is.null(private$pdefaultScenario))
-      {
-        if (missing(variableName))
-          return(private$pdefaultScenario$description)
-      }
-      else
-        sdAtomicModelMsg$description(private$pmodelId)
-    },
-    unit = function(variableName)
-    {
-      "Return the units list or the specified Variable unit" 
-      if (!is.null(private$pdefaultScenario))
-      {
-        if (missing(variableName))
-          return(private$pdefaultScenario$unit)
-      }
-      else
-        sdAtomicModelMsg$unit(private$pmodelId)
-    },
-    modelId = function(modelId)
-    {
-      if (missing(modelId))
-        return(private$pmodelId)
-      else if (is.null(modelId))
-      {
-        modelId <- gsub("\\s", "", paste("model", Sys.Date()), perl = TRUE)
-        sdAtomicModelMsg$modelId1(modelId)
-      }
-      else if (!is.character(modelId))
-      {
-        modelId <- gsub("\\s", "", paste("model", Sys.Date()), perl = TRUE)
-        sdAtomicModelMsg$modelId2(modelId)
-      }
-      
-      # set character ID
-      private[["pmodelId"]] <- make.names(gsub("\\s", "", modelId, 
-                                               perl = TRUE))
-    },
     DifferentialEquations = function()
     {
       return(private$pDifferentialEquations)
@@ -813,7 +774,7 @@ sdAtomicModelClass <- R6::R6Class(
           private$flagVerify <- FALSE
         }
         else 
-          sdAtomicModelMsg$defaultScenario(private$pmodelId)
+          sdAtomicModelMsg$defaultScenario(private$pid)
       }
     },
     InitVars = function()
@@ -839,28 +800,10 @@ sdAtomicModelClass <- R6::R6Class(
     aux = function()
     {
       return(private$paux)
-    },
-    modelDescription = function(modelDescription)
-    {
-      if (missing(modelDescription))
-        return(private$pmodelDescription)
-      else
-      {
-        if (is.character(modelDescription))
-          private$pmodelDescription <- modelDescription
-        else
-          sdAtomicModelMsg$modelDescription(private$pmodelId)
-      }
-    },
-    isVerified = function()
-    {
-      return(private$flagVerify)
     }
   ),
   private = list(
     #@@ Class Private Atributes
-    pmodelId = NULL,
-    pmodelDescription = NULL,
     pDifferentialEquations = NULL,
     pInitVars = NULL,
     pPostProcessVars = NULL,
@@ -868,8 +811,7 @@ sdAtomicModelClass <- R6::R6Class(
     pEventFunction = NULL,
     pdefaultScenario = NULL,
     pglobalFunctions = list(),
-    paux = list(),
-    flagVerify = FALSE
+    paux = list()
   ))
 
 

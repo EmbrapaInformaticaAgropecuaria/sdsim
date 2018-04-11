@@ -14,7 +14,7 @@ R-format.}
 Default is "<-".}
 
 \item{eqName}{The name of the list that will be initialized and sorted, e.g.
-'aux' for \code{\link{sdModelClass}} auxiliary equations and/or 'eq' for 
+'aux' for \code{\link{sdAtomicModelClass}} auxiliary equations and/or 'eq' for 
 \code{\link{sdStaticModelClass}} algebraic equations. 
 
 Can be a vector with all the equations list names that should be considered 
@@ -35,7 +35,7 @@ R-expression in a specified environment.
 }
 \details{
 The returned list of equations can be: added to the auxiliary equations list
-of a \code{\link{sdModelClass}} object to replace the use of functions to 
+of a \code{\link{sdAtomicModelClass}} object to replace the use of functions to 
 calculate intermediary values of the model's system of differential 
 equations; 
 or added to the algebraic equations of a \code{\link{sdStaticModelClass}} 

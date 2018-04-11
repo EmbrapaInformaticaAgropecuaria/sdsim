@@ -15,7 +15,7 @@ valid name (see \code{\link[base]{make.names}}).}
 \item{coupledModelDescription}{A character string with the coupled model 
 description.}
 
-\item{components}{A list of \code{\link{sdModelClass}}, 
+\item{components}{A list of \code{\link{sdAtomicModelClass}}, 
 \code{\link{sdStaticModelClass}} and/or \code{\link{sdCoupledModelClass}} 
 objects. 
 
@@ -45,7 +45,7 @@ A \code{\link{sdCoupledModelClass}} object.
 \description{
 A factory function that creates a \code{\link{sdCoupledModelClass}} object 
 made up of instanced
-\code{\link{sdModelClass}}, \code{\link{sdStaticModelClass}} and/or 
+\code{\link{sdAtomicModelClass}}, \code{\link{sdStaticModelClass}} and/or 
 \code{\link{sdCoupledModelClass}} components and a list of connections that 
 define the flow of information between components.
  
@@ -82,14 +82,6 @@ LVodePrey <- function(t, st, ct, par, inp, sw, aux)
 }
 
 # create the component prey model
-prey <- sdModel(modelId = "Prey",
-                defaultScenario = sdScenario(scenarioId = "preyScen",
-                                             times = times,
-                                             state = stPrey,
-                                             parameter = parsPrey,
-                                             input = inpPrey),
-                aux = auxPrey,
-                DifferentialEquations = LVodePrey)
 
 # Consumer model variables and ode function
 stConsumer <- list(C = 2)
@@ -108,14 +100,6 @@ LVodeConsumer <- function(t, st, ct, par, inp, sw, aux)
 }
 
 # create the component consumer model
-consumer <- sdModel(modelId = "Consumer",
-                    defaultScenario = sdScenario(scenarioId = "consumerScen",
-                                                 times = times,
-                                                 state = stConsumer,
-                                                 parameter = parsConsumer,
-                                                 input = inpConsumer),
-                    aux = auxConsumer,
-                    DifferentialEquations = LVodeConsumer)
 
 # create the coupled model connections list 
 # conP: inform the consumer model about the amount of preys and 

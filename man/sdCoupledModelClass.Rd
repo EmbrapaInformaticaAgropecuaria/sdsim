@@ -10,7 +10,7 @@ sdCoupledModelClass
 }
 \description{
 Represents a coupled system dynamics model made up of instanced
-\code{\link{sdModelClass}}, \code{\link{sdStaticModelClass}} and/or 
+\code{\link{sdAtomicModelClass}}, \code{\link{sdStaticModelClass}} and/or 
 \code{\link{sdCoupledModelClass}} components and a list of connections that 
 define the flow of information between components. 
 The \code{connections} list determines loops of information feedback and 
@@ -44,7 +44,7 @@ valid name (see \code{\link[base]{make.names}}).}
 
 \item{\code{coupledModelDescription}}{A string with the coupled model description.}
 
-\item{\code{components}}{A list of \code{\link{sdModelClass}}, 
+\item{\code{components}}{A list of \code{\link{sdAtomicModelClass}}, 
 \code{\link{sdStaticModelClass}} and/or \code{\link{sdCoupledModelClass}} 
 objects. 
 
@@ -99,7 +99,7 @@ dynamics model.
 
 \describe{
 \item{...}{A character string with a model XML file name or a 
-\code{\link{sdModelClass}}, \code{\link{sdStaticModelClass}} and/or 
+\code{\link{sdAtomicModelClass}}, \code{\link{sdStaticModelClass}} and/or 
 \code{\link{sdCoupledModelClass}} objects already initialized. The
 models must have different \code{ID}'s to be used as unique
 identifiers. Only one component by ID is stored.}}}
@@ -239,15 +239,6 @@ LVodePrey <- function(t, st, ct, par, inp, sw, aux)
 }
 
 # create the component prey model
-prey <- sdModel(modelId = "Prey",
-                defaultScenario = sdScenario(scenarioId = "preyScen",
-                                             times = times,
-                                             state = stPrey,
-                                             parameter = parsPrey,
-                                             input = inpPrey,
-                                             description = descriptionsPrey),
-                aux = auxPrey,
-                DifferentialEquations = LVodePrey)
 
 # Consumer model variables and ode function
 stConsumer <- list(C = 2)
@@ -271,16 +262,6 @@ LVodeConsumer <- function(t, st, ct, par, inp, sw, aux)
 }
 
 # create the component consumer model
-consumer <- sdModel(modelId = "Consumer",
-                    defaultScenario = sdScenario(
-                      scenarioId = "consumerScen",
-                      times = times,
-                      state = stConsumer,
-                      parameter = parsConsumer,
-                      input = inpConsumer,
-                      description = descriptionsConsumer),
-                    aux = auxConsumer,
-                    DifferentialEquations = LVodeConsumer)
 
 # Environment model variables and algebraic equations
 parEnv <- data.frame(Variable = c("K"),

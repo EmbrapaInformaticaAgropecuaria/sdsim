@@ -416,7 +416,7 @@ sdBuildCoupledScenario = function(coupledScenarioId = NULL,
 #' 
 #' # create the component prey model
 # prey <- sdAtomicModel(
-#   modelId = "Prey",
+#   id = "Prey",
 #   defaultScenario = sdScenario(
 #     scenarioId = "preyScen",
 #     times = times,
@@ -451,7 +451,7 @@ sdBuildCoupledScenario = function(coupledScenarioId = NULL,
 #' 
 #' # create the component consumer model
 # consumer <- sdAtomicModel(
-#   modelId = "Consumer",
+#   id = "Consumer",
 #   defaultScenario = sdScenario(
 #     scenarioId = "consumerScen",
 #     times = times,
@@ -589,9 +589,9 @@ sdCoupledModelClass <- R6::R6Class(
           model <- sdLoadModel(file = model)
         
         # only add sdAtomicModel's or sdStaticModel's
-        if (inherits(model, "sdAtomicModelClass"))
+        if (inherits(model, sdAtomicModelClass$classname))
         {
-          id <- model$modelId
+          id <- model$id
           # check if id already exist in components id
           if (any(grepl(pattern = paste0("^",id,"."), 
                         x = private$pcomponentsId, perl = TRUE)) ||
@@ -640,7 +640,7 @@ sdCoupledModelClass <- R6::R6Class(
           private$pcomponentsAux[[id]] <- model$aux
           private$pcomponentsGlobal[[id]] <- model$GlobalFunctions
         }
-        else if (inherits(model, "sdStaticModelClass"))
+        else if (inherits(model, sdStaticModelClass$classname))
         {
           id <- model$staticModelId
           if (any(grepl(pattern = paste0("^",id,"."), 
@@ -667,7 +667,7 @@ sdCoupledModelClass <- R6::R6Class(
           private$pcomponentsAux[[id]] <- model$equations
           private$pcomponentsGlobal[[id]] <- model$GlobalFunctions
         }
-        else if (inherits(model, "sdCoupledModelClass"))
+        else if (inherits(model, sdCoupledModelClass$classname))
         {
           id <- model$coupledModelId
           if (any(grepl(pattern = paste0("^",id,"."), 
@@ -690,8 +690,8 @@ sdCoupledModelClass <- R6::R6Class(
           for (j in seq_along(model$components))
           {
             comp <- model$components[[j]]$clone(deep = TRUE)
-            if (!is.null(comp$modelId))
-              comp$modelId <- paste0(model$coupledModelId, ".", comp$modelId)
+            if (!is.null(comp$id))
+              comp$id <- paste0(model$coupledModelId, ".", comp$id)
             else if(!is.null(comp$staticModelId))
               comp$staticModelId <- paste0(model$coupledModelId, ".", 
                                            comp$staticModelId)
