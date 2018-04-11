@@ -27,38 +27,40 @@ As the ball hits the ground, it bounces. This causes a sudden change in the valu
   <aux/>
   <globalFunctions/>
   <defaultScenario>
-    <scenarioId>Default</scenarioId>
-    <times>
-      <from>0</from>
-      <to>23</to>
-      <by>0.01</by>
-    </times>
-    <method>lsoda</method>
-    <state>
-      <height>0</height>
-      <speed>10</speed>
-    </state>
-    <constant>
-      <gravity>9.8</gravity>
-    </constant>
-    <input>
-      <k>0.9</k>
-    </input>
-    <interpolation/>
-    <parameter/>
-    <switch/>
-    <unit>
-      <gravity>meter / second ^ 2</gravity>
-      <height>meter</height>
-      <k>dimensionless</k>
-      <speed>meter / second</speed>
-      <time>second</time>
-    </unit>
-    <description>
-      <gravity>the gravity of Earth</gravity>
-      <height>initial height of the ball</height>
-      <k>coefficient of restitution</k>
-      <speed>initial speed of the ball</speed>
-    </description>
+    <sdScenario>
+      <id>Default</id>
+      <times>
+        <from>0</from>
+        <to>23</to>
+        <by>0.01</by>
+      </times>
+      <method>lsoda</method>
+      <state>
+        <height>0</height>
+        <speed>10</speed>
+      </state>
+      <constant>
+        <gravity>9.8</gravity>
+      </constant>
+      <input>
+        <k>0.9</k>
+      </input>
+      <interpolation/>
+      <parameter/>
+      <switch/>
+      <unit>
+        <gravity>meter / second ^ 2</gravity>
+        <height>meter</height>
+        <k>dimensionless</k>
+        <speed>meter / second</speed>
+        <time>second</time>
+      </unit>
+      <description>
+        <gravity>the gravity of Earth</gravity>
+        <height>initial height of the ball</height>
+        <k>coefficient of restitution</k>
+        <speed>initial speed of the ball</speed>
+      </description>
+    </sdScenario>
   </defaultScenario>
 </sdAtomicModel>

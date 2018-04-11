@@ -28,43 +28,45 @@ It was necessary to solve this problem in order to determine the path that the A
   </aux>
   <globalFunctions/>
   <defaultScenario>
-    <scenarioId>Default</scenarioId>
-    <times>
-      <from>0</from>
-      <to>17.07</to>
-      <by>0.01</by>
-    </times>
-    <method>ode45</method>
-    <state>
-      <y1>0.994</y1>
-      <y2>0</y2>
-      <dy1>0</dy1>
-      <dy2>-2.001585106</dy2>
-    </state>
-    <constant/>
-    <input>
-      <mu1>0.012277471</mu1>
-      <mu2>0</mu2>
-    </input>
-    <interpolation/>
-    <parameter/>
-    <switch/>
-    <unit>
-      <dy1>dimensionless</dy1>
-      <dy2>dimensionless</dy2>
-      <mu1>dimensionless</mu1>
-      <mu2>dimensionless</mu2>
-      <time>second</time>
-      <y1>meter</y1>
-      <y2>meter</y2>
-    </unit>
-    <description>
-      <dy1>coordinate y1 first derivative</dy1>
-      <dy2>coordinate y2 first derivative</dy2>
-      <mu1>Defined as: m1/(m1 + m2)</mu1>
-      <mu2>Defined as: 1 - mu1</mu2>
-      <y1>coordinates</y1>
-      <y2>coordinates</y2>
-    </description>
+    <sdScenario>
+      <id>Default</id>
+      <times>
+        <from>0</from>
+        <to>17.07</to>
+        <by>0.01</by>
+      </times>
+      <method>ode45</method>
+      <state>
+        <y1>0.994</y1>
+        <y2>0</y2>
+        <dy1>0</dy1>
+        <dy2>-2.001585106</dy2>
+      </state>
+      <constant/>
+      <input>
+        <mu1>0.012277471</mu1>
+        <mu2>0</mu2>
+      </input>
+      <interpolation/>
+      <parameter/>
+      <switch/>
+      <unit>
+        <dy1>dimensionless</dy1>
+        <dy2>dimensionless</dy2>
+        <mu1>dimensionless</mu1>
+        <mu2>dimensionless</mu2>
+        <time>second</time>
+        <y1>meter</y1>
+        <y2>meter</y2>
+      </unit>
+      <description>
+        <dy1>coordinate y1 first derivative</dy1>
+        <dy2>coordinate y2 first derivative</dy2>
+        <mu1>Defined as: m1/(m1 + m2)</mu1>
+        <mu2>Defined as: 1 - mu1</mu2>
+        <y1>coordinates</y1>
+        <y2>coordinates</y2>
+      </description>
+    </sdScenario>
   </defaultScenario>
 </sdAtomicModel>

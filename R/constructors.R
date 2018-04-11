@@ -230,7 +230,7 @@ sdAtomicModel <- function(id = NULL,
 #' repository (see the available models in the \code{\link{sdRepository}} 
 #' documentation).
 #' 
-#' The XML file must be created with the models object method '$saveToXml' to 
+#' The XML file must be created with the models object method '$saveXml' to 
 #' garantee that it will be correctly loaded and validated (by checking the 
 #' sdsim prefix).
 #' 
@@ -253,7 +253,7 @@ sdAtomicModel <- function(id = NULL,
 #' outbb$plot("height speed", multipleYAxis = TRUE, units = TRUE)
 #' 
 #' # save the model to a XML file and reload it
-#' bb$saveToXml(file = "bb.xml")
+#' bb$saveXml(file = "bb.xml")
 #' bb <- sdLoadModel(file = "bb.xml") 
 sdLoadModel <- function(file, repository = F,
                         timeSeriesDirectory = "")
@@ -312,7 +312,7 @@ sdLoadModel <- function(file, repository = F,
     # convert the types of the xml vars
     if (is.list(model$defaultScenario))
     {
-      loadedScen <- model$defaultScenario
+      loadedScen <- model$defaultScenario$sdScenario
       
       model$defaultScenario <- sdScenario(
         id = "Default",
@@ -369,7 +369,7 @@ sdLoadModel <- function(file, repository = F,
         # convert each component to a model object
         x <- model$components[[i]]
         # create the default scenario
-        loadedScen <- x$defaultScenario
+        loadedScen <- x$defaultScenario$sdScenario
         
         x$defaultScenario <- 
           sdScenario(id = "Default",
@@ -439,7 +439,7 @@ sdLoadModel <- function(file, repository = F,
     # convert the types of the xml vars
     if (is.list(model$defaultScenario))
     {
-      loadedScen <- model$defaultScenario
+      loadedScen <- model$defaultScenario$sdScenario
       
       model$defaultScenario <- sdScenario(
         id = "Default",

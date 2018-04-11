@@ -555,20 +555,11 @@ sdOutputClass <- R6::R6Class(
                   row.names = F)
       
       # save model and scenario
-      if (inherits(private$pmodel, "sdAtomicModel"))
-        private$pmodel$saveToXml(paste0(path, "/", private$pmodel$id, 
-                                        ".xml"))
-      else if (inherits(private$pmodel, "sdCoupledModelClass"))
-        private$pmodel$saveToXml(paste0(path, "/", 
-                                        private$pmodel$coupledModelId, 
-                                        ".xml"))
-      else if (inherits(private$pmodel, "sdStaticModelClass"))
-        private$pmodel$saveToXml(paste0(path, "/", 
-                                        private$pmodel$staticModelId, 
+      private$pmodel$saveXml(paste0(path, "/", private$pmodel$id, 
                                         ".xml"))
       
       if (!is.null(private$pscenario))
-        private$pscenario$saveToXml(paste0(path, "/", 
+        private$pscenario$saveXml(paste0(path, "/", 
                                            private$pscenario$id, 
                                            ".xml"))
     }

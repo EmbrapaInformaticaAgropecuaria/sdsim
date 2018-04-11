@@ -91,7 +91,7 @@
 #' the computer is doing. Default = \code{FALSE}.}
 #' }}
 #'  
-#' \item{\code{$saveToXml(file = "sdStaticModel.xml")}}{Save the model equations
+#' \item{\code{$saveXml(file = "sdStaticModel.xml")}}{Save the model equations
 #' and functions in a XML file.
 #' 
 #' \strong{Arguments}
@@ -253,7 +253,7 @@ sdStaticModelClass <- R6::R6Class(
       modelStr$globalFunctions <- private$pglobalFunctions
       
       # print the attributes
-      cat("\n<sdStaticModel ID = ", private$pstaticModelId, ">\n", sep = "")
+      cat("<sdStaticModel ID = ", private$pstaticModelId, ">\n", sep = "")
       cat(indent("$staticModelDescription", indent = 4), sep = "\n")
       cat(indent(private$pstaticModelDescription, indent = 4), sep = "\n")
       cat("\n")
@@ -381,7 +381,7 @@ sdStaticModelClass <- R6::R6Class(
       
       private$flagVerify <- TRUE
     },
-    saveToXml = function(file = "sdStaticModel.xml")
+    saveXml = function(file = "sdStaticModel.xml")
     {
       # save model to XML
       doc = XML::newXMLDoc()
@@ -405,8 +405,9 @@ sdStaticModelClass <- R6::R6Class(
       # add the defaultScenario XML
       if (!is.null(private$pdefaultScenario))
       {
-        defaultScenarioXML <- private$pdefaultScenario$saveToXml()
-        XML::xmlName(defaultScenarioXML) <- "defaultScenario"
+        defaultScenarioXML <- XML::newXMLNode(
+          "defaultScenario", 
+          .children = list(private$pdefaultScenario$saveXml()))
         XML::addChildren(rootsdModel, kids = list(defaultScenarioXML))
       }
       

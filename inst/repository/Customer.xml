@@ -17,34 +17,36 @@ levels, and therefore support company growth. Source: System Dynamics Modeling w
   <aux/>
   <globalFunctions/>
   <defaultScenario>
-    <scenarioId>Default</scenarioId>
-    <times>
-      <from>2015</from>
-      <to>2030</to>
-      <by>0.25</by>
-    </times>
-    <method>rk4</method>
-    <state>
-      <customers>10000</customers>
-    </state>
-    <constant>
-      <growth>0.08</growth>
-      <decline>0.03</decline>
-    </constant>
-    <input/>
-    <interpolation/>
-    <parameter/>
-    <switch/>
-    <unit>
-      <customers>clients</customers>
-      <decline>dimensionless</decline>
-      <growth>dimensionless</growth>
-      <time>year</time>
-    </unit>
-    <description>
-      <customers>stock of clients</customers>
-      <decline>rate of clients decline</decline>
-      <growth>rate of clients growth</growth>
-    </description>
+    <sdScenario>
+      <id>Default</id>
+      <times>
+        <from>2015</from>
+        <to>2030</to>
+        <by>0.25</by>
+      </times>
+      <method>rk4</method>
+      <state>
+        <customers>10000</customers>
+      </state>
+      <constant>
+        <growth>0.08</growth>
+        <decline>0.03</decline>
+      </constant>
+      <input/>
+      <interpolation/>
+      <parameter/>
+      <switch/>
+      <unit>
+        <customers>clients</customers>
+        <decline>dimensionless</decline>
+        <growth>dimensionless</growth>
+        <time>year</time>
+      </unit>
+      <description>
+        <customers>stock of clients</customers>
+        <decline>rate of clients decline</decline>
+        <growth>rate of clients growth</growth>
+      </description>
+    </sdScenario>
   </defaultScenario>
 </sdAtomicModel>

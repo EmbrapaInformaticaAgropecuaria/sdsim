@@ -378,7 +378,7 @@ sdBuildCoupledScenario = function(coupledScenarioId = NULL,
 #' (when passing the time series inputs via external text files).}
 #' }}
 #'
-#' \item{\code{$saveToXml(file = "sdCoupledModel.xml")}}{Save the components 
+#' \item{\code{$saveXml(file = "sdCoupledModel.xml")}}{Save the components 
 #' and the connections in a XML file.
 #'
 #' \strong{Arguments}
@@ -555,7 +555,7 @@ sdCoupledModelClass <- R6::R6Class(
     },
     print = function()
     {
-      cat("\n<sdCoupledModel ID = ",
+      cat("<sdCoupledModel ID = ",
           private$pcoupledModelId,
           ">\n",
           sep = "")
@@ -1442,7 +1442,7 @@ sdCoupledModelClass <- R6::R6Class(
       
       private$flagBuild <- TRUE
     },
-    saveToXml = function(file = "sdCoupledModel.xml")
+    saveXml = function(file = "sdCoupledModel.xml")
     {
       # save model to XML
       doc = XML::newXMLDoc()
@@ -1460,7 +1460,7 @@ sdCoupledModelClass <- R6::R6Class(
       components <- XML::newXMLNode("components")
       componentsXML <- lapply(private$pcomponents, function(x)
       {
-        x$saveToXml()
+        x$saveXml()
       })
       XML::addChildren(components, kids = componentsXML)
       XML::addChildren(rootsdCoupledModel, kids = list(components))

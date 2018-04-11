@@ -28,52 +28,54 @@
   </aux>
   <globalFunctions/>
   <defaultScenario>
-    <scenarioId>Default</scenarioId>
-    <times>
-      <from>0</from>
-      <to>200</to>
-      <by>0.25</by>
-    </times>
-    <method>euler</method>
-    <state>
-      <capital>5</capital>
-      <resource>1000</resource>
-    </state>
-    <constant>
-      <desiredGrowth>0.07</desiredGrowth>
-      <depreciation>0.05</depreciation>
-      <costPerInvestment>2</costPerInvestment>
-      <fractionReinvested>0.12</fractionReinvested>
-      <revenuePerUnit>3</revenuePerUnit>
-    </constant>
-    <input>
-      <efficiency>data.frame(Time = c(0,100,200,300,400,500,600,700,800,900,1000), Value = c(0,0.25,0.45,0.63,0.75,0.85,0.92,0.96,0.98,0.99,1))</efficiency>
-    </input>
-    <interpolation>
-      <efficiency>linear</efficiency>
-    </interpolation>
-    <parameter/>
-    <switch/>
-    <unit>
-      <capital>$</capital>
-      <costPerInvestment>$</costPerInvestment>
-      <depreciation>dimensionless</depreciation>
-      <desiredGrowth>dimensionless</desiredGrowth>
-      <efficiency>kg / $</efficiency>
-      <fractionReinvested>dimensionless</fractionReinvested>
-      <resource>kg</resource>
-      <revenuePerUnit>$ / kg</revenuePerUnit>
-      <time>year</time>
-    </unit>
-    <description>
-      <capital>capital stock</capital>
-      <costPerInvestment>cost per unit of investment</costPerInvestment>
-      <depreciation>Depreciation of resource</depreciation>
-      <desiredGrowth>Desired investment represents the target investment rate for capital, in order to stimulate growth.</desiredGrowth>
-      <efficiency>This extraction rate depends on the amount of available capital, which is multiplied by the extraction efficiency per unit of capital</efficiency>
-      <fractionReinvested>A fixed percentage of profits</fractionReinvested>
-      <resource>resource stock</resource>
-      <revenuePerUnit>the amount extracted times revenue per unit extracted</revenuePerUnit>
-    </description>
+    <sdScenario>
+      <id>Default</id>
+      <times>
+        <from>0</from>
+        <to>200</to>
+        <by>0.25</by>
+      </times>
+      <method>euler</method>
+      <state>
+        <capital>5</capital>
+        <resource>1000</resource>
+      </state>
+      <constant>
+        <desiredGrowth>0.07</desiredGrowth>
+        <depreciation>0.05</depreciation>
+        <costPerInvestment>2</costPerInvestment>
+        <fractionReinvested>0.12</fractionReinvested>
+        <revenuePerUnit>3</revenuePerUnit>
+      </constant>
+      <input>
+        <efficiency>data.frame(Time = c(0,100,200,300,400,500,600,700,800,900,1000), Value = c(0,0.25,0.45,0.63,0.75,0.85,0.92,0.96,0.98,0.99,1))</efficiency>
+      </input>
+      <interpolation>
+        <efficiency>linear</efficiency>
+      </interpolation>
+      <parameter/>
+      <switch/>
+      <unit>
+        <capital>$</capital>
+        <costPerInvestment>$</costPerInvestment>
+        <depreciation>dimensionless</depreciation>
+        <desiredGrowth>dimensionless</desiredGrowth>
+        <efficiency>kg / $</efficiency>
+        <fractionReinvested>dimensionless</fractionReinvested>
+        <resource>kg</resource>
+        <revenuePerUnit>$ / kg</revenuePerUnit>
+        <time>year</time>
+      </unit>
+      <description>
+        <capital>capital stock</capital>
+        <costPerInvestment>cost per unit of investment</costPerInvestment>
+        <depreciation>Depreciation of resource</depreciation>
+        <desiredGrowth>Desired investment represents the target investment rate for capital, in order to stimulate growth.</desiredGrowth>
+        <efficiency>This extraction rate depends on the amount of available capital, which is multiplied by the extraction efficiency per unit of capital</efficiency>
+        <fractionReinvested>A fixed percentage of profits</fractionReinvested>
+        <resource>resource stock</resource>
+        <revenuePerUnit>the amount extracted times revenue per unit extracted</revenuePerUnit>
+      </description>
+    </sdScenario>
   </defaultScenario>
 </sdAtomicModel>

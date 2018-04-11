@@ -109,7 +109,7 @@ constructorsMsg$sdLoadModel4 <- function(file, e)
   stop("sdsim::sdLoadModel - Load Model '", file, 
        "': The given file is not a valid XML. Use the package functions to ", 
        "generate it. See help('sdLoadModel') and in the desired model ", 
-       "help pages look for the method '$saveToXml'. ", e, call. = F)
+       "help pages look for the method '$saveXml'. ", e, call. = F)
 
 # warning when reading file
 constructorsMsg$sdLoadModel5 <- function(file, w)
@@ -120,7 +120,7 @@ constructorsMsg$sdLoadModel6 <- function()
   stop("sdsim::sdLoadModel - Load Model aborted: The given file is not a ", 
        "valid XML file. Generate your XML files using the sdsim package ", 
        "functions. See help('sdLoadModel') and in the desired type of model ", 
-       "help pages look for the method '$saveToXml'.", call. = F)
+       "help pages look for the method '$saveXml'.", call. = F)
 
 constructorsMsg$sdLoadModel7 <- function()
   stop("sdsim::sdLoadModel - Load Model aborted: The given XML file do not ",
@@ -136,7 +136,7 @@ constructorsMsg$sdLoadScenario2 <- function(file, e = NULL)
   stop("sdsim::sdLoadScenario - Load Scenario '", file, "' aborted: ",
        "The given file is not a valid XML. See help('sdLoadScenario') for ", 
        "the set of rules to encode a sdScenario in EXCEL file or use the ",
-       "method '$saveToXml' present in the help('sdScenarioClass') to generate",
+       "method '$saveXml' present in the help('sdScenarioClass') to generate",
        " a valid XML.", e, call. = F)
 
 constructorsMsg$sdLoadScenario3 <- function(file, w)

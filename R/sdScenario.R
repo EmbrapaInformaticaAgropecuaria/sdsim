@@ -297,7 +297,7 @@
 #' \item{colWidth}{The Excel columns width.}
 #' }}
 #' 
-#' \item{\code{$saveToXml(file = "sdScenario.xml")}}{Save the scenario variables 
+#' \item{\code{$saveXml(file = "sdScenario.xml")}}{Save the scenario variables 
 #' in a XML file. This format is \strong{not} recommended for user modification.
 #' 
 #' \strong{Arguments}
@@ -513,7 +513,7 @@ sdScenarioClass <- R6::R6Class(
     },
     print = function()
     {
-      cat("\n<",class(self)[[1]],">\n", sep = "")
+      cat("<",class(self)[[1]],">\n", sep = "")
       cat(indent("$id", indent = 4), sep = "\n")
       cat(indent(private$pid, indent = 4), sep = "\n")
       cat("\n")
@@ -526,7 +526,7 @@ sdScenarioClass <- R6::R6Class(
         cat("\n")
       }
     },
-    saveToXml = function(file = "Scenario.xml")
+    saveXml = function(file = "Scenario.xml")
     {
       inputs <- private[["pinput"]][!(names(private[["pinput"]]) 
                                       %in% c("interpolation_", "fun_"))]
