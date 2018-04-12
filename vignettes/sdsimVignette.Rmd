@@ -3,14 +3,14 @@ title: 'R Package sdsim: Implementing System Dynamics in R'
 author: "Adauto Mancini, Bruno Pereira, Cristina Freitas Bazzano and Luis Barioni"
 date: '`r Sys.Date()`'
 output:
-  pdf_document:
-    keep_tex: yes
-    number_sections: yes
-    toc: yes
   html_document:
     df_print: paged
     toc: yes
     toc_depth: '3'
+  pdf_document:
+    keep_tex: yes
+    number_sections: yes
+    toc: yes
   word_document: default
 geometry: margin=1in
 graphics: yes
@@ -68,10 +68,10 @@ Where *ingestC* is the amount of food ingested by the consumer, *capacityRegulat
 
 ### Implementing an Atomic System Dynamics Model
 
-The sdsim atomic system dynamics model class named *sdModelClass* have the following fields that can be passed to the factory function:
+The sdsim atomic system dynamics model class named *sdAtomicModelClass* have the following fields that can be passed to the factory function:
 
-- *modelId*: a string with a valid name for the model identification, uses the function *make.names* [@RCoreTeam] to make syntactically valid names.
-- *modelDescription*: a string with a breath description of the model.
+- *id*: a string with a valid name for the model identification, uses the function *make.names* [@RCoreTeam] to make syntactically valid names.
+- *description*: a string with a breath description of the model.
 - *defaultScenario*: The model default scenario object. It should contain all the model variables initialized with default values that ensures the model simulation and exemplifies its behaviour.
 - *aux*: A list with the model auxiliary equations in strings or R-expressions written in R-format to assist in the *DifferentialEquations* computation.
 - *DifferentialEquations*: An R-function that computes the values of the state variables derivatives in the ODE system (the model definition) at each time step of the simulation.
@@ -116,7 +116,7 @@ times   <- list(from = 0,
 method  <- "lsoda"
 
 # call the scenario factory to create an object
-lvScenario <- sdScenario(scenarioId = "LVScenario",
+lvScenario <- sdScenario(id = "LVScenario",
                          state = state,
                          parameter = parameters,
                          times = times,
@@ -157,7 +157,7 @@ LVode <- function(t, st, ct, par, inp, sw, aux)
   return(list(c(dP, dC)))
 }
 
-lv <- sdModel(modelId = "LotkaVolterra",
+lv <- sdAtomicModel(id = "LotkaVolterra",
               defaultScenario = lvScenario,
               DifferentialEquations = LVode,
               aux = aux)
@@ -237,15 +237,15 @@ inpEnv <- data.frame(Variable = c("P"),
 eqEnvironment <- list(capacityRegulation = "1 - inp$P/par$K")
 
 # creates the environment scenario
-envScen <- sdScenario(scenarioId = "EnvironmentScen",
+envScen <- sdScenario(id = "EnvironmentScen",
                       parameter = parEnv,
                       input = inpEnv,
                       times = list(from = 0, to = 200, by = 1))
 
 # create the static model of the environment
-environmentLV <- sdStaticModel(staticModelId = "Environment",
+environmentLV <- sdStaticModel(id = "Environment",
                                defaultScenario = envScen,
-                               equations = eqEnvironment)
+                               algebraicEquations = eqEnvironment)
 
 # simulates the static model and print the algebraic equation evaluation
 outenv <- sdSimulate(model = environmentLV)
@@ -280,7 +280,7 @@ The following chunk of code creates an empty scenario object and then adds the L
 
 ```{r scenMethods}
 # creates an empty scenario object
-lvScenario <- sdScenario(scenarioId = "LVScenario")
+lvScenario <- sdScenario(id = "LVScenario")
 
 # add the state variables and their descriptions
 lvScenario$addState(P = 1, C = 2)
@@ -340,12 +340,12 @@ times   <- list(from = 0,
 method  <- "lsoda"
 
 # call the scenario factory
-lvScenario <- sdScenario(scenarioId = "LVScenario",
+lvScenario <- sdScenario(id = "LVScenario",
                          state = state,
                          parameter = parameters,
                          times = times,
                          method = method)
-lvScenario$scenarioDataFrames()
+lvScenario$buildDataFrames()
 ```
 
 Remember setting *stringsAsFactor = FALSE* when creating *data.frames* to prevent wrong conversion. Empty variable names and invalid values will be skipped with a warning to the user.
@@ -360,7 +360,7 @@ Each Excel sheet must follow the *data.frames* guidelines (e.g. header, columns 
 
 | Variable | Value | Unit | Description |
 |:------:|:-------:|:----:|:----:|
-| **scenarioId** | LVScenario |    |  |
+| **id** | LVScenario |    |  |
 | **from** | 0 |  days  | simulation time sequence |
 | **to** | 200 |    | |
 | **by** | 1 |    | |
@@ -523,8 +523,8 @@ LVodePrey <- function(t, st, ct, par, inp, sw, aux)
 }
 
 # create the component prey model
-prey <- sdModel(modelId = "Prey",
-                defaultScenario = sdScenario(scenarioId = "preyScen",
+prey <- sdAtomicModel(id = "Prey",
+                defaultScenario = sdScenario(id = "preyScen",
                                              times = times,
                                              state = stPrey,
                                              parameter = parsPrey,
@@ -549,8 +549,8 @@ LVodeConsumer <- function(t, st, ct, par, inp, sw, aux)
 }
 
 # create the component consumer model
-consumer <- sdModel(modelId = "Consumer",
-                    defaultScenario = sdScenario(scenarioId = "consumerScen",
+consumer <- sdAtomicModel(id = "Consumer",
+                    defaultScenario = sdScenario(id = "consumerScen",
                                                  times = times,
                                                  state = stConsumer,
                                                  parameter = parsConsumer,
@@ -565,14 +565,13 @@ lvConnections <- list(c("conP", "Consumer", "P", "Prey", "st$P"),
                       c("conEnvCapacity", "Prey", "envCapacity", "Environment", "eq$capacityRegulation"))
 
 # create the coupled model
-coupledLV <- sdCoupledModel(coupledModelId = "LVCoupled",
+coupledLV <- sdCoupledModel(id = "LVCoupled",
                             components = c(prey, consumer, environmentLV),
                             connections = lvConnections,
                             "Lotka-Volterra Equations implemented as a coupled model")
 
 # build the coupled model and print it
-coupledLV$buildCoupledModel(id = "lvScenCoupled",
-                            from = 0,
+coupledLV$buildCoupledModel(from = 0,
                             to = 200,
                             by = 1)
 print(coupledLV)
@@ -582,7 +581,7 @@ The instantiated coupled model need to be validated to assure that the coupling 
 
 ```{r coupledSim, fig.width=6, fig.height=8, fig.align='center', dependson=-1, cache=TRUE, autodep=TRUE}
 # validate the coupled model
-coupledLV$validateODE(verbose = T)
+coupledLV$verifyModel(verbose = T)
 
 # simulate the coupled model and plot the results
 outclv <- sdSimulate(coupledLV)
@@ -609,7 +608,7 @@ The following table compares the time elapse of the Lotka-Volterra model example
 
 ## Building a Coupled Scenario
 
-The sdsim package exports a function to build additional coupled scenarios. This function merges a named list of scenario objects in to a unique coupled scenario object with all the variables named with the prefix 'ModelId.' followed by the original variable name. The 'ModelId' is the name of each element in the scenarios list and must be the same name of the component identification that will use it. Use the arguments to define the coupled scenario simulation time sequence (the arguments *from*, *to* and *by* must be present to define the time sequence) and the integrator method to be used in the simulations (or the default *lsoda* will be used).
+The sdsim package exports a function to build additional coupled scenarios. This function merges a named list of scenario objects in to a unique coupled scenario object with all the variables named with the prefix 'id.' followed by the original variable name. The 'id' is the name of each element in the scenarios list and must be the same name of the component identification that will use it. Use the arguments to define the coupled scenario simulation time sequence (the arguments *from*, *to* and *by* must be present to define the time sequence) and the integrator method to be used in the simulations (or the default *lsoda* will be used).
 
 The next chunk of code creates a coupled scenario for the Lotka-Volterra example.
 
@@ -627,8 +626,7 @@ environmentScen <- sdScenario(id = "coupledEnvScen",
                               parameter = list(K = 15))
 
 # creates the coupled scenario
-coupledLvScen <- sdBuildCoupledScenario(id = "LVCoupledScen",
-                                        scenarios = list(Prey = preyScen,
+coupledLvScen <- sdBuildCoupledScenario(scenarios = list(Prey = preyScen,
                                                          Consumer = consumerScen,
                                                          Environment = environmentScen),
                                         from = 0, to = 200, by = 1,
