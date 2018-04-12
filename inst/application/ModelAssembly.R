@@ -6,13 +6,13 @@ AssembleModel <- function(simData, input, timeSeriesDirectory,
   
   model <- simData$models[[simData$currentModelId]]
   
-  if(model$type == "atomic") {
+  if(model$type == "sdAtomicModel") {
     modelObj <- AssembleAtomicModel(model, timeSeriesDirectory, progressFunction)
     return(modelObj)
-  } else if (model$type == "static") {
+  } else if (model$type == "sdStaticModel") {
     modelObj <- AssembleStaticModel(model, timeSeriesDirectory)
     return(modelObj)
-  } else if (model$type == "coupled") {
+  } else if (model$type == "sdCoupledModel") {
     modelObj <- AssembleCoupledModel(model, simData, timeSeriesDirectory)
 
     modelObj$buildCoupledModel(from = as.numeric(input$initialTime),
@@ -30,21 +30,21 @@ AssembleCoupledModel <- function(model, simData, timeSeriesDirectory) {
   
   componentsList <- lapply(componentNames, function(x) {
     component <- simData$models[[x]]
-    if(component$type == "atomic")
+    if(component$type == "sdAtomicModel")
       AssembleAtomicModel(component, timeSeriesDirectory)
-    else if(component$type == "static")
+    else if(component$type == "sdStaticModel")
       AssembleStaticModel(component, timeSeriesDirectory)
-    else if(component$type == "coupled")
+    else if(component$type == "sdCoupledModel")
       AssembleCoupledModel(component, simData, timeSeriesDirectory)
   })
   
   connections <- unname(split(model$connections, row(model$connections)))
   
   modelObj <- sdsim::sdCoupledModel(
-    coupledModelId = model$modelId,
+    id = model$id,
     components = componentsList,
     connections = connections,
-    coupledModelDescription = model$description)
+    description = model$description)
   return(modelObj)
 }
 
@@ -110,7 +110,7 @@ AssembleAtomicModel <- function(model, timeSeriesDirectory, progressFunction = N
   auxDescriptions <- auxDescriptions[which(auxDescriptions != "")]
   
   defaultScenarioObj <- sdsim::sdScenario(
-    scenarioId = defaultScenario$id,
+    id = defaultScenario$id,
     times = list(from = defaultScenario$from,
                  to = defaultScenario$to,
                  by = defaultScenario$by),
@@ -125,13 +125,13 @@ AssembleAtomicModel <- function(model, timeSeriesDirectory, progressFunction = N
     description = auxDescriptions)
   
   modelObj <- sdsim::sdAtomicModel(
-    modelId = model$modelId,
+    id = model$id,
     DifferentialEquations = DifferentialEquations,
     defaultScenario = defaultScenarioObj,
     InitVars = InitVars,
     RootSpecification = RootFunction,
     EventFunction = EventFunction,
-    modelDescription = model$description,
+    description = model$description,
     aux = auxList,
     globalFunctions = globalFunctions)
   
@@ -172,7 +172,7 @@ AssembleStaticModel <- function(model, timeSeriesDirectory) {
   auxDescriptions <- auxDescriptions[which(auxDescriptions != "")]
   
   defaultScenarioObj <- sdsim::sdScenario(
-    scenarioId = defaultScenario$id,
+    id = defaultScenario$id,
     times = list(from = defaultScenario$from,
                  to = defaultScenario$to,
                  by = defaultScenario$by),
@@ -187,8 +187,8 @@ AssembleStaticModel <- function(model, timeSeriesDirectory) {
   
   
   modelObj <- sdsim::sdStaticModel(
-    staticModelId = model$modelId,
-    staticModelDescription = model$description,
+    id = model$id,
+    description = model$description,
     defaultScenario = defaultScenarioObj,
     equations = auxList, 
     InitVars = InitVars,
@@ -209,17 +209,18 @@ AssembleAlternateScenario <- function(simData, timeSeriesDirectory) {
     currentScenario <- NULL
   
   if(!is.null(currentScenario))
-    currentScenarioObj <- sdsim::sdScenario(scenarioId = currentScenario$id,
-                                            times = list(from = currentScenario$from,
-                                                         to = currentScenario$to,
-                                                         by = currentScenario$by),
-                                            method = currentScenario$method,
-                                            state = NullIfEmptyDF(currentScenario$state),
-                                            constant = NullIfEmptyDF(currentScenario$constant),
-                                            input = NullIfEmptyDF(currentScenario$input),
-                                            parameter = NullIfEmptyDF(currentScenario$parameter),
-                                            switch =  NullIfEmptyDF(currentScenario$switch),
-                                            timeSeriesDirectory = timeSeriesDirectory)
+    currentScenarioObj <- sdsim::sdScenario(
+      id = currentScenario$id,
+      times = list(from = currentScenario$from,
+                   to = currentScenario$to,
+                   by = currentScenario$by),
+      method = currentScenario$method,
+      state = NullIfEmptyDF(currentScenario$state),
+      constant = NullIfEmptyDF(currentScenario$constant),
+      input = NullIfEmptyDF(currentScenario$input),
+      parameter = NullIfEmptyDF(currentScenario$parameter),
+      switch =  NullIfEmptyDF(currentScenario$switch),
+      timeSeriesDirectory = timeSeriesDirectory)
   else
     currentScenarioObj <- NULL
   
@@ -237,7 +238,7 @@ UpdateModelData <- function(simData, input) {
       
   currentScenario <- currentModel$scenarios[[currentModel$currentScenarioId]]
   
-  if(currentModel$type == "atomic") {
+  if(currentModel$type == "sdAtomicModel") {
     # Update current model description, functions and auxiliaries
     currentModel$description <- input$description
     currentModel$DifferentialEquations <- input$DifferentialEquations
@@ -249,7 +250,7 @@ UpdateModelData <- function(simData, input) {
     if(!is.null(simData$changed$aux) && simData$changed$aux) {
       currentModel$aux <- RhandsonToDF(input$aux, trimWhites = NULL)
     }
-  } else if (currentModel$type == "static") {
+  } else if (currentModel$type == "sdStaticModel") {
     currentModel$description <- input$description
     currentModel$initVars <- input$initVars
     currentModel$globalFunctions <- input$globalFunctions
@@ -257,7 +258,7 @@ UpdateModelData <- function(simData, input) {
     if(!is.null(simData$changed$staticAux) && simData$changed$staticAux) {
       currentModel$aux <- RhandsonToDF(input$staticAux, trimWhites = NULL)
     }
-  } else if(currentModel$type == "coupled") {
+  } else if(currentModel$type == "sdCoupledModel") {
     if(!is.null(simData$changed$connections) && simData$changed$connections) {
       currentModel$connections <- as.matrix(
         RhandsonToDF(
@@ -274,7 +275,7 @@ UpdateModelData <- function(simData, input) {
   }
   
   # Update method, except for static model scenarios
-  if(currentModel$type != "static") {
+  if(currentModel$type != "sdStaticModel") {
     # Update current scenario
     currentScenario$method <- input$method
   }

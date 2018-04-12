@@ -1,7 +1,7 @@
 <?sdsim about='R package for modeling and simulation of system dynamics' version='0.1'?>
-<SDModel>
-  <modelId>Unnamed Model</modelId>
-  <modelDescription/>
+<sdAtomicModel>
+  <id>Unnamed Atomic Model</id>
+  <description/>
   <DifferentialEquations>function(t, st, ct, par, inp, sw, aux) {
   # Calculate the differentials
   
@@ -31,20 +31,22 @@
 # }</EventFunction>
   <aux/>
   <defaultScenario>
-    <scenarioId>Unnamed Scenario</scenarioId>
-    <times>
-      <from>0</from>
-      <to>100</to>
-      <by>0.1</by>
-    </times>
-    <method>lsoda</method>
-    <state/>
-    <constant/>
-    <input/>
-    <interpolation/>
-    <parameter/>
-    <switch/>
-    <unit/>
-    <description/>
+    <sdScenario>
+      <id>Unnamed Scenario</id>
+      <times>
+        <from>0</from>
+        <to>100</to>
+        <by>0.1</by>
+      </times>
+      <method>lsoda</method>
+      <state/>
+      <constant/>
+      <input/>
+      <interpolation/>
+      <parameter/>
+      <switch/>
+      <unit/>
+      <description/>
+    </sdScenario>
   </defaultScenario>
-</SDModel>
+</sdAtomicModel>

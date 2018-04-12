@@ -18,7 +18,7 @@ server <- shinyServer(function(input, output, session) {
   # Use a temporary directory for saving time series files
   timeSeriesDirectory <- tempdir()
   
-  isolate(LoadModel("UnnamedModel", simData, session, input, output, "application/xml", nTableRows = nTableRows))
+  isolate(LoadModel("UnnamedAtomicModel", simData, session, input, output, "application/xml", nTableRows = nTableRows))
   
   output$selectModelOutput <- renderUI({
     choices <- names(simData$models)
@@ -270,7 +270,7 @@ server <- shinyServer(function(input, output, session) {
       input$newModelType,
       "Atomic" = {
         # Load empty model and replace ID
-        msg <- LoadModel("UnnamedModel", simData, session, input, output, "application/xml", 
+        msg <- LoadModel("UnnamedAtomicModel", simData, session, input, output, "application/xml", 
                          replaceId = input$modelIdInput, nTableRows = nTableRows)
       }, "Static" = {
         msg <- LoadModel("UnnamedStaticModel", simData, session, input, output, "application/xml", 
@@ -294,7 +294,7 @@ server <- shinyServer(function(input, output, session) {
       simData$currentModelId <- modelIds[[1]]
     } else {
       # If the model list is empty load an empty model
-      LoadModel("UnnamedModel", simData, session, input, output, "application/xml", nTableRows = nTableRows)
+      LoadModel("UnnamedAtomicModel", simData, session, input, output, "application/xml", nTableRows = nTableRows)
     }
   })
   
@@ -408,9 +408,6 @@ server <- shinyServer(function(input, output, session) {
   
   # Force refresh ace editor script areas if a file has been uploaded (ace editor bug)
   ObserveScriptChanges(input, session)
-  
-  # Simulation name. Changes when a model is loaded.
-  # output$modelId <- renderText(modelData$modelId)
   
   # Observe if a model XML file is uploaded
   observeEvent(input$importModel, {
@@ -631,7 +628,7 @@ server <- shinyServer(function(input, output, session) {
       currentModel <- simData$models[[simData$currentModelId]]
       currentScenario <- currentModel$scenarios[[currentModel$currentScenarioId]]
       
-      paste0(currentModel$modelId, "(", currentScenario$id, ")_plot.png")
+      paste0(currentModel$id, "(", currentScenario$id, ")_plot.png")
     }, 
     content = function(file) {
       tryCatch({

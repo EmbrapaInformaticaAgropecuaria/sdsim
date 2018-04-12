@@ -104,7 +104,7 @@ TrajectoriesDownloadHandler <- function(simData, output) {
       currentModel <- simData$models[[simData$currentModelId]]
       currentScenario <- currentModel$scenarios[[currentModel$currentScenarioId]]
       
-      paste0(currentModel$modelId, "(", currentScenario$id, ")_state_trajectory.csv")
+      paste0(currentModel$id, "(", currentScenario$id, ")_state_trajectory.csv")
     },
     content = function(file) {
       out <- simData$models[[simData$currentModelId]]$out
@@ -118,7 +118,7 @@ TrajectoriesDownloadHandler <- function(simData, output) {
       currentModel <- simData$models[[simData$currentModelId]]
       currentScenario <- currentModel$scenarios[[currentModel$currentScenarioId]]
       
-      paste0(currentModel$modelId, "(", currentScenario$id, ")_auxiliary_trajectory.csv")
+      paste0(currentModel$id, "(", currentScenario$id, ")_auxiliary_trajectory.csv")
     },
     content = function(file) {
       out <- simData$models[[simData$currentModelId]]$out
@@ -132,7 +132,7 @@ TrajectoriesDownloadHandler <- function(simData, output) {
       currentModel <- simData$models[[simData$currentModelId]]
       currentScenario <- currentModel$scenarios[[currentModel$currentScenarioId]]
       
-      paste0(currentModel$modelId, "(", currentScenario$id, ")_time_series_trajectory.csv")
+      paste0(currentModel$id, "(", currentScenario$id, ")_time_series_trajectory.csv")
     },
     content = function(file) {
       out <- simData$models[[simData$currentModelId]]$out

@@ -128,11 +128,11 @@ scenarioToXlsx <- function(scenario, file, colWidth = c(10, 20, 20, 30, 10)) {
 modelToXML <- function(simData, file = NULL){
   currentModel <- simData$models[[simData$currentModelId]]
   
-  if(currentModel$type == "atomic") {
+  if(currentModel$type == "sdAtomicModel") {
     modelXml <- atomicModelToXml(currentModel)
-  } else if(currentModel$type == "static") {
+  } else if(currentModel$type == "sdStaticModel") {
     modelXml <- staticModelToXml(currentModel)
-  } else if(currentModel$type == "coupled") {
+  } else if(currentModel$type == "sdCoupledModel") {
     modelXml <- coupledModelToXml(currentModel, simData)
   }
   
@@ -144,10 +144,10 @@ modelToXML <- function(simData, file = NULL){
 
 atomicModelToXml <- function(model) {
   doc = XML::newXMLDoc()
-  rootsdModel <- XML::newXMLNode("sdModel", doc = doc)
+  rootsdModel <- XML::newXMLNode("sdAtomicModel", doc = doc)
   
-  lModel <- list(modelId = model$modelId,
-                 modelDescription = model$description,
+  lModel <- list(id = model$id,
+                 description = model$description,
                  DifferentialEquations = model$DifferentialEquations,
                  InitVars = model$initVars,
                  PostProcessVars = "NULL",
@@ -161,9 +161,11 @@ atomicModelToXml <- function(model) {
   # add the defaultScenario XML
   defaultScenarioId <- model$scenarios[[model$defaultScenarioId]]
   
-  defaultScenarioXML <- scenarioToXML(defaultScenarioId)
+  sdScenarioXML <- scenarioToXML(defaultScenarioId)
+  XML::xmlName(sdScenarioXML) <- "sdScenario"
+  defaultScenarioXML <- XML::newXMLNode("defaultScenario")
   
-  XML::xmlName(defaultScenarioXML) <- "defaultScenario"
+  XML::addChildren(defaultScenarioXML, kids = list(sdScenarioXML))
   XML::addChildren(rootsdModel, kids = list(defaultScenarioXML))
   
   return(doc)
@@ -173,8 +175,8 @@ staticModelToXml <- function(model) {
   doc = XML::newXMLDoc()
   rootsdModel <- XML::newXMLNode("sdStaticModel", doc = doc)
   
-  lModel <- list(staticModelId = model$modelId,
-                 staticModelDescription = model$description,
+  lModel <- list(id = model$id,
+                 description = model$description,
                  InitVars = model$initVars,
                  equations = DataFrameToList(model$aux),
                  globalFunctions = model$globalFunctions)
@@ -184,11 +186,12 @@ staticModelToXml <- function(model) {
   # add the defaultScenario XML
   defaultScenarioId <- model$scenarios[[model$defaultScenarioId]]
   
-  defaultScenarioXML <- scenarioToXML(defaultScenarioId)
+  sdScenarioXML <- scenarioToXML(defaultScenarioId)
+  XML::xmlName(sdScenarioXML) <- "sdScenario"
+  defaultScenarioXML <- XML::newXMLNode("defaultScenario")
   
-  XML::xmlName(defaultScenarioXML) <- "defaultScenario"
+  XML::addChildren(defaultScenarioXML, kids = list(sdScenarioXML))
   XML::addChildren(rootsdModel, kids = list(defaultScenarioXML))
-  
   return(doc)
 }
 
@@ -200,8 +203,8 @@ coupledModelToXml <- function(model, simData) {
   connections <- unname(split(model$connections, row(model$connections)))
   names(connections) <- model$connections[,1]
   
-  lModel <- list(coupledModelId = model$modelId,
-                 coupledModelDescription = model$description,
+  lModel <- list(id = model$id,
+                 description = model$description,
                  connections = connections)
   
   ListToXML(rootsdModel, lModel)
@@ -248,7 +251,7 @@ scenarioToXML <- function(scenario, file = NULL){
   else
     times <- list(from = scenario$from, to = scenario$to, by = scenario$by)
   
-  lscenario <- list(scenarioId = scenario$id,
+  lscenario <- list(id = scenario$id,
                     times = times,
                     method = scenario$method,
                     state = DataFrameToList(scenario$state),
@@ -259,7 +262,7 @@ scenarioToXML <- function(scenario, file = NULL){
                     switch = DataFrameToList(scenario$switch),
                     unit = units,
                     description = descriptions)
-  scn <<- lscenario
+  
   ListToXML(rootScenario, lscenario)
   
   if (!is.null(file))

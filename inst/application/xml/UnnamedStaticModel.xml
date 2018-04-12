@@ -1,25 +1,27 @@
 <?sdsim about='R package for modeling and simulation of system dynamics' version='0.1' date='2018-03-03'?>
 <sdStaticModel>
-  <staticModelId>Unnamed Static Model</staticModelId>
-  <staticModelDescription/>
+  <id>Unnamed Static Model</id>
+  <description/>
   <InitVars/>
   <equations/>
   <globalFunctions/>
   <defaultScenario>
-    <scenarioId>Unnamed Scenario</scenarioId>
-    <times>
-      <from>0</from>
-      <to>100</to>
-      <by>0.1</by>
-    </times>
-    <method>none</method>
-    <state/>
-    <constant/>
-    <input/>
-    <interpolation/>
-    <parameter/>
-    <switch/>
-    <unit/>
-    <description/>
+    <sdScenario>
+      <id>Unnamed Scenario</id>
+      <times>
+        <from>0</from>
+        <to>100</to>
+        <by>0.1</by>
+      </times>
+      <method>none</method>
+      <state/>
+      <constant/>
+      <input/>
+      <interpolation/>
+      <parameter/>
+      <switch/>
+      <unit/>
+      <description/>
+    </sdScenario>
   </defaultScenario>
 </sdStaticModel>

@@ -3,39 +3,27 @@
 LoadModel <- function(modelName, simData, session, input, output, 
                          repository = NULL, loadDefaultScenario = T, 
                          nTableRows = 50, replaceId = NULL) {
-  model <- ParseXML(modelName, repository)
+  modelXml <- ParseXML(modelName, repository)
   
   id <- ""
   componentIds <- list()
-  if(!is.null(model$modelId)) {
+  
+  if(!is.null(modelXml$id))
     if(!is.null(replaceId) && replaceId != "")
-      model$modelId <- replaceId
-    id <- model$modelId
-  } else if (!is.null(model$coupledModelId)) {
-    if(!is.null(replaceId) && replaceId != "")
-      model$coupledModelId <- replaceId
-    id <- model$coupledModelId
-    componentIds <- lapply(model$components, function(x) {
-      if(!is.null(x$modelId))
-        x$modelId
-      else if(!is.null(x$staticModelId))
-        x$staticModelId
-      else if(!is.null(x$coupledModelId))
-        x$coupledModelId
+      modelXml$id <- replaceId
+  
+  if(modelXml$type == "sdCoupledModel")
+    componentIds <- lapply(modelXml$components, function(x) {
+      x$id
     })
-  } else if (!is.null(model$staticModelId)) {
-    if(!is.null(replaceId) && replaceId != "")
-      model$staticModelId <- replaceId
-    id <- model$staticModelId
-  }
   
-  modelIds <- c(id, componentIds)
+  modelIdsList <- c(modelXml$id, componentIds)
   
-  if(any(modelIds %in% names(simData$models))) {
+  if(any(modelIdsList %in% names(simData$models))) {
     # Save loading model info in simData
-    simData$loadingModel <- model
+    simData$loadingModel <- modelXml
     
-    idsToOverwrite <- paste(modelIds[modelIds %in% names(simData$models)], collapse = "\", \"")
+    idsToOverwrite <- paste(modelIdsList[modelIdsList %in% names(simData$models)], collapse = "\", \"")
     idsToOverwrite <- sub("(.*),", "\\1 and", idsToOverwrite)
     message <- paste0("The model(s) \"", idsToOverwrite, "\" will be overwritten.",
                      "\nDo you wish to continue?")
@@ -45,24 +33,24 @@ LoadModel <- function(modelName, simData, session, input, output,
                                    responseInputName = responseInputName))
     return(NULL)
   } else {
-    msg <- ConfirmLoadModel(model, simData, session, input, 
+    msg <- ConfirmLoadModel(modelXml, simData, session, input, 
                      output, nTableRows = nTableRows)
     return(msg)
   }
 }
 
-ConfirmLoadModel <- function(model, simData, session, input, output, 
+ConfirmLoadModel <- function(modelXml, simData, session, input, output, 
                       loadDefaultScenario = T, nTableRows = 50) {
   withCallingHandlers({
     tryCatch({
-      if(!is.null(model$modelId)) {
-        msg <- LoadAtomicModel(model, simData, session, input, output, 
+      if(modelXml$type == "sdAtomicModel") {
+        msg <- LoadAtomicModel(modelXml, simData, session, input, output, 
                         loadDefaultScenario)
-      } else if(!is.null(model$staticModelId)) {
-        msg <- LoadStaticModel(model, simData, session, input, output, 
+      } else if(modelXml$type == "sdStaticModel") {
+        msg <- LoadStaticModel(modelXml, simData, session, input, output, 
                         loadDefaultScenario)
-      } else if (!is.null(model$coupledModelId)){
-        msg <- LoadCoupledModel(model, simData, session, input, output, 
+      } else if (modelXml$type == "sdCoupledModel"){
+        msg <- LoadCoupledModel(modelXml, simData, session, input, output, 
                         loadDefaultScenario)
       } else {
         # Invalid model file
@@ -90,68 +78,72 @@ ConfirmLoadModel <- function(model, simData, session, input, output,
   })
 }
 
-LoadAtomicModel <- function(model, simData, session, input, output, 
+LoadAtomicModel <- function(modelXml, simData, session, input, output, 
                             loadDefaultScenario = T) {
   # If default scenario is null or shouldn't be loaded
-  if(!loadDefaultScenario || is.null(model$defaultScenario)) {
+  if(!loadDefaultScenario || is.null(modelXml$defaultScenario$sdScenario)) {
     # Load empty scenario as default
     scenario <- ParseXML("UnnamedScenario", "application/xml")
-    model$defaultScenario <- scenario
+    modelXml$defaultScenario$sdScenario <- scenario
   }
   
-  model$defaultScenario$scenarioId <- "Default"
+  modelXml$defaultScenario$sdScenario$id <- "Default"
   # Load model data and save to reactive list
-  simData$models[[model$modelId]] <- LoadAtomicModelData(model, simData)
+  simData$models[[modelXml$id]] <- LoadAtomicModelData(modelXml, simData)
   
   # Load default scenario
-  LoadScenarioData(model$defaultScenario, simData, model$modelId)
+  LoadScenarioData(modelXml$defaultScenario$sdScenario, simData, modelXml$id)
   
   # Update current model
-  simData$currentModelId <- model$modelId
+  simData$currentModelId <- modelXml$id
   
   msg <- list(
-    paste(model$modelId, "model successfully loaded!"),
+    paste(modelXml$id, "model successfully loaded!"),
     "green"
   )
   return(msg)
 }
 
-LoadStaticModel <- function(model, simData, session, input, output, 
+LoadStaticModel <- function(modelXml, simData, session, input, output, 
                             loadDefaultScenario = T) {
   # Load static model
   
   # If default scenario is null or shouldn't be loaded
-  if(!loadDefaultScenario || is.null(model$defaultScenario)) {
+  if(!loadDefaultScenario || is.null(modelXml$defaultScenario$sdScenario)) {
     # Load empty scenario as default
     scenario <- ParseXML("UnnamedScenario", "application/xml")
-    scenario$scenarioId <- "Default"
-    model$defaultScenario <- scenario
+    scenario$id <- "Default"
+    modelXml$defaultScenario$sdScenario <- scenario
   }
   
-  model$defaultScenario$scenarioId <- "Default"
+  modelXml$defaultScenario$sdScenario$id <- "Default"
   # Load static model
-  simData$models[[model$staticModelId]] <- LoadStaticModelData(model, simData)
+  simData$models[[modelXml$id]] <- LoadStaticModelData(modelXml, simData)
   
-  LoadScenarioData(model$defaultScenario, simData, model$staticModelId)
+  LoadScenarioData(modelXml$defaultScenario$sdScenario, simData, modelXml$id)
   
   # Update current model
-  simData$currentModelId <- model$staticModelId
+  simData$currentModelId <- modelXml$id
   
   msg <- list(
-    paste(model$staticModelId, "model successfully loaded!"),
+    paste(modelXml$id, "model successfully loaded!"),
     "green"
   )
   return(msg)
 }
 
-LoadCoupledModel <- function(model, simData, session, input, output, 
+LoadCoupledModel <- function(modelXml, simData, session, input, output, 
                              loadDefaultScenario = T) {
+  # TODO
   # Load coupled model
   componentIdList <- c()
   # Loads all component models into model list
-  for(component in model$components) {
-    if(!is.null(component$modelId)) {
-      componentIdList <- c(componentIdList, component$modelId)
+  # component in model$components
+  for(i in seq_along(modelXml$components)) {
+    component <- modelXml$components[[i]]
+    
+    if(names(modelXml$components)[[i]] == "sdAtomicModel") {
+      componentIdList <- c(componentIdList, component$id)
       # If default scenario is null
       if(is.null(component$defaultScenario)) {
         # Load empty scenario as default
@@ -159,27 +151,27 @@ LoadCoupledModel <- function(model, simData, session, input, output,
         component$defaultScenario <- scenario
       }
       
-      component$defaultScenario$scenarioId <- "Default"
-      simData$models[[component$modelId]] <- LoadAtomicModelData(component, simData)
+      component$defaultScenario$id <- "Default"
+      simData$models[[component$id]] <- LoadAtomicModelData(component, simData)
       
       # Load default scenario and save it to the component's scenario list
-      LoadScenarioData(component$defaultScenario, simData, component$modelId)
+      LoadScenarioData(component$defaultScenario, simData, component$id)
       
-    } else if(!is.null(component$staticModelId)) {
-      componentIdList <- c(componentIdList, component$staticModelId)
+    } else if(names(modelXml$components)[[i]] == "sdStaticModel") {
+      componentIdList <- c(componentIdList, component$id)
       # If default scenario is null
       if(is.null(component$defaultScenario)) {
         # Load empty scenario as default
         scenario <- ParseXML("UnnamedScenario", "application/xml")
-        component$defaultScenario <- scenario
+        component$defaultScenario$sdScenario <- scenario
       }
       
-      component$defaultScenario$scenarioId <- "Default"
-      simData$models[[component$staticModelId]] <- LoadStaticModelData(component, simData)
+      component$defaultScenario$sdScenario$id <- "Default"
+      simData$models[[component$id]] <- LoadStaticModelData(component, simData)
       
       # Load default scenario and save it to the component's scenario list
-      LoadScenarioData(component$defaultScenario, simData, component$staticModelId)
-    } else if (!is.null(component$coupledModelId)){
+      LoadScenarioData(component$defaultScenario$sdScenario, simData, component$id)
+    } else if (names(modelXml$components)[[i]] == "sdCoupledModel"){
       # msg <- LoadCoupledModel(model, simData, session, input, output, 
       # loadDefaultScenario)
       # TODO
@@ -190,20 +182,20 @@ LoadCoupledModel <- function(model, simData, session, input, output,
   scenario <- ParseXML("UnnamedScenario", "application/xml")
   
   # Get component Ids data frame
-  model$componentIds <- data.frame('Component ID' = componentIdList,
+  modelXml$componentIds <- data.frame('Component ID' = componentIdList,
                                    stringsAsFactors = FALSE, 
                                    row.names = NULL, check.names = F)
   
-  simData$models[[model$coupledModelId]] <- 
-    LoadCoupledModelData(model, simData, scenario$scenarioId)
+  simData$models[[modelXml$id]] <- 
+    LoadCoupledModelData(modelXml, simData, scenario$id)
   
-  LoadScenarioData(scenario, simData, model$coupledModelId)
+  LoadScenarioData(scenario, simData, modelXml$id)
   
   # Update current model
-  simData$currentModelId <- model$coupledModelId
+  simData$currentModelId <- modelXml$id
   
   msg <- list(
-    paste(model$coupledModelId, "model successfully loaded!"),
+    paste(modelXml$id, "model successfully loaded!"),
     "green"
   )
   return(msg)
@@ -214,27 +206,27 @@ LoadScenario <- function(scenarioName, simData, session, input, output,
   withCallingHandlers({
     tryCatch({
       if(!is.null(repository) || grepl(".[xX][mM][lL]$", scenarioName)) {
-        scenario <- ParseXML(scenarioName, repository)
+        xmlScenario <- ParseXML(scenarioName, repository)
       } else if(grepl(".[xX][lL][sS][xX]$", scenarioName)) {
-        scenario <- ParseXlsx(scenarioName)
+        xmlScenario <- ParseXlsx(scenarioName)
       }
       
       if(!is.null(replaceId) && replaceId != "") {
-        scenario$scenarioId <- replaceId
+        xmlScenario$id <- replaceId
       }
       
-      if(scenario$scenarioId == "Default")
+      if(xmlScenario$id == "Default")
         return(list("Cannot create or load a scenario with ID \"Default\"!",
                     "red"))
       
       currentModel <- simData$models[[simData$currentModelId]]
       currentModelScenarioIds <- names(currentModel$scenarios)
       
-      if(scenario$scenarioId %in% currentModelScenarioIds) {
+      if(xmlScenario$id %in% currentModelScenarioIds) {
         # Save loading scenario info in simData
-        simData$loadingScenario <- scenario
+        simData$loadingScenario <- xmlScenario
         
-        message <- paste0("The current model's scenario \"", scenario$scenarioId, 
+        message <- paste0("The current model's scenario \"", xmlScenario$id, 
                           "\" will be overwritten.",
                           "\nDo you wish to continue?")
         responseInputName <- "confirmScenarioOverwrite"
@@ -243,7 +235,7 @@ LoadScenario <- function(scenarioName, simData, session, input, output,
                                        responseInputName = responseInputName))
         return(NULL)
       } else {
-        msg <- ConfirmLoadScenario(scenario, simData, session, input, output, 
+        msg <- ConfirmLoadScenario(xmlScenario, simData, session, input, output, 
                                    repository, nTableRows)
         return(msg)
       }
@@ -259,17 +251,17 @@ LoadScenario <- function(scenarioName, simData, session, input, output,
   })
 }
 
-ConfirmLoadScenario <- function(scenario, simData, session, input, output, 
+ConfirmLoadScenario <- function(xmlScenario, simData, session, input, output, 
                          repository = NULL, nTableRows = 50) {
   withCallingHandlers({
     tryCatch({
       # Load scenario data and add it to current model in simData
-      LoadScenarioData(scenario, simData, simData$currentModelId)
+      LoadScenarioData(xmlScenario, simData, simData$currentModelId)
       
       # Change the current model's current scenario to the loaded scenario
-      simData$models[[simData$currentModelId]]$currentScenarioId <- scenario$scenarioId
+      simData$models[[simData$currentModelId]]$currentScenarioId <- xmlScenario$id
       
-      msg <- paste(scenario$scenarioId, "scenario successfully loaded!")
+      msg <- paste(xmlScenario$id, "scenario successfully loaded!")
       
       UpdateLoadedScenario(simData, session, input, output, nTableRows)
       
@@ -286,6 +278,7 @@ ConfirmLoadScenario <- function(scenario, simData, session, input, output,
   })
 }
 
+# Parse excel file for scenarios
 ParseXlsx <- function(file) {
   scenario <- ReadDataExcel(file)
   
@@ -306,9 +299,9 @@ ParseXlsx <- function(file) {
   from <- GetDataFrameValue(scenario$simulation, "from", "Variable", "Value")
   to <- GetDataFrameValue(scenario$simulation, "to", "Variable", "Value")
   by <- GetDataFrameValue(scenario$simulation, "by", "Variable", "Value")
-  scenarioId <- GetDataFrameValue(scenario$simulation, "scenarioId", "Variable", "Value")
+  id <- GetDataFrameValue(scenario$simulation, "id", "Variable", "Value")
   
-  lscenario <- list(scenarioId = scenarioId,
+  lscenario <- list(id = id,
                     times = list(from = from, to = to, by = by),
                     method = method,
                     state = DataFrameToList(scenario$state),
@@ -334,7 +327,6 @@ ParseXML <- function(file, repositoryDir = NULL) {
     stop(paste("Load model aborted. The given file is not a valid XML file.",
                "Generate your XML files using the sdsim package functions."),
          call. = F)
-  
   # else
   # {
   #   # valid prefix, now check version
@@ -345,8 +337,25 @@ ParseXML <- function(file, repositoryDir = NULL) {
   #             "sdsim version is: ", packageVersion("sdsim"))
   # }
   
-  data <- XML::xmlParse(file)
-  data <- XML::xmlToList(data)
+  parsedFile <- XML::xmlParse(file)
+  data <- XML::xmlToList(parsedFile)
+  
+  # Add model type to data list
+  dataXmlChildren <- names(XML::xmlChildren(parsedFile))
+  
+  if("sdAtomicModel" %in% dataXmlChildren)
+    type <- "sdAtomicModel"
+  else if("sdStaticModel" %in% dataXmlChildren)
+    type <- "sdStaticModel"
+  else if("sdCoupledModel" %in% dataXmlChildren)
+    type <- "sdCoupledModel"
+  else if("sdScenario" %in% dataXmlChildren)
+    type <- "sdScenario"
+  else
+    type <- "unknown"
+  
+  data$type <- type
+  
   return(data)
 }
 
@@ -357,7 +366,7 @@ UpdateLoadedModel <- function(simData, session, input, output, nTableRows = 50) 
   # Get current model
   currentModel <- simData$models[[simData$currentModelId]]
   
-  if(currentModel$type == "atomic") {
+  if(currentModel$type == "sdAtomicModel") {
     # Unhide atomic model panel
     session$sendCustomMessage("unhideElement", "atomicModelPage")
     # Hide static model panel
@@ -387,7 +396,7 @@ UpdateLoadedModel <- function(simData, session, input, output, nTableRows = 50) 
     UpdateRHandsontable(aux, "aux", output)
     
     simData$changed$aux <- F
-  } else if(currentModel$type == "static") {
+  } else if(currentModel$type == "sdStaticModel") {
     # Hide atomic model panel
     session$sendCustomMessage("hideElement", "atomicModelPage")
     # Unhide static model panel
@@ -413,7 +422,7 @@ UpdateLoadedModel <- function(simData, session, input, output, nTableRows = 50) 
     
     UpdateRHandsontable(aux, "staticAux", output)
     simData$changed$staticAux <- F
-  } else if(currentModel$type == "coupled") {
+  } else if(currentModel$type == "sdCoupledModel") {
     # Hide atomic model panel
     session$sendCustomMessage("hideElement", "atomicModelPage")
     # Hide static model panel
@@ -595,40 +604,40 @@ LoadAtomicModelData <- function(model, simData) {
   
   # Create model
   modelData <- CreateModelObject(
-    modelId = model$modelId, 
-    description = model$modelDescription, 
+    id = model$id, 
+    description = model$description, 
     DifferentialEquations = FunToString(model$DifferentialEquations), 
     initVars = FunToString(model$InitVars), 
     root = FunToString(model$RootSpecification), 
     event = FunToString(model$EventFunction),
     aux = aux,
     globalFunctions = globalFunctions,
-    defaultScenarioId = model$defaultScenario$scenarioId,
-    currentScenarioId = model$defaultScenario$scenarioId
+    defaultScenarioId = model$defaultScenario$sdScenario$id,
+    currentScenarioId = model$defaultScenario$sdScenario$id
   )
   
   return(modelData)
 }
 
 # Loads a static model into the UI format
-LoadStaticModelData <- function(model, simData) {
+LoadStaticModelData <- function(modelXml, simData) {
   # Get auxiliary data frame and update rhandsontable values
-  aux <- AuxListToDataFrame(model, "equations")
+  aux <- AuxListToDataFrame(modelXml, "equations")
   
-  globalFunctions <- model$GlobalFunctions
+  globalFunctions <- modelXml$GlobalFunctions
   globalFunctions <- lapply(names(globalFunctions), function(x) {
     paste0(x, " <- ", FunToString(globalFunctions[[x]]))
   })
   
   # Create model
   modelData <- CreateStaticModelObject(
-    modelId = model$staticModelId, 
-    description = model$modelDescription,
-    initVars = FunToString(model$InitVars),
+    id = modelXml$id, 
+    description = modelXml$description,
+    initVars = FunToString(modelXml$InitVars),
     aux = aux,
     globalFunctions = globalFunctions,
-    defaultScenarioId = model$defaultScenario$scenarioId,
-    currentScenarioId = model$defaultScenario$scenarioId
+    defaultScenarioId = modelXml$defaultScenario$sdScenario$id,
+    currentScenarioId = modelXml$defaultScenario$sdScenario$id
   )
   
   return(modelData)
@@ -638,8 +647,8 @@ LoadStaticModelData <- function(model, simData) {
 LoadCoupledModelData <- function(model, simData, currentScenarioId = NULL) {
   connections <- ConnectionsListToDataFrame(model)
   modelData <- CreateCoupledModelObject(
-    modelId = model$coupledModelId,
-    description = model$coupledModelDescription,
+    id = model$id,
+    description = model$description,
     connections = connections,
     componentIds = model$componentIds,
     currentScenarioId = currentScenarioId
@@ -660,7 +669,7 @@ LoadScenarioData <- function(scenario, simData, parentModelId = NULL) {
   
   # Create scenario
   scenarioData <- CreateScenarioObject(
-    scenarioId = scenario$scenarioId,
+    id = scenario$id,
     from = times$from,
     to = times$to,
     by = times$by,
@@ -674,14 +683,14 @@ LoadScenarioData <- function(scenario, simData, parentModelId = NULL) {
   
   # Save scenario to parent model scenario list
   if(!is.null(parentModelId)) {
-    simData$models[[parentModelId]]$scenarios[[scenario$scenarioId]] <- scenarioData
+    simData$models[[parentModelId]]$scenarios[[scenario$id]] <- scenarioData
   }
   return(scenarioData)
 }
 
 
 
-CreateModelObject <- function(modelId,
+CreateModelObject <- function(id,
                               description = NULL,
                               DifferentialEquations = NULL,
                               initVars = NULL,
@@ -695,11 +704,11 @@ CreateModelObject <- function(modelId,
   model <- list()
   
   if(!is.null(DifferentialEquations))
-    model$type <- "atomic"
+    model$type <- "sdAtomicModel"
   else
-    model$type <- "static"
+    model$type <- "sdStaticModel"
   
-  model$modelId <- modelId
+  model$id <- id
   model$description <- description
   model$DifferentialEquations <- DifferentialEquations
   model$initVars <- initVars
@@ -714,7 +723,7 @@ CreateModelObject <- function(modelId,
   return(model)
 }
 
-CreateStaticModelObject <- function(modelId,
+CreateStaticModelObject <- function(id,
                               description = NULL,
                               initVars = NULL,
                               aux = NULL,
@@ -724,9 +733,9 @@ CreateStaticModelObject <- function(modelId,
                               scenarios = list()) {
   model <- list()
   
-  model$type <- "static"
+  model$type <- "sdStaticModel"
   
-  model$modelId <- modelId
+  model$id <- id
   model$description <- description
   model$initVars <- initVars
   model$aux <- aux
@@ -738,7 +747,7 @@ CreateStaticModelObject <- function(modelId,
   return(model)
 }
 
-CreateCoupledModelObject <- function(modelId = NULL,
+CreateCoupledModelObject <- function(id = NULL,
                                      description = NULL,
                                      componentIds = NULL,
                                      connections = NULL,
@@ -746,8 +755,8 @@ CreateCoupledModelObject <- function(modelId = NULL,
                                      scenarios = list()) {
   model <- list()
   
-  model$type <- "coupled"
-  model$modelId <- modelId
+  model$type <- "sdCoupledModel"
+  model$id <- id
   model$description <- description
   model$componentIds <- componentIds
   model$connections <- connections
@@ -757,7 +766,7 @@ CreateCoupledModelObject <- function(modelId = NULL,
   return(model)
 }
 
-CreateScenarioObject <- function(scenarioId = "default scenario",
+CreateScenarioObject <- function(id = "default scenario",
                                  from = 0, to = 100, by = 1,
                                  method = "lsoda",
                                  state = NULL,
@@ -767,7 +776,7 @@ CreateScenarioObject <- function(scenarioId = "default scenario",
                                  switch = NULL) {
   scenario <- list()
   
-  scenario$id <- scenarioId
+  scenario$id <- id
   
   scenario$from <- from
   scenario$to <- to
@@ -810,11 +819,11 @@ ConnectionsListToDataFrame <- function(model, connectionsListName = "connections
   
 }
 
-AuxListToDataFrame <- function(model, auxListName = "aux") {
-  ls <- lapply(model[[auxListName]], function(x) toString(x))
+AuxListToDataFrame <- function(modelXml, auxListName = "aux") {
+  ls <- lapply(modelXml[[auxListName]], function(x) toString(x))
   
-  description <- model$defaultScenario$description
-  unit <- model$defaultScenario$unit
+  description <- modelXml$defaultScenario$sdScenario$description
+  unit <- modelXml$defaultScenario$sdScenario$unit
   
   df <- data.frame(Variable = names(ls), Value = unlist(ls),
                    Unit = character(NROW(ls)),
