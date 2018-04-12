@@ -377,7 +377,7 @@ sdSimulate <- function(model,
   methodArg <- method
   
   # If the model is atomic
-  if (inherits(model, "sdAtomicModel"))
+  if (inherits(model, sdAtomicModelClass$classname))
   {
     # stop if model is empty
     if (is.null(model$DifferentialEquations))
@@ -405,7 +405,7 @@ sdSimulate <- function(model,
         if (is.character(scenario))
           scenario <- sdLoadScenario(file = scenario)
         
-        if (inherits(scenario, "sdScenario"))
+        if (inherits(scenario, sdScenarioClass$classname))
         {
           if (length(scenario$state) > 0)
             defaultScenario$addState(scenario$state, verbose = verbose)
@@ -435,7 +435,7 @@ sdSimulate <- function(model,
       if (is.character(scenario))
         scenario <- sdLoadScenario(file = scenario)
       
-      if (inherits(scenario, "sdScenario"))
+      if (inherits(scenario, sdScenarioClass$classname))
         defaultScenario <- scenario
       else
         sdSimulatorMsg$sdSimulateAtomic0(model$id)
@@ -711,7 +711,7 @@ sdSimulate <- function(model,
         if (is.character(scenario))
           scenario <- sdLoadScenario(file = scenario)
         
-        if (inherits(scenario, "sdScenario"))
+        if (inherits(scenario, sdScenarioClass$classname))
         {
           if (length(scenario$constant) > 0)
             defaultScenario$addConstant(scenario$constant, verbose = verbose)
@@ -738,7 +738,7 @@ sdSimulate <- function(model,
       if (is.character(scenario))
         scenario <- sdLoadScenario(file = scenario)
       
-      if (inherits(scenario, "sdScenario"))
+      if (inherits(scenario, sdScenarioClass$classname))
         defaultScenario <- scenario
       else
         sdSimulatorMsg$sdSimulateAtomic0(model$id)
@@ -884,7 +884,7 @@ sdSimulate <- function(model,
         if (is.character(scenario))
           scenario <- sdLoadScenario(file = scenario)
         
-        if (inherits(scenario, "sdScenario"))
+        if (inherits(scenario, sdScenarioClass$classname))
         {
           if (length(scenario$state) > 0)
             defaultScenario$addState(scenario$state, verbose = verbose)
@@ -953,7 +953,7 @@ sdSimulate <- function(model,
       # run the init vars
       if (!is.null(componentsInitVars[[modelId]]))
       {
-        if (inherits(model$components[[modelId]], "sdAtomicModelClass"))
+        if (inherits(model$components[[modelId]], sdAtomicModelClass$classname))
           modelInitVars <-
             componentsInitVars[[modelId]](
               st = st[model$indexComponents$st[[modelId]]],
@@ -971,6 +971,8 @@ sdSimulate <- function(model,
               inp = inp[model$indexComponents$inp[[modelId]]],
               sw = sw[model$indexComponents$sw[[modelId]]],
               eq = aux[model$indexComponents$aux[[modelId]]])
+        else
+          next()
         
         # concatenate the initVars return
         modelInit$st <- c(modelInit$st, modelInitVars$st)
