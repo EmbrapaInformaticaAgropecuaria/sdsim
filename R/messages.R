@@ -65,6 +65,10 @@ auxiliaryMsg$sdTemporalFunction4  <- function()
           "supported: See help('sdTemporalFunction') for the supported ", 
           "methods. Transformation aborted, returned NULL.", call. = F)
 
+auxiliaryMsg$sdTemporalFunction5  <- function(e) 
+  warning("sdsim::sdTemporalFunction - Error interpolating the time series ", 
+          "data points: Transformation aborted, returned NULL. ", e, call. = F)
+
 # case use:
 # bb <- sdLoadModel("BouncingBall", repository = T)
 # sdSimulate(bb, scenario = sdScenario("", parameter = c(a = 2)))

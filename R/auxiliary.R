@@ -28,8 +28,8 @@
 #' in the sorting. Default is c('aux', 'eq').
 #' @return A sorted list of equations in R-expression format.
 #' @examples 
-#' const = list(c1 = 2, c2 = 1)
-#' vars = list(k1 = 10, k2 = 2)
+#' const <- list(c1 = 2, c2 = 1)
+#' vars <- list(k1 = 10, k2 = 2)
 #' 
 #' auxEquationsStrings <- list("cDiffFrac <- (const$c1 - const$c2) / aux$kDiff",
 #'                             kDiff = "vars$k1 - vars$k2")
@@ -412,12 +412,28 @@ sdTemporalFunction <- function(x, colTimes = 1, colValue = 2,
   # check the interpolation type given the wanted method
   if (method %in% approxfunMethods)
   {
-    f <- stats::approxfun(x = timeS, y = values, yleft = yl, yright = yr, 
+    f <- tryCatch(
+      {
+        stats::approxfun(x = timeS, y = values, yleft = yl, yright = yr, 
                           method = method)
+      },
+      error = function(e) 
+      {
+        auxiliaryMsg$sdTemporalFunction5(e)
+        return(NULL)
+      })
   }
   else if (method %in% splineMethods)
   {
-    f <- stats::splinefun(x = timeS, y = values, method = method)
+    f <- tryCatch(
+      {
+        stats::splinefun(x = timeS, y = values, method = method)
+      },
+      error = function(e) 
+      {
+        auxiliaryMsg$sdTemporalFunction5(e)
+        return(NULL)
+      })
   }
   else
   {
