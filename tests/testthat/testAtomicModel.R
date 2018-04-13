@@ -1,5 +1,5 @@
+library(testthat)
 context("Atomic Model instantiation and simulation")
-library(sdsim)
 
 test_that("Empty atomic model objet", code = 
 {

@@ -1,5 +1,5 @@
+library(testthat)
 context("Scenario instantiation")
-library(sdsim)
 
 test_that("Scenario object", code = 
 {
