@@ -204,6 +204,10 @@ lvscen <- sdScenario(id = "LVscen", times = times, method = "lsoda",
                      unit = parsUnits, description = parsDescription)
 
 # create the model object
+lv <- sdAtomicModel(id = "Lotka-Volterra",
+                   defaultScenario = lvscen,
+                   DifferentialEquations = LVode,
+                   aux = aux)
               
 # validate the model ode
 lv$verifyModel(verbose = TRUE)

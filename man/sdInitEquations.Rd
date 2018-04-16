@@ -42,8 +42,8 @@ or added to the algebraic equations of a \code{\link{sdStaticModelClass}}
 object.
 }
 \examples{
-const = list(c1 = 2, c2 = 1)
-vars = list(k1 = 10, k2 = 2)
+const <- list(c1 = 2, c2 = 1)
+vars <- list(k1 = 10, k2 = 2)
 
 auxEquationsStrings <- list("cDiffFrac <- (const$c1 - const$c2) / aux$kDiff",
                             kDiff = "vars$k1 - vars$k2")

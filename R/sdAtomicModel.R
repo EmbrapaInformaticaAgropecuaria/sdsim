@@ -250,7 +250,6 @@
 #' # simulate the model and plot the results
 #' outrb <- sdSimulate(model = rb)
 #' outrb$plot("x y z")
-#' 
 sdAtomicModelClass <- R6::R6Class(
   classname = "sdAtomicModel",
   inherit = sdModelClass,

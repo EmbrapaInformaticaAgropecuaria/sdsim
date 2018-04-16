@@ -179,12 +179,10 @@
 #'                      unit = parsUnits, description = parsDescription)
 #' 
 #' # create the model object
-# lv <- sdAtomicModel(
-#   id = "Lotka-Volterra",
-#   defaultScenario = lvscen,
-#   DifferentialEquations = LVode,
-#   aux = aux
-# )
+#' lv <- sdAtomicModel(id = "Lotka-Volterra",
+#'                    defaultScenario = lvscen,
+#'                    DifferentialEquations = LVode,
+#'                    aux = aux)
 #'               
 #' # validate the model ode
 #' lv$verifyModel(verbose = TRUE)
@@ -530,16 +528,15 @@ sdLoadModel <- function(file, repository = F,
 #' }
 #' 
 #' # create the component prey model
-# prey <- sdAtomicModel(
-#   id = "Prey",
-#   defaultScenario = sdScenario(id = "preyScen",
-#                                times = times,
-#                                state = stPrey,
-#                                parameter = parsPrey,
-#                                input = inpPrey),
-#   aux = auxPrey,
-#   DifferentialEquations = LVodePrey
-# )
+#' prey <- sdAtomicModel(
+#'   id = "Prey",
+#'   defaultScenario = sdScenario(id = "preyScen",
+#'                                times = times,
+#'                                state = stPrey,
+#'                                parameter = parsPrey,
+#'                                input = inpPrey),
+#'   aux = auxPrey,
+#'   DifferentialEquations = LVodePrey)
 #' 
 #' # Consumer model variables and ode function
 #' stConsumer <- list(C = 2)
@@ -558,17 +555,16 @@ sdLoadModel <- function(file, repository = F,
 #' }
 #' 
 #' # create the component consumer model
-# consumer <- sdAtomicModel(
-#   id = "Consumer",
-#   defaultScenario = sdScenario(
-#     id = "consumerScen",
-#     times = times,
-#     state = stConsumer,
-#     parameter = parsConsumer,
-#     input = inpConsumer),
-#   aux = auxConsumer,
-#   DifferentialEquations = LVodeConsumer
-# )
+#' consumer <- sdAtomicModel(
+#'   id = "Consumer",
+#'   defaultScenario = sdScenario(
+#'     id = "consumerScen",
+#'     times = times,
+#'     state = stConsumer,
+#'     parameter = parsConsumer,
+#'     input = inpConsumer),
+#'   aux = auxConsumer,
+#'   DifferentialEquations = LVodeConsumer)
 #' 
 #' # create the coupled model connections list 
 #' # conP: inform the consumer model about the amount of preys and 

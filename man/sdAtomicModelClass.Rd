@@ -279,6 +279,5 @@ print(rb)
 # simulate the model and plot the results
 outrb <- sdSimulate(model = rb)
 outrb$plot("x y z")
-
 }
 \keyword{datasets}

@@ -415,18 +415,17 @@ sdBuildCoupledScenario = function(id = NULL,
 #' }
 #' 
 #' # create the component prey model
-# prey <- sdAtomicModel(
-#   id = "Prey",
-#   defaultScenario = sdScenario(
-#     id = "preyScen",
-#     times = times,
-#     state = stPrey,
-#     parameter = parsPrey,
-#     input = inpPrey,
-#     description = descriptionsPrey),
-#   aux = auxPrey,
-#   DifferentialEquations = LVodePrey
-# )
+#' prey <- sdAtomicModel(
+#'   id = "Prey",
+#'   defaultScenario = sdScenario(
+#'     id = "preyScen",
+#'     times = times,
+#'     state = stPrey,
+#'     parameter = parsPrey,
+#'     input = inpPrey,
+#'     description = descriptionsPrey),
+#'   aux = auxPrey,
+#'   DifferentialEquations = LVodePrey)
 #' 
 #' # Consumer model variables and ode function
 #' stConsumer <- list(C = 2)
@@ -450,18 +449,17 @@ sdBuildCoupledScenario = function(id = NULL,
 #' }
 #' 
 #' # create the component consumer model
-# consumer <- sdAtomicModel(
-#   id = "Consumer",
-#   defaultScenario = sdScenario(
-#     id = "consumerScen",
-#     times = times,
-#     state = stConsumer,
-#     parameter = parsConsumer,
-#     input = inpConsumer,
-#     description = descriptionsConsumer),
-#   aux = auxConsumer,
-#   DifferentialEquations = LVodeConsumer
-# )
+#' consumer <- sdAtomicModel(
+#'   id = "Consumer",
+#'   defaultScenario = sdScenario(
+#'     id = "consumerScen",
+#'     times = times,
+#'     state = stConsumer,
+#'     parameter = parsConsumer,
+#'     input = inpConsumer,
+#'     description = descriptionsConsumer),
+#'   aux = auxConsumer,
+#'   DifferentialEquations = LVodeConsumer)
 #' 
 #' # Environment model variables and algebraic equations
 #' parEnv <- data.frame(Variable = c("K"),
