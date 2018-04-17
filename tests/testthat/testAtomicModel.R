@@ -1,19 +1,18 @@
 library(testthat)
-source("./R/messages.R")
 context("Atomic Model instantiation and simulation")
 
-test_that("Empty atomic model objet", code = 
+test_that("Empty atomic model objet", code =
 {
-  m <- expect_warning(sdAtomicModel(), 
-                      sprintf(sdModelMsg$id1, 
+  m <- expect_warning(sdAtomicModel(),
+                      sprintf(sdModelMsg$id1,
                              paste0("sdAtomicModel", Sys.Date())),
                       info = "empty model with no id")
-  expect_error(m$verifyModel(), 
+  expect_error(m$verifyModel(),
                sprintf(sdAtomicModelMsg$verifyModel0, m$id))
-  
-  expect_error(sdSimulate(m), 
+
+  expect_error(sdSimulate(m),
                sprintf(sdSimulatorMsg$sdSimulateAtomic7, m$id))
-  
+
   expect_is(m$saveXml(), "XMLInternalElementNode")
 })
 
@@ -26,7 +25,7 @@ test_that("Not empty atomic model object", code =
                      input = c(pow = 2),
                      method = "rk4"),
                     "sdScenario")
-  m <- expect_is(sdAtomicModel(id = "test", 
+  m <- expect_is(sdAtomicModel(id = "test",
                                description = "test test",
                                DifferentialEquations = function(t, st, ct, par, inp, sw, aux)
                                {
@@ -46,9 +45,9 @@ test_that("Atomic model with Global Funs", code =
                                input = c(pow = 2),
                                method = "rk4"),
                     "sdScenario")
-  m <- expect_is(sdAtomicModel(id = "test", 
+  m <- expect_is(sdAtomicModel(id = "test",
                                description = "test test",
-                               DifferentialEquations = function(t, st, ct, par, 
+                               DifferentialEquations = function(t, st, ct, par,
                                                                 inp, sw, aux)
                                {
                                  a("diff")
@@ -62,6 +61,3 @@ test_that("Atomic model with Global Funs", code =
   expect_true(m$verifyModel())
   expect_is(sdSimulate(m), "sdOutput")
 })
-
-
-

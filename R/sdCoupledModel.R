@@ -588,6 +588,15 @@ sdCoupledModelClass <- R6::R6Class(
         if (is.character(model))
           model <- sdLoadModel(file = model)
         
+        # check if it is a valid model
+        if (!inherits(model, sdModelClass$classname))
+        {
+            warning(sprintf(sdCoupledModelMsg$addComponent2, private$pid, 
+                            typeof(model)),
+                    call. = FALSE)
+          next()
+        }
+        
         id <- model$id
         # check if id already exist in components id
         if (any(grepl(pattern = paste0("^",id,"."), 
@@ -671,9 +680,6 @@ sdCoupledModelClass <- R6::R6Class(
             self$addConnection(con)
           }
         }
-        else
-          sdCoupledModelMsg$addComponent2(private$pid,
-                                          typeof(model))
       }
       # merge the components auxs
       private$pcomponentsAux <- lapply(unlist(private$pcomponentsAux, 
@@ -684,7 +690,8 @@ sdCoupledModelClass <- R6::R6Class(
     },
     removeComponent = function(...)
     {
-      componentName <- gsub(" ", "", unlist(list(...)), fixed = TRUE)
+      componentName <- gsub(" ", "", as.character(unlist(list(...))), 
+                            fixed = TRUE)
       
       if (!all(componentName %in% private$pcomponentsId))
       {
@@ -751,7 +758,8 @@ sdCoupledModelClass <- R6::R6Class(
       for (con in connections)
       {
         if (length(con) != 5)
-          sdCoupledModelMsg$addConnection1(private$pid, con)
+          warning(sprintf(sdCoupledModelMsg$addConnection1, private$pid, 
+                          paste(con, collapse = ",")), call. = FALSE)
         else if (!grepl(pattern = "^(aux\\$|st\\$|eq\\$)", x = con[[5]], 
                         perl = TRUE))
           sdCoupledModelMsg$addConnection2(private$pid, con)
@@ -771,13 +779,14 @@ sdCoupledModelClass <- R6::R6Class(
     removeConnection = function(...)
       # ... = cons ids
     {
-      connectionsId <- unlist(list(...))
+      connectionsId <- as.character(unlist(list(...)))
       auxComponents <- private$pcomponentsAux
       
       # refactor the aux lists removing the connection dependency
       for (conId in connectionsId)
       {
         con <- private$pconnections[[conId]]
+        
         if (!is.null(con))
         {
           id <- con[[1]]
@@ -806,6 +815,9 @@ sdCoupledModelClass <- R6::R6Class(
             private$stCon <- private$stCon[names(private$stCon) 
                                              !=  paste0(m1, ".", in1)]
         }
+        else # invalid con
+          warning(sprintf(sdCoupledModelMsg$removeConnection, private$pid, 
+                          conId), call. = FALSE)
       }
       # refactor the auxliary list without sorting
       private$pcomponentsAux <- sdInitEquations(auxComponents, eqName = "NULL")
@@ -1137,7 +1149,8 @@ sdCoupledModelClass <- R6::R6Class(
                                  timeSeriesDirectory = "")
     {
       if (length(private$pcomponentsId) == 0)
-        sdCoupledModelMsg$buildCoupledModel1(private$pid)
+        stop(sprintf(sdCoupledModelMsg$buildCoupledModel1, private$pid), 
+             call. = FALSE)
 
       # build default scenario concatanating the components default scenario
       componentsIds <- private$pcomponentsId
@@ -1288,7 +1301,8 @@ sdCoupledModelClass <- R6::R6Class(
         # stop if components are empty
         if (length(private$pcomponentsEquations) == 0 && 
             length(private$pcomponentsAux) == 0)
-          sdCoupledModelMsg$buildCoupledModel0(private$pid)  
+          stop(sprintf(sdCoupledModelMsg$buildCoupledModel0, private$pid), 
+               call. = FALSE) 
         
         # set each component variables indexes
         indexComponents$st[[modelId]] <- match(

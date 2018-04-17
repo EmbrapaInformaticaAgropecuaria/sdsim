@@ -1,5 +1,4 @@
 library(testthat)
-source("./R/messages.R")
 context("Static Model instantiation and simulation")
 
 test_that("Not empty static model object", code =
@@ -13,7 +12,7 @@ test_that("Not empty static model object", code =
                                input = c(pow = 2),
                                method = "rk4"),
                     "sdScenario")
-  m <- expect_warning(expect_is(sdStaticModel(id = "test", 
+  m <- expect_warning(expect_is(sdStaticModel(id = "test",
                                description = "test test",
                                algebraicEquations = list(eq = "par$v^inp$pow",
                                                          eq2 = "eq$eq*2*eq$eq3",
@@ -35,7 +34,7 @@ test_that("Static model object with global funs", code =
                                input = c(pow = 2),
                                method = "rk4"),
                     "sdScenario")
-  m <- expect_is(sdStaticModel(id = "test", 
+  m <- expect_is(sdStaticModel(id = "test",
                                description = "test test",
                                algebraicEquations = list(eq = "par$v^inp$pow",
                                                          eq2 = "eq$eq*2*eq$eq3",

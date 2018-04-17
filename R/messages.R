@@ -208,23 +208,20 @@ sdCoupledModelMsg$addComponent1 <- function(pcoupledModelId, id)
           "' already exists in the coupled model. ",
           "It will be removed and overwritten.", call. = F)
 
-sdCoupledModelMsg$addComponent2 <- function(pcoupledModelId, typeofmodel)
-  warning("sdsim::addComponent - Coupled Model '", pcoupledModelId, 
-          "' adding component: the argument '...' must be a list of not empty ",
-          "sdModel's or character XML file names. Component of type ", 
-          typeofmodel, " could not be added.", 
-          call. = F)
+sdCoupledModelMsg$addComponent2 <- paste0(
+  "sdsim::addComponent - Coupled Model '%s' adding component: the argument ",
+  "'...' must be a list of not empty sdModel's or character XML file names. ", 
+  "Component of type '%s' could not be added.")
 
 sdCoupledModelMsg$removeComponent <- paste0(
   "sdsim::removeComponent - Coupled Model '%s' removing component: The ", 
-  " components '%s' do not exist in the coupled model and ",
+  "components '%s' do not exist in the coupled model and ",
   "thus can not be removed.")
 
-sdCoupledModelMsg$addConnection1 <- function(pcoupledModelId, con)
-  warning("sdsim::addConnection - Coupled Model '", pcoupledModelId, 
-          "' adding connection: Each connection must be a vector with 5 ", 
-          "elements. The connection: c(", paste(con, collapse = ","), 
-          ") will be skipped.", call. = F)
+sdCoupledModelMsg$addConnection1 <- paste0(
+  "sdsim::addConnection - Coupled Model '%s' adding connection: Each ", 
+  "connection must be a vector with 5 elements. The connection: c(%s) ",
+  "will be skipped.")
 
 sdCoupledModelMsg$addConnection2 <- function(pcoupledModelId, con)
   warning("sdsim::addConnection - Coupled Model '", pcoupledModelId, 
@@ -239,6 +236,11 @@ sdCoupledModelMsg$addConnection3 <- function(pcoupledModelId, conid)
           "' adding connection: The connection '", (conid), 
           "' already exists in the coupled model. It will be overwritten.", 
           call. = F)
+
+sdCoupledModelMsg$removeConnection <- paste0(
+  "sdsim::removeConnection - Coupled Model '%s' removing connection: The ", 
+  "connection ID '%s' do not exist in the coupled model and ",
+  "thus can not be removed.")
 
 sdCoupledModelMsg$verifyModel1 <- function(pcoupledModelId)
   stop("sdsim::verifyModel - Coupled Model '", pcoupledModelId, 
@@ -314,14 +316,13 @@ sdCoupledModelMsg$verifyModel12 <- function(pcoupledModelId)
   message("sdsim::verifyModel - Coupled Model '", pcoupledModelId, 
           "' Ordinary Differential Equations Validated.")
 
-sdCoupledModelMsg$buildCoupledModel0 <- function(pcoupledModelId)
-  stop("sdsim::buildCoupledModel - Coupled Model '", pcoupledModelId, 
-       "' build error: the components are empty.", call. = F)
+sdCoupledModelMsg$buildCoupledModel0 <- paste0(
+  "sdsim::buildCoupledModel - Coupled model '%s' build error: ",
+  "the components are empty.")
 
-sdCoupledModelMsg$buildCoupledModel1 <- function(pcoupledModelId)
-  stop("sdsim::buildCoupledModel - Coupled Model '", pcoupledModelId, 
-          "' build error: no component was added. Add a component ", 
-          "before building the coupled model.", call. = F)
+sdCoupledModelMsg$buildCoupledModel1 <- paste0(
+  "sdsim::buildCoupledModel - Coupled Model '%s' build error: no component was", 
+  " added. Add a component before building the coupled model.")
 
 sdCoupledModelMsg$buildCoupledModel2 <- function(pcoupledModelId, m, id)
   warning("sdsim::buildCoupledModel - Coupled Model '", pcoupledModelId, 

@@ -1,3 +1,4 @@
+library(testthat)
 context("Model repository")
 
 test_that("Loading atomic models", code = 
