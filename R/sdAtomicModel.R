@@ -493,7 +493,7 @@ sdAtomicModelClass <- R6::R6Class(
         sdAtomicModelMsg$verifyModel1(private$pid)
       
       if (is.null(private$pDifferentialEquations))
-        sdAtomicModelMsg$verifyModel0(private$pid)
+        stop(sprintf(sdAtomicModelMsg$verifyModel0, private$pid), call. = FALSE)
       
       # get the model scenario 
       defaultScenario <- private$pdefaultScenario$clone(deep = TRUE)

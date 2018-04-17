@@ -1,3 +1,5 @@
+library(testthat)
+source("./R/messages.R")
 context("Static Model instantiation and simulation")
 
 test_that("Not empty static model object", code =
@@ -18,10 +20,7 @@ test_that("Not empty static model object", code =
                                                          eq3 = "par$v"),
                                defaultScenario = scen),
                  "sdStaticModel"),
-                 paste0("sdsim::defaultScenario - Static Model 'test' set ",
-                        "default scenario: static models do not have state ",
-                        "variables. All the state variables were removed ",
-                        "before setting the default scenario."))
+                 sprintf(sdStaticModelMsg$defaultscenario1, "test"))
   expect_true(m$verifyModel())
   expect_is(sdSimulate(m), "sdOutput")
 })

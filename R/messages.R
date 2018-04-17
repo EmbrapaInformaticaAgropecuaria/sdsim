@@ -470,10 +470,9 @@ sdAtomicModelMsg$initialize9 <- function(modelId)
           "' Initialization: The globalFunctions argument must be a named ",
           "list containing only functions.", call. = F)
 
-sdAtomicModelMsg$verifyModel0 <- function(pmodelId)
-  stop("sdsim::verifyModel - Model '", pmodelId, 
-       "' ODE validation aborted: No differential equations function was set.", 
-       call. = F)
+# sdAtomicModel("id")$verify()
+sdAtomicModelMsg$verifyModel0 <- paste0("sdsim::verifyModel - Model '%s' ODE ",
+       "verification aborted: No differential equations function was set.")
 
 sdAtomicModelMsg$verifyModel1 <- function(pmodelId)
   stop("sdsim::verifyModel - Model '", pmodelId, 
@@ -813,12 +812,10 @@ sdStaticModelMsg$unit <- function(pstaticModelId)
           "No default scenario was set. Could not get the units list.",
           call. = F)
 
-sdStaticModelMsg$defaultscenario1 <- function(pstaticModelId)
-  warning("sdsim::defaultScenario - Static Model '", pstaticModelId, 
-          "' set default scenario: ",
-          "static models do not have state variables. All the state ", 
-          "variables were removed before setting the default scenario.",
-          call. = F)
+sdStaticModelMsg$defaultscenario1 <- paste0(
+  "sdsim::defaultScenario - Static Model '%s' set default scenario: ",
+  "static models do not have state variables. All the state ", 
+  "variables were removed before setting the default scenario.")
 
 sdStaticModelMsg$defaultscenario2 <- function(pstaticModelId)
   warning("sdsim::defaultScenario - Static Model '", pstaticModelId, 
@@ -838,10 +835,10 @@ sdSimulatorMsg$sdSimulate <- function()
   stop("sdsim::sdSimulate - Simulation aborted: ",
        "A model must be informed to run the simulation.", call. = F)
 
-sdSimulatorMsg$sdSimulateAtomic0 <- function(modelId)
-  stop("sdsim::sdSimulate - Simulation of the model '", modelId,"' aborted: ",
-       "A valid model default scenario or the scenario argument must ",
-       "be informed to run the simulation.", call. = F)
+sdSimulatorMsg$sdSimulateModel <- paste0(
+  "sdsim::sdSimulate - Simulation of the %s model '%s' aborted: ",
+  "A valid model default scenario or the scenario argument must ",
+  "be informed to run the simulation.")
 
 sdSimulatorMsg$sdSimulateAtomic1 <- function(modelId)
   stop("sdsim::sdSimulate - Simulation of the model '", modelId,
@@ -875,10 +872,8 @@ sdSimulatorMsg$sdSimulateAtomic6 <- function(modelId, typeofscen)
           "a character string with a scenario XML or EXCEL file name.", 
           call. = F)
 
-sdSimulatorMsg$sdSimulateAtomic7 <- function(modelId)
-  stop("sdsim::sdSimulate - Simulation of the model '", modelId,
-       "' aborted: No differential equations function, model is empty.", 
-       call. = F)
+sdSimulatorMsg$sdSimulateAtomic7 <- paste0("sdsim::sdSimulate - Simulation of ",
+  "the model '%s' aborted: No differential equations function, model is empty.")
 
 sdSimulatorMsg$sdSimulateStatic0 <- function(staticModelId)
   stop("sdsim::sdSimulate - Simulation of the static model '", staticModelId,

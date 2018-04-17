@@ -381,7 +381,7 @@ sdSimulate <- function(model,
   {
     # stop if model is empty
     if (is.null(model$DifferentialEquations))
-      sdSimulatorMsg$sdSimulateAtomic7(model$id)
+      stop(sprintf(sdSimulatorMsg$sdSimulateAtomic7, model$id), call. = FALSE)
     
     if (!model$isVerified)
       model$verifyModel(scenario, verbose = verbose)
@@ -438,10 +438,12 @@ sdSimulate <- function(model,
       if (inherits(scenario, sdScenarioClass$classname))
         defaultScenario <- scenario
       else
-        sdSimulatorMsg$sdSimulateAtomic0(model$id)
+        stop(sprintf(sdSimulatorMsg$sdSimulateModel, "Atomic", model$id), 
+             call. = FALSE)
     }
     else
-      sdSimulatorMsg$sdSimulateAtomic0(model$id)
+      stop(sprintf(sdSimulatorMsg$sdSimulateModel, "Atomic", model$id), 
+           call. = FALSE)
 
     # Get variables from default scenario
     state <- defaultScenario$state
@@ -741,10 +743,12 @@ sdSimulate <- function(model,
       if (inherits(scenario, sdScenarioClass$classname))
         defaultScenario <- scenario
       else
-        sdSimulatorMsg$sdSimulateAtomic0(model$id)
+        stop(sprintf(sdSimulatorMsg$sdSimulateModel, "Static", model$id), 
+             call. = FALSE)
     }
     else
-      sdSimulatorMsg$sdSimulateAtomic0(model$id)
+      stop(sprintf(sdSimulatorMsg$sdSimulateModel, "Static", model$id), 
+           call. = FALSE)
     
     # Get variables from default scenario
     ct <- defaultScenario$constant
@@ -918,10 +922,12 @@ sdSimulate <- function(model,
       if (inherits(scenario, sdScenarioClass$classname))
         defaultScenario <- scenario
       else
-        sdSimulatorMsg$sdSimulateAtomic0(model$id)
+        stop(sprintf(sdSimulatorMsg$sdSimulateModel, "Coupled", model$id), 
+             call. = FALSE)
     }
     else
-      sdSimulatorMsg$sdSimulateAtomic0(model$id)
+      stop(sprintf(sdSimulatorMsg$sdSimulateModel, "Coupled", model$id), 
+           call. = FALSE)
     
     # get model variables
     st <- defaultScenario$state

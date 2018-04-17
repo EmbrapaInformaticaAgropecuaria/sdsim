@@ -1,20 +1,18 @@
 library(testthat)
+source("./R/messages.R")
 context("Atomic Model instantiation and simulation")
 
 test_that("Empty atomic model objet", code = 
 {
   m <- expect_warning(sdAtomicModel(), 
-                      paste0("sdsim::id - Missing model ID: It was set to ", 
-                             "'sdAtomicModel", Sys.Date(), "'"),
+                      sprintf(sdModelMsg$id1, 
+                             paste0("sdAtomicModel", Sys.Date())),
                       info = "empty model with no id")
   expect_error(m$verifyModel(), 
-               paste0("sdsim::verifyModel - Model '", m$id, 
-                      "' ODE validation aborted: No differential equations ", 
-                      "function was set."))
+               sprintf(sdAtomicModelMsg$verifyModel0, m$id))
   
   expect_error(sdSimulate(m), 
-               paste0("sdsim::sdSimulate - Simulation of the model '", m$id,
-                      "' aborted: No differential equations function, model is empty."))
+               sprintf(sdSimulatorMsg$sdSimulateAtomic7, m$id))
   
   expect_is(m$saveXml(), "XMLInternalElementNode")
 })
