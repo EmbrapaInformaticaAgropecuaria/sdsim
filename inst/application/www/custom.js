@@ -156,7 +156,12 @@ Shiny.addCustomMessageHandler("confirmOverwrite", function(value) {
 Shiny.addCustomMessageHandler("sendAlert", function(message) {
   alert(message);
 })
-                
+
+// Prompts user for confirmation before leaving the application
+window.onbeforeunload = function confirmExit() {
+  return "Do you want to leave this site?\nChanges will not be saved.";
+}
+
 // Disables multiple axis button if there are less than 2 variables selected
 multipleAxisToggle.disabled = true;
 selVarPlot.onchange = function() {
