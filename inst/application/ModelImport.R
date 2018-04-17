@@ -1,42 +1,54 @@
 # Loads model if no other models with same ids as the one loading exist
 # Else, query user for confirmation before overwriting
 LoadModel <- function(modelName, simData, session, input, output, 
-                         repository = NULL, loadDefaultScenario = T, 
-                         nTableRows = 50, replaceId = NULL) {
-  modelXml <- ParseXML(modelName, repository)
-  
-  id <- ""
-  componentIds <- list()
-  
-  if(!is.null(modelXml$id))
-    if(!is.null(replaceId) && replaceId != "")
-      modelXml$id <- replaceId
-  
-  if(modelXml$type == "sdCoupledModel")
-    componentIds <- lapply(modelXml$components, function(x) {
-      x$id
+                      repository = NULL, loadDefaultScenario = T, 
+                      nTableRows = 50, replaceId = NULL) {
+  withCallingHandlers({
+    tryCatch({
+      modelXml <- ParseXML(modelName, repository)
+      
+      id <- ""
+      componentIds <- list()
+      
+      if(!is.null(modelXml$id))
+        if(!is.null(replaceId) && replaceId != "")
+          modelXml$id <- replaceId
+      
+      if(modelXml$type == "sdCoupledModel")
+        componentIds <- lapply(modelXml$components, function(x) {
+          x$id
+        })
+      
+      modelIdsList <- c(modelXml$id, componentIds)
+      
+      if(any(modelIdsList %in% names(simData$models))) {
+        # Save loading model info in simData
+        simData$loadingModel <- modelXml
+        
+        idsToOverwrite <- paste(modelIdsList[modelIdsList %in% names(simData$models)], collapse = "\", \"")
+        idsToOverwrite <- sub("(.*),", "\\1 and", idsToOverwrite)
+        message <- paste0("The model(s) \"", idsToOverwrite, "\" will be overwritten.",
+                          "\nDo you wish to continue?")
+        responseInputName <- "confirmModelOverwrite"
+        session$sendCustomMessage("confirmOverwrite", 
+                                  list(message = message, 
+                                       responseInputName = responseInputName))
+        return(NULL)
+      } else {
+        msg <- ConfirmLoadModel(modelXml, simData, session, input, 
+                                output, nTableRows = nTableRows)
+        return(msg)
+      }
+    },
+    error = function(e) {
+      errorOutput <- paste(capture.output(e), collapse = " ")
+      return(list(errorOutput, "red"))
     })
-  
-  modelIdsList <- c(modelXml$id, componentIds)
-  
-  if(any(modelIdsList %in% names(simData$models))) {
-    # Save loading model info in simData
-    simData$loadingModel <- modelXml
-    
-    idsToOverwrite <- paste(modelIdsList[modelIdsList %in% names(simData$models)], collapse = "\", \"")
-    idsToOverwrite <- sub("(.*),", "\\1 and", idsToOverwrite)
-    message <- paste0("The model(s) \"", idsToOverwrite, "\" will be overwritten.",
-                     "\nDo you wish to continue?")
-    responseInputName <- "confirmModelOverwrite"
-    session$sendCustomMessage("confirmOverwrite", 
-                              list(message = message, 
-                                   responseInputName = responseInputName))
-    return(NULL)
-  } else {
-    msg <- ConfirmLoadModel(modelXml, simData, session, input, 
-                     output, nTableRows = nTableRows)
-    return(msg)
-  }
+  },
+  warning = function(w) {
+    warningOutput <- paste(capture.output(w), collapse = " ")
+    return(list(warningOutput, "red"))
+  })
 }
 
 ConfirmLoadModel <- function(modelXml, simData, session, input, output, 
@@ -81,6 +93,10 @@ ConfirmLoadModel <- function(modelXml, simData, session, input, output,
 LoadAtomicModel <- function(modelXml, simData, session, input, output, 
                             loadDefaultScenario = T) {
   # If default scenario is null or shouldn't be loaded
+  # Load empty scenario instead
+  if(is.null(modelXml$defaultScenario)) {
+    modelXml$defaultScenario <- list()
+  }
   if(!loadDefaultScenario || is.null(modelXml$defaultScenario$sdScenario)) {
     # Load empty scenario as default
     scenario <- ParseXML("UnnamedScenario", "application/xml")
@@ -109,6 +125,10 @@ LoadStaticModel <- function(modelXml, simData, session, input, output,
   # Load static model
   
   # If default scenario is null or shouldn't be loaded
+  # Load empty scenario instead
+  if(is.null(modelXml$defaultScenario)) {
+    modelXml$defaultScenario <- list()
+  }
   if(!loadDefaultScenario || is.null(modelXml$defaultScenario$sdScenario)) {
     # Load empty scenario as default
     scenario <- ParseXML("UnnamedScenario", "application/xml")
@@ -134,7 +154,6 @@ LoadStaticModel <- function(modelXml, simData, session, input, output,
 
 LoadCoupledModel <- function(modelXml, simData, session, input, output, 
                              loadDefaultScenario = T) {
-  # TODO
   # Load coupled model
   componentIdList <- c()
   # Loads all component models into model list
@@ -144,23 +163,29 @@ LoadCoupledModel <- function(modelXml, simData, session, input, output,
     
     if(names(modelXml$components)[[i]] == "sdAtomicModel") {
       componentIdList <- c(componentIdList, component$id)
-      # If default scenario is null
+      # If default scenario is null load empty scenario instead
       if(is.null(component$defaultScenario)) {
+        component$defaultScenario <- list()
+      }
+      if(is.null(component$defaultScenario$sdScenario)) {
         # Load empty scenario as default
         scenario <- ParseXML("UnnamedScenario", "application/xml")
-        component$defaultScenario <- scenario
+        component$defaultScenario$sdScenario <- scenario
       }
       
-      component$defaultScenario$id <- "Default"
+      component$defaultScenario$sdScenario$id <- "Default"
       simData$models[[component$id]] <- LoadAtomicModelData(component, simData)
       
       # Load default scenario and save it to the component's scenario list
-      LoadScenarioData(component$defaultScenario, simData, component$id)
+      LoadScenarioData(component$defaultScenario$sdScenario, simData, component$id)
       
     } else if(names(modelXml$components)[[i]] == "sdStaticModel") {
       componentIdList <- c(componentIdList, component$id)
-      # If default scenario is null
+      # If default scenario is null load empty scenario instead
       if(is.null(component$defaultScenario)) {
+        component$defaultScenario <- list()
+      }
+      if(is.null(component$defaultScenario$sdScenario)) {
         # Load empty scenario as default
         scenario <- ParseXML("UnnamedScenario", "application/xml")
         component$defaultScenario$sdScenario <- scenario
@@ -664,7 +689,6 @@ LoadScenarioData <- function(scenario, simData, parentModelId = NULL) {
   input <- ScenarioListToDataFrame(scenario, "input")
   parameter <- ScenarioListToDataFrame(scenario, "parameter")
   switch <- ScenarioListToDataFrame(scenario, "switch")
-  
   times <- scenario$times
   
   # Create scenario

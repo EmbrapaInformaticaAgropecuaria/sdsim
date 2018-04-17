@@ -25,7 +25,6 @@ AssembleModel <- function(simData, input, timeSeriesDirectory,
 }
 
 AssembleCoupledModel <- function(model, simData, timeSeriesDirectory) {
-  # componentNames <- unique(c(model$connections[,2], model$connections[,4]))
   componentNames <- unique(model$componentIds[,1])
   
   componentsList <- lapply(componentNames, function(x) {

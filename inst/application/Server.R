@@ -29,7 +29,6 @@ server <- shinyServer(function(input, output, session) {
         choices <- "Unnamed model"
         selected <- "Unnamed model"
       }
-      
       selectInput("selectModel", "Model", choices = choices, selected = selected)
     } else {
       NULL
@@ -365,6 +364,7 @@ server <- shinyServer(function(input, output, session) {
                                       input$editModelIdTxt, 
                                       names(simData$models))
         simData$currentModelId <- input$editModelIdTxt
+        simData$models[[input$editModelIdTxt]]$id <- input$editModelIdTxt
         msg <- paste0("Current model ID changed from ", currentModelId,
                       " to ", input$editModelIdTxt)
         session$sendCustomMessage("updatedModelIdMessage", list(msg, "green"))

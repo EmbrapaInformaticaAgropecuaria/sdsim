@@ -21,7 +21,7 @@ ModelToXmlHandler <- function(simData, input, output) {
         # Updates simData with inputs that have been altered
         UpdateModelData(simData, input)
         
-        modelToXML(simData, file)
+        ModelToXML(simData, file)
       },
       error = function(e) {
         showNotification(as.character(e), duration = 15)
@@ -67,10 +67,10 @@ ScenarioToXmlHandler <- function(simData, input, output) {
         currentScenario <- currentModel$scenarios[[currentModel$currentScenarioId]]
         switch (input$scenarioFileType,
           "XML" = {
-            scenarioToXML(currentScenario, file)
+            ScenarioToXML(currentScenario, file)
           },
           "xlsx (excel)" = {
-            scenarioToXlsx(currentScenario, file)
+            ScenarioToXlsx(currentScenario, file)
           }
         )
       },
@@ -81,8 +81,7 @@ ScenarioToXmlHandler <- function(simData, input, output) {
   )
 }
 
-scenarioToXlsx <- function(scenario, file, colWidth = c(10, 20, 20, 30, 10)) {
-  scenario <<- scenario
+ScenarioToXlsx <- function(scenario, file, colWidth = c(10, 20, 20, 30, 10)) {
   varList <- unlist(lapply(c("method", "from", "to", "by", "id"), function(x) {
     if(!is.null(scenario[[x]]))
       x
@@ -125,24 +124,24 @@ scenarioToXlsx <- function(scenario, file, colWidth = c(10, 20, 20, 30, 10)) {
     openxlsx::saveWorkbook(wb, file, overwrite = TRUE)
 }
 
-modelToXML <- function(simData, file = NULL){
+ModelToXML <- function(simData, file = NULL){
   currentModel <- simData$models[[simData$currentModelId]]
   
   if(currentModel$type == "sdAtomicModel") {
-    modelXml <- atomicModelToXml(currentModel)
+    modelXml <- AtomicModelToXml(currentModel)
   } else if(currentModel$type == "sdStaticModel") {
-    modelXml <- staticModelToXml(currentModel)
+    modelXml <- StaticModelToXml(currentModel)
   } else if(currentModel$type == "sdCoupledModel") {
-    modelXml <- coupledModelToXml(currentModel, simData)
+    modelXml <- CoupledModelToXml(currentModel, simData)
   }
   
   if (!is.null(file))
     cat(XML::saveXML(modelXml, encoding = "UTF-8",
-                     prefix = xmlPrefix(),
+                     prefix = XmlPrefix(),
                      indent = T),  file = file)
 }
 
-atomicModelToXml <- function(model) {
+AtomicModelToXml <- function(model) {
   doc = XML::newXMLDoc()
   rootsdModel <- XML::newXMLNode("sdAtomicModel", doc = doc)
   
@@ -161,7 +160,7 @@ atomicModelToXml <- function(model) {
   # add the defaultScenario XML
   defaultScenarioId <- model$scenarios[[model$defaultScenarioId]]
   
-  sdScenarioXML <- scenarioToXML(defaultScenarioId)
+  sdScenarioXML <- ScenarioToXML(defaultScenarioId)
   XML::xmlName(sdScenarioXML) <- "sdScenario"
   defaultScenarioXML <- XML::newXMLNode("defaultScenario")
   
@@ -171,7 +170,7 @@ atomicModelToXml <- function(model) {
   return(doc)
 }
 
-staticModelToXml <- function(model) {
+StaticModelToXml <- function(model) {
   doc = XML::newXMLDoc()
   rootsdModel <- XML::newXMLNode("sdStaticModel", doc = doc)
   
@@ -186,7 +185,7 @@ staticModelToXml <- function(model) {
   # add the defaultScenario XML
   defaultScenarioId <- model$scenarios[[model$defaultScenarioId]]
   
-  sdScenarioXML <- scenarioToXML(defaultScenarioId)
+  sdScenarioXML <- ScenarioToXML(defaultScenarioId)
   XML::xmlName(sdScenarioXML) <- "sdScenario"
   defaultScenarioXML <- XML::newXMLNode("defaultScenario")
   
@@ -195,7 +194,7 @@ staticModelToXml <- function(model) {
   return(doc)
 }
 
-coupledModelToXml <- function(model, simData) {
+CoupledModelToXml <- function(model, simData) {
   doc = XML::newXMLDoc()
   rootsdModel <- XML::newXMLNode("sdCoupledModel", doc = doc)
   
@@ -210,16 +209,16 @@ coupledModelToXml <- function(model, simData) {
   ListToXML(rootsdModel, lModel)
   
   # add the components
-  componentNames <- unique(c(model$connections[,2], model$connections[,4]))
+  componentNames <- unique(model$componentIds[,1])
   
   componentsXml <- lapply(componentNames, function(x) {
     component <- simData$models[[x]]
-    if(component$type == "atomic")
-      atomicModelToXml(component)
-    else if(component$type == "static")
-      staticModelToXml(component)
-    else if(component$type == "coupled")
-      coupledModelToXml(component, simData)
+    if(component$type == "sdAtomicModel")
+      AtomicModelToXml(component)
+    else if(component$type == "sdStaticModel")
+      StaticModelToXml(component)
+    else if(component$type == "sdCoupledModel")
+      CoupledModelToXml(component, simData)
   })
   
   components <- XML::newXMLNode("components")
@@ -229,7 +228,7 @@ coupledModelToXml <- function(model, simData) {
   return(doc)
 }
 
-scenarioToXML <- function(scenario, file = NULL){
+ScenarioToXML <- function(scenario, file = NULL){
   doc = XML::newXMLDoc()
   rootScenario <- XML::newXMLNode("sdScenario", doc = doc)
   
@@ -267,7 +266,7 @@ scenarioToXML <- function(scenario, file = NULL){
   
   if (!is.null(file))
     cat(XML::saveXML(doc, encoding = "UTF-8",
-                     prefix = xmlPrefix(),
+                     prefix = XmlPrefix(),
                      indent = T),  file = file)
   
   return(rootScenario)
@@ -324,7 +323,7 @@ VectorToCharDef <- function(x, quote = F)
 }
 
 # return the sdsim package XML prefix
-xmlPrefix <- function()
+XmlPrefix <- function()
 {
   return(paste0("<?sdsim about='R package for ",
                 "modeling and simulation of system dynamics'",
