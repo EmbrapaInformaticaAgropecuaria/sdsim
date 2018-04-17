@@ -215,6 +215,11 @@ sdCoupledModelMsg$addComponent2 <- function(pcoupledModelId, typeofmodel)
           typeofmodel, " could not be added.", 
           call. = F)
 
+sdCoupledModelMsg$removeComponent <- paste0(
+  "sdsim::removeComponent - Coupled Model '%s' removing component: The ", 
+  " components '%s' do not exist in the coupled model and ",
+  "thus can not be removed.")
+
 sdCoupledModelMsg$addConnection1 <- function(pcoupledModelId, con)
   warning("sdsim::addConnection - Coupled Model '", pcoupledModelId, 
           "' adding connection: Each connection must be a vector with 5 ", 
@@ -225,7 +230,7 @@ sdCoupledModelMsg$addConnection2 <- function(pcoupledModelId, con)
   warning("sdsim::addConnection - Coupled Model '", pcoupledModelId, 
           "' adding connection: The 5th element of the connection vector must ",
           "include the prefix st$, aux$ or eq$, indicating a state variable, ",
-          "an auxiliary or an algebraic equation connection, respectively.",
+          "an auxiliary or an algebraic equation connection, respectively. ",
           "The connection: c(", paste(con, collapse = ","), 
           ") will be skipped.", call. = F)
 
@@ -346,12 +351,12 @@ sdCoupledModelMsg$buildCoupledModel4 <- function(pcoupledModelId, m, id)
 sdCoupledModelMsg$buildCoupledModel5 <- function(pcoupledModelId, in1, u1, m1,
                                                  out2, u2, m2, id)
   warning("sdsim::buildCoupledModel - Coupled Model '", pcoupledModelId, 
-          "' Error Building the connection vectors - The input '",
-          in1, "' unit (",  u1, ") from the model '", m1,
+          "' warning building the connection vectors - The input '",
+          in1, "' unit '",  u1, "' from the model '", m1,
           "' is different from the output '", out2[[1]], "' '", 
-          out2[[2]], "' unit (",  u2,
-          ") from the model '", m2,"'. Connection '", id, "' skipped.", 
-          call. = F)
+          out2[[2]], "' unit '",  u2,
+          "' from the model '", m2,"'. Refactor the connection '", id, 
+          "' if this is not wanted.", call. = F)
 
 sdCoupledModelMsg$buildCoupledModel6 <- function(pcoupledModelId, m1, in1,
                                                  vartype)

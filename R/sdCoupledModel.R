@@ -686,6 +686,15 @@ sdCoupledModelClass <- R6::R6Class(
     {
       componentName <- gsub(" ", "", unlist(list(...)), fixed = TRUE)
       
+      if (!all(componentName %in% private$pcomponentsId))
+      {
+        warning(sprintf(sdCoupledModelMsg$removeComponent, private$pid, 
+                        paste(componentName[!(componentName %in% 
+                                                private$pcomponentsId)])), 
+                call. = FALSE)
+        componentName <- componentName[componentName %in% private$pcomponentsId]
+      }
+      
       # remove the models from all lists
       private$pcomponentsId <- private$pcomponentsId[
         !(private$pcomponentsId %in% componentName)]
@@ -1348,42 +1357,42 @@ sdCoupledModelClass <- R6::R6Class(
               paste0(m1, ".", in1)]]
             u2 <- defaultScenarioVars$coupledScenario$unit[[
               paste0(m2, ".", out2[[2]])]]
+            
+            # warning if units do not match
             if (!is.null(u1) &&
                 !is.null(u2) && toupper(u1) != toupper(u2))
               sdCoupledModelMsg$buildCoupledModel5(private$pid, in1, 
                                                    u1, m1, out2, u2, m2, id)
-            else  # make connection
+            # make connection
+            if (out2[[1]] == "st")
             {
-              if (out2[[1]] == "st")
-              {
-                if (!is.null(stConnections[[paste0(m1, ".", in1)]]))
-                  sdCoupledModelMsg$buildCoupledModel6(private$pid, 
-                                                       m1, in1, 
-                                                       "state variable")
-                
-                stConnections[paste0(m1, ".", in1)] <- paste0(m2,".", out2[[2]])
-              }
-              else if (out2[[1]] %in% c("aux","eq"))
-              {
-                if (!is.null(eqConnections[[paste0(m1, ".", in1)]]))
-                  sdCoupledModelMsg$buildCoupledModel6(private$pid, 
-                                                       m1, in1, 
-                                                       "equation")
-                
-                eqConnections[paste0(m1, ".", in1)] <- paste0(m2, ".", 
-                                                               out2[[2]])
-                # substitute the connected inp <- aux
-                auxComponents <- lapply(auxComponents, function(x)
-                  {
-                    gsub(pattern = paste0("inp\\$", m1, ".", in1, 
-                                          "|inp\\[(\\'|\\\")", m1, ".", in1,
-                                          "\b(\\'|\\\")\\]|inp\\[\\[(\\'|\\\")",
-                                          m1, ".", in1, "\b(\\'|\\\")\\]\\]"),
-                         replacement = paste0(out2[[1]], "$", 
-                                              m2, ".", out2[[2]]),
-                         x = toString(as.expression(x)), perl = TRUE)
-                })
-              }
+              if (!is.null(stConnections[[paste0(m1, ".", in1)]]))
+                sdCoupledModelMsg$buildCoupledModel6(private$pid, 
+                                                     m1, in1, 
+                                                     "state variable")
+              
+              stConnections[paste0(m1, ".", in1)] <- paste0(m2,".", out2[[2]])
+            }
+            else if (out2[[1]] %in% c("aux","eq"))
+            {
+              if (!is.null(eqConnections[[paste0(m1, ".", in1)]]))
+                sdCoupledModelMsg$buildCoupledModel6(private$pid, 
+                                                     m1, in1, 
+                                                     "equation")
+              
+              eqConnections[paste0(m1, ".", in1)] <- paste0(m2, ".", 
+                                                             out2[[2]])
+              # substitute the connected inp <- aux
+              auxComponents <- lapply(auxComponents, function(x)
+                {
+                  gsub(pattern = paste0("inp\\$", m1, ".", in1, 
+                                        "|inp\\[(\\'|\\\")", m1, ".", in1,
+                                        "\b(\\'|\\\")\\]|inp\\[\\[(\\'|\\\")",
+                                        m1, ".", in1, "\b(\\'|\\\")\\]\\]"),
+                       replacement = paste0(out2[[1]], "$", 
+                                            m2, ".", out2[[2]]),
+                       x = toString(as.expression(x)), perl = TRUE)
+              })
             }
           }
         }
