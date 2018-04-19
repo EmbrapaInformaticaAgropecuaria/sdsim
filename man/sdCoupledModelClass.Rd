@@ -10,7 +10,7 @@ sdCoupledModelClass
 }
 \description{
 Represents a coupled system dynamics model made up of instanced
-\code{\link{sdAtomicModelClass}}, \code{\link{sdStaticModelClass}} and/or 
+\code{\link{sdOdeModelClass}}, \code{\link{sdStaticModelClass}} and/or 
 \code{\link{sdCoupledModelClass}} components and a list of connections that 
 define the flow of information between components. 
 The \code{connections} list determines loops of information feedback and 
@@ -44,7 +44,7 @@ valid name (see \code{\link[base]{make.names}}).}
 
 \item{\code{description}}{A string with the coupled model description.}
 
-\item{\code{components}}{A list of \code{\link{sdAtomicModelClass}}, 
+\item{\code{components}}{A list of \code{\link{sdOdeModelClass}}, 
 \code{\link{sdStaticModelClass}} and/or \code{\link{sdCoupledModelClass}} 
 objects. 
 
@@ -99,7 +99,7 @@ dynamics model.
 
 \describe{
 \item{...}{A character string with a model XML file name or a 
-\code{\link{sdAtomicModelClass}}, \code{\link{sdStaticModelClass}} and/or 
+\code{\link{sdOdeModelClass}}, \code{\link{sdStaticModelClass}} and/or 
 \code{\link{sdCoupledModelClass}} objects already initialized. The
 models must have different \code{ID}'s to be used as unique
 identifiers. Only one component by ID is stored.}}}
@@ -239,7 +239,7 @@ LVodePrey <- function(t, st, ct, par, inp, sw, aux)
 }
 
 # create the component prey model
-prey <- sdAtomicModel(
+prey <- sdOdeModel(
   id = "Prey",
   defaultScenario = sdScenario(
     id = "preyScen",
@@ -273,7 +273,7 @@ LVodeConsumer <- function(t, st, ct, par, inp, sw, aux)
 }
 
 # create the component consumer model
-consumer <- sdAtomicModel(
+consumer <- sdOdeModel(
   id = "Consumer",
   defaultScenario = sdScenario(
     id = "consumerScen",

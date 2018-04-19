@@ -127,7 +127,7 @@ ScenarioToXlsx <- function(scenario, file, colWidth = c(10, 20, 20, 30, 10)) {
 ModelToXML <- function(simData, file = NULL){
   currentModel <- simData$models[[simData$currentModelId]]
   
-  if(currentModel$type == "sdAtomicModel") {
+  if(currentModel$type == "sdOdeModel") {
     modelXml <- AtomicModelToXml(currentModel)
   } else if(currentModel$type == "sdStaticModel") {
     modelXml <- StaticModelToXml(currentModel)
@@ -143,7 +143,7 @@ ModelToXML <- function(simData, file = NULL){
 
 AtomicModelToXml <- function(model) {
   doc = XML::newXMLDoc()
-  rootsdModel <- XML::newXMLNode("sdAtomicModel", doc = doc)
+  rootsdModel <- XML::newXMLNode("sdOdeModel", doc = doc)
   
   lModel <- list(id = model$id,
                  description = model$description,
@@ -213,7 +213,7 @@ CoupledModelToXml <- function(model, simData) {
   
   componentsXml <- lapply(componentNames, function(x) {
     component <- simData$models[[x]]
-    if(component$type == "sdAtomicModel")
+    if(component$type == "sdOdeModel")
       AtomicModelToXml(component)
     else if(component$type == "sdStaticModel")
       StaticModelToXml(component)

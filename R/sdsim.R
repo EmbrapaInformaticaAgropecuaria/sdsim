@@ -1,9 +1,9 @@
 #' sdsim: System Dynamics Simulator for Models of Initial Value Problems of 
 #' Ordinary Differential Equations (ODE) 
 #'
-#' R6 classes that represents atomic and coupled system dynamics models, static
+#' R6 classes that represents Ode and coupled system dynamics models, static
 #' models, scenarios (variables and values that constitute a system environment) 
-#' and the simulation output. Two or more atomic, static or coupled models can 
+#' and the simulation output. Two or more Ode, static or coupled models can 
 #' be coupled to form a more complex model, that enables communication between 
 #' it's components during simulation.
 #' A function to simulate system dynamics models; a wrapper around the 
@@ -15,7 +15,7 @@
 #' Functions to help in the auxiliary and/or algebraic equations definition
 #' and in the transformation of the time series variables into temporal 
 #' functions. 
-#' All the sdsim package functionalities for atomic system dynamics models are 
+#' All the sdsim package functionalities for Ode system dynamics models are 
 #' available in a intuitive graphical user interface application built with the 
 #' shiny web application framework.
 #' 
@@ -24,10 +24,10 @@
 #' @seealso 
 #' sdsim Functions:
 #' 
-#' \code{\link{sdRunApp}} for launching the sdsim application for atomic models; 
+#' \code{\link{sdRunApp}} for launching the sdsim application for Ode models; 
 #' a shiny server interface,
 #' 
-#' \code{\link{sdAtomicModel}} for creating an atomic system dynamics model object, 
+#' \code{\link{sdOdeModel}} for creating an Ode system dynamics model object, 
 #' 
 #' \code{\link{sdStaticModel}} for creating a static system model object, 
 #' 
@@ -48,7 +48,7 @@
 #' \code{\link{sdBuildCoupledScenario}} for creating a coupled scenario from two 
 #' or more component's scenarios of a coupled model,
 #' 
-#' \code{\link{sdSimulate}} for solving static, atomic or coupled models in a 
+#' \code{\link{sdSimulate}} for solving static, Ode or coupled models in a 
 #' given scenario merged with the defaults. Runs the simulation and outputs the 
 #' result in a \code{\link{sdOutput}} object with visualization methods, 
 #' 

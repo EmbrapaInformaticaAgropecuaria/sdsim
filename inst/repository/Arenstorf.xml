@@ -1,5 +1,5 @@
 <?sdsim about='R package for modeling and simulation of system dynamics' version='0.1' date='2018-04-11'?>
-<sdAtomicModel>
+<sdOdeModel>
   <id>Arenstorf</id>
   <description>Source: Soetaert K., Cash J., Mazzia F. - Solving Differential Equations in R - Springer(2012)
 The Arenstorf problem, from Astronomy, describes the movement of a small body orbiting regularly around two larger objects, such as a spacecraft going between the Earth and the Moon. 
@@ -69,4 +69,4 @@ It was necessary to solve this problem in order to determine the path that the A
       </description>
     </sdScenario>
   </defaultScenario>
-</sdAtomicModel>
+</sdOdeModel>

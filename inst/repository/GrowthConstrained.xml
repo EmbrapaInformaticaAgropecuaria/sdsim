@@ -1,5 +1,5 @@
 <?sdsim about='R package for modeling and simulation of system dynamics' version='0.1' date='2018-04-11'?>
-<sdAtomicModel>
+<sdOdeModel>
   <id>GrowthConstrained</id>
   <description>The model captures the growth and decline dynamics of a company discovering a 
   new oil field, where the stock of oil could potentially last for up to 
@@ -78,4 +78,4 @@
       </description>
     </sdScenario>
   </defaultScenario>
-</sdAtomicModel>
+</sdOdeModel>

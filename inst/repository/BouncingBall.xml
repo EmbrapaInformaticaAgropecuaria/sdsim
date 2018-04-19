@@ -1,5 +1,5 @@
 <?sdsim about='R package for modeling and simulation of system dynamics' version='0.1' date='2018-04-11'?>
-<sdAtomicModel>
+<sdOdeModel>
   <id>BouncingBall</id>
   <description>Source: Soetaert K., Cash_J., Mazzia F. - Solving Differential Equations in R - Springer(2012)
 Simulates a bouncing ball specified by its position above the ground (height). The ball is thrown vertically, from the ground (height(0) = 0 meter), with initial velocity (speed) of 10 meter / second. 
@@ -63,4 +63,4 @@ As the ball hits the ground, it bounces. This causes a sudden change in the valu
       </description>
     </sdScenario>
   </defaultScenario>
-</sdAtomicModel>
+</sdOdeModel>

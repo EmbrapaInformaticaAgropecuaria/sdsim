@@ -15,7 +15,7 @@ valid name (see \code{\link[base]{make.names}}).}
 \item{description}{A character string with the coupled model 
 description.}
 
-\item{components}{A list of \code{\link{sdAtomicModelClass}}, 
+\item{components}{A list of \code{\link{sdOdeModelClass}}, 
 \code{\link{sdStaticModelClass}} and/or \code{\link{sdCoupledModelClass}} 
 objects. 
 
@@ -45,7 +45,7 @@ A \code{\link{sdCoupledModelClass}} object.
 \description{
 A factory function that creates a \code{\link{sdCoupledModelClass}} object 
 made up of instanced
-\code{\link{sdAtomicModelClass}}, \code{\link{sdStaticModelClass}} and/or 
+\code{\link{sdOdeModelClass}}, \code{\link{sdStaticModelClass}} and/or 
 \code{\link{sdCoupledModelClass}} components and a list of connections that 
 define the flow of information between components.
  
@@ -82,7 +82,7 @@ LVodePrey <- function(t, st, ct, par, inp, sw, aux)
 }
 
 # create the component prey model
-prey <- sdAtomicModel(
+prey <- sdOdeModel(
   id = "Prey",
   defaultScenario = sdScenario(id = "preyScen",
                                times = times,
@@ -109,7 +109,7 @@ LVodeConsumer <- function(t, st, ct, par, inp, sw, aux)
 }
 
 # create the component consumer model
-consumer <- sdAtomicModel(
+consumer <- sdOdeModel(
   id = "Consumer",
   defaultScenario = sdScenario(
     id = "consumerScen",

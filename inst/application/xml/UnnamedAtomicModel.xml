@@ -1,5 +1,5 @@
 <?sdsim about='R package for modeling and simulation of system dynamics' version='0.1'?>
-<sdAtomicModel>
+<sdOdeModel>
   <id>Unnamed Atomic Model</id>
   <description/>
   <DifferentialEquations>function(t, st, ct, par, inp, sw, aux) {
@@ -49,4 +49,4 @@
       <description/>
     </sdScenario>
   </defaultScenario>
-</sdAtomicModel>
+</sdOdeModel>

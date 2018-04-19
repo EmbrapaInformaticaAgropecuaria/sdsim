@@ -68,7 +68,7 @@ Where *ingestC* is the amount of food ingested by the consumer, *capacityRegulat
 
 ### Implementing an Atomic System Dynamics Model
 
-The sdsim atomic system dynamics model class named *sdAtomicModelClass* have the following fields that can be passed to the factory function:
+The sdsim atomic system dynamics model class named *sdOdeModelClass* have the following fields that can be passed to the factory function:
 
 - *id*: a string with a valid name for the model identification, uses the function *make.names* [@RCoreTeam] to make syntactically valid names.
 - *description*: a string with a breath description of the model.
@@ -157,7 +157,7 @@ LVode <- function(t, st, ct, par, inp, sw, aux)
   return(list(c(dP, dC)))
 }
 
-lv <- sdAtomicModel(id = "LotkaVolterra",
+lv <- sdOdeModel(id = "LotkaVolterra",
               defaultScenario = lvScenario,
               DifferentialEquations = LVode,
               aux = aux)
@@ -523,7 +523,7 @@ LVodePrey <- function(t, st, ct, par, inp, sw, aux)
 }
 
 # create the component prey model
-prey <- sdAtomicModel(id = "Prey",
+prey <- sdOdeModel(id = "Prey",
                 defaultScenario = sdScenario(id = "preyScen",
                                              times = times,
                                              state = stPrey,
@@ -549,7 +549,7 @@ LVodeConsumer <- function(t, st, ct, par, inp, sw, aux)
 }
 
 # create the component consumer model
-consumer <- sdAtomicModel(id = "Consumer",
+consumer <- sdOdeModel(id = "Consumer",
                     defaultScenario = sdScenario(id = "consumerScen",
                                                  times = times,
                                                  state = stConsumer,

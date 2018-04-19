@@ -1,5 +1,5 @@
 <?sdsim about='R package for modeling and simulation of system dynamics' version='0.1' date='2018-04-11'?>
-<sdAtomicModel>
+<sdOdeModel>
   <id>customers</id>
   <description>In order to demonstrate how a system dynamics model is constructed, a one-stock model of an organization’s customer base is modeled. Given that the customer base is an accumulation, it can be modeled as a stock. The inflow is recruits, and the outflow are losses, also known as the churn rate. The goal of organizations is to limit the losses and maximize the recruits, in order to maintain increasing customers
 levels, and therefore support company growth. Source: System Dynamics Modeling with R, Jim Dugga.</description>
@@ -49,4 +49,4 @@ levels, and therefore support company growth. Source: System Dynamics Modeling w
       </description>
     </sdScenario>
   </defaultScenario>
-</sdAtomicModel>
+</sdOdeModel>

@@ -416,110 +416,110 @@ sdModelMsg$description <- paste("sdsim::description - Model '%s' set",
                                 "description aborted: The model description",
                                 "must be a string.")
 
-## FILE sdAtomicModel.R
+## FILE sdOdeModel.R
 ## 
-sdAtomicModelMsg <- new.env()
+sdOdeModelMsg <- new.env()
 
-sdAtomicModelMsg$initialize1 <- function(modelId)
+sdOdeModelMsg$initialize1 <- function(modelId)
   warning("sdsim::initialize - Model '", modelId, "' initialization: ", 
           "The DifferentialEquations structure does not match specification. ", 
-          "It must be a function, see help('sdAtomicModel').",
+          "It must be a function, see help('sdOdeModel').",
           "Replacement aborted.", call. = F)
 
-sdAtomicModelMsg$initialize2 <- function(modelId)
+sdOdeModelMsg$initialize2 <- function(modelId)
   warning("sdsim::initialize - Model '", modelId, "' initialization: ", 
           "The InitVars structure does not match specification. It ", 
-          "must be a function, see help('sdAtomicModel').",
+          "must be a function, see help('sdOdeModel').",
           "Replacement aborted.", call. = F)
 
-sdAtomicModelMsg$initialize3 <- function(modelId)
+sdOdeModelMsg$initialize3 <- function(modelId)
   warning("sdsim::initialize - Model '", modelId, "' initialization: ",
           "The PostProcessVars structure does not match specification. It ", 
-          "must be a function, see help('sdAtomicModel').",
+          "must be a function, see help('sdOdeModel').",
           "Replacement aborted.", call. = F)
 
-sdAtomicModelMsg$initialize4 <- function(modelId)
+sdOdeModelMsg$initialize4 <- function(modelId)
   warning("sdsim::initialize - Model '", modelId, "' initialization: ",
           "The RootSpecification structure does not match specification. It ", 
           "must be a data.frame, a numeric vector or a function, ", 
-          "see help('sdAtomicModel'). If it is a character or list of ",
+          "see help('sdOdeModel'). If it is a character or list of ",
           "characters all the components are going to be evaluated or ",
           "converted. Replacement aborted.", call. = F)
 
-sdAtomicModelMsg$initialize5 <- function(modelId)
+sdOdeModelMsg$initialize5 <- function(modelId)
   warning("sdsim::initialize - Model '", modelId, "' initialization: ",
           "The EventFunction structure does not match specification. It ", 
-          "must be a function, see help('sdAtomicModel').",
+          "must be a function, see help('sdOdeModel').",
           "Replacement aborted.", call. = F)
 
-sdAtomicModelMsg$initialize6 <- function(modelId, e)
+sdOdeModelMsg$initialize6 <- function(modelId, e)
   warning("sdsim::initialize - Model '", modelId, "' Initialization Error: ", 
           "No auxiliary equations were added. ", e, call. = F)
 
-sdAtomicModelMsg$initialize7 <- function(modelId)
+sdOdeModelMsg$initialize7 <- function(modelId)
   warning("sdsim::initialize - Model '", modelId, "' Initialization: ",
-          "Invalid auxiliary equations. See help('sdAtomicModel') to ", 
+          "Invalid auxiliary equations. See help('sdOdeModel') to ", 
           "learn the accepted types. Replacement aborted.", call. = F)
 
-sdAtomicModelMsg$initialize8 <- function(modelId, nameGlobalFuni)
+sdOdeModelMsg$initialize8 <- function(modelId, nameGlobalFuni)
   warning("sdsim::initialize - Model '", modelId, "' Initialization: ",
           "Invalid global function '", nameGlobalFuni, "' skipped. ",
           "All the globalFunctions elements must be functions.", call. = F)
 
-sdAtomicModelMsg$initialize9 <- function(modelId)
+sdOdeModelMsg$initialize9 <- function(modelId)
   warning("sdsim::initialize - Model '", modelId, 
           "' Initialization: The globalFunctions argument must be a named ",
           "list containing only functions.", call. = F)
 
-# sdAtomicModel("id")$verify()
-sdAtomicModelMsg$verifyModel0 <- paste0("sdsim::verifyModel - Model '%s' ODE ",
+# sdOdeModel("id")$verify()
+sdOdeModelMsg$verifyModel0 <- paste0("sdsim::verifyModel - Model '%s' ODE ",
        "verification aborted: No differential equations function was set.")
 
-sdAtomicModelMsg$verifyModel1 <- function(pmodelId)
+sdOdeModelMsg$verifyModel1 <- function(pmodelId)
   stop("sdsim::verifyModel - Model '", pmodelId, 
        "' ODE validation aborted: No default scenario was set.", call. = F)
 
-sdAtomicModelMsg$verifyModel2 <- function(pmodelId)
+sdOdeModelMsg$verifyModel2 <- function(pmodelId)
   warning("sdsim::verifyModel - Model '", pmodelId, 
           "' validation: No time sequence informed. Define the time sequence ",
           "in the default scenario. Initial time equals 0 will be used.", 
           call. = F)
 
-sdAtomicModelMsg$verifyModel3 <- function(pmodelId, auxVar, e)
+sdOdeModelMsg$verifyModel3 <- function(pmodelId, auxVar, e)
   warning("sdsim::verifyModel - Model '", pmodelId, 
           "' validation: error evaluating the auxiliary equation '", 
           auxVar, "'. ", e, call. = F)
 
-sdAtomicModelMsg$verifyModel4 <- function(pmodelId, auxVar, auxValue)
+sdOdeModelMsg$verifyModel4 <- function(pmodelId, auxVar, auxValue)
   warning("sdsim::verifyModel - Model '", pmodelId, 
           "' validation: Evaluation of the auxiliary variable '", auxVar, 
           "' may be incorrect. Value: ", auxValue, ".", call. = F)
 
-sdAtomicModelMsg$verifyModel5 <- function(pmodelId, e)
+sdOdeModelMsg$verifyModel5 <- function(pmodelId, e)
   warning("sdsim::verifyModel - Model '", pmodelId, 
           "' validation: error running the DifferentialEquations. ", e, 
           call. = F)
 
-sdAtomicModelMsg$verifyModel6 <- function(pmodelId, xname, x, xvalue)
+sdOdeModelMsg$verifyModel6 <- function(pmodelId, xname, x, xvalue)
   warning("sdsim::verifyModel - Model '", pmodelId, 
           "' validation: variable $", xname, " from the '", x,
           "' list in the $DifferentialEquations may be incorrect. ",
           "It has ", xvalue, " value.", call. = F)
 
-sdAtomicModelMsg$verifyModel7 <- function(pmodelId, x, xvalue)
+sdOdeModelMsg$verifyModel7 <- function(pmodelId, x, xvalue)
   warning("sdsim::verifyModel - Model '", pmodelId, 
           "' validation: variable $", x, 
           " in the $DifferentialEquations may be incorrect. It has ", xvalue, 
           " value.", call. = F) 
 
-sdAtomicModelMsg$verifyModel8 <- function(pmodelId, typeofres) 
+sdOdeModelMsg$verifyModel8 <- function(pmodelId, typeofres) 
   warning("sdsim::verifyModel - Model '", pmodelId, 
           "' validation: the first element of the $DifferentialEquations ",
           "return value should be a numeric vector containg the ",
           "state derivatives. Wrong derivative return type: ", typeofres, ".", 
           call. = F)
 
-sdAtomicModelMsg$verifyModel9 <- function(pmodelId, dRes, lenst) 
+sdOdeModelMsg$verifyModel9 <- function(pmodelId, dRes, lenst) 
   warning("sdsim::verifyModel - Model '", pmodelId, 
           "' validation: the number of derivatives returned by the ", 
           "$DifferentialEquations (", length(dRes), " - ", 
@@ -527,41 +527,41 @@ sdAtomicModelMsg$verifyModel9 <- function(pmodelId, dRes, lenst)
           ") must equal the length of the initial conditions vector (", 
           lenst, ").", call. = F)
 
-sdAtomicModelMsg$verifyModel10 <- function(pmodelId, typeofres) 
+sdOdeModelMsg$verifyModel10 <- function(pmodelId, typeofres) 
   warning("sdsim::verifyModel - Model '", pmodelId, 
           "' validation: the $DifferentialEquations function should return ",
           "a list. Wrong return type:", typeofres,".", call. = F)
 
-sdAtomicModelMsg$verifyModel11 <- function(pmodelId) 
+sdOdeModelMsg$verifyModel11 <- function(pmodelId) 
   message("sdsim::verifyModel - Model '", pmodelId, 
           "' Ordinary Differential Equations Validated.")
 
-sdAtomicModelMsg$verifyModel12 <- function(pmodelId, typeofscen) 
+sdOdeModelMsg$verifyModel12 <- function(pmodelId, typeofscen) 
   warning("sdsim::verifyModel - Model '", pmodelId, 
           "' validation: Scenario argument of type '", typeofscen, 
           "' discarted. It must be a valid sdScenarioClass object or ", 
           "a character string with a scenario XML or EXCEL file name.", 
           call. = F)
 
-sdAtomicModelMsg$description <- function(pmodelId)
+sdOdeModelMsg$description <- function(pmodelId)
   warning("sdsim::description - Model '", pmodelId, "' get descriptions: ",
           "No default scenario was added, could not get the desription list.", 
           call. = F)
 
-sdAtomicModelMsg$unit <- function(pmodelId)
+sdOdeModelMsg$unit <- function(pmodelId)
   warning("sdsim::description - Model '", pmodelId, "' get units: ",
           "No default scenario was added, could not get the unit list.", 
           call. = F)
 
-# sdAtomicModelMsg$modelId1 <- function(modelId)
+# sdOdeModelMsg$modelId1 <- function(modelId)
 #   warning("sdsim::modelId - Missing model ID: It was set to '", modelId, "'.", 
 #           call. = F)
 # 
-# sdAtomicModelMsg$modelId2 <- function(modelId)
+# sdOdeModelMsg$modelId2 <- function(modelId)
 #   warning("sdsim::modelId - Invalid model ID type: The model ID must be a ",
 #           "string. It was set to '", modelId, "'.", call. = F)
 
-sdAtomicModelMsg$defaultScenario <- function(pmodelId)
+sdOdeModelMsg$defaultScenario <- function(pmodelId)
   warning("sdsim::defaultScenario - Model '", pmodelId, 
           "' set default scenario: The default scenario ",
           "must be a sdScenario object or a character string with the name of ", 
@@ -569,7 +569,7 @@ sdAtomicModelMsg$defaultScenario <- function(pmodelId)
           "help('sdScenario') constructor. No default scenario was set.", 
           call. = F)
 
-sdAtomicModelMsg$modelDescription <- function(pmodelId)
+sdOdeModelMsg$modelDescription <- function(pmodelId)
   warning("sdsim::modelDescription - Model '", pmodelId, 
           "' set description aborted: The model description ",
           "must be a string.", call. = F)

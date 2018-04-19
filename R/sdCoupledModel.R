@@ -199,7 +199,7 @@ sdBuildCoupledScenario = function(id = NULL,
 #' Class Representation of a Coupled System Dynamics Model
 #'
 #' Represents a coupled system dynamics model made up of instanced
-#' \code{\link{sdAtomicModelClass}}, \code{\link{sdStaticModelClass}} and/or 
+#' \code{\link{sdOdeModelClass}}, \code{\link{sdStaticModelClass}} and/or 
 #' \code{\link{sdCoupledModelClass}} components and a list of connections that 
 #' define the flow of information between components. 
 #' The \code{connections} list determines loops of information feedback and 
@@ -227,7 +227,7 @@ sdBuildCoupledScenario = function(id = NULL,
 #' non-word character will be removed and the result will be converted to a 
 #' valid name (see \code{\link[base]{make.names}}).
 #' @field description A string with the coupled model description.
-#' @field components A list of \code{\link{sdAtomicModelClass}}, 
+#' @field components A list of \code{\link{sdOdeModelClass}}, 
 #' \code{\link{sdStaticModelClass}} and/or \code{\link{sdCoupledModelClass}} 
 #' objects. 
 #' 
@@ -277,7 +277,7 @@ sdBuildCoupledScenario = function(id = NULL,
 #'
 #' \describe{
 #' \item{...}{A character string with a model XML file name or a 
-#' \code{\link{sdAtomicModelClass}}, \code{\link{sdStaticModelClass}} and/or 
+#' \code{\link{sdOdeModelClass}}, \code{\link{sdStaticModelClass}} and/or 
 #' \code{\link{sdCoupledModelClass}} objects already initialized. The
 #' models must have different \code{ID}'s to be used as unique
 #' identifiers. Only one component by ID is stored.}}}
@@ -415,7 +415,7 @@ sdBuildCoupledScenario = function(id = NULL,
 #' }
 #' 
 #' # create the component prey model
-#' prey <- sdAtomicModel(
+#' prey <- sdOdeModel(
 #'   id = "Prey",
 #'   defaultScenario = sdScenario(
 #'     id = "preyScen",
@@ -449,7 +449,7 @@ sdBuildCoupledScenario = function(id = NULL,
 #' }
 #' 
 #' # create the component consumer model
-#' consumer <- sdAtomicModel(
+#' consumer <- sdOdeModel(
 #'   id = "Consumer",
 #'   defaultScenario = sdScenario(
 #'     id = "consumerScen",
@@ -615,8 +615,8 @@ sdCoupledModelClass <- R6::R6Class(
           next()
         }
         
-        # only add sdAtomicModel's or sdStaticModel's
-        if (inherits(model, sdAtomicModelClass$classname))
+        # only add sdOdeModel's or sdStaticModel's
+        if (inherits(model, sdOdeModelClass$classname))
         {
           private$pcomponentsId <- c(private$pcomponentsId, id)
           private$pcomponents[[id]] <- model$clone(deep = TRUE)
@@ -898,7 +898,7 @@ sdCoupledModelClass <- R6::R6Class(
         if (!is.null(componentsInitVars[[modelId]]))
         {
           if (inherits(private$pcomponents[[modelId]], 
-                       sdAtomicModelClass$classname))
+                       sdOdeModelClass$classname))
             modelInitVars <- componentsInitVars[[modelId]](
               st = st[iComps$st[[modelId]]],
               ct = ct[iComps$ct[[modelId]]],

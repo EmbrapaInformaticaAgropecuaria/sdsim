@@ -439,7 +439,8 @@ sdStaticModelClass <- R6::R6Class(
           if (length(dfScen$state) > 0)
           {
             dfScen$removeState()
-            warning(sprintf(sdStaticModelMsg$defaultscenario1, private$pid))
+            warning(sprintf(sdStaticModelMsg$defaultscenario1, private$pid), 
+                    call. = FALSE)
           }
           private$pdefaultScenario <- dfScen
           private$pdefaultScenario$id <- "Default"

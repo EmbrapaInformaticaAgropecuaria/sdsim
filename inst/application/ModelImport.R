@@ -55,7 +55,7 @@ ConfirmLoadModel <- function(modelXml, simData, session, input, output,
                       loadDefaultScenario = T, nTableRows = 50) {
   withCallingHandlers({
     tryCatch({
-      if(modelXml$type == "sdAtomicModel") {
+      if(modelXml$type == "sdOdeModel") {
         msg <- LoadAtomicModel(modelXml, simData, session, input, output, 
                         loadDefaultScenario)
       } else if(modelXml$type == "sdStaticModel") {
@@ -161,7 +161,7 @@ LoadCoupledModel <- function(modelXml, simData, session, input, output,
   for(i in seq_along(modelXml$components)) {
     component <- modelXml$components[[i]]
     
-    if(names(modelXml$components)[[i]] == "sdAtomicModel") {
+    if(names(modelXml$components)[[i]] == "sdOdeModel") {
       componentIdList <- c(componentIdList, component$id)
       # If default scenario is null load empty scenario instead
       if(is.null(component$defaultScenario)) {
@@ -368,8 +368,8 @@ ParseXML <- function(file, repositoryDir = NULL) {
   # Add model type to data list
   dataXmlChildren <- names(XML::xmlChildren(parsedFile))
   
-  if("sdAtomicModel" %in% dataXmlChildren)
-    type <- "sdAtomicModel"
+  if("sdOdeModel" %in% dataXmlChildren)
+    type <- "sdOdeModel"
   else if("sdStaticModel" %in% dataXmlChildren)
     type <- "sdStaticModel"
   else if("sdCoupledModel" %in% dataXmlChildren)
@@ -391,7 +391,7 @@ UpdateLoadedModel <- function(simData, session, input, output, nTableRows = 50) 
   # Get current model
   currentModel <- simData$models[[simData$currentModelId]]
   
-  if(currentModel$type == "sdAtomicModel") {
+  if(currentModel$type == "sdOdeModel") {
     # Unhide atomic model panel
     session$sendCustomMessage("unhideElement", "atomicModelPage")
     # Hide static model panel
@@ -728,7 +728,7 @@ CreateModelObject <- function(id,
   model <- list()
   
   if(!is.null(DifferentialEquations))
-    model$type <- "sdAtomicModel"
+    model$type <- "sdOdeModel"
   else
     model$type <- "sdStaticModel"
   

@@ -19,11 +19,11 @@ complete list of valid names for loading existing models. Default is FALSE.}
 (when passing the time series inputs via external files).}
 }
 \value{
-A \code{\link{sdAtomicModelClass}}, a \code{\link{sdCoupledModelClass}} or 
+A \code{\link{sdOdeModelClass}}, a \code{\link{sdCoupledModelClass}} or 
 a \code{\link{sdStaticModelClass}} object.
 }
 \description{
-A factory function that creates \code{\link{sdAtomicModelClass}}, 
+A factory function that creates \code{\link{sdOdeModelClass}}, 
 \code{\link{sdCoupledModelClass}} or \code{\link{sdStaticModelClass}} object 
 from a XML file or from the package 
 repository (see the available models in the \code{\link{sdRepository}} 

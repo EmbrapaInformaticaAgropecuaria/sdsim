@@ -28,7 +28,7 @@ trajectories
 "Simulation Output " + Sys.time().}
 
 \item{\code{model}}{The model simulated. A \code{\link{sdStaticModelClass}}, a 
-\code{\link{sdAtomicModelClass}} or a \code{\link{sdCoupledModelClass}} object.}
+\code{\link{sdOdeModelClass}} or a \code{\link{sdCoupledModelClass}} object.}
 
 \item{\code{scenario}}{The \code{\link{sdScenarioClass}} object used in the 
 simulation, if any.}
@@ -41,7 +41,7 @@ as variables in the \code{eq} list plus an additional column (the first) for
 the time sequence values. The names of the \code{eq} list will be 
 used to label the columns of the algebraic equations data.frame.
 
-In case of a \code{\link{sdAtomicModelClass}} or a 
+In case of a \code{\link{sdOdeModelClass}} or a 
 \code{\link{sdCoupledModelClass}}: a 
 data.frame with the ODE output of the simulation. This data.frame have up to 
 as many rows as elements in the time sequence and as many columns as 
@@ -53,7 +53,7 @@ the integrator returns with an unrecoverable error.
 If the \code{state} list and the auxiliary values have a names attribute, 
 they will be used to label the columns of the output data.frame.}
 
-\item{\code{auxTrajectory}}{Just in case of a \code{\link{sdAtomicModelClass}} or a 
+\item{\code{auxTrajectory}}{Just in case of a \code{\link{sdOdeModelClass}} or a 
 \code{\link{sdCoupledModelClass}}:
 A data.frame with the auxiliary equations trajectories 
 of the simulation. This data.frame have up to as many rows as elements in the 

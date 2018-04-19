@@ -284,7 +284,7 @@ CreateCoupledRootEventFunc <-
 #' verified and the following logical parameters are set to FALSE: 
 #' storeAuxTrajectory, storeTimeSeriesTrajectory, verbose.
 #'
-#' @param model A \code{\link{sdAtomicModelClass}}, a 
+#' @param model A \code{\link{sdOdeModelClass}}, a 
 #' \code{\link{sdCoupledModelClass}} or a \code{\link{sdStaticModelClass}} 
 #' object.
 #' @param scenario A \code{\link{sdScenarioClass}} object or a character string 
@@ -377,7 +377,7 @@ sdSimulate <- function(model,
   methodArg <- method
   
   # If the model is atomic
-  if (inherits(model, sdAtomicModelClass$classname))
+  if (inherits(model, sdOdeModelClass$classname))
   {
     # stop if model is empty
     if (is.null(model$DifferentialEquations))
@@ -959,7 +959,7 @@ sdSimulate <- function(model,
       # run the init vars
       if (!is.null(componentsInitVars[[modelId]]))
       {
-        if (inherits(model$components[[modelId]], sdAtomicModelClass$classname))
+        if (inherits(model$components[[modelId]], sdOdeModelClass$classname))
           modelInitVars <-
             componentsInitVars[[modelId]](
               st = st[model$indexComponents$st[[modelId]]],

@@ -1,5 +1,5 @@
 <?sdsim about='R package for modeling and simulation of system dynamics' version='0.1' date='2018-04-11'?>
-<sdAtomicModel>
+<sdOdeModel>
   <id>RigidBody</id>
   <description>Source: Soetaert K., Cash J., Mazzia F. - Solving Differential Equations in R-Springer(2012)&#13;
 A standard test problem for non-stiff solvers, as proposed by Krogh. It describes the Euler equations of a rigid body without external forces.&#13;
@@ -75,4 +75,4 @@ The three dependent variables (x , y , z) are the coordinates of the rotation ve
       </description>
     </sdScenario>
   </defaultScenario>
-</sdAtomicModel>
+</sdOdeModel>
