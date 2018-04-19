@@ -1,17 +1,12 @@
-library(testthat)
 context("Atomic Model instantiation and simulation")
 
 test_that("Empty atomic model objet", code =
 {
   m <- expect_warning(sdAtomicModel(),
-                      sprintf(sdModelMsg$id1,
-                             paste0("sdAtomicModel", Sys.Date())),
                       info = "empty model with no id")
-  expect_error(m$verifyModel(),
-               sprintf(sdAtomicModelMsg$verifyModel0, m$id))
+  expect_error(m$verifyModel())
 
-  expect_error(sdSimulate(m),
-               sprintf(sdSimulatorMsg$sdSimulateAtomic7, m$id))
+  expect_error(sdSimulate(m))
 
   expect_is(m$saveXml(), "XMLInternalElementNode")
 })
@@ -50,12 +45,11 @@ test_that("Atomic model with Global Funs", code =
                                DifferentialEquations = function(t, st, ct, par,
                                                                 inp, sw, aux)
                                {
-                                 a("diff")
-                                 return(list(c(st$a*inp$pow)))
+                                 return(list(c(a(st$a)*inp$pow)))
                                },
                                defaultScenario = scen,
                                globalFunctions = list(a = function(x) {
-                                 print(x)}),
+                                 2*x}),
                                aux = list(b = "a(1)")),
                  "sdAtomicModel")
   expect_true(m$verifyModel())

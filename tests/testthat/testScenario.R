@@ -1,4 +1,3 @@
-library(testthat)
 context("Scenario instantiation")
 
 test_that("Scenario object", code = 
@@ -19,5 +18,5 @@ test_that("Scenario object", code =
   expect_equal(scen$setTimeSequence(0,10,1), 1) #equal the by
   expect_equal(scen$method <- "rk4", "rk4")
   scendf <- expect_type(scen$buildDataFrames(), "list")
-  expect_equal(length(scendf), 6)
+  expect_length(scendf, 6)
 })

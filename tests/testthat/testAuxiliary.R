@@ -1,4 +1,3 @@
-library(testthat)
 context("Auxiliary Functions")
 
 test_that("sdInitEquations Circular dependency", code =

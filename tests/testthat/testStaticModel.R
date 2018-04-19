@@ -1,4 +1,3 @@
-library(testthat)
 context("Static Model instantiation and simulation")
 
 test_that("Not empty static model object", code =
@@ -18,8 +17,7 @@ test_that("Not empty static model object", code =
                                                          eq2 = "eq$eq*2*eq$eq3",
                                                          eq3 = "par$v"),
                                defaultScenario = scen),
-                 "sdStaticModel"),
-                 sprintf(sdStaticModelMsg$defaultscenario1, "test"))
+                 "sdStaticModel"))
   expect_true(m$verifyModel())
   expect_is(sdSimulate(m), "sdOutput")
 })
