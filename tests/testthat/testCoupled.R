@@ -41,9 +41,9 @@ test_that("Coupled model connections", code =
                                { return(2*x)})),
                  "sdStaticModel")
   bb <- expect_is(sdLoadModel("BouncingBall", repository = TRUE), 
-                  "sdAtomicModel")
+                  "sdOdeModel")
   aren <- expect_is(sdLoadModel("Arenstorf", repository = TRUE), 
-                    "sdAtomicModel")
+                    "sdOdeModel")
   aren$defaultScenario$input$testconEq <- 0
   aren$initialize(id = "arenstorf", aux = c(aren$aux, testconEq = "inp$testconEq"))
   

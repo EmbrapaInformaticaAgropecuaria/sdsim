@@ -2,7 +2,7 @@ context("Atomic Model instantiation and simulation")
 
 test_that("Empty atomic model objet", code =
 {
-  m <- expect_warning(sdAtomicModel(),
+  m <- expect_warning(sdOdeModel(),
                       info = "empty model with no id")
   expect_error(m$verifyModel())
 
@@ -20,14 +20,14 @@ test_that("Not empty atomic model object", code =
                      input = c(pow = 2),
                      method = "rk4"),
                     "sdScenario")
-  m <- expect_is(sdAtomicModel(id = "test",
+  m <- expect_is(sdOdeModel(id = "test",
                                description = "test test",
                                DifferentialEquations = function(t, st, ct, par, inp, sw, aux)
                                {
                                  return(list(c(st$a*inp$pow)))
                                },
                                defaultScenario = scen),
-                 "sdAtomicModel")
+                 "sdOdeModel")
   expect_true(m$verifyModel())
   expect_is(sdSimulate(m), "sdOutput")
 })
@@ -40,7 +40,7 @@ test_that("Atomic model with Global Funs", code =
                                input = c(pow = 2),
                                method = "rk4"),
                     "sdScenario")
-  m <- expect_is(sdAtomicModel(id = "test",
+  m <- expect_is(sdOdeModel(id = "test",
                                description = "test test",
                                DifferentialEquations = function(t, st, ct, par,
                                                                 inp, sw, aux)
@@ -51,7 +51,7 @@ test_that("Atomic model with Global Funs", code =
                                globalFunctions = list(a = function(x) {
                                  2*x}),
                                aux = list(b = "a(1)")),
-                 "sdAtomicModel")
+                 "sdOdeModel")
   expect_true(m$verifyModel())
   expect_is(sdSimulate(m), "sdOutput")
 })

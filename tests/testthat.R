@@ -1,3 +1,5 @@
 library(testthat)
+library(sdsim)
+
 options(testthat.use_colours = FALSE)
-test_check("testthat")
+test_check("sdsim")
