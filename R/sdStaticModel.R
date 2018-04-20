@@ -197,6 +197,18 @@ sdStaticModelClass <- R6::R6Class(
           algebraicEquations <- list()
           sdStaticModelMsg$initialize3(id)
         }
+        # remove equations with reserved names
+        if (any(names(algebraicEquations) %in% sdsimReserved))
+        {
+          warning(sprintf(sdStaticModelMsg$initialize6, id, 
+                          paste0(
+                            names(algebraicEquations)[names(algebraicEquations) 
+                                                      %in% sdsimReserved], 
+                            collapse = ", ")), call. = FALSE)
+          algebraicEquations <- algebraicEquations[!(names(algebraicEquations) 
+                                                     %in% sdsimReserved)]
+        }
+        
         private$palgebraicEquations <- algebraicEquations
       }
       

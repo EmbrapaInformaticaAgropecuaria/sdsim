@@ -1092,7 +1092,17 @@ sdScenarioClass <- R6::R6Class(
       if (is.null(names(varList)) || all(names(varList) %in% ""))
       {
         sdScenarioMsg$addVar1(private$pid)
-        invisible()
+        invisible(NULL)
+      }
+      
+      # remove variables with reserved names
+      if (any(names(varList) %in% sdsimReserved))
+      {
+        warning(sprintf(sdScenarioMsg$addVar7, private$pid, varType,
+                        paste0(names(varList)[names(varList) 
+                                              %in% sdsimReserved], 
+                               collapse = ", ")), call. = FALSE)
+        varList <- varList[!(names(varList) %in% sdsimReserved)]
       }
       
       if (overwrite)

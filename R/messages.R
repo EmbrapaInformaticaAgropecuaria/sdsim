@@ -412,6 +412,10 @@ sdModelMsg$id1 <- "sdsim::id - Missing model ID: It was set to '%s'"
 sdModelMsg$id2 <- paste("sdsim::id - Invalid model ID type: The model ID",
                         "must be a string. It was set to '%s'.")
 
+sdModelMsg$id3 <- paste0(
+  "sdsim::id - Invalid model ID: The sdsim reserved word '%s' can not be used ",
+  "to identify a model. The model identification was set to '%s'.")
+
 sdModelMsg$description <- paste("sdsim::description - Model '%s' set", 
                                 "description aborted: The model description",
                                 "must be a string.")
@@ -470,6 +474,12 @@ sdOdeModelMsg$initialize9 <- function(modelId)
   warning("sdsim::initialize - Model '", modelId, 
           "' Initialization: The globalFunctions argument must be a named ",
           "list containing only functions.", call. = F)
+
+sdOdeModelMsg$initialize10 <- paste0(
+  "sdsim::initialize - Ode Model '%s' initialization: The following sdsim ",
+  "reserved words can not be used to name an equation and thus the ", 
+  "respective auxiliary equations were skipped: %s."
+)
 
 # sdOdeModel("id")$verify()
 sdOdeModelMsg$verifyModel0 <- paste0("sdsim::verifyModel - Model '%s' ODE ",
@@ -721,6 +731,12 @@ sdScenarioMsg$addVar7 <- function(pscenarioId, varType, var)
                                     "values should not be null. Variable "), 
           var, " will be skipped.", call. = F)
 
+sdScenarioMsg$addVar7 <- paste0(
+  "sdsim::addVar - Scenario '%s' add variable: The following sdsim ",
+  "reserved words can not be used to name a variable and thus the ", 
+  "respective %s variables were skipped: %s."
+)
+
 sdScenarioMsg$removeVar1 <- function(pscenarioId, varType, typeofx)
   warning("sdsim::removeVar - Scenario '", pscenarioId, 
           "' remove ", varType,
@@ -770,6 +786,12 @@ sdStaticModelMsg$initialize5 <- function(staticModelId)
   warning("sdsim::initialize - Static Model '", staticModelId, 
           "' initialization: The globalFunctions argument must be a named list",
           " containing only objects of type function.", call. = F)
+
+sdStaticModelMsg$initialize6 <- paste0(
+  "sdsim::initialize - Static Model '%s' initialization: The following sdsim ",
+  "reserved words can not be used to name an equation and thus the ", 
+  "respective algebraic equations were skipped: %s."
+)
 
 sdStaticModelMsg$validate0 <- function(pstaticModelId)
   stop("sdsim::validateAlgebraicEquations Static Model '", pstaticModelId, 

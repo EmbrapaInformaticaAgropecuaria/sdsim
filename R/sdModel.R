@@ -10,15 +10,22 @@ sdModelClass <- R6::R6Class(
         return(private$pid)
       else if (is.null(id))
       {
-        id <- gsub("\\s", "", paste(class(self)[[1]], Sys.Date()), 
-                   perl = TRUE)
-        warning(sprintf(fmt = sdModelMsg$id1, id), call. = F)
+        id <- gsub("\\s", "", paste(class(self)[[1]], Sys.Date()), perl = TRUE)
+        warning(sprintf(fmt = sdModelMsg$id1, id), call. = FALSE)
       }
       else if (!is.character(id))
       {
-        id <- gsub("\\s", "", paste(class(self)[[1]], Sys.Date()), 
-                   perl = TRUE)
-        warning(sprintf(fmt = sdModelMsg$id2, id), call. = F)
+        id <- gsub("\\s", "", paste(class(self)[[1]], Sys.Date()), perl = TRUE)
+        warning(sprintf(fmt = sdModelMsg$id2, id), call. = FALSE)
+      }
+      else if (make.names(gsub("\\s", "", id, perl = TRUE)) %in% sdsimReserved)
+      {
+        # reserved name
+        warning(sprintf(fmt = sdModelMsg$id3, 
+                        make.names(gsub("\\s", "", id, perl = TRUE)),
+                        gsub("\\s", "", paste(class(self)[[1]], Sys.Date()), 
+                             perl = TRUE)), call. = FALSE)
+        id <- gsub("\\s", "", paste(class(self)[[1]], Sys.Date()), perl = TRUE)
       }
       
       private[["pid"]] <- make.names(gsub("\\s", "", 

@@ -374,6 +374,15 @@ sdOdeModelClass <- R6::R6Class(
           aux <- list()
           sdOdeModelMsg$initialize7(id)
         }
+        # remove equations with reserved names
+        if (any(names(aux) %in% sdsimReserved))
+        {
+          warning(sprintf(sdOdeModelMsg$initialize10, id, 
+                          paste0(names(aux)[names(aux) %in% sdsimReserved], 
+                            collapse = ", ")), call. = FALSE)
+          aux <- aux[!(names(aux) %in% sdsimReserved)]
+        }
+        
         private$paux <- aux
       }
       

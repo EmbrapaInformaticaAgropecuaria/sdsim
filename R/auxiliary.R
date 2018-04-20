@@ -1,3 +1,8 @@
+# Reserved words that can cause false positive matches when a regex is applyed 
+# in a coupling
+sdsimReserved <- c("t", "st", "ct", "par", "inp", "sw", "aux", "eq", 
+                   "interpolation_", "fun_")
+
 #' Initialize R-format Equations from a List of Strings or Expressions
 #' 
 #' Initialize a list of equations from a list of strings or R-expressions with 
