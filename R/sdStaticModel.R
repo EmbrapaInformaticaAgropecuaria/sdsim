@@ -473,10 +473,6 @@ sdStaticModelClass <- R6::R6Class(
     algebraicEquations = function()
     {
       return(private$palgebraicEquations)
-    },
-    isVerified = function()
-    {
-      return(private$flagVerify)
     }
   ),
   private = list(

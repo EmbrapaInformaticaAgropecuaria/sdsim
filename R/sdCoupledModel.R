@@ -1547,10 +1547,6 @@ sdCoupledModelClass <- R6::R6Class(
     modelEnv = function()
     {
       return(private$pcoupledEnv)
-    },
-    isVerified = function()
-    {
-      return(private$flagVerify)
     }
   ),
   private = list(
