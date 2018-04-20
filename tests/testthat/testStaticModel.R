@@ -13,8 +13,8 @@ test_that("Not empty static model object", code =
                     "sdScenario")
   m <- expect_warning(expect_is(sdStaticModel(id = "test",
                                description = "test test",
-                               algebraicEquations = list(eq = "par$v^inp$pow",
-                                                         eq2 = "eq$eq*2*eq$eq3",
+                               algebraicEquations = list(eq1 = "par$v^inp$pow",
+                                                         eq2 = "eq$eq1*2*eq$eq3",
                                                          eq3 = "par$v"),
                                defaultScenario = scen),
                  "sdStaticModel"))
@@ -34,8 +34,8 @@ test_that("Static model object with global funs", code =
                     "sdScenario")
   m <- expect_is(sdStaticModel(id = "test",
                                description = "test test",
-                               algebraicEquations = list(eq = "par$v^inp$pow",
-                                                         eq2 = "eq$eq*2*eq$eq3",
+                               algebraicEquations = list(eq1 = "par$v^inp$pow",
+                                                         eq2 = "eq$eq1*2*eq$eq3",
                                                          eq3 = "b(par$v)"),
                                defaultScenario = scen,
                                globalFunctions = list(b = function(x)

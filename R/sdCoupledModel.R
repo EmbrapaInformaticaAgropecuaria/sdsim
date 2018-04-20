@@ -1555,7 +1555,6 @@ sdCoupledModelClass <- R6::R6Class(
   ),
   private = list(
     # Class Private Atributes
-    pdefaultScenario = NULL,
     pindexComponents = NULL,
     pconnections = list(),
     auxCon = NULL,

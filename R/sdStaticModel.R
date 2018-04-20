@@ -483,7 +483,6 @@ sdStaticModelClass <- R6::R6Class(
     #@@ Class Private Atributes
     pstaticModelEnv = NULL,
     pInitVars = NULL,
-    pdefaultScenario = NULL,
     pglobalFunctions = list(),
     palgebraicEquations = list(),
     flagVerify = FALSE

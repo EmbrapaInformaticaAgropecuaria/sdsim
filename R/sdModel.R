@@ -44,13 +44,33 @@ sdModelClass <- R6::R6Class(
           warning(sprintf(fmt = sdModelMsg$description, private$pid), call. = F)
       }
     },
-    defaultScenario = function() {},
+    defaultScenario = function(defaultScenario)
+    {
+      if (missing(defaultScenario))
+        return(private$pdefaultScenario)
+      else
+      {
+        if (is.character(defaultScenario))
+          defaultScenario <- sdLoadScenario(defaultScenario)
+        
+        # scenario must be a scenario object 
+        if (inherits(defaultScenario, sdScenarioClass$classname))
+        {
+          private$pdefaultScenario <- defaultScenario$clone()
+          private$pdefaultScenario$id <- "Default"
+          private$flagVerify <- FALSE
+        }
+        else 
+          sdOdeModelMsg$defaultScenario(private$pid)
+      }
+    },
     isVerified = function()
     {
       return(private$flagVerify)
     }
   ),
   private = list(pid = NULL,
+                 pdefaultScenario = NULL,
                  pdescription = NULL,
                  flagVerify = FALSE)
 )
