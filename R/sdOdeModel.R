@@ -13,9 +13,8 @@
 #' To simulate a model in different scenarios use the \code{\link{sdSimulate}}
 #' function.
 #' 
-#' @field id A string with the model identification. Any non-word character
-#' will be removed and the result will be converted to a valid name (see 
-#' \code{\link[base]{make.names}}).
+#' @field id A string with the model identification. It is coerced to a valid id 
+#' following the rules described in \code{\link{sdsim-LabelingRules}}.
 #' @field description A string with the model description.
 #' @field defaultScenario The model default scenario, a 
 #' \code{\link{sdScenarioClass}} object. It should contain all the model

@@ -731,7 +731,7 @@ sdScenarioMsg$addVar7 <- function(pscenarioId, varType, var)
                                     "values should not be null. Variable "), 
           var, " will be skipped.", call. = F)
 
-sdScenarioMsg$addVar7 <- paste0(
+sdScenarioMsg$addVar8 <- paste0(
   "sdsim::addVar - Scenario '%s' add variable: The following sdsim ",
   "reserved words can not be used to name a variable and thus the ", 
   "respective %s variables were skipped: %s."

@@ -38,9 +38,9 @@ and the list with the components variables indexes (indexComponents).
 \section{Fields}{
 
 \describe{
-\item{\code{id}}{A string with the coupled model identification. Any 
-non-word character will be removed and the result will be converted to a 
-valid name (see \code{\link[base]{make.names}}).}
+\item{\code{id}}{A string with the coupled model identification. It is coerced to a 
+valid id following the rules described in 
+\code{\link{sdsim-LabelingRules}}.}
 
 \item{\code{description}}{A string with the coupled model description.}
 

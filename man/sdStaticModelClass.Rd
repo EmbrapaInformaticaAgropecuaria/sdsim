@@ -32,9 +32,8 @@ therefore the simulation will only run for the initial time.
 \section{Fields}{
 
 \describe{
-\item{\code{id}}{A string with the model identification. Any non-word 
-character will be removed and the result will be converted to a valid name 
-(see \code{\link[base]{make.names}}).}
+\item{\code{id}}{A string with the model identification. It is coerced to a valid id 
+following the rules described in \code{\link{sdsim-LabelingRules}}.}
 
 \item{\code{description}}{A string with the model description.}
 

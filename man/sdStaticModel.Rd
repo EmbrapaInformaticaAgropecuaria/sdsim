@@ -8,9 +8,8 @@ sdStaticModel(id = NULL, description = NULL, defaultScenario = NULL,
   algebraicEquations = NULL, InitVars = NULL, globalFunctions = NULL)
 }
 \arguments{
-\item{id}{A character string with the model ID. Any non-word 
-character will be removed and the result will be converted to a valid name 
-(see \code{\link[base]{make.names}}).}
+\item{id}{A character string with the model ID. It is coerced to a valid id 
+following the rules described in \code{\link{sdsim-LabelingRules}}.}
 
 \item{description}{A string with the model description.}
 

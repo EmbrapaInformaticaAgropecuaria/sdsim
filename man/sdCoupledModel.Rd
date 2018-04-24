@@ -8,9 +8,9 @@ sdCoupledModel(id = NULL, description = NULL, components = NULL,
   connections = NULL)
 }
 \arguments{
-\item{id}{A character string with the coupled model ID. Any 
-non-word character will be removed and the result will be converted to a 
-valid name (see \code{\link[base]{make.names}}).}
+\item{id}{A character string with the coupled model ID. It is coerced to a 
+valid id following the rules described in 
+\code{\link{sdsim-LabelingRules}}.}
 
 \item{description}{A character string with the coupled model 
 description.}

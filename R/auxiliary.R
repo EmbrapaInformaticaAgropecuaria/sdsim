@@ -3,6 +3,38 @@
 sdsimReserved <- c("t", "st", "ct", "par", "inp", "sw", "aux", "eq", 
                    "interpolation_", "fun_")
 
+#' sdsim Labeling Rules
+#' 
+#' A string is used to identify the models and the scenario variables names in 
+#' the sdsim package. 
+#' 
+#' The model id is used to uniquely distinguish components when coupling and is 
+#' used inside regex patterns and as lists names when building a coupled model.
+#' The scenario variables are used inside regex patterns to build a coupled 
+#' model scenario.
+#' 
+#' To prevent errors the package automatically format the models id and the 
+#' scenario variables names into valid names following the criterias:
+#' 
+#' \itemize{
+#' \item whitespace: all whitespace characters are removed using 
+#' \code{\link[base]{gsub}};
+#' \item valid names: use the function \code{\link[base]{make.names}} to make 
+#' syntactically valid names in R;
+#' \item sdsim reserved word: do not accept the words "t", "st", "ct", "par", 
+#' "inp", "sw", "aux", "eq", "interpolation_" or "fun_".
+#' }
+#' 
+#' If the model id or the variables names is: missing, not a string or a 
+#' sdsim reserved word, it will be discarted. For the models id, in any of these 
+#' cases, a timestamp will be created using the name of the model class
+#' concatenated with the \code{\link[base]{Sys.Date}} value (current day) to be 
+#' used instead. 
+#' 
+#' @name sdsim-LabelingRules
+#' @aliases sdsim-LabelingRules
+sdsimModelLabelingRules <- NULL
+
 #' Initialize R-format Equations from a List of Strings or Expressions
 #' 
 #' Initialize a list of equations from a list of strings or R-expressions with 

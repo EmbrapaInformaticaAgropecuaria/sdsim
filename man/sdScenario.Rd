@@ -107,6 +107,9 @@ to compute the equations of a model. It also stores configurations for a
 simulation, e.g. the time sequence and integrator method.
 }
 \details{
+The varible names are coerced to syntatically valid names following the 
+criterias described in \code{\link{sdsim-LabelingRules}}.
+
 To load a scenario from an EXCEL or XML file use the 
 \code{\link{sdLoadScenario}} function.
 

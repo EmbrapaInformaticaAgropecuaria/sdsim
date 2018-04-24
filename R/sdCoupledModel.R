@@ -223,9 +223,9 @@ sdBuildCoupledScenario = function(id = NULL,
 #' the vectors representing the connections (eqConnections and stConnections) 
 #' and the list with the components variables indexes (indexComponents).
 #'
-#' @field id A string with the coupled model identification. Any 
-#' non-word character will be removed and the result will be converted to a 
-#' valid name (see \code{\link[base]{make.names}}).
+#' @field id A string with the coupled model identification. It is coerced to a 
+#' valid id following the rules described in 
+#' \code{\link{sdsim-LabelingRules}}.
 #' @field description A string with the coupled model description.
 #' @field components A list of \code{\link{sdOdeModelClass}}, 
 #' \code{\link{sdStaticModelClass}} and/or \code{\link{sdCoupledModelClass}} 

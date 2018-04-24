@@ -10,9 +10,8 @@
 #' To simulate a model in different scenarios use the \code{\link{sdSimulate}}
 #' function.
 #' 
-#' @param id A character string with the model ID. Any non-word character
-#' will be removed and the result will be converted to a valid name (see 
-#' \code{\link[base]{make.names}}).
+#' @param id A character string with the model ID. It is coerced to a valid id 
+#' following the rules described in \code{\link{sdsim-LabelingRules}}.
 #' @param description A character string with the model description.
 #' @param defaultScenario The model default scenario, a 
 #' \code{\link{sdScenarioClass}} object. It should contain all the model
@@ -478,9 +477,9 @@ sdLoadModel <- function(file, repository = F,
 #' \code{\link{sdBuildCoupledScenario}} function. Make sure to build it before 
 #' running the simulation to save some computation time.
 #' 
-#' @param id A character string with the coupled model ID. Any 
-#' non-word character will be removed and the result will be converted to a 
-#' valid name (see \code{\link[base]{make.names}}).
+#' @param id A character string with the coupled model ID. It is coerced to a 
+#' valid id following the rules described in 
+#' \code{\link{sdsim-LabelingRules}}.
 #' @param description A character string with the coupled model 
 #' description.
 #' @param components A list of \code{\link{sdOdeModelClass}}, 
@@ -615,9 +614,8 @@ sdCoupledModel <- function(id = NULL,
 #' To simulate a model in different scenarios use the \code{\link{sdSimulate}}
 #' function.
 #' 
-#' @param id A character string with the model ID. Any non-word 
-#' character will be removed and the result will be converted to a valid name 
-#' (see \code{\link[base]{make.names}}).
+#' @param id A character string with the model ID. It is coerced to a valid id 
+#' following the rules described in \code{\link{sdsim-LabelingRules}}.
 #' @param description A string with the model description.
 #' @param defaultScenario The model default scenario, a 
 #' \code{\link{sdScenarioClass}} object without state variables. 
@@ -721,6 +719,9 @@ sdStaticModel <- function(id = NULL,
 #' and values that constitute a system environment, and that are used 
 #' to compute the equations of a model. It also stores configurations for a 
 #' simulation, e.g. the time sequence and integrator method.
+#' 
+#' The varible names are coerced to syntatically valid names following the 
+#' criterias described in \code{\link{sdsim-LabelingRules}}.
 #' 
 #' To load a scenario from an EXCEL or XML file use the 
 #' \code{\link{sdLoadScenario}} function.

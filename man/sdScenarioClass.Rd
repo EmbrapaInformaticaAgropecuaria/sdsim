@@ -13,12 +13,15 @@ Represents a system scenario that can consist of state variables,
 inputs, constant values, parameters and switches. It also stores 
 configurations for a simulation, e.g. the time sequence and integrator 
 method. Together, all the variables and values constitute a system 
-environment for a model. 
+environment for a model.
+}
+\details{
+The varible names are coerced to syntatically valid names following the 
+criterias described in \code{\link{sdsim-LabelingRules}}.
 All the variables, except the \code{state}, accepts vectors. 
 All the object field are active binding variables that invoke a function to 
 read it's value or to assign a value to it (<-).
-}
-\details{
+
 To create an object use the constructor \code{\link{sdScenario}}.
 
 To load a scenario from an EXCEL or XML file use the 

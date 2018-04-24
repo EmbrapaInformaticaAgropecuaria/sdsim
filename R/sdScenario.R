@@ -5,6 +5,9 @@
 #' configurations for a simulation, e.g. the time sequence and integrator 
 #' method. Together, all the variables and values constitute a system 
 #' environment for a model. 
+#' 
+#' The varible names are coerced to syntatically valid names following the 
+#' criterias described in \code{\link{sdsim-LabelingRules}}.
 #' All the variables, except the \code{state}, accepts vectors. 
 #' All the object field are active binding variables that invoke a function to 
 #' read it's value or to assign a value to it (<-). 
@@ -1095,10 +1098,15 @@ sdScenarioClass <- R6::R6Class(
         invisible(NULL)
       }
       
+      # make valid names
+      names(varList) <- make.names(gsub("\\s", "", 
+                                       names(varList), 
+                                       perl = TRUE))
+      
       # remove variables with reserved names
       if (any(names(varList) %in% sdsimReserved))
       {
-        warning(sprintf(sdScenarioMsg$addVar7, private$pid, varType,
+        warning(sprintf(sdScenarioMsg$addVar8, private$pid, varType,
                         paste0(names(varList)[names(varList) 
                                               %in% sdsimReserved], 
                                collapse = ", ")), call. = FALSE)
