@@ -13,6 +13,11 @@ auxiliaryMsg$sdInitEq <- function(eqName, eq)
           "R-format. The element of type ", typeof(eq), 
           " will be skipped.", call. = F)
 
+auxiliaryMsg$sdInitEq1 <- paste0("sdsim::sdInitEquations - Initializing ", 
+          " equations: The '%s' equations argument must be a ",
+          "named list of R-expressions and/or strings with equations in ",
+          "R-format. The unnamed elements will be skipped.", call. = F)
+
 # use case:
 # sdInitEquations(list(e1 = "eq$e1", e2 = "eq$e1"), eqName = "eq")
 auxiliaryMsg$topologicalSortEq <- function(eqName, equations, eqorder, 
