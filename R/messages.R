@@ -42,8 +42,9 @@ auxiliaryMsg$sdTemporalFunctionList <- function()
 # sdTemporalFunction(x = "lala")
 auxiliaryMsg$sdTemporalFunction1  <- function(timeSeriesDirectory, x) 
   warning("sdsim::sdTemporalFunction - Error: The time series file '", 
-          paste0(timeSeriesDirectory, x), "' does not exist.",
-          " Temporal function transformation aborted, returned NULL.", 
+          paste0(timeSeriesDirectory, x), "' does not exist. Use the argument ",
+          "'timeSeriesDirectory' to set the right path to the time series ", 
+          "files. Temporal function transformation aborted, returned NULL.", 
           call. = F)
 
 # case use:
