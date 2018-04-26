@@ -4,7 +4,7 @@
 \alias{sdInitEquations}
 \title{Initialize R-format Equations from a List of Strings or Expressions}
 \usage{
-sdInitEquations(equations, separator = "<-", eqName = c("aux", "eq"))
+sdInitEquations(equations, separator = "<-", eqName = "aux")
 }
 \arguments{
 \item{equations}{A list of strings or R-expressions with the equations in 
@@ -15,7 +15,7 @@ Default is "<-".}
 
 \item{eqName}{The name of the list that will be initialized and sorted, e.g.
 'aux' for \code{\link{sdOdeModelClass}} auxiliary equations and/or 'eq' for 
-\code{\link{sdStaticModelClass}} algebraic equations. 
+\code{\link{sdStaticModelClass}} algebraic equations. Default is 'aux'.
 
 Can be a vector with all the equations list names that should be considered 
 in the sorting. Default is c('aux', 'eq').}

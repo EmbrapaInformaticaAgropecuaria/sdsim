@@ -16,7 +16,7 @@ auxiliaryMsg$sdInitEq <- function(eqName, eq)
 auxiliaryMsg$sdInitEq1 <- paste0("sdsim::sdInitEquations - Initializing ", 
           " equations: The '%s' equations argument must be a ",
           "named list of R-expressions and/or strings with equations in ",
-          "R-format. The unnamed elements will be skipped.", call. = F)
+          "R-format. The unnamed elements will be skipped.")
 
 # use case:
 # sdInitEquations(list(e1 = "eq$e1", e2 = "eq$e1"), eqName = "eq")

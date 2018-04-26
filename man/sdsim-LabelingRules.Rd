@@ -24,7 +24,7 @@ scenario variables names into valid names following the criterias:
 
 \itemize{
 \item whitespace: all whitespace characters are removed using 
-\code{\link[base]{gsub}};
+\code{\link[base]{grep}};
 \item valid names: use the function \code{\link[base]{make.names}} to make 
 syntactically valid names in R;
 \item sdsim reserved word: do not accept the words "t", "st", "ct", "par", 
@@ -34,7 +34,7 @@ syntactically valid names in R;
 If the model id or the variables names is: missing, not a string or a 
 sdsim reserved word, it will be discarted. For the models id, in any of these 
 cases, a timestamp will be created using the name of the model class
-concatenated with the \code{\link[base]{Sys.Date}} value (current day) to be 
+concatenated with the \code{\link[base]{Sys.time}} value (current day) to be 
 used instead.
 }
 \keyword{datasets}

@@ -1412,7 +1412,7 @@ sdCoupledModelClass <- R6::R6Class(
         }
       }
       # sort the auxliary equations and the connection matrix
-      auxComponents <- sdInitEquations(auxComponents)
+      auxComponents <- sdInitEquations(auxComponents, eqName = c("aux", "eq"))
       private$pcomponentsAux <- auxComponents
       
       # set index list for the equations

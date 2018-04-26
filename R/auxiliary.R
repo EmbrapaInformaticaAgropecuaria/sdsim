@@ -18,7 +18,7 @@ sdsimReserved <- c("t", "st", "ct", "par", "inp", "sw", "aux", "eq",
 #' 
 #' \itemize{
 #' \item whitespace: all whitespace characters are removed using 
-#' \code{\link[base]{gsub}};
+#' \code{\link[base]{grep}};
 #' \item valid names: use the function \code{\link[base]{make.names}} to make 
 #' syntactically valid names in R;
 #' \item sdsim reserved word: do not accept the words "t", "st", "ct", "par", 
@@ -28,7 +28,7 @@ sdsimReserved <- c("t", "st", "ct", "par", "inp", "sw", "aux", "eq",
 #' If the model id or the variables names is: missing, not a string or a 
 #' sdsim reserved word, it will be discarted. For the models id, in any of these 
 #' cases, a timestamp will be created using the name of the model class
-#' concatenated with the \code{\link[base]{Sys.Date}} value (current day) to be 
+#' concatenated with the \code{\link[base]{Sys.time}} value (current day) to be 
 #' used instead. 
 #' 
 #' @name sdsim-LabelingRules
@@ -59,7 +59,7 @@ sdsimModelLabelingRules <- NULL
 #' Default is "<-".
 #' @param eqName The name of the list that will be initialized and sorted, e.g.
 #' 'aux' for \code{\link{sdOdeModelClass}} auxiliary equations and/or 'eq' for 
-#' \code{\link{sdStaticModelClass}} algebraic equations. 
+#' \code{\link{sdStaticModelClass}} algebraic equations. Default is 'aux'.
 #' 
 #' Can be a vector with all the equations list names that should be considered 
 #' in the sorting. Default is c('aux', 'eq').
@@ -83,7 +83,7 @@ sdsimModelLabelingRules <- NULL
 #' print(eval(aux$cDiff))
 #' #> [1] 0.125
 sdInitEquations <- function (equations, separator = "<-", 
-                             eqName = c("aux","eq"))
+                             eqName = "aux")
 {
   equationList <- list()
 
@@ -96,6 +96,7 @@ sdInitEquations <- function (equations, separator = "<-",
     
     for (i in 1:length(equations))
     {
+      
       eq <- equations[[i]]
       if (is.character(eq))
       {
@@ -107,6 +108,13 @@ sdInitEquations <- function (equations, separator = "<-",
           equationBody <- eqSplit[[1]][[2]]
           equationVariable <- gsub("[ \t]*", "", eqSplit[[1]][[1]])
           
+          # check if element is named
+          if (equationVariable == "")
+          {
+            warning(sprintf(auxiliaryMsg$sdInitEq1, eqName), call. = FALSE)
+            next()
+          }
+          
           # Assemble the expression
           equation <- parse(text = equationBody)
         }
@@ -114,6 +122,13 @@ sdInitEquations <- function (equations, separator = "<-",
         # in the list
         else
         {
+          # check if element is named
+          if (is.null(nameList) || nameList[[i]] == "")
+          {
+            warning(sprintf(auxiliaryMsg$sdInitEq1, eqName), call. = FALSE)
+            next()
+          }
+          
           equationBody <- eq
           equationVariable <- nameList[[i]]
           
@@ -124,14 +139,20 @@ sdInitEquations <- function (equations, separator = "<-",
       }
       else if (is.expression(eq) || is.language(eq))
       {
-        equationVariable <- nameList[i]
+        # check if element is named
+        if (is.null(nameList) || nameList[[i]] == "")
+        {
+          warning(sprintf(auxiliaryMsg$sdInitEq1, eqName), call. = FALSE)
+          next()
+        }
+        
+        equationVariable <- nameList[[i]]
         equation <- eq
       }
       else
       {
         auxiliaryMsg$sdInitEq(paste(eqName, collapse = " and "), eq)
-        equationVariable <- length(equationList) + 1
-        equation <- NULL
+        next()
       }
       
       equationList[[equationVariable]] <- equation
