@@ -56,7 +56,7 @@ ConfirmLoadModel <- function(modelXml, simData, session, input, output,
   withCallingHandlers({
     tryCatch({
       if(modelXml$type == "sdOdeModel") {
-        msg <- LoadAtomicModel(modelXml, simData, session, input, output, 
+        msg <- LoadOdeModel(modelXml, simData, session, input, output, 
                         loadDefaultScenario)
       } else if(modelXml$type == "sdStaticModel") {
         msg <- LoadStaticModel(modelXml, simData, session, input, output, 
@@ -90,7 +90,7 @@ ConfirmLoadModel <- function(modelXml, simData, session, input, output,
   })
 }
 
-LoadAtomicModel <- function(modelXml, simData, session, input, output, 
+LoadOdeModel <- function(modelXml, simData, session, input, output, 
                             loadDefaultScenario = T) {
   # If default scenario is null or shouldn't be loaded
   # Load empty scenario instead
@@ -105,7 +105,7 @@ LoadAtomicModel <- function(modelXml, simData, session, input, output,
   
   modelXml$defaultScenario$sdScenario$id <- "Default"
   # Load model data and save to reactive list
-  simData$models[[modelXml$id]] <- LoadAtomicModelData(modelXml, simData)
+  simData$models[[modelXml$id]] <- LoadOdeModelData(modelXml, simData)
   
   # Load default scenario
   LoadScenarioData(modelXml$defaultScenario$sdScenario, simData, modelXml$id)
@@ -174,7 +174,7 @@ LoadCoupledModel <- function(modelXml, simData, session, input, output,
       }
       
       component$defaultScenario$sdScenario$id <- "Default"
-      simData$models[[component$id]] <- LoadAtomicModelData(component, simData)
+      simData$models[[component$id]] <- LoadOdeModelData(component, simData)
       
       # Load default scenario and save it to the component's scenario list
       LoadScenarioData(component$defaultScenario$sdScenario, simData, component$id)
@@ -392,8 +392,8 @@ UpdateLoadedModel <- function(simData, session, input, output, nTableRows = 50) 
   currentModel <- simData$models[[simData$currentModelId]]
   
   if(currentModel$type == "sdOdeModel") {
-    # Unhide atomic model panel
-    session$sendCustomMessage("unhideElement", "atomicModelPage")
+    # Unhide ode model panel
+    session$sendCustomMessage("unhideElement", "odeModelPage")
     # Hide static model panel
     session$sendCustomMessage("hideElement", "staticModelPage")
     # Hide coupled model panel
@@ -422,8 +422,8 @@ UpdateLoadedModel <- function(simData, session, input, output, nTableRows = 50) 
     
     simData$changed$aux <- F
   } else if(currentModel$type == "sdStaticModel") {
-    # Hide atomic model panel
-    session$sendCustomMessage("hideElement", "atomicModelPage")
+    # Hide ode model panel
+    session$sendCustomMessage("hideElement", "odeModelPage")
     # Unhide static model panel
     session$sendCustomMessage("unhideElement", "staticModelPage")
     # Hide coupled model panel
@@ -432,7 +432,7 @@ UpdateLoadedModel <- function(simData, session, input, output, nTableRows = 50) 
     session$sendCustomMessage("disableElement", "method")
     
     # Clear other model UI's
-    ClearAtomicModelUI(simData, session, input, output)
+    ClearOdeModelUI(simData, session, input, output)
     ClearCoupledModelUI(simData, session, input, output)
     
     # Update scripts
@@ -448,8 +448,8 @@ UpdateLoadedModel <- function(simData, session, input, output, nTableRows = 50) 
     UpdateRHandsontable(aux, "staticAux", output)
     simData$changed$staticAux <- F
   } else if(currentModel$type == "sdCoupledModel") {
-    # Hide atomic model panel
-    session$sendCustomMessage("hideElement", "atomicModelPage")
+    # Hide ode model panel
+    session$sendCustomMessage("hideElement", "odeModelPage")
     # Hide static model panel
     session$sendCustomMessage("hideElement", "staticModelPage")
     # Unhide coupled model panel
@@ -458,7 +458,7 @@ UpdateLoadedModel <- function(simData, session, input, output, nTableRows = 50) 
     session$sendCustomMessage("enableElement", "method")
     
     # Clear other model UI's
-    ClearAtomicModelUI(simData, session, input, output)
+    ClearOdeModelUI(simData, session, input, output)
     ClearStaticModelUI(simData, session, input, output)
     
     # Update coupled model connections
@@ -518,15 +518,15 @@ ClearSimulationResults <- function(simData, session, input, output) {
   output$errorLog <- renderText("")
 }
 
-ClearAtomicModelUI <- function(simData, session, input, output) {
-  # Clear atomic model script fields
+ClearOdeModelUI <- function(simData, session, input, output) {
+  # Clear ode model script fields
   CustomAceUpdate(session, "DifferentialEquations", value = "")
   CustomAceUpdate(session, "initVars", value = "")
   CustomAceUpdate(session, "root", value = "")
   CustomAceUpdate(session, "event", value = "")
   CustomAceUpdate(session, "globalFunctions", value = "")
   
-  # Clear atomic model aux table
+  # Clear ode model aux table
   emptyDF <- CreateVarDataFrame(nRows = 1)
   UpdateRHandsontable(emptyDF, "aux", output)
   simData$changed$aux <- F
@@ -617,8 +617,8 @@ UpdateLoadedScenario <- function(simData, session, input, output, nTableRows = 5
   }
 }
 
-# Loads an atomic model into the UI format
-LoadAtomicModelData <- function(model, simData) {
+# Loads an ode model into the UI format
+LoadOdeModelData <- function(model, simData) {
   # Get auxiliary data frame and update rhandsontable values
   aux <- AuxListToDataFrame(model)
   

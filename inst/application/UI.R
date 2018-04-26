@@ -204,7 +204,7 @@ simulationPage <- shinydashboard::tabItem(
                      uiOutput("exportAuxTrajBt")
             ),
             tabPanel("Time Series",
-                     dataTableOutput("inpTrajectory"),
+                     dataTableOutput("timeSeriesTrajectory"),
                      uiOutput("exportTimeSeriesTrajBt")
             )
           )
@@ -500,9 +500,9 @@ DifferentialEquationsPage <- shinydashboard::tabItem(
         border: 0px; display: inline-block; vertical-align:bottom;"
       ),
       div(style = "padding: 3px;"),
-      div(id = "atomicModelPage",
+      div(id = "odeModelPage",
           shinydashboard::tabBox(
-            id = "modelBox", title = "Atomic Model", width = "100%",
+            id = "modelBox", title = "Ode Model", width = "100%",
             tabPanel(
               "Differential Equations",
               AceEditorCustom("DifferentialEquations", height = scriptHeight),
@@ -983,13 +983,13 @@ helpPage <- shinydashboard::tabItem(
       h4(strong("Model")),
       h5("In this application a model is a set of components that can be used to
           simulate the behavior of a system. This application supports three
-          types of models:  atomic, static and coupled."),
+          types of models:  ode, static and coupled."),
       br(),
-      h5(strong("Atomic model")),
-      h5("Represents an atomic system dynamics model that consists of functions 
+      h5(strong("Ode model")),
+      h5("Represents an ode system dynamics model that consists of functions 
          describing the system flows and a default scenario describing the 
          system environment (variables and values)."),
-      h5("An atomic model is composed by:"),
+      h5("An ode model is composed by:"),
       tags$ul(
         tags$li("Model ID: the model identification name."),
         tags$li("Model Description: a text description of the model."),
@@ -1046,8 +1046,9 @@ helpPage <- shinydashboard::tabItem(
         tags$li("Model ID: the model identification."),
         tags$li("Model Description: (optional) a text description of the 
                 model."),
-        tags$li("Components: a set of IDs atomic, static or coupled models. The 
-                component models must be loaded in the application."),
+        tags$li("Components: a set of IDs corresponding to ode, static or 
+                coupled models. The component models must be loaded in the 
+                application."),
         tags$li("Connections: a table describing the connections between the 
                 components of the model. The connections determine loops of 
                 information feedback and circular causality for conceptualizing 
@@ -1111,7 +1112,7 @@ helpPage <- shinydashboard::tabItem(
          scenarios."),
       tags$ul(
         tags$li("Default: scenarios which contain the base values of each 
-                model's variables. Every atomic and static models have default 
+                model's variables. Every ode and static models have default 
                 scenarios. Coupled models use the defaults of its components, 
                 thus it does not have its own default scenario. The ID of
                 default scenarios cannot be changed, and will always be named 

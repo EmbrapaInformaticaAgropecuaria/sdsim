@@ -1,6 +1,6 @@
 <?sdsim about='R package for modeling and simulation of system dynamics' version='0.1'?>
 <sdOdeModel>
-  <id>Unnamed Atomic Model</id>
+  <id>Unnamed Ode Model</id>
   <description/>
   <DifferentialEquations>function(t, st, ct, par, inp, sw, aux) {
   # Calculate the differentials

@@ -128,7 +128,7 @@ ModelToXML <- function(simData, file = NULL){
   currentModel <- simData$models[[simData$currentModelId]]
   
   if(currentModel$type == "sdOdeModel") {
-    modelXml <- AtomicModelToXml(currentModel)
+    modelXml <- OdeModelToXml(currentModel)
   } else if(currentModel$type == "sdStaticModel") {
     modelXml <- StaticModelToXml(currentModel)
   } else if(currentModel$type == "sdCoupledModel") {
@@ -141,7 +141,7 @@ ModelToXML <- function(simData, file = NULL){
                      indent = T),  file = file)
 }
 
-AtomicModelToXml <- function(model) {
+OdeModelToXml <- function(model) {
   doc = XML::newXMLDoc()
   rootsdModel <- XML::newXMLNode("sdOdeModel", doc = doc)
   
@@ -214,7 +214,7 @@ CoupledModelToXml <- function(model, simData) {
   componentsXml <- lapply(componentNames, function(x) {
     component <- simData$models[[x]]
     if(component$type == "sdOdeModel")
-      AtomicModelToXml(component)
+      OdeModelToXml(component)
     else if(component$type == "sdStaticModel")
       StaticModelToXml(component)
     else if(component$type == "sdCoupledModel")

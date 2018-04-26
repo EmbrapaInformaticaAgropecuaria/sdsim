@@ -7,7 +7,7 @@ AssembleModel <- function(simData, input, timeSeriesDirectory,
   model <- simData$models[[simData$currentModelId]]
   
   if(model$type == "sdOdeModel") {
-    modelObj <- AssembleAtomicModel(model, timeSeriesDirectory, progressFunction)
+    modelObj <- AssembleOdeModel(model, timeSeriesDirectory, progressFunction)
     return(modelObj)
   } else if (model$type == "sdStaticModel") {
     modelObj <- AssembleStaticModel(model, timeSeriesDirectory)
@@ -30,7 +30,7 @@ AssembleCoupledModel <- function(model, simData, timeSeriesDirectory) {
   componentsList <- lapply(componentNames, function(x) {
     component <- simData$models[[x]]
     if(component$type == "sdOdeModel")
-      AssembleAtomicModel(component, timeSeriesDirectory)
+      AssembleOdeModel(component, timeSeriesDirectory)
     else if(component$type == "sdStaticModel")
       AssembleStaticModel(component, timeSeriesDirectory)
     else if(component$type == "sdCoupledModel")
@@ -47,7 +47,7 @@ AssembleCoupledModel <- function(model, simData, timeSeriesDirectory) {
   return(modelObj)
 }
 
-AssembleAtomicModel <- function(model, timeSeriesDirectory, progressFunction = NULL) {
+AssembleOdeModel <- function(model, timeSeriesDirectory, progressFunction = NULL) {
   defaultScenario <- model$scenarios[[model$defaultScenarioId]]
   
   DifferentialEquationsStr <- model$DifferentialEquations

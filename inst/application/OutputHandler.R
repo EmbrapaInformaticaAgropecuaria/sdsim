@@ -25,17 +25,17 @@ RenderDataTables <- function(simData, output) {
     out$auxTrajectory
   })
   
-  inpData <- reactive({
+  tsData <- reactive({
     out <- simData$models[[simData$currentModelId]]$out
     validate(
       need(!is.null(out), "")
     )
     validate(
-      need(!is.null(out$inpTrajectory), 
+      need(!is.null(out$timeSeriesTrajectory), 
            "The simulated model doesn't have any time series.")
     )
     
-    out$inpTrajectory
+    out$timeSeriesTrajectory
   })
   
   output$outTrajectory <- renderDataTable({
@@ -56,8 +56,8 @@ RenderDataTables <- function(simData, output) {
   ))
   
   # Render time series datatable
-  output$inpTrajectory <- renderDataTable({
-    inpData()
+  output$timeSeriesTrajectory <- renderDataTable({
+    tsData()
   }, options = list(
     lengthMenu = c(5, 10, 25, 100, 250),
     pageLength = 10,

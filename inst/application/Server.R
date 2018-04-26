@@ -16,9 +16,14 @@ server <- shinyServer(function(input, output, session) {
   simData$changed <- list()
   
   # Use a temporary directory for saving time series files
-  timeSeriesDirectory <- tempdir()
+  timeSeriesDirectory <- paste0(tempdir(), "/", "timeSeriesDir")
+  if(dir.exists(timeSeriesDirectory))
+    unlink(timeSeriesDirectory, recursive = T)
+  dir.create(timeSeriesDirectory)
   
-  isolate(LoadModel("UnnamedAtomicModel", simData, session, input, output, "application/xml", nTableRows = nTableRows))
+  # Load empty ode model when starting the application
+  isolate(LoadModel("UnnamedOdeModel", simData, session, input, output, 
+                    "application/xml", nTableRows = nTableRows))
   
   output$selectModelOutput <- renderUI({
     choices <- names(simData$models)
@@ -97,8 +102,6 @@ server <- shinyServer(function(input, output, session) {
     # Update UI
     UpdateLoadedScenario(simData, session, input, output, nTableRows)
   })
-  # Reactive list containing the necessary data for running a simulation
-  modelData <- reactiveValues()
   
   # Load new scenario
   observeEvent(input$newScenario, {
@@ -142,8 +145,8 @@ server <- shinyServer(function(input, output, session) {
       
       h4(strong("Create Empty model")),
       radioButtons("newModelType", "Model type", 
-                   choices = c("Atomic", "Static", "Coupled"),
-                   selected = "Atomic",
+                   choices = c("Ode", "Static", "Coupled"),
+                   selected = "Ode",
                    inline = T),
       div(
         textInput("modelIdInput", "Choose the model ID:", placeholder = "Unnamed Model"),
@@ -267,9 +270,9 @@ server <- shinyServer(function(input, output, session) {
     
     switch (
       input$newModelType,
-      "Atomic" = {
+      "Ode" = {
         # Load empty model and replace ID
-        msg <- LoadModel("UnnamedAtomicModel", simData, session, input, output, "application/xml", 
+        msg <- LoadModel("UnnamedOdeModel", simData, session, input, output, "application/xml", 
                          replaceId = input$modelIdInput, nTableRows = nTableRows)
       }, "Static" = {
         msg <- LoadModel("UnnamedStaticModel", simData, session, input, output, "application/xml", 
@@ -293,7 +296,7 @@ server <- shinyServer(function(input, output, session) {
       simData$currentModelId <- modelIds[[1]]
     } else {
       # If the model list is empty load an empty model
-      LoadModel("UnnamedAtomicModel", simData, session, input, output, "application/xml", nTableRows = nTableRows)
+      LoadModel("UnnamedOdeModel", simData, session, input, output, "application/xml", nTableRows = nTableRows)
     }
   })
   
@@ -485,7 +488,7 @@ server <- shinyServer(function(input, output, session) {
                        stringsAsFactors = FALSE,
                        header = TRUE)
             
-            modelData$timeSeriesFiles <- unique(c(modelData$timeSeriesFiles, f$name))
+            simData$timeSeriesFiles <- unique(c(simData$timeSeriesFiles, f$name))
             file.copy(f$datapath, file.path(timeSeriesDirectory, f$name), overwrite = T)
           },
           error = function(e) {
@@ -515,10 +518,10 @@ server <- shinyServer(function(input, output, session) {
     if(is.null(selectedTs))
       selectedTs <- character(0)
     
-    if(length(modelData$timeSeriesFiles) > 0) {
+    if(length(simData$timeSeriesFiles) > 0) {
       timeSeriesFiles <- 
         radioButtons("selectTs", NULL, 
-                     choices = modelData$timeSeriesFiles, 
+                     choices = simData$timeSeriesFiles, 
                      width = "100%", selected = selectedTs)
     } else {
       timeSeriesFiles <- 
@@ -719,7 +722,9 @@ server <- shinyServer(function(input, output, session) {
                                  method = input$method,
                                  from = as.numeric(input$initialTime),
                                  to = as.numeric(input$finalTime),
-                                 by = as.numeric(input$step))
+                                 by = as.numeric(input$step),
+                                 storeAuxTrajectory = T,
+                                 storeTimeSeriesTrajectory = T)
         
         simData$models[[simData$currentModelId]]$out <- out
         
