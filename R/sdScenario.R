@@ -581,7 +581,7 @@ sdScenarioClass <- R6::R6Class(
                          prefix = xmlPrefix(),
                          indent = TRUE),  file = file) 
       
-      return(invisible(rootScenario))
+      invisible(rootScenario)
     },
     saveXlsx = function(file = "Scenario.xlsx", 
                           colWidth = c(10, 10, 10, 30, 10))
@@ -600,7 +600,7 @@ sdScenarioClass <- R6::R6Class(
       
       openxlsx::saveWorkbook(wb, file, overwrite = TRUE)
       
-      return(invisible(inputData))
+      invisible(inputData)
     },
     setTimeSequence = function(from, to, by)
     {

@@ -1040,7 +1040,7 @@ sdCoupledModelClass <- R6::R6Class(
             {
               sdCoupledModelMsg$verifyModel6(private$pid, 
                                              namesCompEqs[[i]], e)
-              return(invisible(NULL))
+              invisible(NULL)
             })
           
           if (length(unlist(mDef[[1]])) == 0)
@@ -1456,7 +1456,7 @@ sdCoupledModelClass <- R6::R6Class(
                          prefix = xmlPrefix(),
                          indent = TRUE),  file = file) 
       
-      return(invisible(rootsdCoupledModel))
+      invisible(rootsdCoupledModel)
     }
   ),
   active = list(
@@ -1466,6 +1466,8 @@ sdCoupledModelClass <- R6::R6Class(
         return(private$pdefaultScenario)
       else
         sdCoupledModelMsg$defaultScenario(private$pid)
+      
+      invisible(NULL)
     },
     components = function()
     {
@@ -1519,7 +1521,7 @@ sdCoupledModelClass <- R6::R6Class(
       else
         sdCoupledModelMsg$connectionsList(private$pid, 
                                           "equations")
-      return(invisible(NULL))
+      invisible(NULL)
     },
     stConnections = function()
     {
@@ -1529,7 +1531,7 @@ sdCoupledModelClass <- R6::R6Class(
       else
         sdCoupledModelMsg$connectionsList(private$pid, 
                                           "state")
-      return(invisible(NULL))
+      invisible(NULL)
     },
     indexComponents = function()
     {
@@ -1538,7 +1540,8 @@ sdCoupledModelClass <- R6::R6Class(
         return(private$pindexComponents)
       else
         sdCoupledModelMsg$indexComponents(private$pid)
-      return(invisible(NULL))
+      
+      invisible(NULL)
     },
     isBuilt = function()
     {

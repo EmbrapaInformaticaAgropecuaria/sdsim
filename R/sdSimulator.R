@@ -438,11 +438,11 @@ sdSimulate <- function(model,
       if (inherits(scenario, sdScenarioClass$classname))
         defaultScenario <- scenario
       else
-        stop(sprintf(sdSimulatorMsg$sdSimulateModel, "Atomic", model$id), 
+        stop(sprintf(sdSimulatorMsg$sdSimulateModel, "Ode", model$id), 
              call. = FALSE)
     }
     else
-      stop(sprintf(sdSimulatorMsg$sdSimulateModel, "Atomic", model$id), 
+      stop(sprintf(sdSimulatorMsg$sdSimulateModel, "Ode", model$id), 
            call. = FALSE)
 
     # Get variables from default scenario

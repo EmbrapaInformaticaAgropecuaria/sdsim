@@ -260,10 +260,12 @@ sdLoadModel <- function(file, repository = F,
   
   if (repository)
   {
-    file <- system.file(appDir = paste0("repository/", file, ".xml"), 
+    filepath <- system.file(appDir = paste0("repository/", file, ".xml"), 
                         package = "sdsim")
-    if (file == "")
+    if (filepath == "")
       constructorsMsg$sdLoadModel2(file)
+    else
+      file <- filepath
   }
   
   # check if file exists

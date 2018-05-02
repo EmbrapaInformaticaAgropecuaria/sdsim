@@ -382,7 +382,7 @@ sdStaticModelClass <- R6::R6Class(
           error = function(e)
           {
             sdStaticModelMsg$validate2(private$pid, equationsVar, e)
-            return(invisible(numeric(0)))
+            invisible(numeric(0))
           })
         
         if (is.null(eq[[equationsVar]]) || is.na(eq[[equationsVar]]) ||
@@ -431,7 +431,7 @@ sdStaticModelClass <- R6::R6Class(
                          prefix = xmlPrefix(),
                          indent = T),  file = file) 
       
-      return(invisible(rootsdModel))
+      invisible(rootsdModel)
     }
   ),
   active = list(

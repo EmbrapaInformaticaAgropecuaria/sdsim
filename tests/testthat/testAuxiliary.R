@@ -15,7 +15,7 @@ test_that("sdInitEquations Circular dependency", code =
 
 })
 
-test_that("time Series point to temporal function", code =
+test_that("time Series point to temporal function methods", code =
 {
   datapoints <- data.frame(time = c(0,5,10), value = c(10,50,100))
   dataperiodic <- data.frame(time = c(0,5,10), value = c(10,50,10))

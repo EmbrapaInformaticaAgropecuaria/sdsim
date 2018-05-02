@@ -111,7 +111,8 @@ sdInitEquations <- function (equations, separator = "<-",
           # check if element is named
           if (equationVariable == "")
           {
-            warning(sprintf(auxiliaryMsg$sdInitEq1, eqName), call. = FALSE)
+            warning(sprintf(auxiliaryMsg$sdInitEq1, eqName, equationBody), 
+                    call. = FALSE)
             next()
           }
           
@@ -125,7 +126,7 @@ sdInitEquations <- function (equations, separator = "<-",
           # check if element is named
           if (is.null(nameList) || nameList[[i]] == "")
           {
-            warning(sprintf(auxiliaryMsg$sdInitEq1, eqName), call. = FALSE)
+            warning(sprintf(auxiliaryMsg$sdInitEq1, eqName, eq), call. = FALSE)
             next()
           }
           
@@ -142,7 +143,7 @@ sdInitEquations <- function (equations, separator = "<-",
         # check if element is named
         if (is.null(nameList) || nameList[[i]] == "")
         {
-          warning(sprintf(auxiliaryMsg$sdInitEq1, eqName), call. = FALSE)
+          warning(sprintf(auxiliaryMsg$sdInitEq1, eqName, eq), call. = FALSE)
           next()
         }
         
@@ -411,11 +412,25 @@ sdTemporalFunction <- function(x, colTimes = 1, colValue = 2,
   } 
   else if (is.matrix(x) || is.data.frame(x))  ## its a matrix or data frame
   {   
+    # check if the indexes are valid
+    if (!all(c(colTimes, colValue) <= ncol(x)))
+    {
+      warning(auxiliaryMsg$sdTemporalFunction6, call. = FALSE)
+      return(NULL)
+    }
+    
     timeS <- x[, colTimes]
     values <- x[, colValue]  # column col must have the values for each time
   } 
-  else if (is.list(x) && length(x) >= 2)
+  else if (is.list(x))
   {
+    # check if the indexes are valid
+    if (!all(c(colTimes, colValue) <= length(x)))
+    {
+      warning(auxiliaryMsg$sdTemporalFunction6, call. = FALSE)
+      return(NULL)
+    }
+    
     timeS <- x[colTimes]
     values <- x[colValue]  # column col must have the values for each time
   }
@@ -444,6 +459,12 @@ sdTemporalFunction <- function(x, colTimes = 1, colValue = 2,
     
     if (is.null(temporal_data))
       return(NULL)
+    
+    if (!all(c(colTimes, colValue) <= ncol(x)))
+    {
+      warning(auxiliaryMsg$sdTemporalFunction6, call. = FALSE)
+      return(NULL)
+    }
     
     # first column must have the time seq
     timeS  <- temporal_data[, colTimes]    
@@ -635,12 +656,12 @@ MergeLists <- function(parm, defaultParm, listName = "var")
   if (is.null(parm))
     return(defaultParm)
   
-  warningList <- names(parm)[!(names(parm) %in% c(names(defaultParm), 
-                                                  "interpolation_", "fun_"))]
-  lapply(warningList, function(x)
-  {
-    auxiliaryMsg$MergeLists(x, listName)
-  })
+  # warningList <- names(parm)[!(names(parm) %in% c(names(defaultParm), 
+  #                                                 "interpolation_", "fun_"))]
+  # lapply(warningList, function(x)
+  # {
+  #   auxiliaryMsg$MergeLists(x, listName)
+  # })
   
   # update default parms values with given parm
   for (tag in names(parm))
@@ -836,5 +857,5 @@ sdExcelTemplate <- function(file = "Scenario.xlsx",
   
   openxlsx::saveWorkbook(wb, file, overwrite = TRUE)
   
-  return(invisible(inputData))
+  invisible(inputData)
 }

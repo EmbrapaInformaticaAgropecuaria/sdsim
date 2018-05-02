@@ -588,7 +588,7 @@ sdOdeModelClass <- R6::R6Class(
           error = function(e)
           {
             sdOdeModelMsg$verifyModel3(private$pid, auxVar, e)
-            return(invisible(numeric(0)))
+            invisible(numeric(0))
           })
         
         if (is.null(aux[[auxVar]]) || is.na(aux[[auxVar]]) ||
@@ -631,7 +631,7 @@ sdOdeModelClass <- R6::R6Class(
         error = function(e)
         {
           sdOdeModelMsg$verifyModel5(private$pid, e)
-          return(invisible(NULL))
+          invisible(NULL)
         })
       
       # Display warnings if any variables during the Model Definition
@@ -758,7 +758,7 @@ sdOdeModelClass <- R6::R6Class(
                          prefix = xmlPrefix(),
                          indent = TRUE),  file = file) 
       
-      return(invisible(rootsdModel))
+      invisible(rootsdModel)
     }
   ),
   active = list(
