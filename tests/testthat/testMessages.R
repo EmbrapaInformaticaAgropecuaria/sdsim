@@ -156,6 +156,10 @@ test_that("sdOutput.R", code =
 
 test_that("sdScenariot.R", code =
 {
+  expect_warning(sdScenario("test", state = list(3,2)), 
+                 info = "sdScenarioMsg$initialize1")
+  expect_warning(sdScenario("test", input = list(3,2)), 
+                 info = "sdScenarioMsg$initialize2")
 })
 
 

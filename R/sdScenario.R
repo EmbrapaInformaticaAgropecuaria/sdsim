@@ -439,7 +439,7 @@ sdScenarioClass <- R6::R6Class(
       # Initialize state
       if (!missing(state) && !is.null(state) && length(state) > 0)
       {
-        if (is.list(state) || is.numeric(state))
+        if ((is.list(state) || is.numeric(state)) && !is.null(names(state)))
           self$addState(state, verbose = verbose)
         else
           sdScenarioMsg$initialize1(id, "state")
@@ -448,7 +448,8 @@ sdScenarioClass <- R6::R6Class(
       # Initialize constant
       if (!missing(constant) && !is.null(constant) && length(constant) > 0)
       {
-        if (is.list(constant) || is.numeric(constant))
+        if ((is.list(constant) || is.numeric(constant)) && 
+            !is.null(names(constant)))
           self$addConstant(constant, verbose = verbose)
         else
           sdScenarioMsg$initialize1(id, "constant")
@@ -457,7 +458,7 @@ sdScenarioClass <- R6::R6Class(
       # Initialize input and time series
       if (!missing(input) && !is.null(input) && length(input) > 0)
       {
-        if (is.list(input))
+        if ((is.list(input)) && !is.null(names(input)))
           self$addInput(input, verbose = verbose, interpolation = interpolation,
                         timeSeriesDirectory = timeSeriesDirectory)
         else
@@ -467,7 +468,8 @@ sdScenarioClass <- R6::R6Class(
       # Initialize parameter
       if (!missing(parameter) && !is.null(parameter) && length(parameter) > 0)
       {
-        if (is.list(parameter) || is.numeric(parameter))
+        if ((is.list(parameter) || is.numeric(parameter)) && 
+            !is.null(names(parameter)))
           self$addParameter(parameter, verbose = verbose)
         else
           sdScenarioMsg$initialize1(id, "parameter")
@@ -476,7 +478,7 @@ sdScenarioClass <- R6::R6Class(
       # Initialize switch
       if (!missing(switch) && !is.null(switch) && length(switch) > 0)
       {
-        if (is.list(switch))
+        if ((is.list(switch)) && !is.null(names(switch)))
           self$addSwitch(switch, verbose = verbose)
         else
           sdScenarioMsg$initialize2(id, "switch")
@@ -485,7 +487,7 @@ sdScenarioClass <- R6::R6Class(
       # set units list
       if (!missing(unit) && !is.null(unit) && length(unit) > 0)
       {
-        if (is.list(unit) || is.character(unit))
+        if ((is.list(unit) || is.character(unit)) && !is.null(names(unit)))
           self$addUnit(unit, verbose = verbose)
         else
           sdScenarioMsg$initialize2(id, "unit")
@@ -495,7 +497,8 @@ sdScenarioClass <- R6::R6Class(
       if (!missing(description) && !is.null(description) && 
           length(description) > 0)
       {
-        if (is.list(description) || is.character(description))
+        if ((is.list(description) || is.character(description)) && 
+            !is.null(names(description)))
           self$addDescription(description, verbose = verbose)
         else
           sdScenarioMsg$initialize2(id, "description")
@@ -604,21 +607,64 @@ sdScenarioClass <- R6::R6Class(
     },
     setTimeSequence = function(from, to, by)
     {
+      # check if the resultant sequence will have more than one step (the 
+      # increment is inside from and to) and its sign is correct (posite for
+      # crescent seq and negative for decreasing seq) 
+      # (to - from) >= by && (to - from)*by > 0
       if (!missing(from) && is.numeric(from) && 
           length(from) == 1 && !is.na(from))
-        private[["ptimes"]]$from <- from
+      {
+        if (is.null(private[["ptimes"]]$to) || 
+            is.null(private[["ptimes"]]$by))
+        {
+          if (!is.null(private[["ptimes"]]$to) && 
+              private[["ptimes"]]$to == from)
+            sdScenarioMsg$setTimeSequence1(private$pid, "from")
+          else
+            private[["ptimes"]]$from <- from
+        }
+        else if ((private[["ptimes"]]$to - from) >= private[["ptimes"]]$by && 
+                  (private[["ptimes"]]$to - from)*private[["ptimes"]]$by > 0)
+          private[["ptimes"]]$from <- from
+        else
+          sdScenarioMsg$setTimeSequence2(private$pid, "from")
+      } 
       else if (!missing(from) && !is.null(from))
         sdScenarioMsg$setTimeSequence(private$pid, "from")
       
       if (!missing(to) && is.numeric(to) && 
           length(to) == 1 && !is.na(to))
-        private[["ptimes"]]$to <- to
+      {
+        if (is.null(private[["ptimes"]]$from) || 
+            is.null(private[["ptimes"]]$by))
+        {
+          if (!is.null(private[["ptimes"]]$from) && 
+              private[["ptimes"]]$from == to)
+            sdScenarioMsg$setTimeSequence1(private$pid, "to")
+          else
+            private[["ptimes"]]$to <- to
+        }
+        else if ((to - private[["ptimes"]]$from) >= private[["ptimes"]]$by && 
+                 (to - private[["ptimes"]]$from)*private[["ptimes"]]$by > 0)
+          private[["ptimes"]]$to <- to
+        else
+          sdScenarioMsg$setTimeSequence2(private$pid, "to")
+      }
       else if (!missing(to) && !is.null(to))
         sdScenarioMsg$setTimeSequence(private$pid, "to")
       
       if (!missing(by) && is.numeric(by) && 
           length(by) == 1 && !is.na(by))
-        private[["ptimes"]]$by <- by
+      {
+        if (is.null(private[["ptimes"]]$to) || 
+            is.null(private[["ptimes"]]$from))
+          private[["ptimes"]]$by <- by
+        else if ((private[["ptimes"]]$to - private[["ptimes"]]$from) >= by && 
+            (private[["ptimes"]]$to - private[["ptimes"]]$from)*by > 0)
+          private[["ptimes"]]$by <- by
+        else # invalid by
+          sdScenarioMsg$setTimeSequence2(private$pid, "by")
+      }
       else if (!missing(by) && !is.null(by))
         sdScenarioMsg$setTimeSequence(private$pid, "by")
     },
@@ -1094,14 +1140,12 @@ sdScenarioClass <- R6::R6Class(
       
       if (is.null(names(varList)) || all(names(varList) %in% ""))
       {
-        sdScenarioMsg$addVar1(private$pid)
+        sdScenarioMsg$addVar1(private$pid, varType)
         return(invisible(NULL))
       }
       
-      # make valid names
-      names(varList) <- make.names(gsub("\\s", "", 
-                                       names(varList), 
-                                       perl = TRUE))
+      # remove space chars from names
+      names(varList) <- gsub("\\s", "", names(varList), perl = TRUE)
       
       # remove variables with reserved names
       if (any(names(varList) %in% sdsimReserved))
@@ -1118,11 +1162,13 @@ sdScenarioClass <- R6::R6Class(
       
       for (var in names(varList))
       {
-        if (var == "")
+        if (var == "") # skip unnamed vars
         {
-          sdScenarioMsg$addVar2(private$pid)
+          sdScenarioMsg$addVar2(private$pid, varType)
           next()
         }
+        else # make valid names
+          var <- make.names(var)
         
         if (checkNumeric && !is.numeric(unlist(varList[[var]])))
         {

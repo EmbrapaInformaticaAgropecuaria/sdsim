@@ -643,8 +643,20 @@ sdScenarioMsg$initialize2 <- function(scenarioId, varType)
 
 sdScenarioMsg$setTimeSequence <- function(pscenarioId, varType)
   warning("sdsim::setTimeSequence - Scenario '", pscenarioId, 
-          "' set time sequence: Initial time '", varType, "' not set. ",
+          "': Sequence element '", varType, "' not set. ",
           "It must be a numeric value.", call. = F)
+
+sdScenarioMsg$setTimeSequence1 <- function(pscenarioId, varType)
+  warning("sdsim::setTimeSequence - Scenario '", pscenarioId, 
+          "': The end value of the time sequence must be different from the ", 
+          "starting value. Argument '", varType, "' not set.", call. = F)
+
+sdScenarioMsg$setTimeSequence2 <- function(pscenarioId, varType)
+  warning("sdsim::setTimeSequence - Scenario '", pscenarioId, 
+          "': The increment of the time sequence must be inside the starting ", 
+          "and end value of the sequence and have the right sign (positive ", 
+          "for crescent sequences and negative for descreasing ones). ", 
+          "Argument '", varType, "' not set.", call. = F)
 
 sdScenarioMsg$addInput <- function(pscenarioId, namesInterpol, namesInput)
   warning("sdsim::addInput - Scenario '", pscenarioId, 
@@ -695,14 +707,14 @@ sdScenarioMsg$unit <- function(pscenarioId, typeofunit)
           "Unit type (", typeofunit,
           ") not supported. It should be a named list. ", call. = F)
 
-sdScenarioMsg$addVar1 <- function(pscenarioId)
-  warning("sdsim::addVar - Scenario '", pscenarioId, 
-          "' add variable aborted: All the scenario variables must be named.",
+sdScenarioMsg$addVar1 <- function(pscenarioId, varType)
+  warning("sdsim::addVar - Scenario '", pscenarioId, "' add ", 
+          varType, " aborted: All the scenario variables must be named.",
           call. = F)
 
-sdScenarioMsg$addVar2 <- function(pscenarioId)
-  warning("sdsim::addVar - Scenario '", pscenarioId, 
-          "' add variable: Unnamed variable skipped. ",
+sdScenarioMsg$addVar2 <- function(pscenarioId, varType)
+  warning("sdsim::addVar - Scenario '", pscenarioId, "' add ", 
+          varType, ": Unnamed variable skipped. ",
           "All the scenario variables must be named.", call. = F)
 
 sdScenarioMsg$addVar3 <- function(pscenarioId, varType, var)

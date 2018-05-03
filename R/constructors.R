@@ -972,8 +972,8 @@ sdScenario <- function(id,
                                       variableCol = variableCol,
                                       valueCol = descriptionCol))
     }
-    else if (is.vector(state))
-      loadedScen$state <- as.list(state)
+    else
+      loadedScen$state <- state
   }
   
   if (!missing(constant)) # set constant
@@ -995,8 +995,8 @@ sdScenario <- function(id,
                                       variableCol = variableCol,
                                       valueCol = descriptionCol))
     }
-    else if (is.vector(constant))
-      loadedScen$constant <- as.list(constant)
+    else
+      loadedScen$constant <- constant
   }
   
   if (!missing(input)) # set input
@@ -1023,8 +1023,8 @@ sdScenario <- function(id,
           variableCol = variableCol,
           valueCol = interpolationCol)
     }
-    else if (is.vector(input))
-      loadedScen$input <- as.list(input)
+    else
+      loadedScen$input <- input
   }
   
   if (!missing(interpolation) && !is.null(interpolation))
@@ -1051,8 +1051,8 @@ sdScenario <- function(id,
                                       valueCol = descriptionCol))
       
     }
-    else if (is.vector(parameter))
-      loadedScen$parameter <- as.list(parameter)
+    else
+      loadedScen$parameter <- parameter
   }
   
   if (!missing(switch)) # set switch
@@ -1075,8 +1075,8 @@ sdScenario <- function(id,
                                       variableCol = variableCol,
                                       valueCol = descriptionCol))
     }
-    else if (is.vector(switch))
-      loadedScen$switch <- as.list(switch)
+    else
+      loadedScen$switch <- switch
   }
   
   # set unit list
