@@ -325,7 +325,7 @@ sdOutputClass <- R6::R6Class(
         if (!is.character(unlist(which, recursive = T)))
         {
           which <- "all"
-          sdOutputMsg$plot2(poutputId)
+          sdOutputMsg$plot2(private$poutputId)
         }
         else
         {
@@ -398,15 +398,9 @@ sdOutputClass <- R6::R6Class(
         yaxisArray <- unlist(strsplit(yaxis, " "))
         
         # check if all the variables names are valid columns names
-        if (!all((c(xaxis, yaxisArray) %in% names(data)))) 
+        if (!all(yaxisArray %in% names(data))) 
         {
-          sdOutputMsg$plot3(private$poutputId, xaxis, yaxisArray, names(data))
-          
-          if (!(xaxis %in% names(data)))
-          {
-            sdOutputMsg$plot4(private$poutputId, xaxis)
-            xaxis <- "time"
-          }
+          sdOutputMsg$plot3(private$poutputId, yaxisArray, names(data))
           
           # remove the not valid columns
           yaxisArray <- yaxisArray[
@@ -416,6 +410,13 @@ sdOutputClass <- R6::R6Class(
           if (length(yaxisArray) == 0)
             next()
         }
+        
+        if (!(xaxis %in% names(data)))
+        {
+          sdOutputMsg$plot4(private$poutputId, xaxis)
+          xaxis <- "time"
+        }
+        
         nYAxis <- length(yaxisArray)
         
         if (multipleYAxis)
@@ -439,6 +440,10 @@ sdOutputClass <- R6::R6Class(
         # get more colors
         if (nYAxis > length(col))
           col <- unique(c(col, colors(distinct = T)))
+        
+        # check the ylabel size when plotting more than one YAxis
+        if (ylabel != "" && multipleYAxis && length(ylabel) < nYAxis)
+          sdOutputMsg$plot1(private$poutputId, "ylab")
         
         # plot each y variable
         for (j in 1:nYAxis)

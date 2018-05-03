@@ -494,46 +494,61 @@ sdOdeModelClass <- R6::R6Class(
     },
     verifyModel = function(scenario = NULL, verbose = F)
     {
-      # run the aux and model definition validation
-      if (is.null(private$pdefaultScenario) && 
-          !is.null(private$pdefaultScenario$state) && 
-          length(private$pdefaultScenario$state) > 0)
-        sdOdeModelMsg$verifyModel1(private$pid)
-      
       if (is.null(private$pDifferentialEquations))
         stop(sprintf(sdOdeModelMsg$verifyModel0, private$pid), call. = FALSE)
       
-      # get the model scenario 
-      defaultScenario <- private$pdefaultScenario$clone(deep = TRUE)
-      
-      # overwrite default variables with the given scenario values
-      if (!is.null(scenario))
+      # get the simulation scenario
+      if (!is.null(private$pdefaultScenario))
+      {
+        # get the model scenario 
+        defaultScenario <- private$pdefaultScenario$clone(deep = TRUE)
+        
+        # overwrite default variables with the given scenario values
+        if (!is.null(scenario))
+        {
+          if (is.character(scenario))
+            scenario <- sdLoadScenario(file = scenario)
+          
+          if (inherits(scenario, sdScenarioClass$classname))
+          {
+            if (length(scenario$state) > 0)
+              defaultScenario$addState(scenario$state, verbose = verbose)
+            if (length(scenario$constant) > 0)
+              defaultScenario$addConstant(scenario$constant, verbose = verbose)
+            if (length(scenario$input) > 0)
+              defaultScenario$addInput(
+                scenario$input[!(names(scenario$input) %in% c("interpolation_", 
+                                                              "fun_"))],
+                interpolation = scenario$input[["interpolation_"]],
+                verbose = verbose)
+            if (length(scenario$parameter) > 0)
+              defaultScenario$addParameter(scenario$parameter, verbose = verbose)
+            if (length(scenario$switch) > 0)
+              defaultScenario$addSwitch(scenario$switch, verbose = verbose)
+            if (!is.null(scenario$times))
+              defaultScenario$times <- scenario$times
+            if (!is.null(scenario$method))
+              defaultScenario$method <- scenario$method
+          }
+          else
+            sdOdeModelMsg$verifyModel12(private$pid, typeof(scenario))
+        }
+      }
+      else if (!is.null(scenario))
       {
         if (is.character(scenario))
           scenario <- sdLoadScenario(file = scenario)
         
         if (inherits(scenario, sdScenarioClass$classname))
-        {
-          if (length(scenario$state) > 0)
-            defaultScenario$addState(scenario$state, verbose = verbose)
-          if (length(scenario$constant) > 0)
-            defaultScenario$addConstant(scenario$constant, verbose = verbose)
-          if (length(scenario$input) > 0)
-            defaultScenario$addInput(
-              scenario$input[!(names(scenario$input) %in% c("interpolation_", 
-                                                            "fun_"))],
-              interpolation = scenario$input[["interpolation_"]],
-              verbose = verbose)
-          if (length(scenario$parameter) > 0)
-            defaultScenario$addParameter(scenario$parameter, verbose = verbose)
-          if (length(scenario$switch) > 0)
-            defaultScenario$addSwitch(scenario$switch, verbose = verbose)
-          if (!is.null(scenario$times))
-            defaultScenario$times <- scenario$times
-        }
+          defaultScenario <- scenario
         else
+        {
           sdOdeModelMsg$verifyModel12(private$pid, typeof(scenario))
+          sdOdeModelMsg$verifyModel1(private$pid)
+        }
       }
+      else
+        sdOdeModelMsg$verifyModel1(private$pid)
       
       # Get variables from default scenario
       st <- defaultScenario$state
@@ -564,6 +579,10 @@ sdOdeModelClass <- R6::R6Class(
         inp <- initVars$inp
         sw <- initVars$sw
       }
+      
+      # check if there is state variables
+      if (length(st) == 0)
+        sdOdeModelMsg$verifyModel13(private$pid)
       
       # compute the input time Series values for the initial time
       for (var in names(inp$fun_))

@@ -122,18 +122,40 @@ test_that("sdOdeModel.R", code =
                  info = "sdOdeModelMsg$initialize8")
   expect_warning(sdOdeModel("test", globalFunctions = list(2)),
                  info = "sdOdeModelMsg$initialize9")
-  expect_warning(sdOdeModel("test", aux = list(st ="2")),
+  m <- expect_warning(sdOdeModel("test", aux = list(st ="2"),
+                                 DifferentialEquations = 
+                                   function(t, st, ct, par, inp, sw, aux) 
+                                     return(t)),
                  info = "sdOdeModelMsg$initialize10")
   
   expect_error(sdOdeModel("id")$verifyModel(),
-                 info = "sdOdeModelMsg$verifyModel0 ")
+                 info = "sdOdeModelMsg$verifyModel0")
+  expect_error(m$verifyModel(),
+               info = "sdOdeModelMsg$verifyModel1")
+  expect_error(expect_warning(m$verifyModel(sdScenario("test"))),
+               info = "sdOdeModelMsg$verifyModel2;sdOdeModelMsg$verifyModel13")
+  expect_warning(m$verifyModel(sdScenario("test", state = c(x=1))),
+               info = "sdOdeModelMsg$verifyModel2; sdOdeModelMsg$verifyModel10")
   
-  
+  expect_warning(sdOdeModel("test", defaultScenario = 2),
+               info = "sdOdeModelMsg$defaultScenario")
 })
 
 
+test_that("sdOutput.R", code =
+{
+  outa <- sdSimulate(sdLoadModel("Arenstorf", repository = TRUE))
+  expect_warning(outa$plot("D1 y1", ylab = list(c("y lab", "a")), 
+                           multipleYAxis = T), info = "sdOutputMsg$plot1")
+  expect_warning(outa$plot("D1", ylab = c(" a", "d")), 
+                 info = "sdOutputMsg$plot1")
+  expect_warning(outa$plot(2), info = "sdOutputMsg$plot2")
+  expect_warning(outa$plot(2, FALSE, "y1"), info = "sdOutputMsg$plot3")
+  expect_warning(outa$plot("y1 ~ x"), info = "sdOutputMsg$plot4")
+})
 
-
-
+test_that("sdScenariot.R", code =
+{
+})
 
 

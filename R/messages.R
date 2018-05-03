@@ -499,7 +499,7 @@ sdOdeModelMsg$verifyModel0 <- paste0("sdsim::verifyModel - Model '%s' ODE ",
 
 sdOdeModelMsg$verifyModel1 <- function(pmodelId)
   stop("sdsim::verifyModel - Model '", pmodelId, 
-       "' ODE verification aborted: No default scenario was set.", call. = F)
+       "' ODE verification aborted: No valid scenario was set.", call. = F)
 
 sdOdeModelMsg$verifyModel2 <- function(pmodelId)
   warning("sdsim::verifyModel - Model '", pmodelId, 
@@ -552,7 +552,7 @@ sdOdeModelMsg$verifyModel9 <- function(pmodelId, dRes, lenst)
 sdOdeModelMsg$verifyModel10 <- function(pmodelId, typeofres) 
   warning("sdsim::verifyModel - Model '", pmodelId, 
           "' verification: the $DifferentialEquations function should return ",
-          "a list. Wrong return type:", typeofres,".", call. = F)
+          "a list. Wrong return type: ", typeofres,".", call. = F)
 
 sdOdeModelMsg$verifyModel11 <- function(pmodelId) 
   message("sdsim::verifyModel - Model '", pmodelId, 
@@ -565,15 +565,11 @@ sdOdeModelMsg$verifyModel12 <- function(pmodelId, typeofscen)
           "a character string with a scenario XML or EXCEL file name.", 
           call. = F)
 
-sdOdeModelMsg$description <- function(pmodelId)
-  warning("sdsim::description - Model '", pmodelId, "' get descriptions: ",
-          "No default scenario was added, could not get the desription list.", 
-          call. = F)
-
-sdOdeModelMsg$unit <- function(pmodelId)
-  warning("sdsim::description - Model '", pmodelId, "' get units: ",
-          "No default scenario was added, could not get the unit list.", 
-          call. = F)
+sdOdeModelMsg$verifyModel13 <- function(modelId)
+  stop("sdsim::verifyModel - Model '", modelId,
+       "' verification aborted: no state variables informed. Define the ", 
+       "state variables in the default scenario or via the scenario argument.", 
+       call. = F)
 
 # sdOdeModelMsg$modelId1 <- function(modelId)
 #   warning("sdsim::modelId - Missing model ID: It was set to '", modelId, "'.", 
@@ -591,11 +587,6 @@ sdOdeModelMsg$defaultScenario <- function(pmodelId)
           "help('sdScenario') constructor. No default scenario was set.", 
           call. = F)
 
-sdOdeModelMsg$modelDescription <- function(pmodelId)
-  warning("sdsim::modelDescription - Model '", pmodelId, 
-          "' set description aborted: The model description ",
-          "must be a string.", call. = F)
-
 ## FILE sdOutput.R
 ## 
 sdOutputMsg <- new.env()
@@ -612,11 +603,11 @@ sdOutputMsg$plot2 <- function(poutputId)
           "help('sdOutput'). All the output variables will be ploted instead.",
           call. = F)
 
-sdOutputMsg$plot3 <- function(poutputId, xaxis, yaxisArray, namesData)
+sdOutputMsg$plot3 <- function(poutputId, yaxisArray, namesData)
   warning("sdsim::plot - Plot output '", poutputId, 
           "': Not all the formula variables are valid column names. ",
           "The following variables will be skipped: ", 
-          paste(c(xaxis, yaxisArray)[!(c(xaxis, yaxisArray) %in% namesData)], 
+          paste(yaxisArray[!(yaxisArray %in% namesData)], 
                 collapse = ", "), call. = F)
 
 sdOutputMsg$plot4 <- function(poutputId, xaxis)
