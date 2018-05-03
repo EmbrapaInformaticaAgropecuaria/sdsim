@@ -1095,7 +1095,7 @@ sdScenarioClass <- R6::R6Class(
       if (is.null(names(varList)) || all(names(varList) %in% ""))
       {
         sdScenarioMsg$addVar1(private$pid)
-        invisible(NULL)
+        return(invisible(NULL))
       }
       
       # make valid names

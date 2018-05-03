@@ -607,7 +607,7 @@ sdOutputClass <- R6::R6Class(
       if (!is.null(private[["pdiag"]]))
       {
         cat(private[["pdiag"]])
-        invisible(private[["pdiag"]])
+        return(invisible(private[["pdiag"]]))
       }
       else
         return(NULL)
