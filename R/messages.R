@@ -654,7 +654,7 @@ sdScenarioMsg$setTimeSequence1 <- function(pscenarioId, varType)
 sdScenarioMsg$setTimeSequence2 <- function(pscenarioId, varType)
   warning("sdsim::setTimeSequence - Scenario '", pscenarioId, 
           "': The increment of the time sequence must be inside the starting ", 
-          "and end value of the sequence and have the right sign (positive ", 
+          "and end values of the sequence and have the right sign (positive ", 
           "for crescent sequences and negative for descreasing ones). ", 
           "Argument '", varType, "' not set.", call. = F)
 
@@ -878,6 +878,14 @@ sdSimulatorMsg$sdSimulateModel <- paste0(
   "A valid model default scenario or the scenario argument must ",
   "be informed to run the simulation.")
 
+sdSimulatorMsg$sdSimulateAtomic0 <- function(modelId)
+  stop("sdsim::sdSimulate - Simulation of the model '", modelId,
+       "' aborted: The increment of the time sequence must be inside the ", 
+       "starting and end values of the sequence and have the right sign ", 
+       "(positive for crescent sequences and negative for descreasing ones). ",
+       "Define a valid time sequence in the default scenario or via the ", 
+       "arguments to run a simulation.", call. = F)
+
 sdSimulatorMsg$sdSimulateAtomic1 <- function(modelId)
   stop("sdsim::sdSimulate - Simulation of the model '", modelId,
        "' aborted: no state variables informed. Define the state variables in ", 
@@ -922,6 +930,14 @@ sdSimulatorMsg$sdSimulateStatic1 <- function(staticModelId)
        "' aborted: No time sequence informed. Define the time sequence ",
        "in the default scenario or via the arguments.", call. = F)
 
+sdSimulatorMsg$sdSimulateStatic2 <- function(staticModelId)
+  stop("sdsim::sdSimulate - Simulation of the static model '", staticModelId,
+       "' aborted: The increment of the time sequence must be inside the ", 
+       "starting and end values of the sequence and have the right sign ", 
+       "(positive for crescent sequences and negative for descreasing ones). ",
+       "Define a valid time sequence in the default scenario or via the ", 
+       "arguments to run a simulation.", call. = F)
+
 sdSimulatorMsg$sdSimulateCoupled0 <- function(coupledModelId)
   stop("sdsim::sdSimulate - Simulation of the coupled model '", coupledModelId,
        "' aborted: No component differential equations function or ",
@@ -965,3 +981,11 @@ sdSimulatorMsg$sdSimulateCoupled6 <- function(coupledModelId, modelId)
           coupledModelId,
           "': The component '", modelId, "' postProcess function ",
           "returned the following error. ", e, call. = F)
+
+sdSimulatorMsg$sdSimulateCoupled7 <- function(coupledModelId)
+  stop("sdsim::sdSimulate - Simulation of the coupled model '", coupledModelId,
+       "' aborted: The increment of the time sequence must be inside the ", 
+       "starting and end values of the sequence and have the right sign ", 
+       "(positive for crescent sequences and negative for descreasing ones). ",
+       "Define a valid time sequence in the default scenario or via the ", 
+       "arguments to run a simulation.", call. = F)

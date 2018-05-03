@@ -458,7 +458,7 @@ sdScenarioClass <- R6::R6Class(
       # Initialize input and time series
       if (!missing(input) && !is.null(input) && length(input) > 0)
       {
-        if ((is.list(input)) && !is.null(names(input)))
+        if ((is.list(input) || is.vector(input)) && !is.null(names(input)))
           self$addInput(input, verbose = verbose, interpolation = interpolation,
                         timeSeriesDirectory = timeSeriesDirectory)
         else
@@ -478,7 +478,7 @@ sdScenarioClass <- R6::R6Class(
       # Initialize switch
       if (!missing(switch) && !is.null(switch) && length(switch) > 0)
       {
-        if ((is.list(switch)) && !is.null(names(switch)))
+        if ((is.list(switch) || is.vector(input)) && !is.null(names(switch)))
           self$addSwitch(switch, verbose = verbose)
         else
           sdScenarioMsg$initialize2(id, "switch")
@@ -1097,7 +1097,7 @@ sdScenarioClass <- R6::R6Class(
                       verbose = FALSE, sortVars = FALSE, overwrite = FALSE)
     {
       # if an unnamed list is passed, add its elements
-      if (length(varList) == 1 && is.list(varList[[1]]) 
+      if (length(varList) == 1 && is.vector(varList[[1]]) 
           && is.null(names(varList)))
         varList <- varList[[1]]
       

@@ -467,6 +467,10 @@ sdSimulate <- function(model,
     # verify data
     if (is.null(times) || !all(c("from", "to", "by") %in% names(times)))
       sdSimulatorMsg$sdSimulateAtomic2(model$id)
+    else if (!((times$to - times$from) >= times$by && 
+             (times$to - times$from)*times$by > 0)) # invalid time sequence
+      sdSimulatorMsg$sdSimulateAtomic0(model$id)
+    
     if (is.null(method))
     {
       sdSimulatorMsg$sdSimulateAtomic5(model$id)
@@ -768,6 +772,9 @@ sdSimulate <- function(model,
     # verify data
     if (is.null(times) || !all(c("from", "to", "by") %in% names(times)))
       sdSimulatorMsg$sdSimulateStatic1(model$id)
+    else if (!((times$to - times$from) >= times$by && 
+               (times$to - times$from)*times$by > 0)) # invalid time sequence
+      sdSimulatorMsg$sdSimulateStatic2(model$id)
     
     if (!is.null(InitVars))
     {
@@ -951,6 +958,9 @@ sdSimulate <- function(model,
     # verify time sequence
     if (is.null(times) || !all(c("from", "to", "by") %in% names(times)))
       sdSimulatorMsg$sdSimulateCoupled3(model$id)
+    else if (!((times$to - times$from) >= times$by && 
+               (times$to - times$from)*times$by > 0)) # invalid time sequence
+      sdSimulatorMsg$sdSimulateCoupled7(model$id)
     
     # Run the model Init Vars
     modelInit <- list()

@@ -145,8 +145,8 @@ test_that("sdOdeModel.R", code =
 test_that("sdOutput.R", code =
 {
   outa <- sdSimulate(sdLoadModel("Arenstorf", repository = TRUE))
-  expect_warning(outa$plot("D1 y1", ylab = list(c("y lab", "a")), 
-                           multipleYAxis = T), info = "sdOutputMsg$plot1")
+  expect_type(outa$plot("D1 y1", ylab = list(c("y lab", "a")), 
+                           multipleYAxis = T), type = "list")
   expect_warning(outa$plot("D1", ylab = c(" a", "d")), 
                  info = "sdOutputMsg$plot1")
   expect_warning(outa$plot(2), info = "sdOutputMsg$plot2")
