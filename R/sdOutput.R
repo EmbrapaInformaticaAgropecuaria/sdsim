@@ -442,7 +442,8 @@ sdOutputClass <- R6::R6Class(
           col <- unique(c(col, colors(distinct = T)))
         
         # check the ylabel size when plotting more than one YAxis
-        if (ylabel != "" && multipleYAxis && length(ylabel) < nYAxis)
+        if (!is.null(ylab) && ylabel != "" && multipleYAxis && 
+            length(ylabel) < nYAxis)
           sdOutputMsg$plot1(private$poutputId, "ylab")
         
         # plot each y variable
