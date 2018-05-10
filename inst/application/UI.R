@@ -1024,8 +1024,7 @@ helpPage <- shinydashboard::tabItem(
       h5("A static model calculates the system in equilibrium, and thus is 
          time-invariant. It represents a steady-state (no state variables) 
          operation in which the system variables are assumed to remain constant 
-         in time [@static]. A static model is defined by algebraic equations 
-         with static behaviour."),
+         in time", Popover(text = "(static)", title = "static", content = "static"), ". A static model is defined by algebraic equations with static behaviour."),
       h5("A static model is specified by:"),
       tags$ul(
         tags$li("ID: the identification name of the model."),
@@ -1046,14 +1045,18 @@ helpPage <- shinydashboard::tabItem(
          result, assuming that no exogenous sources are specified, such as time 
          series or connections between models, the algebraic equations will
          always output the same result, meaning its output trajectory will be 
-         constant. [@sdsim]"),
+         constant.", Popover(text = "(sdsim)", title = "sdsim", content = "sdsim")),
       br(),
       h5(strong("Coupled Model")),
-      shinyBS::bsPopover("CiteTheoryOfModeling", title = "Theory of Modeling and Simulation", "Bernard P. Zeigler, Herbert Praehofer, Tag Gon Kim"),
       h5("A coupled model is a set of models that are coupled together to define
          a complex system. The flow of information between the component models 
          of a coupled system is defined through input and output connections. 
-         ", tags$sup(id = "CiteTheoryOfModeling", "[Theory of Modeling and Simulation]")),
+         ", Popover(text = "(Zeigler et al. 2000)", 
+                    title = "Theory of modeling and simulation", 
+                    content = "ZEIGLER, B. P.; PRAEHOFER, H.; KIM, T. G. Theory 
+                    of modeling and simulation: integrating discrete event and 
+                    continuous complex dynamic systems. [S.l.]: Academic press, 
+                    2000.")),
       h5("A coupled model is specified by:"),
       tags$ul(
         tags$li("ID: the identification name of the model."),
@@ -1132,6 +1135,7 @@ helpPage <- shinydashboard::tabItem(
                 be executed using that variable's value from the default
                 scenario.")
       ),
+      br(),
       h5(strong("Managing Scenarios")),
       h5("Scenarios can be managed using the menu under “Scenario”, located at 
          the sidebar menu. The dropdown input is used to switch between loaded 

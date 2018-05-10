@@ -1,3 +1,15 @@
+Popover <- function(text, title, content, trigger = "hover click", 
+                    placement = "bottom", tag = "a") {
+  tags[[tag]](href = "#_",
+              class = "pop",
+              "title" = title,
+              "data-content" = content,
+              "data-trigger" = trigger,
+              "data-placement" = placement,
+              "data-toggle" = "popover",
+              text)
+}
+
 # Custom function for creating ace editor with tabulation size parameter
 AceEditorCustom <- function(varName, tabSize = 2, mode = "r", 
                             autoComplete = "enabled",

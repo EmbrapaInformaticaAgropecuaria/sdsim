@@ -1,3 +1,5 @@
+a.pop { white-space: nowrap; }
+
 .shiny-output-error-validation {
   color: #0027ce;
 }
