@@ -973,6 +973,7 @@ helpPage <- shinydashboard::tabItem(
       status = "primary",
       width = "100%",
       collapsible = F,
+      br(),
       tags$ul(style = "padding-left: 17px",
         tags$li(a(href = "#programmingHelp", "Programming Language")),
         tags$li(a(href = "#modelHelp", "Model")),
