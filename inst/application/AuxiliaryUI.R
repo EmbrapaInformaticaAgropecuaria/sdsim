@@ -1,4 +1,5 @@
-Popover <- function(text, title, content, trigger = "hover click", 
+# Create a popover element
+Popover <- function(text, title, content, trigger = "hover", 
                     placement = "bottom", tag = "a") {
   tags[[tag]](href = "#_",
               class = "pop",

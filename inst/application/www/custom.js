@@ -1,7 +1,3 @@
-//$(document).ready(function(){
-//    $('[data-toggle="popover"]').popover();   
-//});
-
 // Source:
 // https://stackoverflow.com/questions/15989591/how-can-i-keep-bootstrap-popover-alive-while-the-popover-is-being-hovered/19684440#19684440
 $(".pop").popover({ trigger: "manual" , html: true, animation:false})

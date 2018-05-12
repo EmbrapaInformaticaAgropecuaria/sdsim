@@ -48,7 +48,7 @@ sidebar <- shinydashboard::dashboardSidebar(
       tags$button(
         id = "saveModel",
         class = "btn action-button shiny-bound-input",
-        img(src = "icon_save2.png",
+        img(src = "icon_save.png",
             height = "34px"),
         style = "border-radius: 50%; padding: 0px 0px 0px 0px; height: 30px; 
         width: 30px; border: 0px; background-color: transparent; 
@@ -93,7 +93,7 @@ sidebar <- shinydashboard::dashboardSidebar(
       tags$button(
         id = "saveScenario",
         class = "btn action-button shiny-bound-input",
-        img(src = "icon_save2.png",
+        img(src = "icon_save.png",
             height = "34px"),
         style = "border-radius: 50%; padding: 0px 0px 0px 0px; height: 30px; 
         width: 30px; border: 0px; background-color: transparent; 
@@ -137,7 +137,6 @@ simulationPage <- shinydashboard::tabItem(
         column(7, h3("Model Simulation"))
       ),
       br(), # newline
-      
       div(
         div(
           
@@ -974,19 +973,48 @@ helpPage <- shinydashboard::tabItem(
       status = "primary",
       width = "100%",
       collapsible = F,
-      h4(strong("Programming Language")),
+      tags$ul(style = "padding-left: 17px",
+        tags$li(a(href = "#programmingHelp", "Programming Language")),
+        tags$li(a(href = "#modelHelp", "Model")),
+        tags$li(style="list-style-type:none",
+                tags$ul(
+                  tags$li(a(href = "#odeHelp", "ODE Model")),
+                  tags$li(a(href = "#staticHelp", "Static Model")),
+                  tags$li(a(href = "#coupledHelp", "Coupled Model")),
+                  tags$li(a(href = "#managingModelsHelp", "Managing Models"))
+                )
+        ),
+        tags$li(a(href = "#scenarioHelp", "Scenario")),
+        tags$li(style="list-style-type:none",
+          tags$ul(
+            tags$li(a(href = "#defaultScenarioHelp", "Default Scenario")),
+            tags$li(a(href = "#alternateScenarioHelp", "Alternate Scenario")),
+            tags$li(a(href = "#managingScenariosHelp", "Managing Scenarios"))
+          )
+        ),
+        tags$li(a(href = "#simulationHelp", "Simulation")),
+        tags$li(style="list-style-type:none",
+                tags$ul(
+                  tags$li(a(href = "#parametersHelp", "Parameters")),
+                  tags$li(a(href = "#executionHelp", "Execution")),
+                  tags$li(a(href = "#resultsHelp", "Results"))
+                )
+        )
+      ),
+      br(),
+      h4(id = "programmingHelp", strong("Programming Language")),
       h5("This is a companion application to the sdsim package, developed for 
          the programming language R. Therefore, everything created in this 
          application must be written in R."),
       br(),
-      h4(strong("Model")),
+      h4(id = "modelHelp", strong("Model")),
       h5("In a modeling and simulation context, a model is conceived as 
          mathematical representation of a system. It is a set of instructions, 
          rules, equations, or constraints for generating input/output behavior 
          . This application supports three types of 
          models: ODE models, static models and coupled models."),
       br(),
-      h5(strong("ODE model")),
+      h5(id = "odeHelp", strong("ODE Model")),
       h5("An ODE (ordinary differential equation) model has its behaviour 
          determined by its current state, which is represented by state 
          variables, and by a system of ODEs which specifies the rate of change 
@@ -1020,7 +1048,7 @@ helpPage <- shinydashboard::tabItem(
                 executed in the scope of other functions defined in the model.")
       ),
       br(),
-      h5(strong("Static model")),
+      h5(id = "staticHelp", strong("Static Model")),
       h5("A static model calculates the system in equilibrium, and thus is 
          time-invariant. It represents a steady-state (no state variables) 
          operation in which the system variables are assumed to remain constant 
@@ -1047,7 +1075,7 @@ helpPage <- shinydashboard::tabItem(
          always output the same result, meaning its output trajectory will be 
          constant.", Popover(text = "(sdsim)", title = "sdsim", content = "sdsim")),
       br(),
-      h5(strong("Coupled Model")),
+      h5(id = "coupledHelp", strong("Coupled Model")),
       h5("A coupled model is a set of models that are coupled together to define
          a complex system. The flow of information between the component models 
          of a coupled system is defined through input and output connections. 
@@ -1071,27 +1099,37 @@ helpPage <- shinydashboard::tabItem(
                 model-based insights.")
       ),
       br(),
-      h5(strong("Managing Models")),
+      h5(id = "managingModelsHelp", strong("Managing Models")),
       h5("Models can be managed using the menu under “Model”, located at the 
          sidebar menu. The dropdown input is used to switch between loaded 
          models."),
-      h5("Models can be created or loaded using the plus sign button. New models
-         can be created empty, loaded from existing models xml files, loaded 
-         from one of the examples available, or cloned from the currently 
-         selected model."),
+      h5("Models can be created or loaded clicking the plus sign button (", 
+         img(src = "icon_add.png", height = "20px", 
+             style = "padding: 0 0 2px 0"),
+         "), located “Model”. New models can be created 
+         empty, loaded from existing models xml files, loaded from one of the 
+         examples available, or cloned from the currently selected model."),
       h5("The selected model's specification can be viewed and modified in the
          “Edit Model” menu. The model’s description can be modified in the 
          “Description” menu."),
       h5("The selected model's ID can be changed in the “Edit Model” menu using 
          the “Change Model ID” button."),
       h5("The selected model can be deleted from the application by clicking the
-         minus sign button."),
+         minus sign button (",
+         img(src = "icon_remove.png", height = "20px", 
+             style = "padding: 0 0 2px 0"),
+         "), under “Model”."
+      ),
       h5("The selected model can be saved to a XML file by clicking the button 
-         with the folder icon and downloading the file. This file can be used to
+         with the folder icon (",
+         img(src = "icon_save.png", height = "20px", 
+             style = "padding: 0 0 2px 0"),
+         "), under “Model”, and downloading the file. This file
+         can be used to
          reload the model into the application. It can also be loaded to R using
          the functions exported by the sdsim package."),
       br(),
-      h4(strong("Scenario")),
+      h4(id = "scenarioHelp",strong("Scenario")),
       h5("A scenario contains the variables and values that describe the 
          environment in which a system is embedded."),
       h5("A scenario is specified by:"),
@@ -1118,48 +1156,58 @@ helpPage <- shinydashboard::tabItem(
                 value in the second column. Both columns must have the 
                 headers.")
       ),
-      h5("There are two types of scenarios: default scenarios and alternate 
-         scenarios."),
-      tags$ul(
-        tags$li("Default: scenarios which contain the base values of each 
-                model's variables. Every ode and static models have default 
-                scenarios. Coupled models use the defaults of its components, 
-                thus it does not have its own default scenario. The ID of
-                default scenarios cannot be changed, and will always be named 
-                “Default”."),
-        tags$li("Alternate: scenarios which contain the value for at least
-                one of the model's variables. This scenario can be used to run
-                different simulations using the same model, without the need
-                to alter the default scenario. If a variable from the model is
-                not specified in the alternate scenario, the simulation will
-                be executed using that variable's value from the default
-                scenario.")
-      ),
+      h5("This application supports two types of scenarios: default scenarios 
+         and alternate scenarios."),
       br(),
-      h5(strong("Managing Scenarios")),
+      h5(id = "defaultScenarioHelp",strong("Default Scenario")),
+      h5("Default cenarios contain the base values of each 
+         model's variables. Every ode and static models have default 
+         scenarios. Coupled models use the defaults of its components, 
+         thus it does not have its own default scenario. The ID of
+         default scenarios cannot be changed, and will always be named 
+         “Default”."),
+      br(),
+      h5(id = "alternateScenarioHelp",strong("Alternate Scenario")),
+      h5("Alternate scenarios contain the value for at least
+         one of the model's variables. This scenario can be used to run
+         different simulations using the same model, without the need
+         to alter the default scenario. If a variable from the model is
+         not specified in the alternate scenario, the simulation will
+         be executed using that variable's value from the default
+         scenario."),
+      br(),
+      h5(id = "managingScenariosHelp", strong("Managing Scenarios")),
       h5("Scenarios can be managed using the menu under “Scenario”, located at 
          the sidebar menu. The dropdown input is used to switch between loaded 
          scenarios. Each model has a different set of scenarios, and the 
          available scenarios will change according to the selected model."),
-      h5("Scenarios can be created or loaded using the plus sign button. New 
-         scenarios can be created empty or loaded from existing scenarios xml or
-         xlsx files."),
+      h5("Scenarios can be created or loaded clicking the plus sign button(", 
+         img(src = "icon_add.png", height = "20px", 
+             style = "padding: 0 0 2px 0"),
+         "), under “Scenario”. New scenarios can be created empty or loaded from
+         existing scenarios xml or xlsx files."),
       h5("The selected scenario's state variables, constants, inputs and 
          switches can be viewed and modified in the “Edit Scenario” menu."),
       h5("The selected scenario's ID can be changed in the “Edit Scenario” menu 
          by clicking the “Change Scenario ID” button."),
       h5("The selected scenario can be deleted from the application by clicking 
-         the minus sign button. Default scenarios cannot be deleted."),
+         the minus sign button (",
+         img(src = "icon_remove.png", height = "20px", 
+             style = "padding: 0 0 2px 0"),
+         "), under “Scenario”. Default scenarios cannot be deleted."),
       h5("The selected scenario can be saved into a XML or xlsx file by clicking
-         the folder button and downloading the file. This file can be used to 
-         reload the model into the application. It can also be loaded to R using
-         the functions exported by the sdsim package."),
+         the button with the folder icon (",
+         img(src = "icon_save.png", height = "20px", 
+             style = "padding: 0 0 2px 0"),
+         "), under “Scenario”, and downloading the file. This file can be used 
+         to reload the model into the application. It can also be loaded to R 
+         using the functions exported by the sdsim package."),
       br(),
-      h4(strong("Simulation")),
+      h4(id = "simulationHelp", strong("Simulation")),
       h5("After models are loaded, they can be simulated in the “Simulation” 
          menu, located at the sidebar."),
       br(),
-      h5(strong("Parameters")),
+      h5(id = "parametersHelp", strong("Parameters")),
       h5("The integration method can be chosen under “Method”. The available
          methods are:"),
       tags$ul(
@@ -1196,15 +1244,13 @@ helpPage <- shinydashboard::tabItem(
          Time”, determines when the simulation ends, and “Time Step”, the
          interval between each step of the simulation."),
       br(),
-      h5(strong("Execution")),
-      h5("The currently selected model can be simulated with the currently
-         selected scenario by pressing the “Start Simulation” button. If
-         any errors or warnings occur during the simulation, they will be
-         logged and displayed inside a text panel."),
-      h5("The button “Start Simulation” can be used to simulate the currently
-         selected model with the currently selected scenario."),
+      h5(id = "executionHelp", strong("Execution")),
+      h5("The selected model, together with the selected scenario, can be 
+         simulated by pressing the “Start Simulation” button. If any errors or 
+         warnings occur during the simulation, they will be logged and displayed
+         inside a text panel."),
       br(),
-      h5(strong("Results")),
+      h5(id = "resultsHelp", strong("Results")),
       h5("The simulation results are displayed under the “Trajectory” tab, 
          which contains three other tabs: “Result”, where the trajectory of 
          the state variables or algebraic equations are displayed; “Auxiliary 
