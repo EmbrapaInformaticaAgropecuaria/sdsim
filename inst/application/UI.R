@@ -595,9 +595,9 @@ DifferentialEquationsPage <- shinydashboard::tabItem(
                 status = "primary",
                 width = "100%",
                 collapsible = T,
-                h5("An optional function that becomes zero when a root 
-                   occurs. When a root is found, the simulation triggers 
-                   an event by calling the EventFunction. "),
+                h5("The trigger function, or Root function, is an optional 
+                   R-function that triggers an Event Function when it returns 
+                   zero."),
                 h5("It is defined as the function:"),
                 tags$ul(h5("function(t, st, ct, par, inp, sw, aux)")),
                 h5("Where,"),
@@ -612,8 +612,8 @@ DifferentialEquationsPage <- shinydashboard::tabItem(
                   tags$li("sw: a list of switches;"),
                   tags$li("aux: a list of auxiliary variables.")
                 ),
-                h5("If no EventFunction is defined, when a root is found 
-                   the simulation stops."),
+                h5("If no Event Function is defined, when the trigger function 
+                   returns zero, the simulation stops. "),
                 h5("The return must be numeric vector. If any element of 
                    this vector is zero an event is trigged."),
                 br(),
@@ -637,7 +637,7 @@ DifferentialEquationsPage <- shinydashboard::tabItem(
                 width = "100%",
                 collapsible = T,
                 h5("An optional function that specifies the event that
-                   is triggered when the root function returns 0. It can
+                   is triggered when the trigger function returns 0. It can
                    be used to change state values during the execution
                    of the simulation."),
                 h5("It is defined as the function:"),
@@ -657,8 +657,8 @@ DifferentialEquationsPage <- shinydashboard::tabItem(
                 h5("It should return the state-values (some of which might
                    have been modified by the function), as a vector with 
                    the variables in the right order."),
-                h5("If no EventFunction is defined, when a root is found 
-                   the simulation stops."),
+                h5("If no Event Function is defined, when the trigger function 
+                   returns zero, the simulation stops. "),
                 br(),
                 h5("Example from Bouncing Ball Model:"),
                 AceEditorCustom("eventExample",
