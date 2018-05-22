@@ -974,355 +974,367 @@ helpPage <- shinydashboard::tabItem(
       width = "100%",
       collapsible = F,
       br(),
-      tags$ul(
-        style = "padding-left: 17px",
-        tags$li(a(href = "#Interface_Usability", "Interface Usability")),
-        tags$li(a(href = "#Programming_Language", "Programming Language")),
-        tags$li(a(href = "#Model", "Model")),
-        tags$li(
-          style="list-style-type:none",
-          tags$ul(
-            tags$li(a(href = "#ODE_Model", "ODE Model")),
-            tags$li(a(href = "#Static_Model", "Static Model")),
-            tags$li(a(href = "#Coupled_Model", "Coupled Model")),
-            tags$li(a(href = "#Managing_Models", "Managing Models"))
-          )
-        ),
-        tags$li(a(href = "#Scenario", "Scenario")),
-        tags$li(
-          style="list-style-type:none",
-          tags$ul(
-            tags$li(a(href = "#Default_Scenario", "Default Scenario")),
-            tags$li(a(href = "#Alternate_Scenario", "Alternate Scenario")),
-            tags$li(a(href = "#Managing_Scenarios", "Managing Scenarios"))
-          )
-        ),
-        tags$li(a(href = "#Simulation", "Simulation")),
-        tags$li(
-          style="list-style-type:none",
-          tags$ul(
-            tags$li(a(href = "#Parameters", "Parameters")),
-            tags$li(a(href = "#Execution", "Execution")),
-            tags$li(a(href = "#Results", "Results"))
+      fluidPage(
+        fluidRow(
+          column(
+            width = 2,
+            tags$ul(
+              style = "padding-left: 17px",
+              tags$li(a(href = "#Interface_Usability", "Interface Usability")),
+              tags$li(a(href = "#Programming_Language", "Programming Language")),
+              tags$li(a(href = "#Model", "Model")),
+              tags$li(
+                style="list-style-type:none",
+                tags$ul(
+                  tags$li(a(href = "#ODE_Model", "ODE Model")),
+                  tags$li(a(href = "#Static_Model", "Static Model")),
+                  tags$li(a(href = "#Coupled_Model", "Coupled Model")),
+                  tags$li(a(href = "#Managing_Models", "Managing Models"))
+                )
+              ),
+              tags$li(a(href = "#Scenario", "Scenario")),
+              tags$li(
+                style="list-style-type:none",
+                tags$ul(
+                  tags$li(a(href = "#Default_Scenario", "Default Scenario")),
+                  tags$li(a(href = "#Alternate_Scenario", "Alternate Scenario")),
+                  tags$li(a(href = "#Managing_Scenarios", "Managing Scenarios"))
+                )
+              ),
+              tags$li(a(href = "#Simulation", "Simulation")),
+              tags$li(
+                style="list-style-type:none",
+                tags$ul(
+                  tags$li(a(href = "#Parameters", "Parameters")),
+                  tags$li(a(href = "#Execution", "Execution")),
+                  tags$li(a(href = "#Results", "Results"))
+                )
+              )
+            )
+          ),
+          column(
+            width = 10,
+            div(
+              style = "height: 80vh; overflow-y: scroll;",
+              h4(id = "Interface_Usability", strong("Interface Usability")),
+              h5("This section provides a general explanation of this application, and 
+                      introduces the modeling and simulation approach of the sdsim package. 
+                      Detailed instructions of the application's functionalities are 
+                      available under the tab “Usage” at each menu tab."),
+              br(),
+              h4(id = "Programming_Language", strong("Programming Language")),
+              h5("This is a companion application to the sdsim package, developed for 
+                      the programming language R. Therefore, everything created in this 
+                      application must be written in R."),
+              br(),
+              h4(id = "Model", strong("Model")),
+              h5("In a modeling and simulation context, a model is conceived as 
+                      mathematical representation of a system. It is a set of instructions, 
+                      rules, equations, or constraints for generating input/output behavior 
+                      . This application supports three types of 
+                      models: ODE models, static models and coupled models."),
+              br(),
+              h5(id = "ODE_Model", strong("ODE Model")),
+              h5("An ODE (ordinary differential equation) model has its behaviour 
+                      determined by its current state, which is represented by state 
+                      variables, and by a system of ODEs which specifies the rate of change 
+                      of the model state. Along with a scenario containing the trajectories 
+                      of the driver variables, the ODE model can be simulated to forecast the
+                      evolution of the real system’s state over time."),
+              h5("An ODE model is specified by:"),
+              tags$ul(
+                tags$li("ID: the identification name of the model."),
+                tags$li("Description: (optional) a text description of the model."),
+                tags$li("Differential Equations: an R-function that computes the values 
+                             of the state variables derivatives in the ODE system (the model 
+                             definition) at time t. The calculated derivatives are used to 
+                             calculate the growth of the model's state throughout the 
+                             simulation."),
+                tags$li("Initialization Function: (optional) an R-function that 
+                             initializes or changes the initial state values and/or other 
+                             model variables before the solver call when running a 
+                             simulation. It can be used to initialize variables whose values 
+                             are calculated depending on other variables from the system."),
+                tags$li("Trigger Function: (optional) an R-function that triggers an 
+                             Event Function when it returns zero. If no Event Function is 
+                             defined, when zero is returned the simulation stops."),
+                tags$li("Event Function: (optional) an R-function that specifies the 
+                             event."),
+                tags$li("Auxiliary Variables: (optional) a set of equations that are 
+                             used to calculate auxiliary variables at each step of the 
+                             simulation. These variables represent intermediary values used 
+                             to compute the derivatives of the differential equations."),
+                tags$li("Global Functions: (optional) a set of R-functions that can be 
+                             executed in the scope of other functions defined in the model.")
+              ),
+              br(),
+              h5(id = "Static_Model", strong("Static Model")),
+              h5("A static model calculates the system in equilibrium, and thus is 
+                      time-invariant. It represents a steady-state (no state variables) 
+                      operation in which the system variables are assumed to remain constant 
+                      in time", 
+                 Popover(
+                   id = "ref_Karnopp_et_al_2006",
+                   text = "(Karnopp et al., 2006)", 
+                   title = "System Dynamics: Modeling and Simulation of Mechatronic Systems", 
+                   content = "Dean C. Karnopp, Donald L. Margolis, and Ronald C. 
+                        Rosenberg. 2006. System Dynamics: Modeling and Simulation of 
+                        Mechatronic Systems. John Wiley & Sons, Inc., New York, NY, USA.",
+                   href = "#note_Karnopp_et_al_2006"), 
+                 ". A static model is defined by algebraic equations with static 
+                      behaviour."),
+              h5("A static model is specified by:"),
+              tags$ul(
+                tags$li("ID: the identification name of the model."),
+                tags$li("Description: (optional) a text description of the model."),
+                tags$li("Equations: a set of algebraic equations that are calculated 
+                             during the simulation."),
+                tags$li("Initialization Function: (optional) an R-function that 
+                             initializes or changes the initial state values and/or other
+                             model variables before the solver call when running a 
+                             simulation. It can be used to initialize variables whose values 
+                             are calculated depending on other variables from the system."),
+                tags$li("Global Functions: (optional) a set of R-functions that can be 
+                             executed in the scope of other functions or equations defined 
+                             in the model.")
+              ),
+              h5("In this definition a static model provides the system’s response to a 
+                      specific set of input conditions, specified by the scenario. As a 
+                      result, assuming that no exogenous sources are specified, such as time 
+                      series or connections between models, the algebraic equations will
+                      always output the same result, meaning its output trajectory will be 
+                      constant."
+                 # Popover(text = "(sdsim)", title = "sdsim", content = "sdsim")
+              ),
+              br(),
+              h5(id = "Coupled_Model", strong("Coupled Model")),
+              h5("A coupled model is a set of models that are coupled together to define
+                      a complex system. The flow of information between the component models 
+                      of a coupled system is defined through input and output connections. 
+                      ", 
+                 Popover(
+                   id = "ref_Zeigler_et_al_2000",
+                   text = "(Zeigler et al., 2000)", 
+                   title = "Theory of modeling and simulation", 
+                   content = "ZEIGLER, B. P.; PRAEHOFER, H.; KIM, T. G. Theory of 
+                        modeling and simulation: integrating discrete event and continuous 
+                        complex dynamic systems. [S.l.]: Academic press, 2000.",
+                   href = "#note_Zeigler_et_al_2000")),
+              h5("A coupled model is specified by:"),
+              tags$ul(
+                tags$li("ID: the identification name of the model."),
+                tags$li("Description: (optional) a text description of the model."),
+                tags$li("Components: a set of IDs of existing atomic, static or coupled 
+                             models. The component models must be previously loaded in the 
+                             application."),
+                tags$li("Connections: a data table describing the connections between 
+                             the components of the model. The connections determine loops of 
+                             information feedback and circular causality for conceptualizing 
+                             the structure of a complex system and for communicating 
+                             model-based insights.")
+              ),
+              br(),
+              h5(id = "Managing_Models", strong("Managing Models")),
+              h5("Models can be managed using the menu under “Model”, located at the 
+                      sidebar menu. The dropdown input is used to switch between loaded 
+                      models."),
+              h5("Models can be created or loaded clicking the plus sign button (", 
+                 img(src = "icon_add.png", height = "20px", 
+                     style = "padding: 0 0 3px 0"),
+                 "), located “Model”. New models can be created 
+                      empty, loaded from existing models xml files, loaded from one of the 
+                      examples available, or cloned from the currently selected model."),
+              h5("The selected model's specification can be viewed and modified in the
+                      “Edit Model” menu. The model’s description can be modified in the 
+                      “Description” menu."),
+              h5("The selected model's ID can be changed in the “Edit Model” menu using 
+                      the “Change Model ID” button."),
+              h5("The selected model can be deleted from the application by clicking the
+                      minus sign button (",
+                 img(src = "icon_remove.png", height = "20px", 
+                     style = "padding: 0 0 3px 0"),
+                 "), under “Model”."
+              ),
+              h5("The selected model can be saved to a XML file by clicking the button 
+                      with the folder icon (",
+                 img(src = "icon_save.png", height = "20px", 
+                     style = "padding: 0 0 3px 0"),
+                 "), under “Model”, and downloading the file. This file
+                      can be used to
+                      reload the model into the application. It can also be loaded to R using
+                      the functions exported by the sdsim package."),
+              br(),
+              h4(id = "Scenario",strong("Scenario")),
+              h5("A scenario contains the variables and values that describe the 
+                      environment in which a system is embedded."),
+              h5("A scenario is specified by:"),
+              tags$ul(
+                tags$li("State: the initial value of state variables, which will change 
+                             over time during the simulation according to the value of its 
+                             respective derivative. Every ODE model must have at least one 
+                             state variable. Static models scenarios do not have state 
+                             variables"),
+                tags$li("Constants: remain immutable across different simulations and 
+                             cannot be calibrated by statistical methods."),
+                tags$li("Parameters: variables that can be calibrated using statistical 
+                             methods."),
+                tags$li("Switches: discrete variables that are used as conditional 
+                             selectors in the model. Switches can be used, for instance, to 
+                             change parameter initialization values or to change the control 
+                             flow of the model (i.e. to change the parts of the code which 
+                             will be used by the model)."),
+                tags$li("Inputs: exogenous variables (also called drivers). These 
+                             variables can be numeric values, time series or forcing 
+                             functions (i.e. functions that only depends on time). Time 
+                             series should be uploaded as csv (comma separated values) format
+                             files with time in the first column and the respective variable 
+                             value in the second column. Both columns must have the 
+                             headers.")
+              ),
+              h5("This application supports two types of scenarios: default scenarios 
+                      and alternate scenarios."),
+              br(),
+              h5(id = "Default_Scenario",strong("Default Scenario")),
+              h5("Default cenarios contain the base values of each 
+                      model's variables. Every ode and static models have default 
+                      scenarios. Coupled models use the defaults of its components, 
+                      thus it does not have its own default scenario. The ID of
+                      default scenarios cannot be changed, and will always be named 
+                      “Default”."),
+              br(),
+              h5(id = "Alternate_Scenario",strong("Alternate Scenario")),
+              h5("Alternate scenarios contain the value for at least
+                      one of the model's variables. This scenario can be used to run
+                      different simulations using the same model, without the need
+                      to alter the default scenario. If a variable from the model is
+                      not specified in the alternate scenario, the simulation will
+                      be executed using that variable's value from the default
+                      scenario."),
+              br(),
+              h5(id = "Managing_Scenarios", strong("Managing Scenarios")),
+              h5("Scenarios can be managed using the menu under “Scenario”, located at 
+                      the sidebar menu. The dropdown input is used to switch between loaded 
+                      scenarios. Each model has a different set of scenarios, and the 
+                      available scenarios will change according to the selected model."),
+              h5("Scenarios can be created or loaded clicking the plus sign button(", 
+                 img(src = "icon_add.png", height = "20px", 
+                     style = "padding: 0 0 3px 0"),
+                 "), under “Scenario”. New scenarios can be created empty or loaded from
+                      existing scenarios xml or xlsx files."),
+              h5("The selected scenario's state variables, constants, inputs and 
+                      switches can be viewed and modified in the “Edit Scenario” menu."),
+              h5("The selected scenario's ID can be changed in the “Edit Scenario” menu 
+                      by clicking the “Change Scenario ID” button."),
+              h5("The selected scenario can be deleted from the application by clicking 
+                      the minus sign button (",
+                 img(src = "icon_remove.png", height = "20px", 
+                     style = "padding: 0 0 3px 0"),
+                 "), under “Scenario”. Default scenarios cannot be deleted."),
+              h5("The selected scenario can be saved into a XML or xlsx file by clicking
+                      the button with the folder icon (",
+                 img(src = "icon_save.png", height = "20px", 
+                     style = "padding: 0 0 3px 0"),
+                 "), under “Scenario”, and downloading the file. This file can be used 
+                      to reload the model into the application. It can also be loaded to R 
+                      using the functions exported by the sdsim package."),
+              br(),
+              h4(id = "Simulation", strong("Simulation")),
+              h5("After models are loaded, they can be simulated in the “Simulation” 
+                      menu, located at the sidebar."),
+              br(),
+              h5(id = "Parameters", strong("Parameters")),
+              h5("The integration method can be chosen under “Method”. The available
+                      methods are:"),
+              tags$ul(
+                tags$li("lsoda"),
+                tags$li("lsode"),
+                tags$li("lsodes"),
+                tags$li("lsodar"),
+                tags$li("vode"),
+                tags$li("daspk"),
+                tags$li("euler"),
+                tags$li("rk4 (Runge-Kutta)"),
+                tags$li("ode23"),
+                tags$li("ode45"),
+                tags$li("radau"),
+                tags$li("bdf"),
+                tags$li("bdf_d"),
+                tags$li("adams"),
+                tags$li("impAdams"),
+                tags$li("impAdams_d"),
+                style = "columns: 130px;"
+              ),
+              h5("Models that require events cannot work with some of the methods. The
+                      available methods for models with events are:"),
+              tags$ul(
+                tags$li("lsoda"),
+                tags$li("lsode"),
+                tags$li("lsodes"),
+                tags$li("lsodar"),
+                tags$li("radau"),
+                style = "columns: 130px;"
+              ),
+              h5("The simulation times can be set under “Initial Time”, determines 
+                      time when the simulations begins, usually 0, “Final 
+                      Time”, determines when the simulation ends, and “Time Step”, the
+                      interval between each step of the simulation."),
+              br(),
+              h5(id = "Execution", strong("Execution")),
+              h5("The selected model, together with the selected scenario, can be 
+                      simulated by pressing the “Start Simulation” button. If any errors or 
+                      warnings occur during the simulation, they will be logged and displayed
+                      inside a text panel."),
+              br(),
+              h5(id = "Results", strong("Results")),
+              h5("The simulation results are displayed under the “Trajectory” tab, 
+               which contains three other tabs: “Result”, where the trajectory of 
+               the state variables or algebraic equations are displayed; “Auxiliary 
+               Variables”, where the trajectory of the auxiliary variables is 
+               displayed; and “Time Series”, where the trajectory of time series 
+               inputs is displayed. Each trajectory can be saved using the button 
+               “Export CSV” located at the bottom of each of these tabs."),
+              h5("The simulation results can be plotted using the “Plot” tab. The
+               plot parameters are:"),
+              tags$ul(
+                tags$li("Plot Title: The text displayed at the top of the plot."),
+                tags$li("X-Axis Label: The text displayed under the horizontal axis."),
+                tags$li("Y-Axis Label: The text displayed to the left of the vertical
+                      axis. If there are multiple Y-Axis variables, the label of each
+                      axis can be separated by commas. Example: 'Variable X, 
+                      Variable Y, Variable Z'"),
+                tags$li("Y-Axis Variables: One or more variables that will be 
+                      plotted."),
+                tags$li("X-Axis Variable: The variable that will be represented as the
+                      X-Axis."),
+                tags$li("Plot Type: Choose if the plot is drawn using points or line."),
+                tags$li("Display Variable's Units: Choose if the variable's units are
+                      displayed at the side of the Y-Axis Label."),
+                tags$li("Display Multiple Y-Axis: This is only used for plots with more 
+                      than one variable. Choose if each variable is plotted 
+                      using different Y-Axis value intervals, or if all variables are
+                      plotted using the same Y-Axis value interval. This can be
+                      enabled if the difference of value between the plotted variables
+                      is too large.")
+              ),
+              br(),
+              h4(id = "References", strong("References")),
+              tags$ul(
+                tags$li(
+                  h5(id = "note_Karnopp_et_al_2006",
+                     tags$a(href = "#ref_Karnopp_et_al_2006", strong("^")),
+                     "Dean C. Karnopp, Donald L. Margolis, and Ronald C. Rosenberg. 
+                   2006. System Dynamics: Modeling and Simulation of Mechatronic 
+                   Systems. John Wiley & Sons, Inc., New York, NY, USA.")),
+                tags$li(
+                  h5(id = "note_Zeigler_et_al_2000",
+                     tags$a(href = "#ref_Zeigler_et_al_2000", strong("^")), 
+                     "Zeigler, B. P.; Praehofer, H.; Kim, T. G. Theory of modeling and 
+                   simulation: integrating discrete event and continuous complex 
+                   dynamic systems. [S.l.]: Academic press, 2000."))
+              )
+            )
           )
         )
-      ),
-      br(),
-      h4(id = "Interface_Usability", strong("Interface Usability")),
-      h5("This section provides a general explanation of this application, and 
-         introduces the modeling and simulation approach of the sdsim package. 
-         Detailed instructions of the application's functionalities are 
-         available under the tab “Usage” at each menu tab."),
-      br(),
-      h4(id = "Programming_Language", strong("Programming Language")),
-      h5("This is a companion application to the sdsim package, developed for 
-         the programming language R. Therefore, everything created in this 
-         application must be written in R."),
-      br(),
-      h4(id = "Model", strong("Model")),
-      h5("In a modeling and simulation context, a model is conceived as 
-         mathematical representation of a system. It is a set of instructions, 
-         rules, equations, or constraints for generating input/output behavior 
-         . This application supports three types of 
-         models: ODE models, static models and coupled models."),
-      br(),
-      h5(id = "ODE_Model", strong("ODE Model")),
-      h5("An ODE (ordinary differential equation) model has its behaviour 
-         determined by its current state, which is represented by state 
-         variables, and by a system of ODEs which specifies the rate of change 
-         of the model state. Along with a scenario containing the trajectories 
-         of the driver variables, the ODE model can be simulated to forecast the
-         evolution of the real system’s state over time."),
-      h5("An ODE model is specified by:"),
-      tags$ul(
-        tags$li("ID: the identification name of the model."),
-        tags$li("Description: (optional) a text description of the model."),
-        tags$li("Differential Equations: an R-function that computes the values 
-                of the state variables derivatives in the ODE system (the model 
-                definition) at time t. The calculated derivatives are used to 
-                calculate the growth of the model's state throughout the 
-                simulation."),
-        tags$li("Initialization Function: (optional) an R-function that 
-                initializes or changes the initial state values and/or other 
-                model variables before the solver call when running a 
-                simulation. It can be used to initialize variables whose values 
-                are calculated depending on other variables from the system."),
-        tags$li("Trigger Function: (optional) an R-function that triggers an 
-                Event Function when it returns zero. If no Event Function is 
-                defined, when zero is returned the simulation stops."),
-        tags$li("Event Function: (optional) an R-function that specifies the 
-                event."),
-        tags$li("Auxiliary Variables: (optional) a set of equations that are 
-                used to calculate auxiliary variables at each step of the 
-                simulation. These variables represent intermediary values used 
-                to compute the derivatives of the differential equations."),
-        tags$li("Global Functions: (optional) a set of R-functions that can be 
-                executed in the scope of other functions defined in the model.")
-      ),
-      br(),
-      h5(id = "Static_Model", strong("Static Model")),
-      h5("A static model calculates the system in equilibrium, and thus is 
-         time-invariant. It represents a steady-state (no state variables) 
-         operation in which the system variables are assumed to remain constant 
-         in time", 
-         Popover(
-           id = "ref_Karnopp_et_al_2006",
-           text = "(Karnopp et al., 2006)", 
-           title = "System Dynamics: Modeling and Simulation of Mechatronic Systems", 
-           content = "Dean C. Karnopp, Donald L. Margolis, and Ronald C. 
-           Rosenberg. 2006. System Dynamics: Modeling and Simulation of 
-           Mechatronic Systems. John Wiley & Sons, Inc., New York, NY, USA.",
-           href = "#note_Karnopp_et_al_2006"), 
-         ". A static model is defined by algebraic equations with static 
-         behaviour."),
-      h5("A static model is specified by:"),
-      tags$ul(
-        tags$li("ID: the identification name of the model."),
-        tags$li("Description: (optional) a text description of the model."),
-        tags$li("Equations: a set of algebraic equations that are calculated 
-                during the simulation."),
-        tags$li("Initialization Function: (optional) an R-function that 
-                initializes or changes the initial state values and/or other
-                model variables before the solver call when running a 
-                simulation. It can be used to initialize variables whose values 
-                are calculated depending on other variables from the system."),
-        tags$li("Global Functions: (optional) a set of R-functions that can be 
-                executed in the scope of other functions or equations defined 
-                in the model.")
-      ),
-      h5("In this definition a static model provides the system’s response to a 
-         specific set of input conditions, specified by the scenario. As a 
-         result, assuming that no exogenous sources are specified, such as time 
-         series or connections between models, the algebraic equations will
-         always output the same result, meaning its output trajectory will be 
-         constant."
-         # Popover(text = "(sdsim)", title = "sdsim", content = "sdsim")
-         ),
-      br(),
-      h5(id = "Coupled_Model", strong("Coupled Model")),
-      h5("A coupled model is a set of models that are coupled together to define
-         a complex system. The flow of information between the component models 
-         of a coupled system is defined through input and output connections. 
-         ", 
-         Popover(
-           id = "ref_Zeigler_et_al_2000",
-           text = "(Zeigler et al., 2000)", 
-           title = "Theory of modeling and simulation", 
-           content = "ZEIGLER, B. P.; PRAEHOFER, H.; KIM, T. G. Theory of 
-           modeling and simulation: integrating discrete event and continuous 
-           complex dynamic systems. [S.l.]: Academic press, 2000.",
-           href = "#note_Zeigler_et_al_2000")),
-      h5("A coupled model is specified by:"),
-      tags$ul(
-        tags$li("ID: the identification name of the model."),
-        tags$li("Description: (optional) a text description of the model."),
-        tags$li("Components: a set of IDs of existing atomic, static or coupled 
-                models. The component models must be previously loaded in the 
-                application."),
-        tags$li("Connections: a data table describing the connections between 
-                the components of the model. The connections determine loops of 
-                information feedback and circular causality for conceptualizing 
-                the structure of a complex system and for communicating 
-                model-based insights.")
-      ),
-      br(),
-      h5(id = "Managing_Models", strong("Managing Models")),
-      h5("Models can be managed using the menu under “Model”, located at the 
-         sidebar menu. The dropdown input is used to switch between loaded 
-         models."),
-      h5("Models can be created or loaded clicking the plus sign button (", 
-         img(src = "icon_add.png", height = "20px", 
-             style = "padding: 0 0 3px 0"),
-         "), located “Model”. New models can be created 
-         empty, loaded from existing models xml files, loaded from one of the 
-         examples available, or cloned from the currently selected model."),
-      h5("The selected model's specification can be viewed and modified in the
-         “Edit Model” menu. The model’s description can be modified in the 
-         “Description” menu."),
-      h5("The selected model's ID can be changed in the “Edit Model” menu using 
-         the “Change Model ID” button."),
-      h5("The selected model can be deleted from the application by clicking the
-         minus sign button (",
-         img(src = "icon_remove.png", height = "20px", 
-             style = "padding: 0 0 3px 0"),
-         "), under “Model”."
-      ),
-      h5("The selected model can be saved to a XML file by clicking the button 
-         with the folder icon (",
-         img(src = "icon_save.png", height = "20px", 
-             style = "padding: 0 0 3px 0"),
-         "), under “Model”, and downloading the file. This file
-         can be used to
-         reload the model into the application. It can also be loaded to R using
-         the functions exported by the sdsim package."),
-      br(),
-      h4(id = "Scenario",strong("Scenario")),
-      h5("A scenario contains the variables and values that describe the 
-         environment in which a system is embedded."),
-      h5("A scenario is specified by:"),
-      tags$ul(
-        tags$li("State: the initial value of state variables, which will change 
-                over time during the simulation according to the value of its 
-                respective derivative. Every ODE model must have at least one 
-                state variable. Static models scenarios do not have state 
-                variables"),
-        tags$li("Constants: remain immutable across different simulations and 
-                cannot be calibrated by statistical methods."),
-        tags$li("Parameters: variables that can be calibrated using statistical 
-                methods."),
-        tags$li("Switches: discrete variables that are used as conditional 
-                selectors in the model. Switches can be used, for instance, to 
-                change parameter initialization values or to change the control 
-                flow of the model (i.e. to change the parts of the code which 
-                will be used by the model)."),
-        tags$li("Inputs: exogenous variables (also called drivers). These 
-                variables can be numeric values, time series or forcing 
-                functions (i.e. functions that only depends on time). Time 
-                series should be uploaded as csv (comma separated values) format
-                files with time in the first column and the respective variable 
-                value in the second column. Both columns must have the 
-                headers.")
-      ),
-      h5("This application supports two types of scenarios: default scenarios 
-         and alternate scenarios."),
-      br(),
-      h5(id = "Default_Scenario",strong("Default Scenario")),
-      h5("Default cenarios contain the base values of each 
-         model's variables. Every ode and static models have default 
-         scenarios. Coupled models use the defaults of its components, 
-         thus it does not have its own default scenario. The ID of
-         default scenarios cannot be changed, and will always be named 
-         “Default”."),
-      br(),
-      h5(id = "Alternate_Scenario",strong("Alternate Scenario")),
-      h5("Alternate scenarios contain the value for at least
-         one of the model's variables. This scenario can be used to run
-         different simulations using the same model, without the need
-         to alter the default scenario. If a variable from the model is
-         not specified in the alternate scenario, the simulation will
-         be executed using that variable's value from the default
-         scenario."),
-      br(),
-      h5(id = "Managing_Scenarios", strong("Managing Scenarios")),
-      h5("Scenarios can be managed using the menu under “Scenario”, located at 
-         the sidebar menu. The dropdown input is used to switch between loaded 
-         scenarios. Each model has a different set of scenarios, and the 
-         available scenarios will change according to the selected model."),
-      h5("Scenarios can be created or loaded clicking the plus sign button(", 
-         img(src = "icon_add.png", height = "20px", 
-             style = "padding: 0 0 3px 0"),
-         "), under “Scenario”. New scenarios can be created empty or loaded from
-         existing scenarios xml or xlsx files."),
-      h5("The selected scenario's state variables, constants, inputs and 
-         switches can be viewed and modified in the “Edit Scenario” menu."),
-      h5("The selected scenario's ID can be changed in the “Edit Scenario” menu 
-         by clicking the “Change Scenario ID” button."),
-      h5("The selected scenario can be deleted from the application by clicking 
-         the minus sign button (",
-         img(src = "icon_remove.png", height = "20px", 
-             style = "padding: 0 0 3px 0"),
-         "), under “Scenario”. Default scenarios cannot be deleted."),
-      h5("The selected scenario can be saved into a XML or xlsx file by clicking
-         the button with the folder icon (",
-         img(src = "icon_save.png", height = "20px", 
-             style = "padding: 0 0 3px 0"),
-         "), under “Scenario”, and downloading the file. This file can be used 
-         to reload the model into the application. It can also be loaded to R 
-         using the functions exported by the sdsim package."),
-      br(),
-      h4(id = "Simulation", strong("Simulation")),
-      h5("After models are loaded, they can be simulated in the “Simulation” 
-         menu, located at the sidebar."),
-      br(),
-      h5(id = "Parameters", strong("Parameters")),
-      h5("The integration method can be chosen under “Method”. The available
-         methods are:"),
-      tags$ul(
-        tags$li("lsoda"),
-        tags$li("lsode"),
-        tags$li("lsodes"),
-        tags$li("lsodar"),
-        tags$li("vode"),
-        tags$li("daspk"),
-        tags$li("euler"),
-        tags$li("rk4 (Runge-Kutta)"),
-        tags$li("ode23"),
-        tags$li("ode45"),
-        tags$li("radau"),
-        tags$li("bdf"),
-        tags$li("bdf_d"),
-        tags$li("adams"),
-        tags$li("impAdams"),
-        tags$li("impAdams_d"),
-        style = "columns: 130px;"
-      ),
-      h5("Models that require events cannot work with some of the methods. The
-         available methods for models with events are:"),
-      tags$ul(
-        tags$li("lsoda"),
-        tags$li("lsode"),
-        tags$li("lsodes"),
-        tags$li("lsodar"),
-        tags$li("radau"),
-        style = "columns: 130px;"
-      ),
-      h5("The simulation times can be set under “Initial Time”, determines 
-         time when the simulations begins, usually 0, “Final 
-         Time”, determines when the simulation ends, and “Time Step”, the
-         interval between each step of the simulation."),
-      br(),
-      h5(id = "Execution", strong("Execution")),
-      h5("The selected model, together with the selected scenario, can be 
-         simulated by pressing the “Start Simulation” button. If any errors or 
-         warnings occur during the simulation, they will be logged and displayed
-         inside a text panel."),
-      br(),
-      h5(id = "Results", strong("Results")),
-      h5("The simulation results are displayed under the “Trajectory” tab, 
-         which contains three other tabs: “Result”, where the trajectory of 
-         the state variables or algebraic equations are displayed; “Auxiliary 
-         Variables”, where the trajectory of the auxiliary variables is 
-         displayed; and “Time Series”, where the trajectory of time series 
-         inputs is displayed. Each trajectory can be saved using the button 
-         “Export CSV” located at the bottom of each of these tabs."),
-      h5("The simulation results can be plotted using the “Plot” tab. The
-         plot parameters are:"),
-      tags$ul(
-        tags$li("Plot Title: The text displayed at the top of the plot."),
-        tags$li("X-Axis Label: The text displayed under the horizontal axis."),
-        tags$li("Y-Axis Label: The text displayed to the left of the vertical
-                axis. If there are multiple Y-Axis variables, the label of each
-                axis can be separated by commas. Example: 'Variable X, 
-                Variable Y, Variable Z'"),
-        tags$li("Y-Axis Variables: One or more variables that will be 
-                plotted."),
-        tags$li("X-Axis Variable: The variable that will be represented as the
-                X-Axis."),
-        tags$li("Plot Type: Choose if the plot is drawn using points or line."),
-        tags$li("Display Variable's Units: Choose if the variable's units are
-                displayed at the side of the Y-Axis Label."),
-        tags$li("Display Multiple Y-Axis: This is only used for plots with more 
-                than one variable. Choose if each variable is plotted 
-                using different Y-Axis value intervals, or if all variables are
-                plotted using the same Y-Axis value interval. This can be
-                enabled if the difference of value between the plotted variables
-                is too large.")
-      ),
-      br(),
-      h4(id = "References", strong("References")),
-      tags$ul(
-        tags$li(
-          h5(id = "note_Karnopp_et_al_2006",
-             tags$a(href = "#ref_Karnopp_et_al_2006", strong("^")),
-             "Dean C. Karnopp, Donald L. Margolis, and Ronald C. Rosenberg. 
-             2006. System Dynamics: Modeling and Simulation of Mechatronic 
-             Systems. John Wiley & Sons, Inc., New York, NY, USA.")),
-        tags$li(
-          h5(id = "note_Zeigler_et_al_2000",
-             tags$a(href = "#ref_Zeigler_et_al_2000", strong("^")), 
-             "Zeigler, B. P.; Praehofer, H.; Kim, T. G. Theory of modeling and 
-             simulation: integrating discrete event and continuous complex 
-             dynamic systems. [S.l.]: Academic press, 2000."))
       )
     )
   )
