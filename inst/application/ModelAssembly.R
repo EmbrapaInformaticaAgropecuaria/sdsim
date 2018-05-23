@@ -189,7 +189,7 @@ AssembleStaticModel <- function(model, timeSeriesDirectory) {
     id = model$id,
     description = model$description,
     defaultScenario = defaultScenarioObj,
-    equations = auxList, 
+    algebraicEquations = auxList, 
     InitVars = InitVars,
     globalFunctions = globalFunctions)
   
