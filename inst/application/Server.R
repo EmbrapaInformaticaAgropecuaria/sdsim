@@ -34,7 +34,8 @@ server <- shinyServer(function(input, output, session) {
         choices <- "Unnamed model"
         selected <- "Unnamed model"
       }
-      selectInput("selectModel", "Model", choices = choices, selected = selected)
+      selectInput("selectModel", "Model", 
+                  choices = choices, selected = selected)
     } else {
       NULL
     }
@@ -47,7 +48,7 @@ server <- shinyServer(function(input, output, session) {
     if(length(simData$models) > 0) {
       currentModel <- simData$models[[simData$currentModelId]]
     }
-
+    
     if(!is.null(currentModel) && length(currentModel$scenarios) > 0) {
       choices <- names(currentModel$scenarios)
     }
@@ -55,7 +56,8 @@ server <- shinyServer(function(input, output, session) {
     if(!is.null(choices)) {
       selected <- currentModel$currentScenarioId
       if(!is.null(selected))
-        selectInput("selectScenario", "Scenario", choices = choices, selected = selected)
+        selectInput("selectScenario", "Scenario", 
+                    choices = choices, selected = selected)
       else
         selectInput("selectScenario", "Scenario", choices = choices)
     } else {
@@ -88,11 +90,13 @@ server <- shinyServer(function(input, output, session) {
     session$sendCustomMessage("delayExecSim", 1400)
     
     if(!is.null(simData$models[[simData$currentModelId]]$currentScenarioId) &&
-      simData$models[[simData$currentModelId]]$currentScenarioId != input$selectScenario)
+       simData$models[[simData$currentModelId]]$currentScenarioId != 
+       input$selectScenario)
       UpdateModelData(simData, input)
     
     # Update current scenario
-    simData$models[[simData$currentModelId]]$currentScenarioId <- input$selectScenario
+    simData$models[[simData$currentModelId]]$currentScenarioId <- 
+      input$selectScenario
     
     if(input$selectScenario == "Default")
       session$sendCustomMessage("hideElement", "editScenarioIdDiv")
@@ -113,26 +117,40 @@ server <- shinyServer(function(input, output, session) {
       
       h4(strong("Create Empty scenario")),
       div(
-        textInput("scenarioIdInput", "Choose the scenario ID:", placeholder = "Unnamed Scenario"),
-        style = "display: inline-block;vertical-align:top; padding: 0px 10px 15px 0px;"
+        textInput("scenarioIdInput", "Choose the scenario ID:", 
+                  placeholder = "Unnamed Scenario"),
+        style = "display: inline-block;vertical-align:top; 
+        padding: 0px 10px 15px 0px;"
       ),
       div(
-        actionButton("newEmptyScenario", strong("Create Scenario"),
+        actionButton("newEmptyScenario", strong("Create Scenario"), 
                      width = "120px"),
-        style = "display: inline-block;vertical-align:top; padding: 25px 10px 15px 0px;"
+        style = "display: inline-block;vertical-align:top; 
+        padding: 25px 10px 15px 0px;"
       ),
       div(style = "border: 1px solid grey"),
       h4(strong("Import scenario from file")),
-      fileInput("importScenario", "Choose the scenario file", accept = c(".xml", ".xlsx")),
-      
+      fileInput("importScenario", "Choose the scenario file", 
+                accept = c(".xml", ".xlsx")),
+      div(style = "border: 1px solid grey"),
+      h4(strong("Clone selected Scenario")),
+      div(
+        textInput("cloneScenarioIdInput", "Choose the cloned scenario ID", 
+                  placeholder = "Unnamed Scenario"),
+        style = "display: inline-block;vertical-align:top; 
+        padding: 0px 10px 15px 0px;"
+      ),
+      div(
+        actionButton("newCloneScenario", strong("Clone Scenario"),
+                     width = "120px"),
+        style = "display: inline-block;vertical-align:top; 
+        padding: 25px 10px 15px 0px;"
+      ),
       div(
         textOutput("loadedScenarioMessage")
       ),
       
-      style = "
-      padding-left: 10px;
-      padding-right: 10px;
-      word-wrap: break-word;"
+      style = "padding-left: 10px; padding-right: 10px; word-wrap: break-word;"
     ))
   })
   
@@ -149,27 +167,33 @@ server <- shinyServer(function(input, output, session) {
                    selected = "Ode",
                    inline = T),
       div(
-        textInput("modelIdInput", "Choose the model ID:", placeholder = "Unnamed Model"),
-        style = "display: inline-block;vertical-align:top; padding: 0px 10px 15px 0px;"
+        textInput("modelIdInput", "Choose the model ID:", 
+                  placeholder = "Unnamed Model"),
+        style = "display: inline-block;vertical-align:top; 
+        padding: 0px 10px 15px 0px;"
       ),
       div(
         actionButton("newEmptyModel", strong("Create Model"),
                      width = "120px"),
-        style = "display: inline-block;vertical-align:top; padding: 25px 10px 15px 0px;"
+        style = "display: inline-block;vertical-align:top; 
+        padding: 25px 10px 15px 0px;"
       ),
       div(style = "border: 1px solid grey"),
       h4(strong("Import model from file")),
       fileInput("importModel", "Choose the model file", accept = c(".xml")),
       div(style = "border: 1px solid grey"),
-      h4(strong("Clone Current Model")),
+      h4(strong("Clone Selected Model")),
       div(
-        textInput("cloneModelIdInput", "Choose the cloned model ID:", placeholder = "Unnamed Model"),
-        style = "display: inline-block;vertical-align:top; padding: 0px 10px 15px 0px;"
+        textInput("cloneModelIdInput", "Choose the cloned model ID:", 
+                  placeholder = "Unnamed Model"),
+        style = "display: inline-block;vertical-align:top; 
+        padding: 0px 10px 15px 0px;"
       ),
       div(
         actionButton("newCloneModel", strong("Clone Model"),
                      width = "120px"),
-        style = "display: inline-block;vertical-align:top; padding: 25px 10px 15px 0px;"
+        style = "display: inline-block;vertical-align:top; 
+        padding: 25px 10px 15px 0px;"
       ),
       div(style = "border: 1px solid grey"),
       h4(strong("Examples")),
@@ -178,12 +202,14 @@ server <- shinyServer(function(input, output, session) {
                     choices = c("Arenstorf", "BouncingBall", 
                                 "Customer", "RigidBody"),
                     width = "200"),
-        style = "display: inline-block;vertical-align:top; padding: 0px 10px 15px 0px;"
+        style = "display: inline-block;vertical-align:top; 
+        padding: 0px 10px 15px 0px;"
       ),
       div(
         actionButton("loadExample", strong("Load Example"),
                      width = "120px"),
-        style = "display: inline-block;vertical-align:top; padding: 25px 10px 15px 0px;"
+        style = "display: inline-block;vertical-align:top; 
+        padding: 25px 10px 15px 0px;"
       ),
       
       div(
@@ -197,23 +223,27 @@ server <- shinyServer(function(input, output, session) {
   })
   
   observeEvent(input$newCloneModel, {
+    UpdateModelData(simData, input)
     modelName <- input$cloneModelIdInput
     
     if(grepl("^[ \t\n]$", modelName))
       modelName <- "Unnamed Model"
     
     if(modelName %in% names(simData$models)) {
+      # If model has repeated ID, ask user for confirmation to overwrite
       # Save loading model info in simData
       simData$cloningModelName <- modelName
       
       idsToOverwrite <- modelName
-      message <- paste0("The model \"", idsToOverwrite, "\" will be overwritten.",
-                        "\nDo you wish to continue?")
+      message <- paste0("The model \"", idsToOverwrite, 
+                        "\" will be overwritten.", "\nDo you wish to continue?")
       responseInputName <- "confirmCloneModelOverwrite"
+      # Send confirmation message
       session$sendCustomMessage("confirmOverwrite", 
                                 list(message = message, 
                                      responseInputName = responseInputName))
     } else {
+      # If model doesn't have repated ID, load model
       simData$models[[modelName]] <- simData$models[[simData$currentModelId]]
       simData$currentModelId <- modelName
       
@@ -223,6 +253,51 @@ server <- shinyServer(function(input, output, session) {
       )
       
       session$sendCustomMessage("loadedModelMessage", msg)
+    }
+  })
+  
+  observeEvent(input$newCloneScenario, {
+    UpdateModelData(simData, input)
+    scenarioName <- input$cloneScenarioIdInput
+    
+    if(grepl("^[ \t\n]$", scenarioName))
+      scenarioName <- "Unnamed Scenario"
+    
+    currentModel <- simData$models[[simData$currentModelId]]
+    
+    if(scenarioName == "Default") {
+      msg <- list(
+        paste("The Default scenario cannot be overwritten!"),
+        "red"
+      )
+      
+      session$sendCustomMessage("loadedScenarioMessage", msg)
+    } else if(scenarioName %in% names(currentModel$scenarios)) {
+      # If scenario has repeated ID, ask user for confirmation to overwrite
+      # Save loading model info in simData
+      simData$cloningScenarioName <- scenarioName
+      
+      idsToOverwrite <- scenarioName
+      message <- paste0("The scenario \"", idsToOverwrite, 
+                        "\" will be overwritten.\nDo you wish to continue?")
+      responseInputName <- "confirmCloneScenarioOverwrite"
+      # Send confimation message
+      session$sendCustomMessage("confirmOverwrite",
+                                list(message = message,
+                                     responseInputName = responseInputName))
+    } else {
+      # If scenario doesn't have repated ID, load scenario
+      currentScenarioId <- currentModel$currentScenarioId
+      simData$models[[simData$currentModelId]]$scenarios[[scenarioName]] <-
+        simData$models[[simData$currentModelId]]$scenarios[[currentScenarioId]]
+      simData$models[[simData$currentModelId]]$currentScenarioId <- scenarioName
+      
+      msg <- list(
+        paste(scenarioName, "scenario successfully cloned!"),
+        "green"
+      )
+      
+      session$sendCustomMessage("loadedScenarioMessage", msg)
     }
   })
   
@@ -244,10 +319,32 @@ server <- shinyServer(function(input, output, session) {
   })
   
   # load model if overwrite confirmation is received
+  observeEvent(input$confirmCloneScenarioOverwrite, {
+    if(input$confirmCloneScenarioOverwrite[[1]] == 1) {
+      scenarioName <- simData$cloningScenarioName
+      simData$cloningScenarioName <- NULL
+      
+      currentModel <- simData$models[[simData$currentModelId]]
+      currentScenarioId <- currentModel$currentScenarioId
+      
+      simData$models[[simData$currentModelId]]$scenarios[[scenarioName]] <-
+        simData$models[[simData$currentModelId]]$scenarios[[currentScenarioId]]
+      simData$models[[simData$currentModelId]]$currentScenarioId <- scenarioName
+      
+      msg <- list(
+        paste(scenarioName, "scenario successfully cloned!"),
+        "green"
+      )
+      
+      session$sendCustomMessage("loadedScenarioMessage", msg)
+    }
+  })
+  
+  # load model if overwrite confirmation is received
   observeEvent(input$confirmModelOverwrite, {
     if(input$confirmModelOverwrite[[1]] == 1) {
       msg <- ConfirmLoadModel(simData$loadingModel, simData, session, input, 
-                       output, nTableRows = nTableRows)
+                              output, nTableRows = nTableRows)
       simData$loadingModel <- NULL
       session$sendCustomMessage("loadedModelMessage", msg)
     }
@@ -256,8 +353,8 @@ server <- shinyServer(function(input, output, session) {
   # load scenario if overwrite confirmation is received
   observeEvent(input$confirmScenarioOverwrite, {
     if(input$confirmScenarioOverwrite[[1]] == 1) {
-      msg <- ConfirmLoadScenario(simData$loadingScenario, simData, session, input,
-                              output, nTableRows = nTableRows)
+      msg <- ConfirmLoadScenario(simData$loadingScenario, simData, session, 
+                                 input, output, nTableRows = nTableRows)
       simData$loadingScenario <- NULL
       session$sendCustomMessage("loadedScenarioMessage", msg)
     }
@@ -272,13 +369,16 @@ server <- shinyServer(function(input, output, session) {
       input$newModelType,
       "Ode" = {
         # Load empty model and replace ID
-        msg <- LoadModel("UnnamedOdeModel", simData, session, input, output, "application/xml", 
+        msg <- LoadModel("UnnamedOdeModel", simData, session, input, 
+                         output, "application/xml", 
                          replaceId = input$modelIdInput, nTableRows = nTableRows)
       }, "Static" = {
-        msg <- LoadModel("UnnamedStaticModel", simData, session, input, output, "application/xml", 
+        msg <- LoadModel("UnnamedStaticModel", simData, session, input, 
+                         output, "application/xml", 
                          replaceId = input$modelIdInput, nTableRows = nTableRows)
       }, "Coupled" = {
-        msg <- LoadModel("UnnamedCoupledModel", simData, session, input, output, "application/xml", 
+        msg <- LoadModel("UnnamedCoupledModel", simData, session, input, 
+                         output, "application/xml", 
                          replaceId = input$modelIdInput, nTableRows = nTableRows)
       }
     )
@@ -296,7 +396,8 @@ server <- shinyServer(function(input, output, session) {
       simData$currentModelId <- modelIds[[1]]
     } else {
       # If the model list is empty load an empty model
-      LoadModel("UnnamedOdeModel", simData, session, input, output, "application/xml", nTableRows = nTableRows)
+      LoadModel("UnnamedOdeModel", simData, session, input, output, 
+                "application/xml", nTableRows = nTableRows)
     }
   })
   
@@ -312,7 +413,8 @@ server <- shinyServer(function(input, output, session) {
       simData$models[[simData$currentModelId]]$currentScenarioId <- scenarioIds[[1]]
     } else {
       # If the scenario list is empty load an empty scenario
-      LoadScenario("UnnamedScenario", simData, session, input, output, "application/xml", nTableRows = nTableRows)
+      LoadScenario("UnnamedScenario", simData, session, input, output, 
+                   "application/xml", nTableRows = nTableRows)
     }
   })
   
@@ -324,7 +426,8 @@ server <- shinyServer(function(input, output, session) {
       easyClose = TRUE,
       size = "s",
       h5("This will change your current model ID."),
-      textInput("editModelIdTxt", "Choose an ID", value = simData$currentModelId),
+      textInput("editModelIdTxt", "Choose an ID", 
+                value = simData$currentModelId),
       actionButton("updateModelId", "Update Model ID", icon = icon("edit")),
       div(
         textOutput("updatedModelIdMessage")
@@ -342,7 +445,8 @@ server <- shinyServer(function(input, output, session) {
       h5("This will change your scenario model ID."),
       textInput("editScenarioIdTxt", "Choose an ID", 
                 value = simData$models[[simData$currentModelId]]$currentScenarioId),
-      actionButton("updateScenarioId", "Update Scenario ID", icon = icon("edit")),
+      actionButton("updateScenarioId", "Update Scenario ID", 
+                   icon = icon("edit")),
       div(
         textOutput("updatedScenarioIdMessage")
       )
@@ -391,9 +495,10 @@ server <- shinyServer(function(input, output, session) {
         session$sendCustomMessage("updatedScenarioIdMessage", list(msg, "red"))
       } else {
         currentScenarioId <- currentModel$currentScenarioId
-        names(simData$models[[simData$currentModelId]]$scenarios) <- gsub(currentScenarioId, 
-                                                                input$editScenarioIdTxt, 
-                                                                names(currentModel$scenarios))
+        names(simData$models[[simData$currentModelId]]$scenarios) <- 
+          gsub(currentScenarioId, 
+               input$editScenarioIdTxt, 
+               names(currentModel$scenarios))
         
         simData$models[[simData$currentModelId]]$currentScenarioId <- input$editScenarioIdTxt
         msg <- paste0("Current model ID changed from ", currentScenarioId,
@@ -712,7 +817,7 @@ server <- shinyServer(function(input, output, session) {
             session$sendCustomMessage("updateSimulationProgress", toString(progress))
           }
         }
-
+        
         # Execute simulation
         model <- AssembleModel(simData, input, timeSeriesDirectory, progressFunction)
         alternateScenario <- AssembleAlternateScenario(simData, timeSeriesDirectory)

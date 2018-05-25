@@ -1,4 +1,20 @@
-// Custom message Handlers
+// Source:
+// https://stackoverflow.com/questions/15989591/how-can-i-keep-bootstrap-popover-alive-while-the-popover-is-being-hovered/19684440#19684440
+$(".pop").popover({ trigger: "manual" , html: true, animation:false})
+.on("mouseenter", function () {
+    var _this = this;
+    $(this).popover("show");
+    $(".popover").on("mouseleave", function () {
+        $(_this).popover('hide');
+    });
+}).on("mouseleave", function () {
+    var _this = this;
+    setTimeout(function () {
+        if (!$(".popover:hover").length) {
+            $(_this).popover("hide");
+        }
+    }, 300);
+});
 
 // Fix for ace editor for setting empty values to a script area
 Shiny.addCustomMessageHandler("shinyAceUpdate", function(data) {
