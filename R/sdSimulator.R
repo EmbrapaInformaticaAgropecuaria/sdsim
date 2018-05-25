@@ -362,7 +362,7 @@ sdSimulate <- function(model,
                        to = NULL,
                        by = NULL,
                        method = NULL,
-                       events = T,
+                       events = TRUE,
                        maxroots = 100,
                        terminalroot = NULL,
                        ties = "notordered",
@@ -467,7 +467,7 @@ sdSimulate <- function(model,
     # verify data
     if (is.null(times) || !all(c("from", "to", "by") %in% names(times)))
       sdSimulatorMsg$sdSimulateAtomic2(model$id)
-    else if (!((times$to - times$from) >= times$by && 
+    else if (!(abs(times$to - times$from) >= abs(times$by) && 
              (times$to - times$from)*times$by > 0)) # invalid time sequence
       sdSimulatorMsg$sdSimulateAtomic0(model$id)
     
@@ -546,6 +546,7 @@ sdSimulate <- function(model,
         
         if (is.function(EventFunction))
         {
+          
           # EVENTS func triggered by a root function
           EventFunctionEval <- createFuncEval(EventFunction,
                                               ct, par, inp, sw, 
@@ -586,6 +587,16 @@ sdSimulate <- function(model,
       else if (is.numeric(RootSpecification) &&
                is.function(EventFunction))
       {
+        # check if the method support events
+        if (!identical(method, deSolve::radau) &&
+            !identical(method, deSolve::lsoda) &&
+            !identical(method, deSolve::lsode) &&
+            (!is.vector(method) ||
+             !method %in% c("lsoda", "lsode", "radau")))
+        {
+          sdSimulatorMsg$sdSimulateAtomic3(model$id)
+          method <- "lsoda"
+        }
         # events in a function with the triggers times in RootSpecification
         EventFunctionEval <-
           createFuncEval(EventFunction,
@@ -608,6 +619,16 @@ sdSimulate <- function(model,
       }
       else if (is.data.frame(RootSpecification))
       {
+        # check if the method support events
+        if (!identical(method, deSolve::radau) &&
+            !identical(method, deSolve::lsoda) &&
+            !identical(method, deSolve::lsode) &&
+            (!is.vector(method) ||
+             !method %in% c("lsoda", "lsode", "radau")))
+        {
+          sdSimulatorMsg$sdSimulateAtomic3(model$id)
+          method <- "lsoda"
+        }
         outTrajectory <- deSolve::ode(
           y = unlist(state),
           times = seq(times$from, times$to, times$by),
@@ -625,8 +646,7 @@ sdSimulate <- function(model,
           times = seq(times$from, times$to, times$by),
           parms = NULL,
           func = DifferentialEquationsEval,
-          method = method
-        )
+          method = method)
       }
     }
     
@@ -772,7 +792,7 @@ sdSimulate <- function(model,
     # verify data
     if (is.null(times) || !all(c("from", "to", "by") %in% names(times)))
       sdSimulatorMsg$sdSimulateStatic1(model$id)
-    else if (!((times$to - times$from) >= times$by && 
+    else if (!(abs(times$to - times$from) >= abs(times$by) && 
                (times$to - times$from)*times$by > 0)) # invalid time sequence
       sdSimulatorMsg$sdSimulateStatic2(model$id)
     
@@ -958,7 +978,7 @@ sdSimulate <- function(model,
     # verify time sequence
     if (is.null(times) || !all(c("from", "to", "by") %in% names(times)))
       sdSimulatorMsg$sdSimulateCoupled3(model$id)
-    else if (!((times$to - times$from) >= times$by && 
+    else if (!(abs(times$to - times$from) >= abs(times$by) && 
                (times$to - times$from)*times$by > 0)) # invalid time sequence
       sdSimulatorMsg$sdSimulateCoupled7(model$id)
     

@@ -18,7 +18,6 @@ test_that("Empty coupled model objet", code =
 # test connection with state var
 # test con with aux eq
 # test con with algebraic eq
-
 test_that("Coupled model connections", code = 
 {
   scen <- expect_is(sdScenario("Default",

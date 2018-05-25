@@ -623,7 +623,8 @@ sdScenarioClass <- R6::R6Class(
           else
             private[["ptimes"]]$from <- from
         }
-        else if ((private[["ptimes"]]$to - from) >= private[["ptimes"]]$by && 
+        else if (abs(private[["ptimes"]]$to - from) >= 
+                 abs(private[["ptimes"]]$by) && 
                   (private[["ptimes"]]$to - from)*private[["ptimes"]]$by > 0)
           private[["ptimes"]]$from <- from
         else
@@ -644,7 +645,8 @@ sdScenarioClass <- R6::R6Class(
           else
             private[["ptimes"]]$to <- to
         }
-        else if ((to - private[["ptimes"]]$from) >= private[["ptimes"]]$by && 
+        else if (abs(to - private[["ptimes"]]$from) >= 
+                 abs(private[["ptimes"]]$by) && 
                  (to - private[["ptimes"]]$from)*private[["ptimes"]]$by > 0)
           private[["ptimes"]]$to <- to
         else
@@ -659,7 +661,8 @@ sdScenarioClass <- R6::R6Class(
         if (is.null(private[["ptimes"]]$to) || 
             is.null(private[["ptimes"]]$from))
           private[["ptimes"]]$by <- by
-        else if ((private[["ptimes"]]$to - private[["ptimes"]]$from) >= by && 
+        else if (abs(private[["ptimes"]]$to - private[["ptimes"]]$from) 
+                 >= abs(by) && 
             (private[["ptimes"]]$to - private[["ptimes"]]$from)*by > 0)
           private[["ptimes"]]$by <- by
         else # invalid by

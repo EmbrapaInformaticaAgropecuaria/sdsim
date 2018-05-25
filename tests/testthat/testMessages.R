@@ -160,6 +160,16 @@ test_that("sdScenariot.R", code =
                  info = "sdScenarioMsg$initialize1")
   expect_warning(sdScenario("test", input = list(3,2)), 
                  info = "sdScenarioMsg$initialize2")
+  expect_warning(sdScenario("test")$setTimeSequence(0,1, ""), 
+                 info = "sdScenarioMsg$setTimeSequence")
+  expect_warning(sdScenario("test")$setTimeSequence(1,1, 2), 
+                 info = "sdScenarioMsg$setTimeSequence1")
+  expect_warning(sdScenario("test")$setTimeSequence(1,2,-1), 
+                 info = "sdScenarioMsg$setTimeSequence2")
+  expect_warning(sdScenario("test")$setTimeSequence(2,1,1), 
+                 info = "sdScenarioMsg$setTimeSequence2")
+  expect_warning(sdScenario("test")$setTimeSequence(2.5,2,-1), 
+                 info = "sdScenarioMsg$setTimeSequence2")
 })
 
 
