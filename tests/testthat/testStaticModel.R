@@ -39,7 +39,7 @@ test_that("Static model object with global funs", code =
                                                          eq3 = "b(par$v)"),
                                defaultScenario = scen,
                                globalFunctions = list(b = function(x)
-                                 { print(x); return(x)})),
+                                 { return(x)})),
                  "sdStaticModel")
   expect_true(m$verifyModel())
   expect_is(sdSimulate(m), "sdOutput")
