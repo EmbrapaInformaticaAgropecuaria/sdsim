@@ -977,7 +977,7 @@ helpPage <- shinydashboard::tabItem(
       fluidPage(
         fluidRow(
           column(
-            width = 2,
+            width = 3,
             tags$ul(
               style = "padding-left: 17px",
               tags$li(a(href = "#Interface_Usability", "Interface Usability")),
@@ -1009,11 +1009,12 @@ helpPage <- shinydashboard::tabItem(
                   tags$li(a(href = "#Execution", "Execution")),
                   tags$li(a(href = "#Results", "Results"))
                 )
-              )
+              ),
+              tags$li(a(href = "#References", "References"))
             )
           ),
           column(
-            width = 10,
+            width = 9,
             div(
               style = "height: 80vh; overflow-y: scroll;",
               h4(id = "Interface_Usability", strong("Interface Usability")),

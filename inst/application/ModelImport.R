@@ -633,27 +633,27 @@ UpdateLoadedScenario <- function(simData, session, input,
 }
 
 # Loads an ode model into the UI format
-LoadOdeModelData <- function(model, simData) {
+LoadOdeModelData <- function(modelXml, simData) {
   # Get auxiliary data frame and update rhandsontable values
-  aux <- AuxListToDataFrame(model)
+  aux <- AuxListToDataFrame(modelXml)
   
-  globalFunctions <- model$GlobalFunctions
+  globalFunctions <- modelXml$globalFunctions
   globalFunctions <- lapply(names(globalFunctions), function(x) {
     paste0(x, " <- ", FunToString(globalFunctions[[x]]))
   })
   
   # Create model
-  modelData <- CreateModelObject(
-    id = model$id, 
-    description = model$description, 
-    DifferentialEquations = FunToString(model$DifferentialEquations), 
-    initVars = FunToString(model$InitVars), 
-    root = FunToString(model$RootSpecification), 
-    event = FunToString(model$EventFunction),
+  modelData <- CreateOdeModelObject(
+    id = modelXml$id, 
+    description = modelXml$description, 
+    DifferentialEquations = FunToString(modelXml$DifferentialEquations), 
+    initVars = FunToString(modelXml$InitVars), 
+    root = FunToString(modelXml$RootSpecification), 
+    event = FunToString(modelXml$EventFunction),
     aux = aux,
     globalFunctions = globalFunctions,
-    defaultScenarioId = model$defaultScenario$sdScenario$id,
-    currentScenarioId = model$defaultScenario$sdScenario$id
+    defaultScenarioId = modelXml$defaultScenario$sdScenario$id,
+    currentScenarioId = modelXml$defaultScenario$sdScenario$id
   )
   
   return(modelData)
@@ -662,9 +662,9 @@ LoadOdeModelData <- function(model, simData) {
 # Loads a static model into the UI format
 LoadStaticModelData <- function(modelXml, simData) {
   # Get auxiliary data frame and update rhandsontable values
-  aux <- AuxListToDataFrame(modelXml, "equations")
+  algebraicEquations <- AuxListToDataFrame(modelXml, "algebraicEquations")
   
-  globalFunctions <- modelXml$GlobalFunctions
+  globalFunctions <- modelXml$globalFunctions
   globalFunctions <- lapply(names(globalFunctions), function(x) {
     paste0(x, " <- ", FunToString(globalFunctions[[x]]))
   })
@@ -674,7 +674,7 @@ LoadStaticModelData <- function(modelXml, simData) {
     id = modelXml$id, 
     description = modelXml$description,
     initVars = FunToString(modelXml$InitVars),
-    aux = aux,
+    aux = algebraicEquations,
     globalFunctions = globalFunctions,
     defaultScenarioId = modelXml$defaultScenario$sdScenario$id,
     currentScenarioId = modelXml$defaultScenario$sdScenario$id
@@ -727,9 +727,8 @@ LoadScenarioData <- function(scenario, simData, parentModelId = NULL) {
   return(scenarioData)
 }
 
-
-
-CreateModelObject <- function(id,
+# Returns a list with the model's components
+CreateOdeModelObject <- function(id,
                               description = NULL,
                               DifferentialEquations = NULL,
                               initVars = NULL,

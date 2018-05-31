@@ -85,7 +85,7 @@ AssembleOdeModel <- function(model, timeSeriesDirectory, progressFunction = NULL
   
   # Parse global functions into a list
   if(!is.null(model$globalFunctions))
-    globalFunctions <- StrVariablesToList(model$globalFunctions)
+    globalFunctions <- StrGlobalFunctionsToList(model$globalFunctions)
   
   # Set function environments to global to reduce object size and
   # remove server variables from the object
@@ -153,7 +153,7 @@ AssembleStaticModel <- function(model, timeSeriesDirectory) {
   
   # Parse global functions into a list
   if(!is.null(model$globalFunctions))
-    globalFunctions <- StrVariablesToList(model$globalFunctions)
+    globalFunctions <- StrGlobalFunctionsToList(model$globalFunctions)
   
   # Set function environments to global to reduce object size and
   # remove server variables from the object
@@ -237,8 +237,9 @@ UpdateModelData <- function(simData, input) {
       
   currentScenario <- currentModel$scenarios[[currentModel$currentScenarioId]]
   
+  # Update current model description, functions and auxiliaries
   if(currentModel$type == "sdOdeModel") {
-    # Update current model description, functions and auxiliaries
+    # Update Ode Model
     currentModel$description <- input$description
     currentModel$DifferentialEquations <- input$DifferentialEquations
     currentModel$initVars <- input$initVars
@@ -250,14 +251,16 @@ UpdateModelData <- function(simData, input) {
       currentModel$aux <- RhandsonToDF(input$aux, trimWhites = NULL)
     }
   } else if (currentModel$type == "sdStaticModel") {
+    # Update Static Model
     currentModel$description <- input$description
-    currentModel$initVars <- input$initVars
-    currentModel$globalFunctions <- input$globalFunctions
+    currentModel$initVars <- input$staticInitVars
+    currentModel$globalFunctions <- input$staticGlobalFunctions
     
     if(!is.null(simData$changed$staticAux) && simData$changed$staticAux) {
       currentModel$aux <- RhandsonToDF(input$staticAux, trimWhites = NULL)
     }
   } else if(currentModel$type == "sdCoupledModel") {
+    # Update Coupled Model
     if(!is.null(simData$changed$connections) && simData$changed$connections) {
       currentModel$connections <- as.matrix(
         RhandsonToDF(
@@ -353,14 +356,20 @@ DataFrameToList <- function(dataFrame, variableCol = "Variable",
   return(dataList)
 }
 
-StrVariablesToList <- function(strFuns) {
+# Convert a string countaining the source code of global functions into
+# a list containing the global functions
+StrGlobalFunctionsToList <- function(strFuns, asCharacter = F) {
   tempEnvironment <- new.env()
   eval(parse(text = strFuns), envir = tempEnvironment)
   
-  funNames <- all.vars(parse(text = strFuns))
+  funNames <- ls(tempEnvironment)
   
   l <- lapply(funNames, function(x) {
-    return(get(x, envir = tempEnvironment))
+    if(asCharacter) {
+      return(FunToString(get(x, envir = tempEnvironment)))
+    } else {
+      return(get(x, envir = tempEnvironment))
+    }
   })
   names(l) <- funNames
   return(l)

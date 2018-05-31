@@ -124,6 +124,7 @@ ScenarioToXlsx <- function(scenario, file, colWidth = c(10, 20, 20, 30, 10)) {
     openxlsx::saveWorkbook(wb, file, overwrite = TRUE)
 }
 
+# Save model to XML
 ModelToXML <- function(simData, file = NULL){
   currentModel <- simData$models[[simData$currentModelId]]
   
@@ -141,9 +142,13 @@ ModelToXML <- function(simData, file = NULL){
                      indent = T),  file = file)
 }
 
+# Save ODE model to XML
 OdeModelToXml <- function(model) {
   doc = XML::newXMLDoc()
   rootsdModel <- XML::newXMLNode("sdOdeModel", doc = doc)
+  
+  globalFunctions <- StrGlobalFunctionsToList(model$globalFunctions, 
+                                              asCharacter = T)
   
   lModel <- list(id = model$id,
                  description = model$description,
@@ -153,7 +158,7 @@ OdeModelToXml <- function(model) {
                  RootSpecification = model$root,
                  EventFunction = model$event,
                  aux = DataFrameToList(model$aux),
-                 globalFunctions = model$globalFunctions)
+                 globalFunctions = globalFunctions)
   
   ListToXML(rootsdModel, lModel)
   
@@ -170,15 +175,19 @@ OdeModelToXml <- function(model) {
   return(doc)
 }
 
+# Save static model to XML
 StaticModelToXml <- function(model) {
   doc = XML::newXMLDoc()
   rootsdModel <- XML::newXMLNode("sdStaticModel", doc = doc)
   
+  globalFunctions <- StrGlobalFunctionsToList(model$globalFunctions, 
+                                              asCharacter = T)
+  
   lModel <- list(id = model$id,
                  description = model$description,
                  InitVars = model$initVars,
-                 equations = DataFrameToList(model$aux),
-                 globalFunctions = model$globalFunctions)
+                 algebraicEquations = DataFrameToList(model$aux),
+                 globalFunctions = globalFunctions)
   
   ListToXML(rootsdModel, lModel)
   
@@ -194,6 +203,7 @@ StaticModelToXml <- function(model) {
   return(doc)
 }
 
+# Save coupled model to XML
 CoupledModelToXml <- function(model, simData) {
   doc = XML::newXMLDoc()
   rootsdModel <- XML::newXMLNode("sdCoupledModel", doc = doc)
@@ -228,6 +238,7 @@ CoupledModelToXml <- function(model, simData) {
   return(doc)
 }
 
+# Save scenario to XML 
 ScenarioToXML <- function(scenario, file = NULL){
   doc = XML::newXMLDoc()
   rootScenario <- XML::newXMLNode("sdScenario", doc = doc)
@@ -314,6 +325,7 @@ ListToXML <- function(node, sublist)
   return(node)
 }
 
+# Convert vector to source code format (ex: c(1, 2, 3))
 VectorToCharDef <- function(x, quote = F)
 {
   if (quote)

@@ -296,7 +296,7 @@ sdStaticModelClass <- R6::R6Class(
     {
       # run the equations and model definition validation
       if (is.null(private$pdefaultScenario))
-        sdStaticModelMsg$validate0(private$pid, equationsVar, e)
+        sdStaticModelMsg$validate0(private$pid)
       
       # get the model scenario 
       defaultScenario <- private$pdefaultScenario$clone(deep = TRUE)
