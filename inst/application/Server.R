@@ -967,6 +967,7 @@ ShowModelDownloadDialog <- function(simData) {
   showModal(modalDialog(
     title = "Download Model",
     textInput("chooseModelName", "Choose a file name:", value = simData$currentModelId),
+    checkboxInput("downloadModelAsZip", "Include alternate scenarios (.zip file)"),
     downloadButton("exportModel", "Download",
                    style = paste("color: #000;",
                                  "background-color: #fff;",

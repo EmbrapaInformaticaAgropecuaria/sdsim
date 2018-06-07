@@ -7,8 +7,13 @@ ModelToXmlHandler <- function(simData, input, output) {
         if(name == "")
           name <- "Model"
         
-        if(!grepl("\\.xml$", name))
-          name <- paste0(name, ".xml")
+        if(input$downloadModelAsZip) {
+          if(!grepl("\\.zip$", name))
+            name <- paste0(name, ".zip")
+        } else {
+          if(!grepl("\\.xml$", name))
+            name <- paste0(name, ".xml")
+        }
         
         return(name)
       },
@@ -21,7 +26,50 @@ ModelToXmlHandler <- function(simData, input, output) {
         # Updates simData with inputs that have been altered
         UpdateModelData(simData, input)
         
-        ModelToXML(simData, file)
+        if(input$downloadModelAsZip) {
+          # Get current model
+          currentModel <- simData$models[[simData$currentModelId]]
+          
+          # Create temporary directory to save model and scenarios
+          dir <- paste0(tempdir(), "/", currentModel$id)
+          if(!dir.exists(dir))
+            dir.create(dir)
+          
+          # Save current working directory
+          tempwd <- getwd()
+          # Set working directory to temporary directory
+          setwd(dir)
+          
+          # Save model to xml
+          modelFile <- paste0(currentModel$id, ".xml")
+          ModelToXML(simData, modelFile)
+          
+          # Get alternative scenario names
+          scenarioNames <- names(currentModel$scenarios)
+          scenarioNames <- scenarioNames[which(scenarioNames!="Default")]
+          
+          # Save alternative scenarios to xml
+          ziplist <- lapply(scenarioNames, function(x) {
+            scenarioFile <- paste0(x, ".xlsx")
+            ScenarioToXlsx(currentModel$scenarios[[x]], scenarioFile)
+            return(scenarioFile)
+          })
+          
+          # Zip model and scenarios xml
+          ziplist <- c(ziplist, modelFile)
+          zip(zipfile = file, files = unlist(ziplist))
+          
+          # Restore working directory
+          setwd(tempwd)
+          
+          # Remove temporary directory
+          if(dir.exists(dir)) {
+            unlink(dir, recursive = T, force = T)
+          }
+            
+        } else {
+          ModelToXML(simData, file)
+        }
       },
       error = function(e) {
         showNotification(as.character(e), duration = 15)
@@ -49,8 +97,6 @@ ScenarioToXmlHandler <- function(simData, input, output) {
                     name <- paste0(name, ".xlsx")
                 }
         )
-        
-        
         
         return(name)
       },
@@ -289,8 +335,7 @@ ScenarioToXML <- function(scenario, file = NULL){
 ListToXML <- function(node, sublist)
 {
   # vectors leafs
-  if (is.numeric(sublist) || is.character(sublist))
-  {
+  if (is.numeric(sublist) || is.character(sublist)) {
     child <- XML::newXMLNode(names(sublist)[i], parent=node)
     
     if (is.numeric(sublist[[i]]))
@@ -301,23 +346,18 @@ ListToXML <- function(node, sublist)
   }
   
   # list
-  for (i in 1:length(sublist))
-  {
+  for (i in 1:length(sublist)) {
     child <- XML::newXMLNode(names(sublist)[i], parent=node)
     
-    if (typeof(sublist[[i]]) == "list" && length(sublist[[i]]) > 0)
-    {
+    if (typeof(sublist[[i]]) == "list" && length(sublist[[i]]) > 0) {
       ListToXML(child, sublist[[i]])
-    }
-    else if (length(sublist[[i]]) > 1) # to store vectors
-    {
+    } else if (length(sublist[[i]]) > 1) {
+      # to store vectors
       if (is.numeric(sublist[[i]]))
         XML::xmlValue(child) <- VectorToCharDef(sublist[[i]]) 
       else # quote
         XML::xmlValue(child) <- VectorToCharDef(sublist[[i]], quote = T) 
-    }
-    else
-    {
+    } else {
       XML::xmlValue(child) <- sublist[[i]]
     }
   }
@@ -326,8 +366,7 @@ ListToXML <- function(node, sublist)
 }
 
 # Convert vector to source code format (ex: c(1, 2, 3))
-VectorToCharDef <- function(x, quote = F)
-{
+VectorToCharDef <- function(x, quote = F) {
   if (quote)
     return(paste0("c(", paste0("'", x, "'", collapse = ","), ")"))
   else
@@ -335,8 +374,7 @@ VectorToCharDef <- function(x, quote = F)
 }
 
 # return the sdsim package XML prefix
-XmlPrefix <- function()
-{
+XmlPrefix <- function() {
   return(paste0("<?sdsim about='R package for ",
                 "modeling and simulation of system dynamics'",
                 " version='",
