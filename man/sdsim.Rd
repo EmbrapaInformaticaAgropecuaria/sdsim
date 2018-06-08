@@ -59,6 +59,10 @@ result in a \code{\link{sdOutput}} object with visualization methods,
 \code{\link{sdInitEquations}} for creating a list of sorted equations from a 
 list of R-expressions and/or strings with the equations in R-format,
 
+\code{\link{sdEquationList}} for converting equations wrriten in plain R code
+into a list equations in character format that can be recognized by the
+sdsim functions \code{\link{sdOdeModel}} and \code{\link{sdStaticModel}}.
+
 \code{\link{sdTemporalFunction}} for interpolating input time series 
 variables. It is automatically used in the scenario initialization, 
 see \code{\link{sdScenarioClass}} documentation. 

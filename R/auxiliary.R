@@ -859,3 +859,35 @@ sdExcelTemplate <- function(file = "Scenario.xlsx",
   
   invisible(inputData)
 }
+
+#' Create a list of equations
+#' 
+#' 
+#' This function converts equations written in plain R code into a list of 
+#' equations in chracter format that can be recognized by the sdsim functions 
+#' \code{\link{sdOdeModel}} and \code{\link{sdStaticModel}}.
+#' 
+#' @param ... One or more equations. The equations must have the format
+#' <equation_name> = <equation>, where equation_name is the name of the 
+#' equation, and equation is the body of the equation. The equations must
+#' written in plain R code.
+#' @return A list of strings containing the equations in chracter format.
+#' @examples 
+#' # Create equations list
+#' equations <- sdEquationsList(
+#'   x = a + b,
+#'   y = c ^ 2
+#' )
+sdEquationList <- function(...) 
+{
+  # Convert parameters to string
+  eqList <- as.list(sapply( substitute(list(...)), deparse)[-1])
+  eqList <- lapply(eqList, function(x) 
+  {
+    # Collapse sublists
+    x <- paste(x, collapse = " ")
+    # Remove extra spaces
+    x <- gsub(pattern = "[ ]{2,}", replacement = " ", x)
+  })
+  return(eqList)
+}
