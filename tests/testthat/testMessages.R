@@ -30,7 +30,7 @@ test_that("sdLoadModel", code =
                info = "constructorsMsg$sdLoadModel2")
   expect_error(sdLoadModel("la"), 
                info = "constructorsMsg$sdLoadModel3")
-  expect_error(sdLoadModel("testAuxiliary.R"), 
+  a <- expect_error(capture.output(sdLoadModel("testAuxiliary.R")), 
                info = "constructorsMsg$sdLoadModel4")
 })
 

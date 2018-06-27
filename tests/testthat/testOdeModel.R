@@ -56,12 +56,10 @@ test_that("Ode model with Global Funs", code =
   expect_is(sdSimulate(m), "sdOutput")
 })
 
+# Testes de Casos de Uso
 test_that("Ode model with Root Specification", code =
 {
-  scen <- expect_is(sdScenario("Default",
-                               times = c(from = 0, to = 5, by = 1),
-                               state = c(a = 1), input = c(pow = 2), 
-                               method = "rk4"), "sdScenario")
+  # Primeira caso de uso -  Root especificda com vetor numerico
   m <- expect_is(sdOdeModel(id = "vec root",
                             description = "test test",
                             DifferentialEquations = function(t, st, ct, par,
@@ -76,9 +74,14 @@ test_that("Ode model with Root Specification", code =
                               st$a <- st$a*2
                               return(st)
                             },
-                            defaultScenario = scen), "sdOdeModel")
-  outvec <- expect_warning(sdSimulate(m), info = "root method")
+                            defaultScenario = expect_is(sdScenario("Default",
+                                                                   times = c(from = 0, to = 5, by = 1),
+                                                                   state = c(a = 1), input = c(pow = 2), 
+                                                                   method = "rk4"), "sdScenario")), "sdOdeModel")
+  outvec <- expect_warning(sdSimulate(m), info = "test if the method has root-finding capability")
+  m$defaultScenario$method <- "lsoda"
   
+  # Segunda caso de uso - Root especificada com funcao
   m$initialize("fun root", RootSpecification = function(t, st, ct, par, inp, sw, aux)
   {
     if (t %in% c(1,3))
@@ -86,15 +89,70 @@ test_that("Ode model with Root Specification", code =
     else
       return(1)
   })
-  m$defaultScenario$method <- "lsoda"
   outfun <- expect_is(sdSimulate(m), "sdOutput")
   
+  # Terceira caso de uso - Root especificada com data.frama
   m$initialize("df root", RootSpecification = data.frame(
     var = c("a", "a"),
     time = c(1, 3),
     value = c(2, 2),
     method = c("multiply", "multiply")))
   outdf <- expect_is(sdSimulate(m), "sdOutput")
-  expect_true(all(outfun$outTrajectory == outvec$outTrajectory && 
-                  outfun$outTrajectory == outdf$outTrajectory))
+  
+  outCorrectVec <- ode(y = c(a = 1), 
+                       parms = c(pow = 2), 
+                       times = seq(from = 0, to = 5, by = 1),
+                       func = function(t, y, parms)
+                       {
+                         dy <- y*parms[['pow']]
+                         return(list(dy))
+                       },
+                       method = "lsoda",
+                       events = list(func = function(t, y, parms)
+                       {
+                         y <- y*2
+                         return(y)
+                       }, time = c(1, 3)))
+  
+  outCorrectFun <- ode(y = c(a = 1), 
+                       parms = c(pow = 2), 
+                       times = seq(from = 0, to = 5, by = 1),
+                       func = function(t, y, parms)
+                       {
+                         dy <- y*parms[['pow']]
+                         return(list(dy))
+                       },
+                       method = "lsoda",
+                       events = list(func = function(t, y, parms)
+                       {
+                         y <- y*2
+                         return(y)
+                       }, root = TRUE),
+                       rootfun = function(t, y, parms)
+                       {
+                         if (t %in% c(1,3))
+                           return(0)
+                         else
+                           return(1)
+                       })
+  
+  outCorrectDf <- ode(y = c(a = 1), 
+                      parms = c(pow = 2), 
+                      times = seq(from = 0, to = 5, by = 1),
+                      func = function(t, y, parms)
+                      {
+                        dy <- y*parms[['pow']]
+                        return(list(dy))
+                      },
+                      method = "lsoda",
+                      events = list(data = data.frame(
+                        var = c("a", "a"),
+                        time = c(1, 3),
+                        value = c(2, 2),
+                        method = c("multiply", "multiply"))))
+  
+  # teste de validade dos casos de testes
+  expect_true(all(outdf$outTrajectory == outCorrectDf))
+  expect_true(all(outfun$outTrajectory == outCorrectFun))
+  expect_true(all(outvec$outTrajectory == outCorrectVec))
 })
