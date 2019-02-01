@@ -858,29 +858,9 @@ sdCoupledModelClass <- R6::R6Class(
           scenario <- sdLoadScenario(file = scenario)
         
         if (inherits(scenario, sdScenarioClass$classname))
-        {
-          if (length(scenario$state) > 0)
-            defaultScenario$addState(scenario$state, verbose = verbose)
-          if (length(scenario$constant) > 0)
-            defaultScenario$addConstant(scenario$constant, verbose = verbose)
-          if (length(scenario$input) > 0)
-            defaultScenario$addInput(
-              scenario$input[!(names(scenario$input) %in% c("interpolation_", 
-                                                            "fun_"))],
-              interpolation = scenario$input[["interpolation_"]],
-              verbose = verbose)
-          if (length(scenario$parameter) > 0)
-            defaultScenario$addParameter(scenario$parameter, verbose = verbose)
-          if (length(scenario$switch) > 0)
-            defaultScenario$addSwitch(scenario$switch, verbose = verbose)
-          if (!is.null(scenario$times))
-            defaultScenario$times <- scenario$times
-          if (!is.null(scenario$method))
-            defaultScenario$method <- scenario$method
-        }
+          defaultScenario <- mergeScenarios(defaultScenario, scenario)
         else
-          sdCoupledModelMsg$verifyModel2(private$pid, 
-                                         typeof(scenario))
+          sdCoupledModelMsg$verifyModel2(private$pid, typeof(scenario))
       }
       # get model variables
       st <- defaultScenario$state

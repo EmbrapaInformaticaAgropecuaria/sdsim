@@ -891,3 +891,68 @@ sdEquationList <- function(...)
   })
   return(eqList)
 }
+
+# TODO: finish this function, document and export it
+sdMakeFlows <- function(connections = NULL, flow_rate = NULL, st = NULL) {
+  if(is.null(connections))
+    stop("Argument 'connections' has value 'NULL'. Must be an Array or List.")
+  
+  if(is.null(flow_rate))
+    stop("Argument 'flow_rate' has value 'NULL'. Must be an Array or List.")
+  
+  if(length(connections) == 0)
+    stop("")
+  
+  if(length(flow_rate) == 0)
+    stop("")
+  
+  if(is.list(connections))
+    connections <- unlist(connections)
+  
+  if(is.list(flow_rate))
+    flow_rate <- unlist(flow_rate)
+  
+  if(length(connections) != length(flow_rate))
+    stop("The length of the argument 'connections' does not match the length of the argument 'flow_rate")
+  
+  if(any(!grepl("^\\h*[^ \t]+\\h*->\\h*[^ \t]+\\h*$", connections, perl = T)))
+    stop("")
+  
+  split_con <- strsplit(connections, split = "\\h*->\\h*", perl = T)
+  source <- unlist(lapply(split_con, `[[`, 1))
+  sink <- unlist(lapply(split_con, `[[`, 2))
+  
+  list(
+    stateVariables = st,
+    flows = data.frame(source = source,
+                       sink = sink,
+                       flow_rate = flow_rate,
+                       stringsAsFactors = FALSE)
+  )
+}
+
+# Merge the a default scenario with an alternate scenario. Returns the
+# merged scenario.
+mergeScenarios <- function(defaultScenario, alternateScenario, verbose) 
+{
+  if (length(alternateScenario$state) > 0)
+    defaultScenario$addState(alternateScenario$state, verbose = verbose)
+  if (length(alternateScenario$constant) > 0)
+    defaultScenario$addConstant(alternateScenario$constant, verbose = verbose)
+  if (length(alternateScenario$input) > 0)
+    defaultScenario$addInput(
+      alternateScenario$input[!(names(alternateScenario$input) %in% c("interpolation_", 
+                                                                      "fun_"))],
+      interpolation = alternateScenario$input[["interpolation_"]],
+      verbose = verbose)
+  if (length(alternateScenario$parameter) > 0)
+    defaultScenario$addParameter(alternateScenario$parameter, verbose = verbose)
+  if (length(alternateScenario$switch) > 0)
+    defaultScenario$addSwitch(alternateScenario$switch, verbose = verbose)
+  if (!is.null(alternateScenario$times))
+    defaultScenario$times <- alternateScenario$times
+  if (!is.null(alternateScenario$method))
+    defaultScenario$method <- alternateScenario$method
+  
+  return(defaultScenario)
+}

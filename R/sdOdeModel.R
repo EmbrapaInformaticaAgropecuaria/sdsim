@@ -265,6 +265,12 @@ sdOdeModelClass <- R6::R6Class(
                           EventFunction,
                           globalFunctions)
     {
+      # Create new environment for model functions
+      # modelEnvironment <- new.env(parent = baseenv())
+      modelEnvironment <- new.env(parent = parent.env(globalenv()))
+      
+      private[["pModelEnvironment"]] <- modelEnvironment
+      
       funDefaultArgs <- c("t", "st", "ct", "par", "inp", "sw", "aux")
       # mandatory parameters
       if (!missing(id) && !is.null(id))
@@ -275,11 +281,14 @@ sdOdeModelClass <- R6::R6Class(
       
       if (!missing(DifferentialEquations) && !is.null(DifferentialEquations))
       {
-        if (is.function(DifferentialEquations) && 
-            all(funDefaultArgs %in% names(formals(DifferentialEquations))))
-          private$pDifferentialEquations <- DifferentialEquations
-        else
-          sdOdeModelMsg$initialize1(id)
+        # TODO: do this verification in sdOde class
+        # if (is.function(DifferentialEquations) && 
+        #     all(funDefaultArgs %in% names(formals(DifferentialEquations))))
+        #   private$pDifferentialEquations <- DifferentialEquations
+        # else
+        #   sdOdeModelMsg$initialize1(id)
+        private$pDifferentialEquations <- sdOdeClass$new(DifferentialEquations, 
+                                                         modelEnvironment)
       }
       
       if (!missing(defaultScenario) && !is.null(defaultScenario))
@@ -385,10 +394,8 @@ sdOdeModelClass <- R6::R6Class(
         private$paux <- aux
       }
       
-      # Create new environment for model functions
-      modelEnvironment <- new.env(parent = baseenv())
-      if (is.function(private[["pDifferentialEquations"]]))
-        environment(private[["pDifferentialEquations"]]) <- modelEnvironment
+      # if (is.function(private[["pDifferentialEquations"]]))
+      #   environment(private[["pDifferentialEquations"]]) <- modelEnvironment
       if (is.function(private[["pInitVars"]]))
         environment(private[["pInitVars"]]) <- modelEnvironment
       if (is.function(private[["pPostProcessVars"]]))
@@ -510,26 +517,7 @@ sdOdeModelClass <- R6::R6Class(
             scenario <- sdLoadScenario(file = scenario)
           
           if (inherits(scenario, sdScenarioClass$classname))
-          {
-            if (length(scenario$state) > 0)
-              defaultScenario$addState(scenario$state, verbose = verbose)
-            if (length(scenario$constant) > 0)
-              defaultScenario$addConstant(scenario$constant, verbose = verbose)
-            if (length(scenario$input) > 0)
-              defaultScenario$addInput(
-                scenario$input[!(names(scenario$input) %in% c("interpolation_", 
-                                                              "fun_"))],
-                interpolation = scenario$input[["interpolation_"]],
-                verbose = verbose)
-            if (length(scenario$parameter) > 0)
-              defaultScenario$addParameter(scenario$parameter, verbose = verbose)
-            if (length(scenario$switch) > 0)
-              defaultScenario$addSwitch(scenario$switch, verbose = verbose)
-            if (!is.null(scenario$times))
-              defaultScenario$times <- scenario$times
-            if (!is.null(scenario$method))
-              defaultScenario$method <- scenario$method
-          }
+            defaultScenario <- mergeScenarios(defaultScenario, scenario)
           else
             sdOdeModelMsg$verifyModel12(private$pid, typeof(scenario))
         }
@@ -617,11 +605,11 @@ sdOdeModelClass <- R6::R6Class(
       }
       
       #### Model Definition Validation
-      DifferentialEquations <- private$pDifferentialEquations
+      DifferentialEquations <- private$pDifferentialEquations$getOdeFunction()
       
       # Create new environment to store variables that will be validated
       # and set env as an environment for the function
-      env <- new.env(parent = environment(DifferentialEquations))
+      env <- new.env(parent = private$pModelEnvironment)
       environment(DifferentialEquations) <- env
       
       # Create test variables in env
@@ -640,8 +628,8 @@ sdOdeModelClass <- R6::R6Class(
         parse(text = paste("{", bodyStr, "}", sep = "\n"))
       
       # call the model definition and also return the auxiliary values
-      #res <- DifferentialEquations(t = t, st = st, ct = ct, par = par, inp = inp, 
-      #                        sw = sw, aux = aux)
+      # res <- DifferentialEquations(t = t, st = st, ct = ct, par = par,  
+      #                        inp = inp, sw = sw, aux = aux)
       res <- tryCatch(
         {
           DifferentialEquations(t = t, st = st, ct = ct, par = par, inp = inp, 
@@ -783,7 +771,7 @@ sdOdeModelClass <- R6::R6Class(
   active = list(
     DifferentialEquations = function()
     {
-      return(private$pDifferentialEquations)
+      return(private$pDifferentialEquations$getOdeFunction())
     },
     InitVars = function()
     {
@@ -808,6 +796,10 @@ sdOdeModelClass <- R6::R6Class(
     aux = function()
     {
       return(private$paux)
+    },
+    modelEnvironment = function()
+    {
+      return(private$pModelEnvironment)
     }
   ),
   private = list(
@@ -818,7 +810,8 @@ sdOdeModelClass <- R6::R6Class(
     pRootSpecification = NULL,
     pEventFunction = NULL,
     pglobalFunctions = list(),
-    paux = list()
+    paux = list(),
+    pModelEnvironment = NULL
   ))
 
 

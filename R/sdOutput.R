@@ -345,189 +345,193 @@ sdOutputClass <- R6::R6Class(
       ncol <- min(ceiling(sqrt(length(which))), maxCol)
       nrow <- min(ceiling(length(which)/ncol), maxRow)
       
+      # save par settings
       mar <- par()$mar
       mfrow <- par()$mfrow
       par(mfrow=c(nrow, ncol))
       
-      # plot each formula from ... in a separeted plot
-      plots <- list() # list of plots size = i
-      i <- 1 # number of plots
-      for (column in which)
-      {
-        xaxis <- "time"
-        yaxis <- column
-        xlabel <- ""
-        ylabel <- ""
-        mainlabel <- ""
-        sublabel <- ""
+      try({
         
-        if (grepl("~", column))
+        # plot each formula from ... in a separeted plot
+        plots <- list() # list of plots size = i
+        i <- 1 # number of plots
+        for (column in which)
         {
-          vars <- unlist(strsplit(column, "~"))
-          yaxis <- vars[[1]]
-          xaxis <- vars[[2]]
-        }
-        
-        # set x label
-        if (!is.null(xlab))
-          xlabel <- xlab[[i]]
-        else
-          xlabel <- xaxis
-        
-        # set main title
-        if (!is.null(main))
-        {
-          ylabel <- yaxis
-          mainlabel <- main[[i]]
-        }
-        else
-          mainlabel <- yaxis
-        
-        # set y label
-        if (!is.null(ylab))
-          ylabel <- ylab[[i]]
-        
-        # set sub title
-        if (!is.null(sub))
-          sublabel <- sub[[i]]
-        
-        yaxis <- gsub("^\\s+|\\s+$", "", yaxis)
-        xaxis <- gsub("^\\s+|\\s+$", "", xaxis)
-        
-        # Separate y axis variables
-        yaxisArray <- unlist(strsplit(yaxis, " "))
-        
-        # check if all the variables names are valid columns names
-        if (!all(yaxisArray %in% names(data))) 
-        {
-          sdOutputMsg$plot3(private$poutputId, yaxisArray, names(data))
-          
-          # remove the not valid columns
-          yaxisArray <- yaxisArray[
-            yaxisArray %in% yaxisArray[(yaxisArray %in% names(data))]]
-          
-          # skip if no valid column are left
-          if (length(yaxisArray) == 0)
-            next()
-        }
-        
-        if (!(xaxis %in% names(data)))
-        {
-          sdOutputMsg$plot4(private$poutputId, xaxis)
           xaxis <- "time"
-        }
-        
-        nYAxis <- length(yaxisArray)
-        
-        if (multipleYAxis)
-          par(mar=c(5, 1 + 3.5*nYAxis, 4, 4) + 0.1)
-        
-        # add the x-axis unit if any
-        if (units && !is.null(dfscen$unit[[xaxis]]))
-          xlabel <- paste0(xlabel, " (", dfscen$unit[[xaxis]], ")")
-        
-        # Create empty plot within range of xaxis and yaxis
-        plot(x = NULL,
-             y = NULL,
-             axes = !(multipleYAxis && nYAxis > 1),
-             main = mainlabel,
-             sub = sublabel,
-             ylab = "",
-             xlab = xlabel,
-             xlim = range(data[,xaxis]),
-             ylim = range(data[,yaxisArray]))
-        
-        # get more colors
-        if (nYAxis > length(col))
-          col <- unique(c(col, colors(distinct = T)))
-        
-        # check the ylabel size when plotting more than one YAxis
-        if (!is.null(ylab) && ylabel != "" && multipleYAxis && 
-            length(ylabel) < nYAxis)
-          sdOutputMsg$plot1(private$poutputId, "ylab")
-        
-        # plot each y variable
-        for (j in 1:nYAxis)
-        {
-          if (multipleYAxis && nYAxis > 1) # when plotting multiple y-axis
+          yaxis <- column
+          xlabel <- ""
+          ylabel <- ""
+          mainlabel <- ""
+          sublabel <- ""
+          
+          if (grepl("~", column))
           {
-            par(new=T)
-            plot(x = data[,xaxis],
-                 y = data[,yaxisArray[j]],
-                 axes = F,
-                 main = "",
-                 ylab = "",
-                 xlab = "",
-                 xlim = range(data[,xaxis]),
-                 ylim = range(data[,yaxisArray[j]]),
-                 col = col[j],
-                 lty = plotSymbol,
-                 pch = plotSymbol,
-                 lwd = symbolSize,
-                 type = type)
-            
-            # deslocate the y axis
-            axis(2, ylim=range(data[, yaxisArray[j]]), col="black", lwd = 1.5,
-                 line = 3.5*j - 3.5)
-            
-            # insert the ylabel if compatible size
-            if (length(ylabel) == nYAxis)
-              labeltext <- paste(j, ".", paste(ylabel[[j]], collapse = " "))
-            else
-              labeltext <- paste(j, ".", yaxisArray[[j]])
-            
-            # add y-axis unit
-            if (units && !is.null(dfscen$unit[[yaxisArray[[j]]]]))
-              labeltext <- paste0(labeltext, " (", 
-                                  dfscen$unit[[yaxisArray[[j]]]], ")")
-            
-            # add the ylabel
-            mtext(2, text = labeltext, line = 3.5*j - 1.5)
+            vars <- unlist(strsplit(column, "~"))
+            yaxis <- vars[[1]]
+            xaxis <- vars[[2]]
           }
-          else 
-          { # multipleYAxis = FALSE
-            lines(data[,xaxis],
-                  y = data[,yaxisArray[j]],
-                  col = col[j],
-                  lty = plotSymbol,
-                  pch = plotSymbol,
-                  lwd = symbolSize,
-                  type = type)
-            
-            # add the y label
-            if (nYAxis == 1)
-            {
-              if (units && !is.null(dfscen$unit[[yaxisArray[[j]]]]))
-                ylabel <- paste0(ylabel, " (", 
-                                 dfscen$unit[[yaxisArray[[j]]]], ")")
-              
-              mtext(2, text = paste(ylabel, collapse = " "), line = 2.5)
-            }
-            else
-              mtext(2, text = paste(ylabel, collapse = " "), line = 2.5)
-          }
-        }
-        
-        if (nYAxis > 1)
-        {
-          if (multipleYAxis)
-            legend(legendPosition, paste(1:nYAxis, '.', yaxisArray), 
-                   lty = 1, lwd = symbolSize, col = col)
+          
+          # set x label
+          if (!is.null(xlab))
+            xlabel <- xlab[[i]]
           else
-            legend(legendPosition, yaxisArray, 
-                   lty = 1, lwd = symbolSize, col = col)
+            xlabel <- xaxis
+          
+          # set main title
+          if (!is.null(main))
+          {
+            ylabel <- yaxis
+            mainlabel <- main[[i]]
+          }
+          else
+            mainlabel <- yaxis
+          
+          # set y label
+          if (!is.null(ylab))
+            ylabel <- ylab[[i]]
+          
+          # set sub title
+          if (!is.null(sub))
+            sublabel <- sub[[i]]
+          
+          yaxis <- gsub("^\\s+|\\s+$", "", yaxis)
+          xaxis <- gsub("^\\s+|\\s+$", "", xaxis)
+          
+          # Separate y axis variables
+          yaxisArray <- unlist(strsplit(yaxis, " "))
+          
+          # check if all the variables names are valid columns names
+          if (!all(yaxisArray %in% names(data))) 
+          {
+            sdOutputMsg$plot3(private$poutputId, yaxisArray, names(data))
+            
+            # remove the not valid columns
+            yaxisArray <- yaxisArray[
+              yaxisArray %in% yaxisArray[(yaxisArray %in% names(data))]]
+            
+            # skip if no valid column are left
+            if (length(yaxisArray) == 0)
+              next()
+          }
+          
+          if (!(xaxis %in% names(data)))
+          {
+            sdOutputMsg$plot4(private$poutputId, xaxis)
+            xaxis <- "time"
+          }
+          
+          nYAxis <- length(yaxisArray)
+          
+          if (multipleYAxis)
+            par(mar=c(5, 1 + 3.5*nYAxis, 4, 4) + 0.1)
+          
+          # add the x-axis unit if any
+          if (units && !is.null(dfscen$unit[[xaxis]]))
+            xlabel <- paste0(xlabel, " (", dfscen$unit[[xaxis]], ")")
+          
+          # Create empty plot within range of xaxis and yaxis
+          plot(x = NULL,
+               y = NULL,
+               axes = !(multipleYAxis && nYAxis > 1),
+               main = mainlabel,
+               sub = sublabel,
+               ylab = "",
+               xlab = xlabel,
+               xlim = range(data[,xaxis]),
+               ylim = range(data[,yaxisArray]))
+          
+          # get more colors
+          if (nYAxis > length(col))
+            col <- unique(c(col, colors(distinct = T)))
+          
+          # check the ylabel size when plotting more than one YAxis
+          if (!is.null(ylab) && ylabel != "" && multipleYAxis && 
+              length(ylabel) < nYAxis)
+            sdOutputMsg$plot1(private$poutputId, "ylab")
+          
+          # plot each y variable
+          for (j in 1:nYAxis)
+          {
+            if (multipleYAxis && nYAxis > 1) # when plotting multiple y-axis
+            {
+              par(new=T)
+              plot(x = data[,xaxis],
+                   y = data[,yaxisArray[j]],
+                   axes = F,
+                   main = "",
+                   ylab = "",
+                   xlab = "",
+                   xlim = range(data[,xaxis]),
+                   ylim = range(data[,yaxisArray[j]]),
+                   col = col[j],
+                   lty = plotSymbol,
+                   pch = plotSymbol,
+                   lwd = symbolSize,
+                   type = type)
+              
+              # deslocate the y axis
+              axis(2, ylim=range(data[, yaxisArray[j]]), col="black", lwd = 1.5,
+                   line = 3.5*j - 3.5)
+              
+              # insert the ylabel if compatible size
+              if (length(ylabel) == nYAxis)
+                labeltext <- paste(j, ".", paste(ylabel[[j]], collapse = " "))
+              else
+                labeltext <- paste(j, ".", yaxisArray[[j]])
+              
+              # add y-axis unit
+              if (units && !is.null(dfscen$unit[[yaxisArray[[j]]]]))
+                labeltext <- paste0(labeltext, " (", 
+                                    dfscen$unit[[yaxisArray[[j]]]], ")")
+              
+              # add the ylabel
+              mtext(2, text = labeltext, line = 3.5*j - 1.5)
+            }
+            else 
+            { # multipleYAxis = FALSE
+              lines(data[,xaxis],
+                    y = data[,yaxisArray[j]],
+                    col = col[j],
+                    lty = plotSymbol,
+                    pch = plotSymbol,
+                    lwd = symbolSize,
+                    type = type)
+              
+              # add the y label
+              if (nYAxis == 1)
+              {
+                if (units && !is.null(dfscen$unit[[yaxisArray[[j]]]]))
+                  ylabel <- paste0(ylabel, " (", 
+                                   dfscen$unit[[yaxisArray[[j]]]], ")")
+                
+                mtext(2, text = paste(ylabel, collapse = " "), line = 2.5)
+              }
+              else
+                mtext(2, text = paste(ylabel, collapse = " "), line = 2.5)
+            }
+          }
+          
+          if (nYAxis > 1)
+          {
+            if (multipleYAxis)
+              legend(legendPosition, paste(1:nYAxis, '.', yaxisArray), 
+                     lty = 1, lwd = symbolSize, col = col)
+            else
+              legend(legendPosition, yaxisArray, 
+                     lty = 1, lwd = symbolSize, col = col)
+          }
+          
+          if (multipleYAxis)
+            axis(1, pretty(range(data[,xaxis])), xlim = range(data[,xaxis]), 
+                 lwd=1.5, line = 0)
+          
+          # store the printed plots
+          plots[[i]] <- recordPlot()
+          i <- i + 1
         }
-        
-        if (multipleYAxis)
-          axis(1, pretty(range(data[,xaxis])), xlim = range(data[,xaxis]), 
-               lwd=1.5, line = 0)
-        
-        # store the printed plots
-        plots[[i]] <- recordPlot()
-        i <- i + 1
-      }
+      })
       
-      # restore the parameters
+      # restore par settings
       par(mfrow = mfrow, mar = mar)
       
       invisible(plots)

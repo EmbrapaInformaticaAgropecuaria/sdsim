@@ -383,8 +383,8 @@ sdSimulate <- function(model,
     if (is.null(model$DifferentialEquations))
       stop(sprintf(sdSimulatorMsg$sdSimulateAtomic7, model$id), call. = FALSE)
     
-    if (!model$isVerified)
-      model$verifyModel(scenario, verbose = verbose)
+    # if (!model$isVerified)
+    #   model$verifyModel(scenario, verbose = verbose)
     
     # Get model functions
     InitVars <- model$InitVars
@@ -406,26 +406,7 @@ sdSimulate <- function(model,
           scenario <- sdLoadScenario(file = scenario)
         
         if (inherits(scenario, sdScenarioClass$classname))
-        {
-          if (length(scenario$state) > 0)
-            defaultScenario$addState(scenario$state, verbose = verbose)
-          if (length(scenario$constant) > 0)
-            defaultScenario$addConstant(scenario$constant, verbose = verbose)
-          if (length(scenario$input) > 0)
-            defaultScenario$addInput(
-              scenario$input[!(names(scenario$input) %in% c("interpolation_", 
-                                                            "fun_"))],
-              interpolation = scenario$input[["interpolation_"]],
-              verbose = verbose)
-          if (length(scenario$parameter) > 0)
-            defaultScenario$addParameter(scenario$parameter, verbose = verbose)
-          if (length(scenario$switch) > 0)
-            defaultScenario$addSwitch(scenario$switch, verbose = verbose)
-          if (!is.null(scenario$times))
-            defaultScenario$times <- scenario$times
-          if (!is.null(scenario$method))
-            defaultScenario$method <- scenario$method
-        }
+          defaultScenario <- mergeScenarios(defaultScenario, scenario)
         else
           sdSimulatorMsg$sdSimulateAtomic6(model$id, typeof(scenario))
       }
@@ -498,7 +479,8 @@ sdSimulate <- function(model,
       sdSimulatorMsg$sdSimulateAtomic1(model$id)
     
     createFuncEval <- CreateFuncEval
-    environment(createFuncEval) <- environment(model$DifferentialEquations)
+    
+    environment(createFuncEval) <- model$modelEnvironment
     DifferentialEquationsEval <-
       createFuncEval(func = model$DifferentialEquations,
                      ct = ct,
@@ -738,25 +720,9 @@ sdSimulate <- function(model,
           scenario <- sdLoadScenario(file = scenario)
         
         if (inherits(scenario, sdScenarioClass$classname))
-        {
-          if (length(scenario$constant) > 0)
-            defaultScenario$addConstant(scenario$constant, verbose = verbose)
-          if (length(scenario$input) > 0)
-            defaultScenario$addInput(
-              scenario$input[!(names(scenario$input) %in% c("interpolation_", 
-                                                            "fun_"))],
-              interpolation = scenario$input[["interpolation_"]],
-              verbose = verbose)
-          if (length(scenario$parameter) > 0)
-            defaultScenario$addParameter(scenario$parameter, verbose = verbose)
-          if (length(scenario$switch) > 0)
-            defaultScenario$addSwitch(scenario$switch, verbose = verbose)
-          if (!is.null(scenario$times))
-            defaultScenario$times <- scenario$times
-        }
+          defaultScenario <- mergeScenarios(defaultScenario, scenario)
         else
-          sdSimulatorMsg$sdSimulateAtomic6(model$id, 
-                                           typeof(scenario))
+          sdSimulatorMsg$sdSimulateAtomic6(model$id, typeof(scenario))
       }
     }
     else if (!is.null(scenario))
@@ -916,29 +882,9 @@ sdSimulate <- function(model,
           scenario <- sdLoadScenario(file = scenario)
         
         if (inherits(scenario, sdScenarioClass$classname))
-        {
-          if (length(scenario$state) > 0)
-            defaultScenario$addState(scenario$state, verbose = verbose)
-          if (length(scenario$constant) > 0)
-            defaultScenario$addConstant(scenario$constant, verbose = verbose)
-          if (length(scenario$input) > 0)
-            defaultScenario$addInput(
-              scenario$input[!(names(scenario$input) %in% c("interpolation_", 
-                                                            "fun_"))],
-              interpolation = scenario$input[["interpolation_"]],
-              verbose = verbose)
-          if (length(scenario$parameter) > 0)
-            defaultScenario$addParameter(scenario$parameter, verbose = verbose)
-          if (length(scenario$switch) > 0)
-            defaultScenario$addSwitch(scenario$switch, verbose = verbose)
-          if (!is.null(scenario$times))
-            defaultScenario$times <- scenario$times
-          if (!is.null(scenario$method))
-            defaultScenario$method <- scenario$method
-        }
+          defaultScenario <- mergeScenarios(defaultScenario, scenario)
         else
-          sdSimulatorMsg$sdSimulateAtomic6(model$id, 
-                                           typeof(scenario))
+          sdSimulatorMsg$sdSimulateAtomic6(model$id, typeof(scenario))
       }
     }
     else if (!is.null(scenario))
@@ -1279,3 +1225,4 @@ sdSimulate <- function(model,
   else
     stop(sdSimulatorMsg$sdSimulate, call. = F)
 }
+
