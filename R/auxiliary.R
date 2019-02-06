@@ -892,8 +892,47 @@ sdEquationList <- function(...)
   return(eqList)
 }
 
-# TODO: finish this function, document and export it
-sdMakeFlows <- function(connections = NULL, flow_rate = NULL, st = NULL) {
+# TODO: 
+# Add documentation
+# Move error strings to messages.R
+# Add variable check for variables that dont exist in boundary or st lists
+# Add inversible flows (allow both <- and ->)
+# Use case:
+# flows <- sdMakeFlows(
+#   connections = c("birth -> prey", 
+#                   "prey -> death",
+#                   "birth -> predator",
+#                   "predator -> death"),
+#   flow_rate = c(
+#     sdsim::sdEquationList(
+#       st$prey * par$a,
+#       par$b * st$prey * st$predator,
+#       par$delta * st$prey * st$predator,
+#       par$gamma * st$predator
+#     )
+#   ),
+#   boundary = c("birth", "death"),
+#   st = c("prey", "predator")
+# )
+# scen <- sdScenario(
+#   id = "test",
+#   state = list(prey = 10,
+#                predator = 10),
+#   parameter = list(a = 2/3,
+#                    b = 4/3,
+#                    delta = 1,
+#                    gamma = 1),
+#   times = list(from = 0, to = 100, by = 0.1),
+#   method = "lsoda"
+# )
+# 
+# model <- sdOdeModel("test",
+#                     DifferentialEquations = flows,
+#                     defaultScenario = scen)
+# out <- sdSimulate(model)
+# plot(out)
+sdMakeFlows <- function(connections = NULL, flow_rate = NULL, 
+                        st = NULL, boundary = c("boundary")) {
   if(is.null(connections))
     stop("Argument 'connections' has value 'NULL'. Must be an Array or List.")
   
