@@ -86,7 +86,7 @@ sdInitEquations <- function (equations, separator = "<-",
                              eqName = "aux")
 {
   equationList <- list()
-
+  
   # If equations is a list containing expressions and/or characters
   if (is.list(equations) && length(equations) > 0)
   {
@@ -195,11 +195,11 @@ topologicalSortEquations <- function(equations, eqName = c("aux","eq"))
       gregexpr(pattern = patterneq, toString(equations[[eqVar]]), perl = T))))
     
     eqdegree[[eqVar]] <- length(dependency) 
-
+    
     # add to the free list the eqs with no dependency
     if (eqdegree[[eqVar]] == 0)
       eqfree <- c(eqfree, eqVar)
-
+    
     # build the dependents eq    
     for (d in dependency)
       dependents[[d]] <- c(dependents[[d]], eqVar)
@@ -292,9 +292,9 @@ topologicalSortEquations <- function(equations, eqName = c("aux","eq"))
 # interpolation of the time series variables. The list is named using the 
 # \code{x} names.
 sdTemporalFunctionList <- function(x, colTimes = 1, colValue = 2, 
-                                 methods, 
-                                 sep = ",", dec = ".", header = TRUE,
-                                 timeSeriesDirectory = "")
+                                   methods, 
+                                   sep = ",", dec = ".", header = TRUE,
+                                   timeSeriesDirectory = "")
 {
   if (length(x) == 0)
     return(x)
@@ -309,10 +309,10 @@ sdTemporalFunctionList <- function(x, colTimes = 1, colValue = 2,
   timeSeriesFun <- lapply(1:length(x), FUN = function(i) 
   { 
     sdTemporalFunction(x = x[[i]], colTimes = colTimes, 
-                     colValue = colValue, 
-                     method = methods[[i]], sep = sep, dec = dec, 
-                     timeSeriesDirectory = timeSeriesDirectory,
-                     header = header) 
+                       colValue = colValue, 
+                       method = methods[[i]], sep = sep, dec = dec, 
+                       timeSeriesDirectory = timeSeriesDirectory,
+                       header = header) 
   })
   names(timeSeriesFun) <- names(x)
   
@@ -395,9 +395,9 @@ sdTemporalFunctionList <- function(x, colTimes = 1, colValue = 2,
 #' dietFun(10)
 #' #> [1] 100
 sdTemporalFunction <- function(x, colTimes = 1, colValue = 2, 
-                             method = "linear", 
-                             sep = ",", dec = ".", header = TRUE,
-                             timeSeriesDirectory = "")
+                               method = "linear", 
+                               sep = ",", dec = ".", header = TRUE,
+                               timeSeriesDirectory = "")
 { 
   splineMethods <- c("fmm", "natural", "periodic", "monoH.FC" , "hyman")
   approxfunMethods <- c("linear", "constant")
@@ -494,7 +494,7 @@ sdTemporalFunction <- function(x, colTimes = 1, colValue = 2,
     f <- tryCatch(
       {
         stats::approxfun(x = timeS, y = values, yleft = yl, yright = yr, 
-                          method = method)
+                         method = method)
       },
       error = function(e) 
       {
@@ -632,15 +632,15 @@ replaceCoupledVarsNames <- function(func, listExp, componentsVarNames, modelId)
   else if (!missing(listExp) && is.list(listExp))
   {
     expstr <- lapply(listExp, function(x) toString(as.expression(x)))
-
+    
     for (var in componentsVarNames)
     {
       for (varexp in names(listExp))
         expstr[[varexp]] <- gsub(pattern = paste0("(?<!\\.)\\b", var, 
                                                   "\\b(?!\\.)"), 
-                     replacement = paste0(modelId, ".", var), 
-                     x = expstr[[varexp]], 
-                     perl = T)
+                                 replacement = paste0(modelId, ".", var), 
+                                 x = expstr[[varexp]], 
+                                 perl = T)
     }
     
     listExp <- lapply(expstr, function(x) parse(text = x))
@@ -666,7 +666,7 @@ MergeLists <- function(parm, defaultParm, listName = "var")
   # update default parms values with given parm
   for (tag in names(parm))
     defaultParm[[tag]] <- parm[[tag]]
-
+  
   return(defaultParm)
 }
 
@@ -798,11 +798,11 @@ sdRepository <- function()
 xmlPrefix <- function()
 {
   return(paste0("<?sdsim about='R package for ",
-         "modeling and simulation of system dynamics'",
-         " version='",
-         toString(utils::packageVersion("sdsim")),
-         "' date='", Sys.Date(),
-         "'?>"))
+                "modeling and simulation of system dynamics'",
+                " version='",
+                toString(utils::packageVersion("sdsim")),
+                "' date='", Sys.Date(),
+                "'?>"))
 }
 
 #' Create a Scenario EXCEL Template
@@ -934,7 +934,7 @@ sdEquationList <- function(...)
 sdMakeFlows <- function(connections = NULL, flow_rate = NULL, 
                         st = NULL, boundary = c("boundary")) {
   if(is.null(connections))
-    stop("Argument 'connections' has value 'NULL'. Must be an Array or List.")
+    stop(sprintf(auxiliaryMsg$sdMakeFlows1))
   
   if(is.null(flow_rate))
     stop("Argument 'flow_rate' has value 'NULL'. Must be an Array or List.")
@@ -952,7 +952,8 @@ sdMakeFlows <- function(connections = NULL, flow_rate = NULL,
     flow_rate <- unlist(flow_rate)
   
   if(length(connections) != length(flow_rate))
-    stop("The length of the argument 'connections' does not match the length of the argument 'flow_rate")
+    stop(paste0("The length of the argument 'connections' does not match the ",
+                "length of the argument 'flow_rate"))
   
   if(any(!grepl("^\\h*[^ \t]+\\h*->\\h*[^ \t]+\\h*$", connections, perl = T)))
     stop("")

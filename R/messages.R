@@ -79,6 +79,10 @@ auxiliaryMsg$sdTemporalFunction6 <- paste0(
   "sdsim::sdTemporalFunction - Error in the time serie data points: Missing ",
   "the times or the value column. Transformation aborted, returned NULL. ")
 
+auxiliaryMsg$sdMakeFlows1 <- paste0(
+  "Argument 'connections' has value 'NULL'. Must be an Array or List."
+)
+
 # case use:
 # bb <- sdLoadModel("BouncingBall", repository = T)
 # sdSimulate(bb, scenario = sdScenario("", parameter = c(a = 2)))

@@ -582,7 +582,7 @@ sdOdeModelClass <- R6::R6Class(
       }
       
       auxEnv <- new.env(parent = environment())
-      appendEnv(auxEnv, environment(private$pDifferentialEquations))
+      appendEnv(auxEnv, private$pModelEnvironment)
       
       # evaluates the auxiliary variables and update the aux list
       for (auxVar in names(aux))
@@ -607,31 +607,14 @@ sdOdeModelClass <- R6::R6Class(
       #### Model Definition Validation
       DifferentialEquations <- private$pDifferentialEquations$getOdeFunction()
       
-      # Create new environment to store variables that will be validated
-      # and set env as an environment for the function
-      env <- new.env(parent = private$pModelEnvironment)
-      environment(DifferentialEquations) <- env
-      
-      # Create test variables in env
-      lsVars <- all.vars(body(DifferentialEquations))
-      for(var in lsVars)
-      {
-        assign(var, "\\0", envir = env)
-      }
-      
-      # replace original function with test function
-      bodyStr <- as.character(body(DifferentialEquations))
-      bodyStr <- gsub("(?<!<)<-", "<<-", bodyStr, perl = TRUE)
-      bodyStr <- gsub("->(?!>)", "->>", bodyStr, perl = TRUE)
-      bodyStr <- paste(bodyStr[2:length(bodyStr)], collapse = "\n")
-      body(DifferentialEquations) <- 
-        parse(text = paste("{", bodyStr, "}", sep = "\n"))
-      
+      trace_env <- new.env()
       # call the model definition and also return the auxiliary values
-      # res <- DifferentialEquations(t = t, st = st, ct = ct, par = par,  
-      #                        inp = inp, sw = sw, aux = aux)
       res <- tryCatch(
         {
+          trace(DifferentialEquations,
+                exit = function() trace_env <<- parent.frame(), 
+                print = F, where = environment())
+          
           DifferentialEquations(t = t, st = st, ct = ct, par = par, inp = inp, 
                                 sw = sw, aux = aux)
         },
@@ -641,18 +624,19 @@ sdOdeModelClass <- R6::R6Class(
           invisible(NULL)
         })
       
+      lsVars <- ls(trace_env)
       # Display warnings if any variables during the Model Definition
       # execution are NULL, numeric(0), Inf or NA
       lapply(lsVars, function(x)
       {
-        var <- get(x, envir = env)
+        var <- get(x, envir = trace_env)
         if (is.function(var) || is.environment(var))
         {
           var <- NULL
           # do nothing
         }
-        else if ( (is.list(var) && length(var) > 0) || 
-                  ( is.vector(var) && length(var) > 1 )) 
+        else if ( (is.list(var) && length(var) > 0) ||
+                  ( is.vector(var) && length(var) > 1 ))
         {
           xUnlist <- unlist(var, recursive = TRUE)
           for (i in 1:length(xUnlist))
@@ -663,30 +647,30 @@ sdOdeModelClass <- R6::R6Class(
               # do nothing
             }
             else if (is.null(xUnlist[[i]]))
-              sdOdeModelMsg$verifyModel6(private$pid, names(xUnlist)[[i]], x, 
+              sdOdeModelMsg$verifyModel6(private$pid, names(xUnlist)[[i]], x,
                                       "NULL")
             else if (length(var) == 0 && is.numeric(var))
-              sdOdeModelMsg$verifyModel6(private$pid, names(xUnlist)[[i]], x, 
+              sdOdeModelMsg$verifyModel6(private$pid, names(xUnlist)[[i]], x,
                                       "numeric(0)")
             else if (is.na(xUnlist[[i]]))
-              sdOdeModelMsg$verifyModel6(private$pid, names(xUnlist)[[i]], x, 
+              sdOdeModelMsg$verifyModel6(private$pid, names(xUnlist)[[i]], x,
                                       "NA")
             else if (is.infinite(xUnlist[[i]]))
-              sdOdeModelMsg$verifyModel6(private$pid, names(xUnlist)[[i]], x, 
+              sdOdeModelMsg$verifyModel6(private$pid, names(xUnlist)[[i]], x,
                                       "Inf")
-          } 
+          }
         }
         else if (x %in% c('st', 'ct', 'par', 'inp', 'sw', 'aux'))
         { # do nothing if an arg is empty
         }
         else if (is.null(unlist(var)))
-          sdOdeModelMsg$verifyModel7(private$pid, x, "NULL") 
+          sdOdeModelMsg$verifyModel7(private$pid, x, "NULL")
         else if (length(var) == 0 && is.numeric(var))
-          sdOdeModelMsg$verifyModel7(private$pid, x, "numeric(0)") 
+          sdOdeModelMsg$verifyModel7(private$pid, x, "numeric(0)")
         else if (is.na(unlist(var)))
-          sdOdeModelMsg$verifyModel7(private$pid, x, "NA") 
+          sdOdeModelMsg$verifyModel7(private$pid, x, "NA")
         else if (is.infinite(unlist(var)))
-          sdOdeModelMsg$verifyModel7(private$pid, x, "Inf") 
+          sdOdeModelMsg$verifyModel7(private$pid, x, "Inf")
       })
       
       # Check the return of Model Definition contains invalid values

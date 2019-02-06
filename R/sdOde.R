@@ -1,14 +1,15 @@
 sdOdeClass <- R6::R6Class(
   classname = "sdOde",
   public = list(
-    initialize = function(ode = NULL, 
+    initialize = function(ode = NULL,
                           modelEnvironment = NULL)
     {
-      if(is.function(ode))
+      if (is.function(ode))
         private$pOdeFunction <- ode
-      else if(is.list(ode))
+      else if (is.list(ode))
       {
-        private$pOdeFlows <- ode$flows
+        # if (all(names(ode)) == c("flows", "stateVariables"))
+          private$pOdeFlows <- ode$flows
         private$stateVariables <- ode$stateVariables
       }
       
@@ -18,29 +19,29 @@ sdOdeClass <- R6::R6Class(
     {
       # TODO
     },
-    test = function()
-    {
-      print(ls(environment(self$getOdeFunction())))
-    },
     getOdeFunction = function() {
-      if(!is.null(private$pOdeFunction))
+      if (!is.null(private$pOdeFunction))
       {
         ode <- private$pOdeFunction
       }
-      else if(!is.null(private$pOdeFlows))
+      else if (!is.null(private$pOdeFlows))
       {
-        if(is.null(private$stateVariables))
+        if (is.null(private$stateVariables))
           stop("TODO")
-        ode <- private$makeFlowOdeFunction(private$pOdeFlows)
+        
+        flows <- lapply(private$pOdeFlows$flow_rate, function(x) {
+          parse(text = x)
+        })
+        
+        ode <- private$makeFlowOdeFunction(private$pOdeFlows$source,
+                                           private$pOdeFlows$sink,
+                                           flows)
       }
       
-      if(!is.null(private$modelEnvironment))
+      if (!is.null(private$modelEnvironment))
         parent.env(environment(ode)) <- private$modelEnvironment
       
       return(ode)
-    },
-    getVerifyFunction = function() {
-      
     },
     setStateVariables = function() {
       
@@ -48,41 +49,47 @@ sdOdeClass <- R6::R6Class(
     saveXml = function()
     {
       # TODO
-    }),
-  active = list(
+    }
   ),
+  active = list(),
   private = list(
     generate_flows = function(source, sink, st) {
       nStates <- length(st)
       st_names <- st
       
-      source_idx <- sapply(source, function(x) match(x, st_names))
-      sink_idx   <- sapply(sink,   function(x) match(x, st_names))
+      source_idx <- sapply(source, function(x)
+        match(x, st_names))
+      
+      sink_idx   <- sapply(sink, function(x)
+        match(x, st_names))
       
       inflow <- list()
       outflow <- list()
-      for (i in 1:nStates){
+      
+      for (i in 1:nStates) {
         inflow[[i]] <- which(sink_idx == i)
         outflow[[i]] <- which(source_idx == i)
       }
       
       return(list(inflow = inflow, outflow = outflow))
     },
-    makeFlowOdeFunction = function(df)
+    makeFlowOdeFunction = function(source, sink, flow_rate)
     {
-      flows <- private$generate_flows(df$source, df$sink, private$stateVariables)
+      flows <-
+        private$generate_flows(source, sink, private$stateVariables)
       
       ode <- function(t, st, ct, par, inp, sw, aux)
       {
         # Calc flow quantity
-        flow_qty <- sapply(df$flow_rate, function(x) {
-          expr <- parse(text = x)
-          eval(expr)
-        })
+        flow_qty <- sapply(flow_rate, eval, envir = environment())
         
         # Calc differentials
-        inflow_qty <- sapply(flows$inflow, function(x) sum(flow_qty[x]))
-        outflow_qty <- sapply(flows$outflow, function(x) sum(flow_qty[x]))
+        inflow_qty <-
+          sapply(flows$inflow, function(x)
+            sum(flow_qty[x]))
+        outflow_qty <-
+          sapply(flows$outflow, function(x)
+            sum(flow_qty[x]))
         
         dS_dt <- inflow_qty - outflow_qty
         

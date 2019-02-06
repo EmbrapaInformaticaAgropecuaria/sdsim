@@ -5,10 +5,10 @@
 \title{Builds a Coupled Scenario}
 \usage{
 sdBuildCoupledScenario(id = NULL, scenarios = NULL, from = NULL,
-  to = NULL, by = NULL, method = c("lsoda", "lsode", "lsodes", "lsodar",
-  "vode", "daspk", "euler", "rk4", "ode23", "ode45", "radau", "bdf", "bdf_d",
-  "adams", "impAdams", "impAdams_d"), timeSeriesDirectory = "",
-  varNames = FALSE)
+  to = NULL, by = NULL, method = c("lsoda", "lsode", "lsodes",
+  "lsodar", "vode", "daspk", "euler", "rk4", "ode23", "ode45", "radau",
+  "bdf", "bdf_d", "adams", "impAdams", "impAdams_d"),
+  timeSeriesDirectory = "", varNames = FALSE)
 }
 \arguments{
 \item{id}{A string with the coupled scenario ID. If missing a

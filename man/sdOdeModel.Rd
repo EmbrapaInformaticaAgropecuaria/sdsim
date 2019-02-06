@@ -6,8 +6,8 @@
 \usage{
 sdOdeModel(id = NULL, description = NULL, defaultScenario = NULL,
   aux = NULL, DifferentialEquations = NULL, InitVars = NULL,
-  PostProcessVars = NULL, RootSpecification = NULL, EventFunction = NULL,
-  globalFunctions = NULL)
+  PostProcessVars = NULL, RootSpecification = NULL,
+  EventFunction = NULL, globalFunctions = NULL)
 }
 \arguments{
 \item{id}{A character string with the model ID. It is coerced to a valid id 

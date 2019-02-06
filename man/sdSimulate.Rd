@@ -4,9 +4,9 @@
 \alias{sdSimulate}
 \title{Simulate System Dynamics Models and Static Models}
 \usage{
-sdSimulate(model, scenario = NULL, from = NULL, to = NULL, by = NULL,
-  method = NULL, events = TRUE, maxroots = 100, terminalroot = NULL,
-  ties = "notordered", storeAuxTrajectory = T,
+sdSimulate(model, scenario = NULL, from = NULL, to = NULL,
+  by = NULL, method = NULL, events = TRUE, maxroots = 100,
+  terminalroot = NULL, ties = "notordered", storeAuxTrajectory = T,
   storeTimeSeriesTrajectory = F, verbose = F)
 }
 \arguments{
