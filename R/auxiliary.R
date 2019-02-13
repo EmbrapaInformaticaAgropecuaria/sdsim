@@ -892,73 +892,117 @@ sdEquationList <- function(...)
   return(eqList)
 }
 
-# TODO: 
-# Add documentation
-# Move error strings to messages.R
-# Add variable check for variables that dont exist in boundary or st lists
-# Add inversible flows (allow both <- and ->)
-# Use case:
-# flows <- sdMakeFlows(
-#   connections = c("birth -> prey", 
-#                   "prey -> death",
-#                   "birth -> predator",
-#                   "predator -> death"),
-#   flow_rate = c(
-#     sdsim::sdEquationList(
-#       st$prey * par$a,
-#       par$b * st$prey * st$predator,
-#       par$delta * st$prey * st$predator,
-#       par$gamma * st$predator
-#     )
-#   ),
-#   boundary = c("birth", "death"),
-#   st = c("prey", "predator")
-# )
-# scen <- sdScenario(
-#   id = "test",
-#   state = list(prey = 10,
-#                predator = 10),
-#   parameter = list(a = 2/3,
-#                    b = 4/3,
-#                    delta = 1,
-#                    gamma = 1),
-#   times = list(from = 0, to = 100, by = 0.1),
-#   method = "lsoda"
-# )
-# 
-# model <- sdOdeModel("test",
-#                     DifferentialEquations = flows,
-#                     defaultScenario = scen)
-# out <- sdSimulate(model)
-# plot(out)
-sdMakeFlows <- function(connections = NULL, flow_rate = NULL, 
+# Compares the variables in list 'flows' with the list 'boundary' and 'st'. 
+# Gives a warning if there is no match.
+verifyBoundarySt <- function(boundary, st, flows)
+{
+  strFlows <- strsplit(flows, "\\s+\\->\\s+")
+  missingFlows <- list()
+  for(i in 1:length(flows))
+  {
+    if(!length(grep(strFlows[[i]][1], boundary))&& 
+       !length(grep(strFlows[[i]][1], st)))
+        missingFlows <- c(missingFlows, strFlows[[i]][1])
+    if(!length(grep(strFlows[[i]][2], boundary)) && 
+       !length(grep(strFlows[[i]][2], st)))
+        missingFlows <- c(missingFlows, strFlows[[i]][2])
+  }
+  
+  missingFlows <- unique(missingFlows)
+
+  for(e in 1:length(missingFlows))
+    warning(sprintf(auxiliaryMsg$sdMakeFlows6, missingFlows[[e]]))
+}
+
+# Verifies the direction of the flow in list 'flows'. Returns a corrected list. 
+verifyInverseFlow <- function(flows)
+{
+  if(length(grep("<-", flows)))
+  {
+    aux_pos <- grep("<-", flows)
+    aux_str <- strsplit(flows[aux_pos], "\\s+")
+    for (i in 1:length(aux_pos)) 
+      flows[aux_pos[i]] <- paste(aux_str[[i]][3], aux_str[[i]][1],
+                                 sep = " -> ")
+  }
+  return(flows)
+}
+
+#' 
+#' Create a list of flow variables
+#'  
+#'
+#'  This function converts written text to a list of variables in character 
+#' format that contains the flow model. It also guarantees that the arguments to 
+#' are adequated to be used by other sdsim functions.
+#' 
+#' @param connections 
+#' 
+#' @return  
+#'
+#' @examples
+#' flows <- sdMakeFlows(
+#'   connections = c("birth -> prey", 
+#'                   "prey -> death",
+#'                   "birth -> predator",
+#'                   "predator -> death"),
+#'   flow_rate = c(
+#'     sdsim::sdEquationList(
+#'       st$prey * par$a,
+#'       par$b * st$prey * st$predator,
+#'       par$delta * st$prey * st$predator,
+#'       par$gamma * st$predator
+#'     )
+#'   ),
+#'   boundary = c("birth", "death"),
+#'   st = c("prey", "predator")
+#' )
+#' scen <- sdScenario(
+#'   id = "test",
+#'   state = list(prey = 10,
+#'                predator = 10),
+#'   parameter = list(a = 2/3,
+#'                    b = 4/3,
+#'                    delta = 1,
+#'                    gamma = 1),
+#'   times = list(from = 0, to = 100, by = 0.1),
+#'   method = "lsoda"
+#' )
+#' 
+#' model <- sdOdeModel("test",
+#'                     DifferentialEquations = flows,
+#'                     defaultScenario = scen)
+#' out <- sdSimulate(model)
+#' plot(out)
+sdMakeFlows <- function(flows = NULL, flow_rate = NULL, 
                         st = NULL, boundary = c("boundary")) {
-  if(is.null(connections))
+  if(is.null(flows))
     stop(sprintf(auxiliaryMsg$sdMakeFlows1))
   
   if(is.null(flow_rate))
-    stop("Argument 'flow_rate' has value 'NULL'. Must be an Array or List.")
+    stop(sprintf(auxiliaryMsg$sdMakeFlows2))
   
-  if(length(connections) == 0)
-    stop("")
+  if(length(flows) == 0)
+    stop(sprintf(auxiliaryMsg$sdMakeFlows3))
   
   if(length(flow_rate) == 0)
-    stop("")
+    stop(sprintf(auxiliaryMsg$sdMakeFlows4))
   
-  if(is.list(connections))
+  if(is.list(flows))
     connections <- unlist(connections)
-  
+
   if(is.list(flow_rate))
     flow_rate <- unlist(flow_rate)
+
+  if(length(flows) != length(flow_rate))
+    stop(sprintf(auxiliaryMsg$sdMakeFlows5))
   
-  if(length(connections) != length(flow_rate))
-    stop(paste0("The length of the argument 'connections' does not match the ",
-                "length of the argument 'flow_rate"))
-  
-  if(any(!grepl("^\\h*[^ \t]+\\h*->\\h*[^ \t]+\\h*$", connections, perl = T)))
-    stop("")
-  
-  split_con <- strsplit(connections, split = "\\h*->\\h*", perl = T)
+  flows <- verifyInverseFlow(flows)
+
+  verifyBoundarySt(boundary, st, flows)
+
+
+  split_con <- strsplit(flows, split = "\\h*->\\h*", perl = T)
   source <- unlist(lapply(split_con, `[[`, 1))
   sink <- unlist(lapply(split_con, `[[`, 2))
   
