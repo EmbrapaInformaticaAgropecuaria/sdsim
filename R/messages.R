@@ -80,7 +80,7 @@ auxiliaryMsg$sdTemporalFunction6 <- paste0(
   "the times or the value column. Transformation aborted, returned NULL. ")
 
 auxiliaryMsg$sdMakeFlows1 <- paste0(
-  "sdsim::sdMakeFlows - Error initializing flow: Argument 'connections' has ",
+  "sdsim::sdMakeFlows - Error initializing flow: Argument 'flows' has ",
   "value 'NULL'. Must be an Array or List.")
 
 auxiliaryMsg$sdMakeFlows2 <- paste0(
@@ -89,7 +89,7 @@ auxiliaryMsg$sdMakeFlows2 <- paste0(
 
 auxiliaryMsg$sdMakeFlows3 <- paste0(
   "sdsim::sdMakeFlows - Error initializing flow: No elements identified in ",
-  "argument 'connections'. Must be an non-empty Array or List. ")
+  "argument 'flows'. Must be an non-empty Array or List. ")
 
 auxiliaryMsg$sdMakeFlows4 <- paste0(
   "sdsim::sdMakeFlows - Error initializing flow: No elements identified in ",
@@ -97,7 +97,7 @@ auxiliaryMsg$sdMakeFlows4 <- paste0(
 
 auxiliaryMsg$sdMakeFlows5 <- paste0(
   "sdsim::sdMakeFlows - Error initializing flow: The length of the argument ",
-  "'connections' does not match the lenght of the argument 'flow_rate'.")
+  "'flows' does not match the lenght of the argument 'flow_rate'.")
 
 auxiliaryMsg$sdMakeFlows6 <- paste0(
   "sdsim::MakeFlows - The variable '%s' in argument 'flows' ",

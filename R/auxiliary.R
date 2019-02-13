@@ -1002,9 +1002,9 @@ sdMakeFlows <- function(flows = NULL, flow_rate = NULL,
   verifyBoundarySt(boundary, st, flows)
 
 
-  split_con <- strsplit(flows, split = "\\h*->\\h*", perl = T)
-  source <- unlist(lapply(split_con, `[[`, 1))
-  sink <- unlist(lapply(split_con, `[[`, 2))
+  split_flow <- strsplit(flows, split = "\\h*->\\h*", perl = T)
+  source <- unlist(lapply(split_flow, `[[`, 1))
+  sink <- unlist(lapply(split_flow, `[[`, 2))
   
   list(
     stateVariables = st,
