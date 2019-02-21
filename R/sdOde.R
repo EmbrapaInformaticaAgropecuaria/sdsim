@@ -8,7 +8,7 @@ sdOdeClass <- R6::R6Class(
       } else if(inherits(ode, sdFlowClass$classname)) {
         private$pOdeFlows <- ode
       } else if (is.list(ode)) { 
-        # TODO: differential equations list
+        private$pDiffEq <- sdDifferentialEquationsClass$new(ode)
       }
       
       private$modelEnvironment <- modelEnvironment
@@ -37,6 +37,7 @@ sdOdeClass <- R6::R6Class(
   private = list(
     pOdeFunction = NULL,
     pOdeFlows = NULL,
+    pDiffEq = NULL,
     modelEnvironment = NULL
   )
 )
