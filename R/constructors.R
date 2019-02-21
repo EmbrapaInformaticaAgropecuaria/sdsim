@@ -193,16 +193,15 @@
 #' outlv$saveSimulationOutput(path = "LV") 
 #' @return A \code{\link{sdOdeModelClass}} object.
 sdOdeModel <- function(id = NULL,
-                          description = NULL,
-                          defaultScenario = NULL,
-                          aux = NULL,
-                          DifferentialEquations = NULL, 
-                          InitVars = NULL,
-                          PostProcessVars = NULL, 
-                          RootSpecification = NULL, 
-                          EventFunction = NULL,
-                          globalFunctions = NULL)
-{
+                       description = NULL,
+                       defaultScenario = NULL,
+                       aux = NULL,
+                       DifferentialEquations = NULL, 
+                       InitVars = NULL,
+                       PostProcessVars = NULL, 
+                       RootSpecification = NULL, 
+                       EventFunction = NULL,
+                       globalFunctions = NULL) { 
   # create a new model
   model <- sdOdeModelClass$new(
     id = id,
@@ -253,15 +252,13 @@ sdOdeModel <- function(id = NULL,
 #' bb$saveXml(file = "bb.xml")
 #' bb <- sdLoadModel(file = "bb.xml") 
 sdLoadModel <- function(file, repository = F,
-                        timeSeriesDirectory = "")
-{
+                        timeSeriesDirectory = "") { 
   if (missing(file))
     constructorsMsg$sdLoadModel1()
   
-  if (repository)
-  {
+  if (repository) { 
     filepath <- system.file(appDir = paste0("repository/", file, ".xml"), 
-                        package = "sdsim")
+                            package = "sdsim")
     if (filepath == "")
       constructorsMsg$sdLoadModel2(file)
     else
@@ -275,12 +272,10 @@ sdLoadModel <- function(file, repository = F,
   # read the file
   model <- tryCatch(
     XML::xmlParse(file),
-    error = function(e)
-    {
+    error = function(e) { 
       constructorsMsg$sdLoadModel4(file, e)
     },
-    warning = function(w) 
-    {
+    warning = function(w) { 
       constructorsMsg$sdLoadModel5(file, w)
     })
   
@@ -305,12 +300,10 @@ sdLoadModel <- function(file, repository = F,
   model <- XML::xmlToList(model)
   
   # instanciate the model object
-  if (sdOdeModelClass$classname %in% modelTags) # load atomic model
-  {
+  if (sdOdeModelClass$classname %in% modelTags) { # load atomic model
     # create the default scenario
     # convert the types of the xml vars
-    if (is.list(model$defaultScenario))
-    {
+    if (is.list(model$defaultScenario)) { 
       loadedScen <- model$defaultScenario$sdScenario
       
       model$defaultScenario <- sdScenario(
@@ -343,17 +336,13 @@ sdLoadModel <- function(file, repository = F,
                                StringToFun))
     
     return(model)
-  }
-  else if (sdCoupledModelClass$classname %in% modelTags) # load coupled model
-  {
-    if (!is.null(model$components))
-    {
+  } else if (sdCoupledModelClass$classname %in% modelTags) { # load coupled model
+    if (!is.null(model$components)) { 
       # get the components Ids
       componentsId <- lapply(model$components, function(x) x$id)
       
       # convert the components
-      model$components <- lapply(seq_along(model$components), function(i)
-      {
+      model$components <- lapply(seq_along(model$components), function(i) { 
         # convert each component to a model object
         x <- model$components[[i]]
         # create the default scenario
@@ -372,8 +361,10 @@ sdLoadModel <- function(file, repository = F,
                      unit = loadedScen$unit,
                      description = loadedScen$description,
                      timeSeriesDirectory = timeSeriesDirectory)
-        # create a sd atomic model
-        if (names(model$components)[[i]] == sdOdeModelClass$classname) 
+        
+        if (names(model$components)[[i]] == sdOdeModelClass$classname) {
+          # create a sd atomic model
+          
           component <- sdOdeModelClass$new(
             id = x$id,
             description = x$description,
@@ -385,8 +376,9 @@ sdLoadModel <- function(file, repository = F,
             EventFunction = StringToFun(x$EventFunction),
             aux = x$aux,
             globalFunctions = lapply(x$globalFunctions, StringToFun))
-        # create a static model
-        else if (names(model$components)[[i]] == sdStaticModelClass$classname) 
+        } else if (names(model$components)[[i]] == sdStaticModelClass$classname) {
+          # create a static model
+          
           component <- sdStaticModelClass$new(
             id = x$id,
             description = x$description,
@@ -394,16 +386,16 @@ sdLoadModel <- function(file, repository = F,
             algebraicEquations = x$algebraicEquations,
             defaultScenario = x$defaultScenario,
             globalFunctions = lapply(x$globalFunctions, StringToFun))
-        else
+        } else {
           component <- NULL
+        }
         
         component
       })
     }
     
     # convert the connections (parse text)
-    model$connections <- lapply(model$connections, function(x)
-    {
+    model$connections <- lapply(model$connections, function(x) { 
       if (is.character(x) && length(x) == 1)
         eval(parse(text = x))
       else
@@ -419,15 +411,12 @@ sdLoadModel <- function(file, repository = F,
     
     
     return(coupledModel)
-  } 
-  else if (sdStaticModelClass$classname %in% modelTags)
-  {
+  } else if (sdStaticModelClass$classname %in% modelTags) { 
     # load static model
     
     # create the default scenario
     # convert the types of the xml vars
-    if (is.list(model$defaultScenario))
-    {
+    if (is.list(model$defaultScenario)) { 
       loadedScen <- model$defaultScenario$sdScenario
       
       model$defaultScenario <- sdScenario(
@@ -456,9 +445,9 @@ sdLoadModel <- function(file, repository = F,
                                                              StringToFun))
     
     return(model)
-  }
-  else
+  } else {
     constructorsMsg$sdLoadModel7()
+  }
 }
 
 #' Creates a Coupled System Dynamics Model
@@ -592,8 +581,7 @@ sdLoadModel <- function(file, repository = F,
 sdCoupledModel <- function(id = NULL,
                            description = NULL,
                            components = NULL,
-                           connections = NULL)
-{
+                           connections = NULL) { 
   # creat a new model
   coupledModel <- sdCoupledModelClass$new(id = id,
                                           description = description,
@@ -700,8 +688,7 @@ sdStaticModel <- function(id = NULL,
                           defaultScenario = NULL,
                           algebraicEquations = NULL,
                           InitVars = NULL,
-                          globalFunctions = NULL)
-{
+                          globalFunctions = NULL) { 
   # create a new model
   model <- sdStaticModelClass$new(
     id = id,
@@ -937,8 +924,7 @@ sdScenario <- function(id,
                        valueCol = "Value", 
                        unitCol = "Unit", 
                        descriptionCol = "Description", 
-                       interpolationCol = "Interpolation") 
-{
+                       interpolationCol = "Interpolation") { 
   loadedScen <- list()
   
   # Update the variables from external files with the given arguments and
@@ -952,10 +938,8 @@ sdScenario <- function(id,
   if (!missing(method) && !is.null(method)) # set method
     loadedScen$method <- method
   
-  if (!missing(state)) # set state
-  {
-    if (is.data.frame(state))
-    {
+  if (!missing(state)) { # set state
+    if (is.data.frame(state)) { 
       loadedScen$state <- ConvertDataFrameToList(state, 
                                                  variableCol = variableCol,
                                                  valueCol = valueCol)
@@ -971,15 +955,13 @@ sdScenario <- function(id,
                                       state, 
                                       variableCol = variableCol,
                                       valueCol = descriptionCol))
-    }
-    else
+    } else {
       loadedScen$state <- state
+    }
   }
   
-  if (!missing(constant)) # set constant
-  {
-    if (is.data.frame(constant))
-    {
+  if (!missing(constant)) { # set constant
+    if (is.data.frame(constant)) { 
       loadedScen$constant <- ConvertDataFrameToList(constant, 
                                                     variableCol = variableCol,
                                                     valueCol = valueCol)
@@ -994,15 +976,13 @@ sdScenario <- function(id,
                                       constant, 
                                       variableCol = variableCol,
                                       valueCol = descriptionCol))
-    }
-    else
+    } else {
       loadedScen$constant <- constant
+    }
   }
   
-  if (!missing(input)) # set input
-  {
-    if (is.data.frame(input))
-    {
+  if (!missing(input)) { # set input
+    if (is.data.frame(input)) { 
       loadedScen$input <- ConvertDataFrameToList(input, 
                                                  variableCol = variableCol,
                                                  valueCol = valueCol)
@@ -1022,18 +1002,16 @@ sdScenario <- function(id,
           input, 
           variableCol = variableCol,
           valueCol = interpolationCol)
-    }
-    else
+    } else {
       loadedScen$input <- input
+    }
   }
   
   if (!missing(interpolation) && !is.null(interpolation))
     loadedScen$interpolation <- interpolation
   
-  if (!missing(parameter)) # set parameter
-  {
-    if (is.data.frame(parameter))
-    {
+  if (!missing(parameter)) { # set parameter
+    if (is.data.frame(parameter)) { 
       loadedScen$parameter <- ConvertDataFrameToList(parameter, 
                                                      variableCol = variableCol,
                                                      valueCol = valueCol)
@@ -1050,15 +1028,13 @@ sdScenario <- function(id,
                                       variableCol = variableCol,
                                       valueCol = descriptionCol))
       
-    }
-    else
+    } else {
       loadedScen$parameter <- parameter
+    }
   }
   
-  if (!missing(switch)) # set switch
-  {
-    if (is.data.frame(switch))
-    {
+  if (!missing(switch)) { # set switch
+    if (is.data.frame(switch)) { 
       loadedScen$switch <- ConvertDataFrameToList(switch, 
                                                   variableCol = variableCol,
                                                   valueCol = valueCol)
@@ -1074,9 +1050,9 @@ sdScenario <- function(id,
                                       switch, 
                                       variableCol = variableCol,
                                       valueCol = descriptionCol))
-    }
-    else
+    } else {
       loadedScen$switch <- switch
+    }
   }
   
   # set unit list
@@ -1241,8 +1217,7 @@ sdLoadScenario <- function(file,
                            valueCol = "Value", 
                            unitCol = "Unit", 
                            descriptionCol = "Description", 
-                           interpolationCol = "Interpolation") 
-{
+                           interpolationCol = "Interpolation") { 
   # Detect if file extension is equal ".xml" or to xlsx/xls
   isXml <- grepl("\\.([xX][mM][lL])$", file, perl = TRUE) 
   isXlsx <- grepl("\\.([xX][lL][sS][xX]|[xX][lL][sS])$", file, perl = TRUE)
@@ -1251,17 +1226,14 @@ sdLoadScenario <- function(file,
   if (!file.exists(file)) 
     constructorsMsg$sdLoadScenario1(file)
   
-  if (isXml)
-  {
+  if (isXml) { 
     # read the file
     loadedScen <- tryCatch(
       XML::xmlParse(file),
-      error = function(e)
-      {
+      error = function(e) { 
         constructorsMsg$sdLoadScenario2(file, e)
       },
-      warning = function(w) 
-      {
+      warning = function(w) { 
         constructorsMsg$sdLoadScenario3(file, w)
       })
     
@@ -1282,9 +1254,7 @@ sdLoadScenario <- function(file,
     # }
     
     loadedScen <- XML::xmlToList(loadedScen)
-  }
-  else if (isXlsx)
-  {
+  } else if (isXlsx) { 
     loadedScen <- LoadModelScenario(file = file,
                                     dec = ".",
                                     stateSheet = stateSheet,
@@ -1298,9 +1268,9 @@ sdLoadScenario <- function(file,
                                     unitCol = "Unit", 
                                     descriptionCol = "Description", 
                                     interpolationCol = "Interpolation")
-  }
-  else
+  } else {
     constructorsMsg$sdLoadScenario4(file)
+  }
   
   return(sdScenarioClass$new(id = loadedScen$id,
                              times = loadedScen$times, 
@@ -1321,3 +1291,61 @@ sdLoadScenario <- function(file,
 # unitCol = "Unit",
 # descriptionCol = "Description", 
 # interpolationCol = "Interpolation"
+
+
+# TODO: finish documentation
+#' Create flow object
+#'  
+#'
+#' This function converts written text to a list of variables in character 
+#' format that contains the flow model. It also guarantees that the arguments to 
+#' are adequated to be used by other sdsim functions.
+#' 
+#' @param flows 
+#' @param flow_rate
+#' @param st
+#' @param boundaries
+#' 
+#' @return  
+#'
+#' @examples
+#' flows <- sdFlow(
+#'   connections = c("birth -> prey", 
+#'                   "prey -> death",
+#'                   "birth -> predator",
+#'                   "predator -> death"),
+#'   flow_rate = c(
+#'     sdsim::sdEquationList(
+#'       st$prey * par$a,
+#'       par$b * st$prey * st$predator,
+#'       par$delta * st$prey * st$predator,
+#'       par$gamma * st$predator
+#'     )
+#'   ),
+#'   boundaries = c("birth", "death"),
+#'   st = c("prey", "predator")
+#' )
+#' scen <- sdScenario(
+#'   id = "test",
+#'   state = list(prey = 10,
+#'                predator = 10),
+#'   parameter = list(a = 2/3,
+#'                    b = 4/3,
+#'                    delta = 1,
+#'                    gamma = 1),
+#'   times = list(from = 0, to = 100, by = 0.1),
+#'   method = "lsoda"
+#' )
+#' 
+#' model <- sdOdeModel("test",
+#'                     DifferentialEquations = flows,
+#'                     defaultScenario = scen)
+#' out <- sdSimulate(model)
+#' plot(out)
+sdFlow <- function(flows = NULL, flowRate = NULL, 
+                   stocks = NULL, boundaries = c("boundary")) {
+  sdFlowClass$new(flows,
+                  flowRate = flowRate,
+                  stocks = stocks,
+                  boundaries = boundaries)
+}

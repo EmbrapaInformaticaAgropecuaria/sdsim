@@ -425,8 +425,7 @@ sdScenarioClass <- R6::R6Class(
                           unit,
                           description,
                           timeSeriesDirectory = "",
-                          verbose = FALSE)
-    {
+                          verbose = FALSE) { 
       private[["pFlush"]]()
       
       # Initialize scenario ID
@@ -437,8 +436,7 @@ sdScenarioClass <- R6::R6Class(
       id <- private$pid
       
       # Initialize state
-      if (!missing(state) && !is.null(state) && length(state) > 0)
-      {
+      if (!missing(state) && !is.null(state) && length(state) > 0) { 
         if ((is.list(state) || is.numeric(state)) && !is.null(names(state)))
           self$addState(state, verbose = verbose)
         else
@@ -446,8 +444,7 @@ sdScenarioClass <- R6::R6Class(
       }
       
       # Initialize constant
-      if (!missing(constant) && !is.null(constant) && length(constant) > 0)
-      {
+      if (!missing(constant) && !is.null(constant) && length(constant) > 0) { 
         if ((is.list(constant) || is.numeric(constant)) && 
             !is.null(names(constant)))
           self$addConstant(constant, verbose = verbose)
@@ -456,8 +453,7 @@ sdScenarioClass <- R6::R6Class(
       }
       
       # Initialize input and time series
-      if (!missing(input) && !is.null(input) && length(input) > 0)
-      {
+      if (!missing(input) && !is.null(input) && length(input) > 0) { 
         if ((is.list(input) || is.vector(input)) && !is.null(names(input)))
           self$addInput(input, verbose = verbose, interpolation = interpolation,
                         timeSeriesDirectory = timeSeriesDirectory)
@@ -466,8 +462,7 @@ sdScenarioClass <- R6::R6Class(
       }
       
       # Initialize parameter
-      if (!missing(parameter) && !is.null(parameter) && length(parameter) > 0)
-      {
+      if (!missing(parameter) && !is.null(parameter) && length(parameter) > 0) { 
         if ((is.list(parameter) || is.numeric(parameter)) && 
             !is.null(names(parameter)))
           self$addParameter(parameter, verbose = verbose)
@@ -476,8 +471,7 @@ sdScenarioClass <- R6::R6Class(
       }
       
       # Initialize switch
-      if (!missing(switch) && !is.null(switch) && length(switch) > 0)
-      {
+      if (!missing(switch) && !is.null(switch) && length(switch) > 0) { 
         if ((is.list(switch) || is.vector(input)) && !is.null(names(switch)))
           self$addSwitch(switch, verbose = verbose)
         else
@@ -485,8 +479,7 @@ sdScenarioClass <- R6::R6Class(
       }
       
       # set units list
-      if (!missing(unit) && !is.null(unit) && length(unit) > 0)
-      {
+      if (!missing(unit) && !is.null(unit) && length(unit) > 0) { 
         if ((is.list(unit) || is.character(unit)) && !is.null(names(unit)))
           self$addUnit(unit, verbose = verbose)
         else
@@ -495,8 +488,7 @@ sdScenarioClass <- R6::R6Class(
       
       # set descriptions list
       if (!missing(description) && !is.null(description) && 
-          length(description) > 0)
-      {
+          length(description) > 0) { 
         if ((is.list(description) || is.character(description)) && 
             !is.null(names(description)))
           self$addDescription(description, verbose = verbose)
@@ -506,34 +498,30 @@ sdScenarioClass <- R6::R6Class(
       
       # set simulation time sequence
       if (!missing(times) && !is.null(times) && length(times) > 0)
-        self$times <- lapply(times, function(x) 
-          {
-            if (is.character(x))
-              type.convert(x, as.is = TRUE)
-            else
-              x
-          })
+        self$times <- lapply(times, function(x) { 
+          if (is.character(x))
+            type.convert(x, as.is = TRUE)
+          else
+            x
+        })
       
       if (!missing(method) && !is.null(method))
         self$method <- method
     },
-    print = function()
-    {
+    print = function() { 
       cat("<",class(self)[[1]],">\n", sep = "")
       cat(indent("$id", indent = 4), sep = "\n")
       cat(indent(private$pid, indent = 4), sep = "\n")
       cat("\n")
       
       scenDF <- self[["buildDataFrames"]](showId = FALSE)
-      if (length(scenDF) > 0)
-      {
+      if (length(scenDF) > 0) { 
         cat(indent(paste(capture.output(scenDF), 
                          collapse =  "\n"), indent = 4))
         cat("\n")
       }
     },
-    saveXml = function(file = "Scenario.xml")
-    {
+    saveXml = function(file = "Scenario.xml") { 
       inputs <- private[["pinput"]][!(names(private[["pinput"]]) 
                                       %in% c("interpolation_", "fun_"))]
       switches <- private[["pswitch"]]
@@ -587,14 +575,12 @@ sdScenarioClass <- R6::R6Class(
       invisible(rootScenario)
     },
     saveXlsx = function(file = "Scenario.xlsx", 
-                          colWidth = c(10, 10, 10, 30, 10))
-    {
+                        colWidth = c(10, 10, 10, 30, 10)) { 
       inputData <- self[["buildDataFrames"]]()
       
       # Save to excel
       wb <- openxlsx::createWorkbook()
-      lapply(names(inputData), function(x)
-      {
+      lapply(names(inputData), function(x) { 
         openxlsx::addWorksheet(wb, sheetName = x)
         openxlsx::writeDataTable(wb = wb, sheet = x, x = inputData[[x]])
         openxlsx::setColWidths(wb = wb, sheet = x, cols = 1:5, 
@@ -605,97 +591,88 @@ sdScenarioClass <- R6::R6Class(
       
       invisible(inputData)
     },
-    setTimeSequence = function(from, to, by)
-    {
+    setTimeSequence = function(from, to, by) { 
       # check if the resultant sequence will have more than one step (the 
       # increment is inside from and to) and its sign is correct (posite for
       # crescent seq and negative for decreasing seq) 
       # (to - from) >= by && (to - from)*by > 0
       if (!missing(from) && is.numeric(from) && 
-          length(from) == 1 && !is.na(from))
-      {
+          length(from) == 1 && !is.na(from)) { 
         if (is.null(private[["ptimes"]]$to) || 
-            is.null(private[["ptimes"]]$by))
-        {
+            is.null(private[["ptimes"]]$by)) { 
           if (!is.null(private[["ptimes"]]$to) && 
               private[["ptimes"]]$to == from)
             sdScenarioMsg$setTimeSequence1(private$pid, "from")
           else
             private[["ptimes"]]$from <- from
-        }
-        else if (abs(private[["ptimes"]]$to - from) >= 
+        } else if (abs(private[["ptimes"]]$to - from) >= 
                  abs(private[["ptimes"]]$by) && 
-                  (private[["ptimes"]]$to - from)*private[["ptimes"]]$by > 0)
+                 (private[["ptimes"]]$to - from)*private[["ptimes"]]$by > 0)
           private[["ptimes"]]$from <- from
         else
           sdScenarioMsg$setTimeSequence2(private$pid, "from")
-      } 
-      else if (!missing(from) && !is.null(from))
+      } else if (!missing(from) && !is.null(from))
         sdScenarioMsg$setTimeSequence(private$pid, "from")
       
       if (!missing(to) && is.numeric(to) && 
-          length(to) == 1 && !is.na(to))
-      {
+          length(to) == 1 && !is.na(to)) { 
         if (is.null(private[["ptimes"]]$from) || 
-            is.null(private[["ptimes"]]$by))
-        {
+            is.null(private[["ptimes"]]$by)) { 
           if (!is.null(private[["ptimes"]]$from) && 
-              private[["ptimes"]]$from == to)
+              private[["ptimes"]]$from == to) {
             sdScenarioMsg$setTimeSequence1(private$pid, "to")
-          else
+          } else {
             private[["ptimes"]]$to <- to
-        }
-        else if (abs(to - private[["ptimes"]]$from) >= 
+          }
+        } else if (abs(to - private[["ptimes"]]$from) >= 
                  abs(private[["ptimes"]]$by) && 
-                 (to - private[["ptimes"]]$from)*private[["ptimes"]]$by > 0)
+                 (to - private[["ptimes"]]$from)*private[["ptimes"]]$by > 0) {
           private[["ptimes"]]$to <- to
-        else
+        } else {
           sdScenarioMsg$setTimeSequence2(private$pid, "to")
-      }
-      else if (!missing(to) && !is.null(to))
+        }
+      } else if (!missing(to) && !is.null(to)) {
         sdScenarioMsg$setTimeSequence(private$pid, "to")
+      }
+      
       
       if (!missing(by) && is.numeric(by) && 
-          length(by) == 1 && !is.na(by))
-      {
+          length(by) == 1 && !is.na(by)) { 
         if (is.null(private[["ptimes"]]$to) || 
-            is.null(private[["ptimes"]]$from))
+            is.null(private[["ptimes"]]$from)) {
           private[["ptimes"]]$by <- by
-        else if (abs(private[["ptimes"]]$to - private[["ptimes"]]$from) 
-                 >= abs(by) && 
-            (private[["ptimes"]]$to - private[["ptimes"]]$from)*by > 0)
+        } else if (abs(private[["ptimes"]]$to - private[["ptimes"]]$from) >= 
+                   abs(by) && 
+                   (private[["ptimes"]]$to - private[["ptimes"]]$from)*by > 0) {
           private[["ptimes"]]$by <- by
-        else # invalid by
+        } else{ # invalid by
           sdScenarioMsg$setTimeSequence2(private$pid, "by")
-      }
-      else if (!missing(by) && !is.null(by))
+        }
+      } else if (!missing(by) && !is.null(by)) {
         sdScenarioMsg$setTimeSequence(private$pid, "by")
+      }
     },
     # Add variables to the scenario
-    addState = function(..., verbose = FALSE, overwrite = FALSE)
-    {
+    addState = function(..., verbose = FALSE, overwrite = FALSE) { 
       private[["paddVar"]](unlist(list(...)), "state", checkNumeric = TRUE, 
                            verbose = verbose, overwrite = overwrite)
       invisible()
     },
-    addConstant = function(..., verbose = FALSE, overwrite = FALSE)
-    {
+    addConstant = function(..., verbose = FALSE, overwrite = FALSE) { 
       private[["paddVar"]](list(...), "constant", checkNumeric = TRUE, 
                            verbose = verbose, overwrite = overwrite)
       invisible()
     },
     addInput = function(..., interpolation = NULL, verbose = FALSE, 
                         overwrite = FALSE,
-                        timeSeriesDirectory = "")
-    {
+                        timeSeriesDirectory = "") { 
       private[["paddVar"]](list(...), "input", checkNumeric = FALSE, 
                            verbose = verbose, overwrite = overwrite)
       
       # check if the interpolation names are valid
       if (length(interpolation) > 0 && 
           (is.null(names(interpolation)) || 
-           !all(names(interpolation) %in% names(private[["pinput"]]))))
-      {
+           !all(names(interpolation) %in% names(private[["pinput"]])))) { 
         sdScenarioMsg$addInput(private$pid, names(interpolation), 
                                names(private[["pinput"]]))
         
@@ -704,8 +681,7 @@ sdScenarioClass <- R6::R6Class(
       }
       
       # set time series funcs
-      if (length(interpolation) > 0) 
-      {
+      if (length(interpolation) > 0) { 
         # transform the time series data to temporal functions
         temporalfuns <- sdTemporalFunctionList(
           x = private[["pinput"]][names(interpolation)],
@@ -720,39 +696,34 @@ sdScenarioClass <- R6::R6Class(
       }
       invisible()
     },
-    addParameter = function(..., verbose = FALSE, overwrite = FALSE)
-    {
+    addParameter = function(..., verbose = FALSE, overwrite = FALSE) { 
       private[["paddVar"]](list(...), "parameter", checkNumeric = TRUE, 
-                          verbose = verbose, overwrite = overwrite)
+                           verbose = verbose, overwrite = overwrite)
       invisible()
     },
-    addSwitch = function(..., verbose = FALSE, overwrite = FALSE)
-    {
+    addSwitch = function(..., verbose = FALSE, overwrite = FALSE) { 
       private[["paddVar"]](list(...), "switch", checkNumeric = FALSE, 
                            verbose = verbose, overwrite = overwrite)
       invisible()
     },
-    addDescription = function(..., verbose = FALSE, overwrite = FALSE)
-    {
+    addDescription = function(..., verbose = FALSE, overwrite = FALSE) { 
       varList <- list(...)
       
       private[["paddVar"]](varList, "description", checkNumeric = FALSE, 
-                          verbose = verbose, sortVars = TRUE, 
-                          overwrite = overwrite)
+                           verbose = verbose, sortVars = TRUE, 
+                           overwrite = overwrite)
       invisible()
     },
-    addUnit = function(..., verbose = FALSE, overwrite = FALSE)
-    {
+    addUnit = function(..., verbose = FALSE, overwrite = FALSE) { 
       varList <- list(...)
       
       private[["paddVar"]](varList, "unit", checkNumeric = FALSE, 
                            verbose = verbose,
-                          sortVars = TRUE, overwrite = overwrite)
+                           sortVars = TRUE, overwrite = overwrite)
       invisible()
     },
     # Remove variables from the scenario
-    removeState = function(..., verbose = FALSE)
-    {
+    removeState = function(..., verbose = FALSE) { 
       varList <- list(...)
       
       if (length(varList) == 0) # remove all variables
@@ -762,8 +733,7 @@ sdScenarioClass <- R6::R6Class(
         private[["premoveVar"]](varList, "state", verbose = verbose)
       invisible()
     },
-    removeConstant = function(..., verbose = FALSE)
-    {
+    removeConstant = function(..., verbose = FALSE) { 
       varList <- list(...)
       
       if (length(varList) == 0) # remove all variables
@@ -773,8 +743,7 @@ sdScenarioClass <- R6::R6Class(
         private[["premoveVar"]](varList, "constant", verbose = verbose)
       invisible()
     },
-    removeInput = function(..., verbose = FALSE)
-    {
+    removeInput = function(..., verbose = FALSE) { 
       varList <- list(...)
       
       if (length(varList) == 0) # remove all variables
@@ -784,8 +753,7 @@ sdScenarioClass <- R6::R6Class(
         private[["premoveVar"]](varList, "input", verbose = verbose)
       invisible()
     },
-    removeParameter = function(..., verbose = FALSE)
-    {
+    removeParameter = function(..., verbose = FALSE) { 
       varList <- list(...)
       
       if (length(varList) == 0) # remove all variables
@@ -795,8 +763,7 @@ sdScenarioClass <- R6::R6Class(
         private[["premoveVar"]](varList, "parameter", verbose = verbose)
       invisible()
     },
-    removeSwitch = function(..., verbose = FALSE)
-    {
+    removeSwitch = function(..., verbose = FALSE) { 
       varList <- list(...)
       
       if (length(varList) == 0) # remove all variables
@@ -806,8 +773,7 @@ sdScenarioClass <- R6::R6Class(
         private[["premoveVar"]](varList, "switch", verbose = verbose)
       invisible()
     },
-    removeDescription = function(..., verbose = FALSE)
-    {
+    removeDescription = function(..., verbose = FALSE) { 
       varList <- list(...)
       
       if (length(varList) == 0) # remove all variables
@@ -817,8 +783,7 @@ sdScenarioClass <- R6::R6Class(
         private[["premoveVar"]](varList, "description", verbose = verbose)
       invisible()
     },
-    removeUnit = function(..., verbose = FALSE)
-    {
+    removeUnit = function(..., verbose = FALSE) { 
       varList <- list(...)
       
       if (length(varList) == 0) # remove all variables
@@ -828,50 +793,44 @@ sdScenarioClass <- R6::R6Class(
         private[["premoveVar"]](varList, "unit", verbose = verbose)
       invisible()
     },
-    buildDataFrames = function(showId = TRUE)
-    {
+    buildDataFrames = function(showId = TRUE) { 
       # Create list of data.frames containing variable names and their
       # respective values
       varTypes <- list("pstate", "pconstant", "pparameter", "pinput", "pswitch")
       varTypesNames <- list("state", "constant", "parameter", "input", "switch")
       
       # check which lists are not empty
-      validLists <- unlist(lapply(1:length(varTypes), function(x) 
-        {
-          if (length(private[[varTypes[[x]]]]) > 0)
-            x
-        }))
+      validLists <- unlist(lapply(1:length(varTypes), function(x) { 
+        if (length(private[[varTypes[[x]]]]) > 0)
+          x
+      }))
       varTypes <- varTypes[validLists]
       varTypesNames <- varTypesNames[validLists]
       
-      inputData <- lapply(varTypes, function(varType)
-      {
+      inputData <- lapply(varTypes, function(varType) { 
         # remove the interpolations and temporal functions lists
         condRemoveColumns <- !(names(private[[varType]]) %in% 
                                  c("interpolation_", "fun_"))
         nRows <- length(private[[varType]][condRemoveColumns])
         
-        if (nRows == 0)
-        {
+        if (nRows == 0) { 
           variable <- character(0)
           value <- numeric(0)
-        }
-        else
-        {
+        } else { 
           variable <- names(private[[varType]][condRemoveColumns])
           # convert any vector to character to be able to print
           value <- unlist(lapply(private[[varType]][condRemoveColumns], 
-           function(x) {
-             if (is.data.frame(x))
-               paste0("data.frame(Time = ", VectorToCharDef(x[[1]]), 
-                      ", Value = ", VectorToCharDef(x[[2]]), ")")
-             else if (length(x) > 1)
-               paste0("c(", paste0(x, collapse = ","), ")")
-             else if (is.function(x) || is.language(x))
-               FunToString(x)
-              else
-                x
-            }))
+                                 function(x) {
+                                   if (is.data.frame(x))
+                                     paste0("data.frame(Time = ", VectorToCharDef(x[[1]]), 
+                                            ", Value = ", VectorToCharDef(x[[2]]), ")")
+                                   else if (length(x) > 1)
+                                     paste0("c(", paste0(x, collapse = ","), ")")
+                                   else if (is.function(x) || is.language(x))
+                                     FunToString(x)
+                                   else
+                                     x
+                                 }))
         }
         
         varData <- data.frame(Variable = variable, 
@@ -880,13 +839,10 @@ sdScenarioClass <- R6::R6Class(
                               Description = character(nRows),
                               row.names = NULL, stringsAsFactors = FALSE)
         # add the interpolation column in the input sheet
-        if (varType == "pinput")
-        {
+        if (varType == "pinput") { 
           interpolation <- rep(list(""), nRows)
-          if (!is.null(private[[varType]][["interpolation_"]]))
-          {
-            interpolation <- lapply(variable, function(var) 
-            {
+          if (!is.null(private[[varType]][["interpolation_"]])) { 
+            interpolation <- lapply(variable, function(var) { 
               if (is.null(private[[varType]][["interpolation_"]][[var]]))
                 ""
               else
@@ -906,10 +862,8 @@ sdScenarioClass <- R6::R6Class(
       names(inputData) <- varTypesNames
       
       # Add descriptions and units to dataframe
-      for (dfNm in names(inputData))
-      {
-        for (varNm in inputData[[dfNm]][["Variable"]])
-        {
+      for (dfNm in names(inputData)) { 
+        for (varNm in inputData[[dfNm]][["Variable"]]) { 
           if (varNm %in% names(private[["pdescription"]]))
             inputData[[dfNm]][["Description"]][[which(
               inputData[[dfNm]][["Variable"]] == varNm)]] <- 
@@ -945,16 +899,13 @@ sdScenarioClass <- R6::R6Class(
     }
   ),
   active = list(
-    id = function(id)
-    {
-      if (missing(id))
+    id = function(id) { 
+      if (missing(id)) {
         return(private[["pid"]])
-      else # set
-      {
-        if (is.character(id))
+      } else { # set
+        if (is.character(id)) {
           private[["pid"]] <- id
-        else
-        {
+        } else { 
           id <- paste("scenario", Sys.Date())
           sdScenarioMsg$id(id)
           
@@ -962,8 +913,7 @@ sdScenarioClass <- R6::R6Class(
         }
       } 
     },
-    state = function(varList)
-    {
+    state = function(varList) { 
       if (missing(varList))
         return(private[["pstate"]])
       else if (length(varList) == 0)
@@ -971,8 +921,7 @@ sdScenarioClass <- R6::R6Class(
       else # set
         self$addState(varList, overwrite = TRUE)
     },
-    constant = function(varList)
-    {
+    constant = function(varList) { 
       if (missing(varList))
         return(private[["pconstant"]])
       else if (length(varList) == 0)
@@ -980,8 +929,7 @@ sdScenarioClass <- R6::R6Class(
       else # set
         self$addConstant(varList, overwrite = TRUE)
     },
-    input = function(varList)
-    {
+    input = function(varList) { 
       if (missing(varList))
         return(private[["pinput"]])
       else if (length(varList) == 0)
@@ -989,8 +937,7 @@ sdScenarioClass <- R6::R6Class(
       else # set
         self$addInput(varList, overwrite = TRUE)
     },
-    parameter = function(varList)
-    {
+    parameter = function(varList) { 
       if (missing(varList))
         return(private[["pparameter"]])
       else if (length(varList) == 0)
@@ -998,8 +945,7 @@ sdScenarioClass <- R6::R6Class(
       else # set
         self$addParameter(varList, overwrite = TRUE)
     },
-    switch = function(varList)
-    {
+    switch = function(varList) { 
       if (missing(varList))
         return(private[["pswitch"]])
       else if (length(varList) == 0)
@@ -1007,15 +953,12 @@ sdScenarioClass <- R6::R6Class(
       else # set
         self$addSwitch(varList, overwrite = TRUE)
     },
-    method = function(method)
-    {
+    method = function(method) { 
       if (missing(method))
         return(private[["pmethod"]])
-      else
-      { 
+      else {  
         # SET method
-        if (!is.character(method))
-        {
+        if (!is.character(method)) { 
           sdScenarioMsg$method1(private$pid)
           private[["pmethod"]] <- "lsoda"
         }
@@ -1024,21 +967,19 @@ sdScenarioClass <- R6::R6Class(
         if (method %in% c("lsoda", "lsode", "lsodes", "lsodar", "vode", 
                           "daspk", "euler", "rk4", "ode23", "ode45", 
                           "radau", "bdf", "bdf_d", "adams", "impAdams", 
-                          "impAdams_d"))
+                          "impAdams_d")) {
           private[["pmethod"]] <- method
-        else
-        {
+        } else { 
+          # Invalid method argument
           sdScenarioMsg$method2(private$pid)
           private[["pmethod"]] <- "lsoda"
         }
       }
     },
-    times = function(times)
-    {
-      if (missing(times))
+    times = function(times) { 
+      if (missing(times)) {
         return(private[["ptimes"]])
-      else
-      {
+      } else { 
         if (is.vector(times) && any(names(times) %in% c("from", "to", "by")))
           self[["setTimeSequence"]](times[["from"]], 
                                     times[["to"]], 
@@ -1047,24 +988,20 @@ sdScenarioClass <- R6::R6Class(
           sdScenarioMsg$times(private$pid)
       }
     },
-    description = function(descriptions)
-    {
-      if (missing(descriptions))
+    description = function(descriptions) { 
+      if (missing(descriptions)) {
         return(private[["pdescription"]])
-      else # set
-      {
+      } else { # set
         if (is.list(descriptions))
           private[["pdescription"]] <- descriptions
         else
           sdScenarioMsg$description(private$pid, typeof(descriptions))
       }
     },
-    unit = function(units)
-    {
-      if (missing(units))
+    unit = function(units) { 
+      if (missing(units)) {
         return(private[["punit"]])
-      else # set
-      {
+      } else { # set
         if (is.list(units))
           private[["punit"]] <- units
         else
@@ -1083,8 +1020,7 @@ sdScenarioClass <- R6::R6Class(
     punit = list(),
     pmethod = NULL,
     ptimes = list(),
-    pFlush = function()
-    {
+    pFlush = function() { 
       private[["pid"]] <- NULL
       private[["pstate"]] <- list()
       private[["pconstant"]] <- list()
@@ -1097,8 +1033,7 @@ sdScenarioClass <- R6::R6Class(
       private[["ptimes"]] <- NULL
     },
     paddVar = function(varList = list(), varType = NULL, checkNumeric = FALSE, 
-                      verbose = FALSE, sortVars = FALSE, overwrite = FALSE)
-    {
+                       verbose = FALSE, sortVars = FALSE, overwrite = FALSE) { 
       # if an unnamed list is passed, add its elements
       if (length(varList) == 1 && is.vector(varList[[1]]) 
           && is.null(names(varList)))
@@ -1107,42 +1042,37 @@ sdScenarioClass <- R6::R6Class(
       # if is char, check if is a data structure or function definition and
       # then parse and evaluate it;
       # or convert it to the right type
-      varList <- lapply(varList, FUN  = function(x) 
-      {
-        if (is.character(x) && length(x) == 1)
-        {
+      varList <- lapply(varList, FUN  = function(x) { 
+        if (is.character(x) && length(x) == 1) { 
           # if function, expression, vector, list, data.frame, matrix
           if (grepl(pattern = paste0("^(function|expression|c|vector|list|",
-                           "data\\.frame|matrix)\\s?\\((.*\\s*)*\\)"),
+                                     "data\\.frame|matrix)\\s?\\((.*\\s*)*\\)"),
                     x = x,
-                    perl = TRUE)) 
-          {
-            tryCatch(
-              {
-                ex <- eval(parse(text = x))
-                if (((is.function(ex) || is.language(ex)) && 
-                     !(varType %in% c("input", "switch"))) || 
-                    is.null(ex))
-                  type.convert(x, dec = ".", numerals = "allow.loss", 
-                               as.is = TRUE)
-                else
-                  ex
-              },
-              error = function(e)
-              {
+                    perl = TRUE)) { 
+            tryCatch( { 
+              ex <- eval(parse(text = x))
+              if (((is.function(ex) || is.language(ex)) && 
+                   !(varType %in% c("input", "switch"))) || 
+                  is.null(ex)) {
                 type.convert(x, dec = ".", numerals = "allow.loss", 
                              as.is = TRUE)
-              })
-          }
-          else 
+              } else {
+                ex
+              }
+            },
+            error = function(e) { 
+              type.convert(x, dec = ".", numerals = "allow.loss", 
+                           as.is = TRUE)
+            })
+          } else {
             type.convert(x, dec = ".", numerals = "allow.loss", as.is = TRUE)
-        }
-        else
+          }
+        } else {
           x
+        }
       })
       
-      if (is.null(names(varList)) || all(names(varList) %in% ""))
-      {
+      if (is.null(names(varList)) || all(names(varList) %in% "")) { 
         sdScenarioMsg$addVar1(private$pid, varType)
         return(invisible(NULL))
       }
@@ -1151,8 +1081,7 @@ sdScenarioClass <- R6::R6Class(
       names(varList) <- gsub("\\s", "", names(varList), perl = TRUE)
       
       # remove variables with reserved names
-      if (any(names(varList) %in% sdsimReserved))
-      {
+      if (any(names(varList) %in% sdsimReserved)) { 
         warning(sprintf(sdScenarioMsg$addVar8, private$pid, varType,
                         paste0(names(varList)[names(varList) 
                                               %in% sdsimReserved], 
@@ -1163,50 +1092,37 @@ sdScenarioClass <- R6::R6Class(
       if (overwrite)
         private[[paste0("p", varType)]] <- list()
       
-      for (var in names(varList))
-      {
-        if (var == "") # skip unnamed vars
-        {
+      for (var in names(varList)) { 
+        if (var == "") { # skip unnamed vars
           sdScenarioMsg$addVar2(private$pid, varType)
           next()
-        }
-        else # make valid names
+        } else # make valid names
           var <- make.names(var)
         
-        if (checkNumeric && !is.numeric(unlist(varList[[var]])))
-        {
+        if (checkNumeric && !is.numeric(unlist(varList[[var]]))) { 
           sdScenarioMsg$addVar3(private$pid, varType, var)
-        }
-        else
-        {
+        } else { 
           # if (length(varList[[var]]) > 1 || is.function(varList[[var]]) 
           #     || is.language(varList[[var]]) || !is.na(varList[[var]]))
-          if (!is.null(varList[[var]]))
-          {
+          if (!is.null(varList[[var]])) { 
             # check for duplicates
-            if (var %in% names(private[[paste0("p", varType)]]))
-            {
+            if (var %in% names(private[[paste0("p", varType)]])) { 
               if (verbose)
                 sdScenarioMsg$addVar6(private$pid, varType, var, 
-                                    varList[[var]])
+                                      varList[[var]])
               
               # if it was a ts also remove the previous interpolation and fun
-              if (varType == "input")
-              {
+              if (varType == "input") { 
                 private[["pinput"]][["interpolation_"]][[var]] <- NULL
                 private[["pinput"]][["fun_"]][[var]] <- NULL
                 
-                if (length(private[["pinput"]][["interpolation_"]]) == 0)
-                {
+                if (length(private[["pinput"]][["interpolation_"]]) == 0) { 
                   private[["pinput"]][["interpolation_"]] <- NULL
                   private[["pinput"]][["fun_"]] <- NULL
                 }
               }
-            }
-            else
-            {
-              if (verbose)
-              {
+            } else { 
+              if (verbose) { 
                 if (varType %in% c("description", "unit"))
                   sdScenarioMsg$addVar4(private$pid, varType, var, 
                                         varList[[var]])
@@ -1217,9 +1133,9 @@ sdScenarioClass <- R6::R6Class(
             }
             
             private[[paste0("p", varType)]][[var]] <- varList[[var]]
-          }
-          else
+          } else {
             sdScenarioMsg$addVar7(private$pid, varType, var)
+          }
         }
       }
       
@@ -1230,51 +1146,44 @@ sdScenarioClass <- R6::R6Class(
       
       invisible()
     },
-    premoveVar = function(varList = list(), varType = NULL, verbose = FALSE)
-    {
+    premoveVar = function(varList = list(), varType = NULL, verbose = FALSE) { 
       # If multiple one or more named lists are passed as argument
       varList <- as.list(unlist(varList))
       
       # Check if there are only characters in the parameters
-      varList <- lapply(varList, function(x)
-      {
+      varList <- lapply(varList, function(x) { 
         if (!is.character(x))
           sdScenarioMsg$removeVar1(private$pid, varType, typeof(x))
         else
           x
       })
       
-      for (var in varList)
-      { 
-        if (!is.null(private[[paste0("p", varType)]][[var]]))
-        {
+      for (var in varList) {  
+        if (!is.null(private[[paste0("p", varType)]][[var]])) { 
           if (verbose)
             sdScenarioMsg$removeVar2(private$pid, varType, var)
           
           private[[paste0("p", varType)]][[var]] <- NULL
           
           # also remove units and descriptions from variables
-          if (!(varType %in% c("description", "unit")))
-          {
+          if (!(varType %in% c("description", "unit"))) { 
             private[["pdescription"]][[var]] <- NULL
             private[["punit"]][[var]] <- NULL
           }
           
           # in case of inputs, also remove from the interpolation and fun lists
-          if (varType == "input")
-          {
+          if (varType == "input") { 
             private[["pinput"]][["interpolation_"]][[var]] <- NULL
             private[["pinput"]][["fun_"]][[var]] <- NULL
             
-            if (length(private[["pinput"]][["interpolation_"]]) == 0)
-            {
+            if (length(private[["pinput"]][["interpolation_"]]) == 0) { 
               private[["pinput"]][["interpolation_"]] <- NULL
               private[["pinput"]][["fun_"]] <- NULL
             }
           }
+        } else {
+          sdScenarioMsg$removeVar3(private$pid, varType, var)    
         }
-        else
-          sdScenarioMsg$removeVar3(private$pid, varType, var)       
       }
     }
   )

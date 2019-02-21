@@ -91,18 +91,17 @@
 #' # in a different environment by setting different values for the variables 
 #' # and passing it via the argument 'scenario' to the sdSimulate function           
 sdBuildCoupledScenario = function(id = NULL,
-                                scenarios = NULL,
-                                from = NULL,
-                                to = NULL,
-                                by = NULL,
-                                method = c("lsoda", "lsode", "lsodes", "lsodar", 
-                                           "vode", "daspk", "euler", "rk4", 
-                                           "ode23", "ode45", "radau", "bdf", 
-                                           "bdf_d", "adams", "impAdams", 
-                                           "impAdams_d"),
-                                timeSeriesDirectory = "",
-                                varNames = FALSE)
-{
+                                  scenarios = NULL,
+                                  from = NULL,
+                                  to = NULL,
+                                  by = NULL,
+                                  method = c("lsoda", "lsode", "lsodes", "lsodar", 
+                                             "vode", "daspk", "euler", "rk4", 
+                                             "ode23", "ode45", "radau", "bdf", 
+                                             "bdf_d", "adams", "impAdams", 
+                                             "impAdams_d"),
+                                  timeSeriesDirectory = "",
+                                  varNames = FALSE) { 
   if (!is.null(from) && !is.null(to) && !is.null(by))
     times <- list(from = from, to = to, by = by)
   else
@@ -127,16 +126,14 @@ sdBuildCoupledScenario = function(id = NULL,
   
   # trim the components names
   componentsId <- gsub(" ", "", componentsId, fixed = TRUE)
-  for (modelId in componentsId)
-  {
+  for (modelId in componentsId) { 
     scenComponent <- scenarios[[modelId]]
     
     if (is.character(scenComponent))
       scenComponent <- sdLoadScenario(file = scenComponent, 
-                                    timeSeriesDirectory = timeSeriesDirectory)
+                                      timeSeriesDirectory = timeSeriesDirectory)
     
-    if (!inherits(scenComponent, sdScenarioClass$classname))
-    {
+    if (!inherits(scenComponent, sdScenarioClass$classname)) { 
       sdCoupledModelMsg$sdBuildCoupledScenario2(scenComponent, modelId)
       next
     }
@@ -516,33 +513,29 @@ sdCoupledModelClass <- R6::R6Class(
     initialize = function(id = NULL,
                           description = NULL,
                           components = NULL,
-                          connections = NULL)
-    {
+                          connections = NULL) { 
       if (!missing(id) && !is.null(id))
         self$id <- id
       else
         self$id <- NULL
       
-      if (!missing(components) && !is.null(components))
-      {
-        if (is.list(components))
-        {
+      if (!missing(components) && !is.null(components)) { 
+        if (is.list(components)) { 
           for (model in components)
             self$addComponent(model)
-        }
-        else
+        } else {
           self$addComponent(components)
+        }
+          
       }
       
-      if (!missing(connections) && !is.null(connections))
-      {
-        if (is.list(connections))
-        {
+      if (!missing(connections) && !is.null(connections)) { 
+        if (is.list(connections)) { 
           for (con in connections)
             self$addConnection(con)
-        }
-        else
+        } else {
           self$addConnection(connections)
+        }
       }
       
       if (!missing(description) &&
@@ -551,8 +544,7 @@ sdCoupledModelClass <- R6::R6Class(
       
       private$pcoupledEnv <- new.env(parent = baseenv())
     },
-    print = function()
-    {
+    print = function() { 
       # print the attributes
       cat("<",class(self)[[1]],">\n", sep = "")
       cat(indent("$id", indent = 4), sep = "\n")
@@ -579,21 +571,18 @@ sdCoupledModelClass <- R6::R6Class(
         cat(indent("Not built.", indent = 4), sep = "\n")
       cat("\n")
     },
-    addComponent = function(...)
-    {
+    addComponent = function(...) { 
       components <- list(...)
       
-      for (model in components)
-      {
+      for (model in components) { 
         if (is.character(model))
           model <- sdLoadModel(file = model)
         
         # check if it is a valid model
-        if (!inherits(model, sdModelClass$classname))
-        {
-            warning(sprintf(sdCoupledModelMsg$addComponent2, private$pid, 
-                            typeof(model)),
-                    call. = FALSE)
+        if (!inherits(model, sdModelClass$classname)) { 
+          warning(sprintf(sdCoupledModelMsg$addComponent2, private$pid, 
+                          typeof(model)),
+                  call. = FALSE)
           next()
         }
         
@@ -601,23 +590,21 @@ sdCoupledModelClass <- R6::R6Class(
         # check if id already exist in components id
         if (any(grepl(pattern = paste0("^",id,"."), 
                       x = private$pcomponentsId, perl = TRUE)) ||
-            id %in% private$pcomponentsId) 
-        {
+            id %in% private$pcomponentsId) { 
           sdCoupledModelMsg$addComponent1(private$pid, id)
           
           self$removeComponent(c(private$pcomponentsId[
             grepl(pattern = paste0("^",id,"."), 
                   x = private$pcomponentsId, perl = TRUE)], id))
-        }
-        else if (id == private$pid)
-        { # check if id is equal the coupled model id
+        } else if (id == private$pid) {  
+          # check if id is equal the coupled model id
+          
           sdCoupledModelMsg$addComponent0(private$pid, id)
           next()
         }
         
         # only add sdOdeModel's or sdStaticModel's
-        if (inherits(model, sdOdeModelClass$classname))
-        {
+        if (inherits(model, sdOdeModelClass$classname)) { 
           private$pcomponentsId <- c(private$pcomponentsId, id)
           private$pcomponents[[id]] <- model$clone(deep = TRUE)
           private$pcomponentsClass[[id]] <- class(model)[[1]]
@@ -626,14 +613,11 @@ sdCoupledModelClass <- R6::R6Class(
           private$pcomponentsPostProcessVars[[id]] <- model$PostProcessVars
           
           if (is.function(model$RootSpecification) || 
-              is.numeric(model$RootSpecification))
-          {
+              is.numeric(model$RootSpecification)) { 
             private$pcomponentsRootSpecification[[id]] <- 
               model$RootSpecification
             private$pcomponentsEventFunction[[id]] <- model$EventFunction
-          }
-          else if (is.data.frame(model$RootSpecification))
-          {
+          } else if (is.data.frame(model$RootSpecification)) { 
             rootdf <- model$RootSpecification
             rootdf$var <- paste0(id, ".", as.character(rootdf$var))
             # convert the columns for errors prevention
@@ -648,9 +632,7 @@ sdCoupledModelClass <- R6::R6Class(
           
           private$pcomponentsAux[[id]] <- model$aux
           private$pcomponentsGlobal[[id]] <- model$GlobalFunctions
-        }
-        else if (inherits(model, sdStaticModelClass$classname))
-        {
+        } else if (inherits(model, sdStaticModelClass$classname)) { 
           private$pcomponentsId <- c(private$pcomponentsId, id)
           private$pcomponents[[id]] <- model$clone(deep = TRUE)
           private$pcomponentsClass[[id]] <- class(model)[[1]]
@@ -658,12 +640,9 @@ sdCoupledModelClass <- R6::R6Class(
           
           private$pcomponentsAux[[id]] <- model$algebraicEquations
           private$pcomponentsGlobal[[id]] <- model$GlobalFunctions
-        }
-        else if (inherits(model, sdCoupledModelClass$classname))
-        {
+        } else if (inherits(model, sdCoupledModelClass$classname)) { 
           # add the components with the coupled model id as prefix
-          for (j in seq_along(model$components))
-          {
+          for (j in seq_along(model$components)) { 
             comp <- model$components[[j]]$clone(deep = TRUE)
             comp$id <- paste0(model$id, ".", comp$id)
             
@@ -671,8 +650,7 @@ sdCoupledModelClass <- R6::R6Class(
           }
           
           # add the connections
-          for (con in model$connections)
-          {
+          for (con in model$connections) { 
             con[[2]] <- paste0(model$id, ".", con[[2]])
             con[[4]] <- paste0(model$id, ".", con[[4]])
             
@@ -688,13 +666,11 @@ sdCoupledModelClass <- R6::R6Class(
       private$flagBuild <- private$flagVerify <- FALSE
       invisible()
     },
-    removeComponent = function(...)
-    {
+    removeComponent = function(...) { 
       componentName <- gsub(" ", "", as.character(unlist(list(...))), 
                             fixed = TRUE)
       
-      if (!all(componentName %in% private$pcomponentsId))
-      {
+      if (!all(componentName %in% private$pcomponentsId)) { 
         warning(sprintf(sdCoupledModelMsg$removeComponent, private$pid, 
                         paste(componentName[!(componentName %in% 
                                                 private$pcomponentsId)])), 
@@ -710,20 +686,20 @@ sdCoupledModelClass <- R6::R6Class(
         !(names(private$pcomponents) %in% componentName)]
       
       private$pcomponentsEquations <- private$pcomponentsEquations[
-          !(names(private$pcomponentsEquations) %in% componentName)]
+        !(names(private$pcomponentsEquations) %in% componentName)]
       
       private$pcomponentsInitVars <- private$pcomponentsInitVars[
         !(names(private$pcomponentsInitVars) %in% componentName)]
       
       private$pcomponentsPostProcessVars <- private$pcomponentsPostProcessVars[
-          !(names(private$pcomponentsPostProcessVars) %in% componentName)]
+        !(names(private$pcomponentsPostProcessVars) %in% componentName)]
       
       private$pcomponentsRootSpecification <- 
         private$pcomponentsRootSpecification[
           !(names(private$pcomponentsRootSpecification) %in% componentName)]
       
       private$pcomponentsEventFunction <- private$pcomponentsEventFunction[
-          !(names(private$pcomponentsEventFunction) %in% componentName)]
+        !(names(private$pcomponentsEventFunction) %in% componentName)]
       
       for (model in componentName)
         private$pcomponentsAux <-  private$pcomponentsAux[
@@ -731,16 +707,13 @@ sdCoupledModelClass <- R6::R6Class(
                  names(private$pcomponentsAux))]
       
       private$pcomponentsGlobal <- private$pcomponentsGlobal[
-          !(names(private$pcomponentsGlobal) %in% componentName)]
+        !(names(private$pcomponentsGlobal) %in% componentName)]
       
       # remove the connections involving the removed model
       connections <- private$pconnections
-      if (!is.null(connections) && length(connections) > 0)
-      {
-        for (model in componentName)
-        {
-          remCon <- sapply(1:length(connections), function(i)
-          {
+      if (!is.null(connections) && length(connections) > 0) { 
+        for (model in componentName) { 
+          remCon <- sapply(1:length(connections), function(i) { 
             if (model %in% connections[[i]])
               return(connections[[i]][[1]])
           })
@@ -751,24 +724,21 @@ sdCoupledModelClass <- R6::R6Class(
       }
       private$flagBuild <- private$flagVerify <- FALSE
     },
-    addConnection = function(...)
-    {
+    addConnection = function(...) { 
       connections <- list(...)
       
-      for (con in connections)
-      {
-        if (length(con) != 5)
+      for (con in connections) { 
+        if (length(con) != 5) {
           warning(sprintf(sdCoupledModelMsg$addConnection1, private$pid, 
                           paste(con, collapse = ",")), call. = FALSE)
-        else if (!grepl(pattern = "^(aux\\$|st\\$|eq\\$)", x = con[[5]], 
-                        perl = TRUE))
+        } else if (!grepl(pattern = "^(aux\\$|st\\$|eq\\$)", x = con[[5]], 
+                        perl = TRUE)) {
           sdCoupledModelMsg$addConnection2(private$pid, con)
-        else
-        {
+        } else { 
           # add connection
           if (con[[1]] %in% names(private$pconnections))
             sdCoupledModelMsg$addConnection3(private$pid, con[[1]])
-            
+          
           private$pconnections[[con[[1]]]] <- con
           
         }
@@ -776,19 +746,15 @@ sdCoupledModelClass <- R6::R6Class(
       
       private$flagBuild <- private$flagVerify <- FALSE
     },
-    removeConnection = function(...)
-      # ... = cons ids
-    {
+    removeConnection = function(...) { # ... = cons ids
       connectionsId <- as.character(unlist(list(...)))
       auxComponents <- private$pcomponentsAux
       
       # refactor the aux lists removing the connection dependency
-      for (conId in connectionsId)
-      {
+      for (conId in connectionsId) { 
         con <- private$pconnections[[conId]]
         
-        if (!is.null(con))
-        {
+        if (!is.null(con)) { 
           id <- con[[1]]
           m1 <- con[[2]]
           in1 <- con[[3]]
@@ -796,40 +762,37 @@ sdCoupledModelClass <- R6::R6Class(
           out2 <- strsplit(con[[5]], "$", fixed = TRUE)[[1]]
           
           # remove the aux connection from the equations list using regex
-          if (out2[[1]] %in% c("aux", "eq"))
-          {
+          if (out2[[1]] %in% c("aux", "eq")) { 
             auxComponents[grepl(paste0("^", m1, "\\."),
                                 names(auxComponents))] <- 
               lapply(auxComponents[grepl(paste0("^", m1, "\\."),
-                    names(auxComponents))], function(x)
-            {
-              gsub(pattern = paste0(out2[[1]], "\\$", m2, ".", out2[[2]]),
-                   replacement = paste0("inp$", m1, ".", in1),
-                   x = toString(as.expression(x)), perl = TRUE)
-            })
+                                         names(auxComponents))], function(x) { 
+                                           gsub(pattern = paste0(out2[[1]], "\\$", m2, ".", out2[[2]]),
+                                                replacement = paste0("inp$", m1, ".", in1),
+                                                x = toString(as.expression(x)), perl = TRUE)
+                                         })
             
             private$auxCon <- private$auxCon[names(private$auxCon) 
                                              !=  paste0(m1, ".", in1)]
-          }
-          else
+          } else {
             private$stCon <- private$stCon[names(private$stCon) 
-                                             !=  paste0(m1, ".", in1)]
-        }
-        else # invalid con
+                                           !=  paste0(m1, ".", in1)]
+          }
+        } else { # invalid con
           warning(sprintf(sdCoupledModelMsg$removeConnection, private$pid, 
                           conId), call. = FALSE)
+        }
       }
       # refactor the auxliary list without sorting
       private$pcomponentsAux <- sdInitEquations(auxComponents, eqName = "NULL")
       
       # remove the connections with id in the connecitonId vector
       private$pconnections <- private$pconnections[!(names(private$pconnections) 
-                                                   %in% connectionsId)]
+                                                     %in% connectionsId)]
       private$flagVerify <- private$flagBuild <- FALSE
     },
     verifyModel = function(scenario = NULL, verbose = FALSE,
-                           timeSeriesDirectory = "")
-    {
+                           timeSeriesDirectory = "") { 
       if (!self$isBuilt)
         sdCoupledModelMsg$verifyModel1(private$pid)
       
@@ -848,8 +811,7 @@ sdCoupledModelClass <- R6::R6Class(
       defaultScenario <- self$defaultScenario$clone(deep = TRUE)
       
       # overwrite default variables with the given scenario values
-      if (!is.null(scenario))
-      {
+      if (!is.null(scenario)) { 
         # convert list of scenarios to coupled scenario
         if (is.list(scenario))
           scenario <- sdBuildCoupledScenario(id = "coupledScen", 
@@ -872,11 +834,9 @@ sdCoupledModelClass <- R6::R6Class(
       
       # Run the model Init Vars
       modelInit <- list()
-      for (modelId in names(componentsInitVars))
-      {
+      for (modelId in names(componentsInitVars)) { 
         # run the init vars
-        if (!is.null(componentsInitVars[[modelId]]))
-        {
+        if (!is.null(componentsInitVars[[modelId]])) { 
           if (inherits(private$pcomponents[[modelId]], 
                        sdOdeModelClass$classname))
             modelInitVars <- componentsInitVars[[modelId]](
@@ -904,8 +864,7 @@ sdCoupledModelClass <- R6::R6Class(
           modelInit$sw <- c(modelInit$sw, modelInitVars$sw)
         }
       }
-      if (length(modelInit) > 0)
-      {
+      if (length(modelInit) > 0) { 
         st  <- MergeLists(modelInit$st, st, "coupledState")
         ct  <- MergeLists(modelInit$ct, ct, "coupledConstant")
         par <- MergeLists(modelInit$par, par, "coupledParameter")
@@ -923,20 +882,16 @@ sdCoupledModelClass <- R6::R6Class(
       conSt <- match(unlist(stCon, use.names = FALSE), names(st))
       conStInps <- match(names(stCon), names(inp))
       
-      if (!is.null(times) && length(unlist(times)) > 0)
-      {
+      if (!is.null(times) && length(unlist(times)) > 0) { 
         t <- times[[1]]
-      } 
-      else 
-      {
+      } else { 
         sdCoupledModelMsg$verifyModel3(private$pid)
         t <- 0
       }
       
       # evaluate time series varibles 
       # compute the time series in the inputs
-      for (var in names(inp$fun_))
-      {
+      for (var in names(inp$fun_)) { 
         if (!is.null(inp$fun_[[var]]))
           inp[[var]] <- inp$fun_[[var]](t)
         else
@@ -949,18 +904,15 @@ sdCoupledModelClass <- R6::R6Class(
       appendEnv(auxenv, private$pcoupledEnv)
       
       # evaluate the auxiliary variables and update the aux list
-      for (auxVar in names(aux))
-      {
-        eq[[auxVar]] <- aux[[auxVar]] <- tryCatch(
-          {
-            eval(aux[[auxVar]],
-                 envir = auxenv)
-          },
-          error = function(e)
-          {
-            sdCoupledModelMsg$verifyModel4(private$pid, auxVar, e)
-            invisible(numeric(0))
-          })
+      for (auxVar in names(aux)) { 
+        eq[[auxVar]] <- aux[[auxVar]] <- tryCatch( { 
+          eval(aux[[auxVar]],
+               envir = auxenv)
+        },
+        error = function(e) { 
+          sdCoupledModelMsg$verifyModel4(private$pid, auxVar, e)
+          invisible(numeric(0))
+        })
         
         if (is.null(aux[[auxVar]]) || is.na(aux[[auxVar]]) ||
             length(aux[[auxVar]]) == 0 || is.infinite(aux[[auxVar]]))
@@ -969,16 +921,14 @@ sdCoupledModelClass <- R6::R6Class(
       # make the aux connection
       inp[conAuxInps] <- aux[conAux]
       
-      if (length(private$pcomponentsEquations) > 0) # at least one atomic model components
-      {
+      if (length(private$pcomponentsEquations) > 0) { # at least one atomic model components
         # Create new environment to store variables that will be validated
         # and set the coupled env as its parent environment
         env <- new.env(parent = private$pcoupledEnv)
         lsVars <- list()
         
         # replace original function with test function
-        for (i in 1:length(componentsEquations)) 
-        {
+        for (i in 1:length(componentsEquations)) { 
           mId <- namesCompEqs[[i]]
           lsVars[[mId]] <- c()
           bodyStr <- as.character(body(componentsEquations[[i]]))
@@ -1003,25 +953,22 @@ sdCoupledModelClass <- R6::R6Class(
         # run the components model definitions
         dState <- vector("numeric", length = length(st))
         names(dState) <- names(st)
-        for (i in seq_along(namesCompEqs))
-        {
+        for (i in seq_along(namesCompEqs)) { 
           # run the model definition
-          mDef <- tryCatch(
-            {
-              componentsEquations[[i]](t = t, 
-                                       st = st[iComps$st[[namesCompEqs[[i]]]]], 
-                                       ct = ct[iComps$ct[[namesCompEqs[[i]]]]], 
-                                       par = par[iComps$par[[namesCompEqs[[i]]]]],
-                                       inp = inp[iComps$inp[[namesCompEqs[[i]]]]], 
-                                       sw = sw[iComps$sw[[namesCompEqs[[i]]]]], 
-                                       aux = aux[iComps$aux[[namesCompEqs[[i]]]]])
-            },
-            error = function(e)
-            {
-              sdCoupledModelMsg$verifyModel6(private$pid, 
-                                             namesCompEqs[[i]], e)
-              invisible(NULL)
-            })
+          mDef <- tryCatch( { 
+            componentsEquations[[i]](t = t, 
+                                     st = st[iComps$st[[namesCompEqs[[i]]]]], 
+                                     ct = ct[iComps$ct[[namesCompEqs[[i]]]]], 
+                                     par = par[iComps$par[[namesCompEqs[[i]]]]],
+                                     inp = inp[iComps$inp[[namesCompEqs[[i]]]]], 
+                                     sw = sw[iComps$sw[[namesCompEqs[[i]]]]], 
+                                     aux = aux[iComps$aux[[namesCompEqs[[i]]]]])
+          },
+          error = function(e) { 
+            sdCoupledModelMsg$verifyModel6(private$pid, 
+                                           namesCompEqs[[i]], e)
+            invisible(NULL)
+          })
           
           if (length(unlist(mDef[[1]])) == 0)
             mDef[[1]] <- c()
@@ -1031,9 +978,7 @@ sdCoupledModelClass <- R6::R6Class(
           # concatenate the global auxiliary values
           mAux <- mDef[-1]
           
-          if (length(mAux) > 0)
-            # there is auxiliary values
-          {
+          if (length(mAux) > 0) { # there is auxiliary values
             names(mAux)[names(mAux) == ""] <- "noname"
             names(mAux) <- paste0(namesCompEqs[[i]], ".", names(mAux))
             dAux <- append(dAux, mAux)
@@ -1043,39 +988,36 @@ sdCoupledModelClass <- R6::R6Class(
         
         # Display warnings if any variables during the Model Definition
         # execution are NULL, numeric(0), Inf or NA
-        for (modelId in namesCompEqs)
-        {
-          for (x in lsVars[[modelId]])
-          {
+        for (modelId in namesCompEqs) { 
+          for (x in lsVars[[modelId]]) { 
             var <- mget(x, envir = environment(componentsEquations[[modelId]]),
                         ifnotfound = "\\1", inherits = TRUE)[[1]]
             
-            if (is.function(var) || is.environment(var))
-            {
+            if (is.function(var) || is.environment(var)) { 
               # do nothing
-            }
-            else if ( (is.list(var) && length(var) > 0) || 
-                      ( is.vector(var) && length(var) > 1 )) 
-            {
+            } else if ( (is.list(var) && length(var) > 0) || 
+                      ( is.vector(var) && length(var) > 1 )) { 
+              
               xUnlist <- unlist(var, recursive = TRUE)
-              for (i in 1:length(xUnlist))
-              {
+              
+              for (i in 1:length(xUnlist)) { 
                 if (is.function(xUnlist[[i]]) || is.environment(xUnlist[[i]]) ||
-                    is.language(xUnlist[[i]]))
+                    is.language(xUnlist[[i]])) {
                   next # do nothing
-                else if (is.null(xUnlist[[i]]))
+                } else if (is.null(xUnlist[[i]])) {
                   sdCoupledModelMsg$verifyModel7(private$pid, modelId, 
                                                  names(xUnlist)[[i]], x, "NULL")
-                else if (length(xUnlist[[i]]) == 0 && is.numeric(xUnlist[[i]]))
+                } else if (length(xUnlist[[i]]) == 0 && is.numeric(xUnlist[[i]])) {
                   sdCoupledModelMsg$verifyModel7(private$pid, modelId, 
                                                  names(xUnlist)[[i]], x, 
                                                  "numeric(0)")
-                else if (is.na(xUnlist[[i]]))
+                } else if (is.na(xUnlist[[i]])) {
                   sdCoupledModelMsg$verifyModel7(private$pid, modelId, 
                                                  names(xUnlist)[[i]], x, "NA")
-                else if (is.infinite(xUnlist[[i]]))
+                } else if (is.infinite(xUnlist[[i]])) {
                   sdCoupledModelMsg$verifyModel7(private$pid, modelId, 
                                                  names(xUnlist)[[i]], x, "Inf")
+                }
               } 
             }
             else if (x %in% c('st', 'ct', 'par', 'inp', 'sw', 'aux'))
@@ -1096,8 +1038,7 @@ sdCoupledModelClass <- R6::R6Class(
         }
         
         # Check the return of Model Definition contains invalid values
-        if (is.list(res))
-        {
+        if (is.list(res)) { 
           dRes <- res[[1]]
           
           if (!is.numeric(dRes))
@@ -1106,9 +1047,9 @@ sdCoupledModelClass <- R6::R6Class(
           if (length(dRes) != length(st))
             sdCoupledModelMsg$verifyModel10(private$pid, dRes,
                                             length(st))
-        }
-        else
+        } else {
           sdCoupledModelMsg$verifyModel11(private$pid, typeof(res))
+        }
       }
       
       if (verbose)
@@ -1116,6 +1057,7 @@ sdCoupledModelClass <- R6::R6Class(
       
       private$flagVerify <- TRUE
     },
+    
     buildCoupledModel = function(from = NULL,
                                  to = NULL,
                                  by = NULL,
@@ -1126,19 +1068,17 @@ sdCoupledModelClass <- R6::R6Class(
                                             "ode45", "radau", 
                                             "bdf", "bdf_d", "adams", 
                                             "impAdams", "impAdams_d"),
-                                 timeSeriesDirectory = "")
-    {
+                                 timeSeriesDirectory = "") { 
       if (length(private$pcomponentsId) == 0)
         stop(sprintf(sdCoupledModelMsg$buildCoupledModel1, private$pid), 
              call. = FALSE)
-
+      
       # build default scenario concatanating the components default scenario
       componentsIds <- private$pcomponentsId
       scenComponents <- list()
       auxsNames <- list()
       
-      for (modelId in componentsIds)
-      {
+      for (modelId in componentsIds) { 
         if (!is.null(private$pcomponents[[modelId]]$defaultScenario))
           scenComponents[[modelId]] <-
             private$pcomponents[[modelId]]$defaultScenario$clone()
@@ -1175,8 +1115,7 @@ sdCoupledModelClass <- R6::R6Class(
       # functions for the coupled names (concatenated with the model ID)
       # reset the enviromnet of all components functions with the coupled env
       componentsVarNames <- defaultScenarioVars$varNames
-      for (modelId in componentsIds)
-      {
+      for (modelId in componentsIds) { 
         componentsVarNames[[modelId]] <- c(
           componentsVarNames[[modelId]],
           gsub(pattern = paste0("^",modelId,"\\."), replacement = "", 
@@ -1185,8 +1124,7 @@ sdCoupledModelClass <- R6::R6Class(
                        names(private$pcomponentsAux))]),
           names(private$pcomponentsGlobal[[modelId]]))
         
-        if (is.function(private$pcomponentsEquations[[modelId]]))
-        {
+        if (is.function(private$pcomponentsEquations[[modelId]])) { 
           private$pcomponentsEquations[[modelId]] <-
             replaceCoupledVarsNames(
               func = private$pcomponentsEquations[[modelId]],
@@ -1197,8 +1135,7 @@ sdCoupledModelClass <- R6::R6Class(
             coupledEnv
         }
         
-        if (is.function(private$pcomponentsInitVars[[modelId]]))
-        {
+        if (is.function(private$pcomponentsInitVars[[modelId]])) { 
           private$pcomponentsInitVars[[modelId]] <-
             replaceCoupledVarsNames(
               func = private$pcomponentsInitVars[[modelId]],
@@ -1209,8 +1146,7 @@ sdCoupledModelClass <- R6::R6Class(
             coupledEnv
         }
         
-        if (is.function(private$pcomponentsPostProcessVars[[modelId]]))
-        {
+        if (is.function(private$pcomponentsPostProcessVars[[modelId]])) { 
           private$pcomponentsPostProcessVars[[modelId]] <-
             replaceCoupledVarsNames(
               func = private$pcomponentsPostProcessVars[[modelId]],
@@ -1221,25 +1157,23 @@ sdCoupledModelClass <- R6::R6Class(
             coupledEnv
         }
         
-        if (is.function(private$pcomponentsRootSpecification[[modelId]]))
-        {
+        if (is.function(private$pcomponentsRootSpecification[[modelId]])) { 
           private$pcomponentsRootSpecification[[modelId]] <-
-          replaceCoupledVarsNames(
-            func = private$pcomponentsRootSpecification[[modelId]],
-            componentsVarNames = componentsVarNames[[modelId]],
-            modelId = modelId)
+            replaceCoupledVarsNames(
+              func = private$pcomponentsRootSpecification[[modelId]],
+              componentsVarNames = componentsVarNames[[modelId]],
+              modelId = modelId)
           
           environment(private$pcomponentsRootSpecification[[modelId]]) <-
             coupledEnv
         }
         
-        if (is.function(private$pcomponentsEventFunction[[modelId]]))
-        {
+        if (is.function(private$pcomponentsEventFunction[[modelId]])) { 
           private$pcomponentsEventFunction[[modelId]] <-
-          replaceCoupledVarsNames(
-            func = private$pcomponentsEventFunction[[modelId]],
-            componentsVarNames = componentsVarNames[[modelId]],
-            modelId = modelId)
+            replaceCoupledVarsNames(
+              func = private$pcomponentsEventFunction[[modelId]],
+              componentsVarNames = componentsVarNames[[modelId]],
+              modelId = modelId)
           
           environment(private$pcomponentsEventFunction[[modelId]]) <-
             coupledEnv
@@ -1254,27 +1188,28 @@ sdCoupledModelClass <- R6::R6Class(
             componentsVarNames = componentsVarNames[[modelId]],
             modelId = modelId)
         
-        if (length(private$pcomponentsGlobal[[modelId]]) > 0)
-        {
-          for (i in 1:length(private$pcomponentsGlobal[[modelId]]))
-          {
-            if (is.function(private$pcomponentsGlobal[[modelId]][[i]]))
-            {
+        if (length(private$pcomponentsGlobal[[modelId]]) > 0) { 
+          for (i in 1:length(private$pcomponentsGlobal[[modelId]])) { 
+            if (is.function(private$pcomponentsGlobal[[modelId]][[i]])) { 
+              
               private$pcomponentsGlobal[[modelId]][[i]] <-
                 replaceCoupledVarsNames(
-                func = private$pcomponentsGlobal[[modelId]][[i]],
-                componentsVarNames = componentsVarNames[[modelId]],
-                modelId = modelId)
+                  func = private$pcomponentsGlobal[[modelId]][[i]],
+                  componentsVarNames = componentsVarNames[[modelId]],
+                  modelId = modelId)
               
               environment(private$pcomponentsGlobal[[modelId]][[i]]) <-
                 coupledEnv
-            }
-            else if (is.expression(private$pcomponentsGlobal[[modelId]][[i]]))
+              
+            } else if (is.expression(
+              private$pcomponentsGlobal[[modelId]][[i]])) {
+              
               private$pcomponentsGlobal[[modelId]][[i]] <-
                 replaceCoupledVarsNames(
-                listExp = private$pcomponentsGlobal[[modelId]][[i]],
-                componentsVarNames = componentsVarNames[[modelId]],
-                modelId = modelId)
+                  listExp = private$pcomponentsGlobal[[modelId]][[i]],
+                  componentsVarNames = componentsVarNames[[modelId]],
+                  modelId = modelId)
+            }
           }
         }
         
@@ -1314,38 +1249,44 @@ sdCoupledModelClass <- R6::R6Class(
       
       # Build the transformation vectors from the given connections
       connections <- private$pconnections
-      if (!is.null(connections) && length(connections) > 0)
-      {
-        for (con in connections)
-        {
+      if (!is.null(connections) && length(connections) > 0) { 
+        
+        for (con in connections) { 
           id <- con[[1]]
           m1 <- con[[2]]
           in1 <- con[[3]]
           m2 <- con[[4]]
           out2 <- strsplit(con[[5]], "$", fixed = TRUE)[[1]]
           
-          if (!(m1 %in% componentsIds))
-            sdCoupledModelMsg$buildCoupledModel2(private$pid, m1, 
-                                                 id)
-          else if (!(m2 %in% componentsIds))
-            sdCoupledModelMsg$buildCoupledModel2(private$pid, m2, 
-                                                 id)
-          else if (!(paste0(m1, ".", in1) %in% names(inpComponents)))
+          if (!(m1 %in% componentsIds)) {
+            
+            sdCoupledModelMsg$buildCoupledModel2(private$pid, m1, id)
+            
+          } else if (!(m2 %in% componentsIds)) {
+            
+            sdCoupledModelMsg$buildCoupledModel2(private$pid, m2, id)
+            
+          } else if (!(paste0(m1, ".", in1) %in% names(inpComponents))) {
+            
             sdCoupledModelMsg$buildCoupledModel3(private$pid, 
                                                  "input", in1, m1, id)
-          else if (!(out2[[1]] %in% c("aux", "st", "eq")))
-            sdCoupledModelMsg$buildCoupledModel4(private$pid, m2, 
-                                                 id)
-          else if (out2[[1]] == "st" && !(paste0(m2, ".", out2[[2]]) %in% 
-                                          names(stComponents)))
+            
+          } else if (!(out2[[1]] %in% c("aux", "st", "eq"))) {
+            
+            sdCoupledModelMsg$buildCoupledModel4(private$pid, m2, id)
+            
+          } else if (out2[[1]] == "st" && !(paste0(m2, ".", out2[[2]]) %in% 
+                                          names(stComponents))) {
+            
             sdCoupledModelMsg$buildCoupledModel3(private$pid, 
                                                  "state", out2[[2]], m2, id)
-          else if (out2[[1]] %in% c("aux", "eq") && 
-                   !(paste0(m2, ".", out2[[2]]) %in% names(auxComponents)))
+            
+          } else if (out2[[1]] %in% c("aux", "eq") && 
+                   !(paste0(m2, ".", out2[[2]]) %in% names(auxComponents))) {
+            
             sdCoupledModelMsg$buildCoupledModel3(private$pid, 
                                                  "equation", out2[[2]], m2, id)
-          else
-          {
+          } else { 
             # check connections unit
             u1 <- defaultScenarioVars$coupledScenario$unit[[
               paste0(m1, ".", in1)]]
@@ -1358,34 +1299,30 @@ sdCoupledModelClass <- R6::R6Class(
               sdCoupledModelMsg$buildCoupledModel5(private$pid, in1, 
                                                    u1, m1, out2, u2, m2, id)
             # make connection
-            if (out2[[1]] == "st")
-            {
+            if (out2[[1]] == "st") { 
               if (!is.null(stConnections[[paste0(m1, ".", in1)]]))
                 sdCoupledModelMsg$buildCoupledModel6(private$pid, 
                                                      m1, in1, 
                                                      "state variable")
               
               stConnections[paste0(m1, ".", in1)] <- paste0(m2,".", out2[[2]])
-            }
-            else if (out2[[1]] %in% c("aux","eq"))
-            {
+            } else if (out2[[1]] %in% c("aux","eq")) { 
               if (!is.null(eqConnections[[paste0(m1, ".", in1)]]))
                 sdCoupledModelMsg$buildCoupledModel6(private$pid, 
                                                      m1, in1, 
                                                      "equation")
               
               eqConnections[paste0(m1, ".", in1)] <- paste0(m2, ".", 
-                                                             out2[[2]])
+                                                            out2[[2]])
               # substitute the connected inp <- aux
-              auxComponents <- lapply(auxComponents, function(x)
-                {
-                  gsub(pattern = paste0("inp\\$", m1, ".", in1, 
-                                        "|inp\\[(\\'|\\\")", m1, ".", in1,
-                                        "\b(\\'|\\\")\\]|inp\\[\\[(\\'|\\\")",
-                                        m1, ".", in1, "\b(\\'|\\\")\\]\\]"),
-                       replacement = paste0(out2[[1]], "$", 
-                                            m2, ".", out2[[2]]),
-                       x = toString(as.expression(x)), perl = TRUE)
+              auxComponents <- lapply(auxComponents, function(x) { 
+                gsub(pattern = paste0("inp\\$", m1, ".", in1, 
+                                      "|inp\\[(\\'|\\\")", m1, ".", in1,
+                                      "\b(\\'|\\\")\\]|inp\\[\\[(\\'|\\\")",
+                                      m1, ".", in1, "\b(\\'|\\\")\\]\\]"),
+                     replacement = paste0(out2[[1]], "$", 
+                                          m2, ".", out2[[2]]),
+                     x = toString(as.expression(x)), perl = TRUE)
               })
             }
           }
@@ -1408,8 +1345,7 @@ sdCoupledModelClass <- R6::R6Class(
       
       private$flagBuild <- TRUE
     },
-    saveXml = function(file = "sdCoupledModel.xml")
-    {
+    saveXml = function(file = "sdCoupledModel.xml") { 
       # save model to XML
       doc = XML::newXMLDoc()
       rootsdCoupledModel <- XML::newXMLNode(class(self)[[1]], doc = doc)
@@ -1424,8 +1360,7 @@ sdCoupledModelClass <- R6::R6Class(
       
       # add the components
       components <- XML::newXMLNode("components")
-      componentsXML <- lapply(private$pcomponents, function(x)
-      {
+      componentsXML <- lapply(private$pcomponents, function(x) { 
         x$saveXml()
       })
       XML::addChildren(components, kids = componentsXML)
@@ -1440,8 +1375,7 @@ sdCoupledModelClass <- R6::R6Class(
     }
   ),
   active = list(
-    defaultScenario = function()
-    {
+    defaultScenario = function() { 
       if (private$flagBuild)
         return(private$pdefaultScenario)
       else
@@ -1449,52 +1383,40 @@ sdCoupledModelClass <- R6::R6Class(
       
       invisible(NULL)
     },
-    components = function()
-    {
+    components = function() { 
       return(private$pcomponents)
     },
-    componentsId = function()
-    {
+    componentsId = function() { 
       return(private$pcomponentsId)
     },
-    componentsClass = function()
-    {
+    componentsClass = function() { 
       return(private$pcomponentsClass)
     },
-    componentsEquations = function()
-    {
+    componentsEquations = function() { 
       return(private$pcomponentsEquations)
     },
-    componentsInitVars = function()
-    {
+    componentsInitVars = function() { 
       return(private$pcomponentsInitVars)
     },
-    componentsPostProcessVars = function()
-    {
+    componentsPostProcessVars = function() { 
       return(private$pcomponentsPostProcessVars)
     },
-    componentsRootSpecification = function()
-    {
+    componentsRootSpecification = function() { 
       return(private$pcomponentsRootSpecification)
     },
-    componentsEventFunction = function()
-    {
+    componentsEventFunction = function() { 
       return(private$pcomponentsEventFunction)
     },
-    componentsAux = function()
-    {
+    componentsAux = function() { 
       return(private$pcomponentsAux)
     },
-    componentsGlobal = function()
-    {
+    componentsGlobal = function() { 
       return(private$pcomponentsGlobal)
     },
-    connections = function()
-    {
+    connections = function() { 
       return(private$pconnections)
     },
-    eqConnections = function()
-    {
+    eqConnections = function() { 
       # check if the matrix exist - flagBuild = TRUE
       if (private$flagBuild)
         return(private$auxCon)
@@ -1503,8 +1425,7 @@ sdCoupledModelClass <- R6::R6Class(
                                           "equations")
       invisible(NULL)
     },
-    stConnections = function()
-    {
+    stConnections = function() { 
       # check if the matrix exist - flagBuild = TRUE
       if (private$flagBuild)
         return(private$stCon)
@@ -1513,8 +1434,7 @@ sdCoupledModelClass <- R6::R6Class(
                                           "state")
       invisible(NULL)
     },
-    indexComponents = function()
-    {
+    indexComponents = function() { 
       # check if the matrix exist - flagBuild = TRUE
       if (private$flagBuild)
         return(private$pindexComponents)
@@ -1523,12 +1443,10 @@ sdCoupledModelClass <- R6::R6Class(
       
       invisible(NULL)
     },
-    isBuilt = function()
-    {
+    isBuilt = function() { 
       return(private$flagBuild)
     },
-    modelEnv = function()
-    {
+    modelEnv = function() { 
       return(private$pcoupledEnv)
     }
   ),

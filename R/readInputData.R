@@ -37,15 +37,13 @@
 # @param valueCol The name of the column with the variable value)
 # @return A list of the variables and their values
 ConvertDataFrameToList <- function(dataFrame, variableCol = "Variable", 
-                                   valueCol = "Value", dec = ".")
-{
+                                   valueCol = "Value", dec = ".") { 
   dataFrame <- as.data.frame(dataFrame, stringsAsFactors = FALSE)
   
   dataList <- NULL
   if (!is.null(dataFrame) && nrow(dataFrame) > 0 && 
       !is.null(dataFrame[[valueCol]]) && !is.null(dataFrame[[variableCol]]) &&
-      !all(dataFrame[[variableCol]] %in% "")) # if file is not empty
-  {
+      !all(dataFrame[[variableCol]] %in% "")) { # if file is not empty
     # remove invalid rows
     dataFrame <- dataFrame[!(dataFrame[[valueCol]] %in% "") **
                              !sapply(dataFrame[[valueCol]], is.null, 
@@ -54,9 +52,9 @@ ConvertDataFrameToList <- function(dataFrame, variableCol = "Variable",
     # convert to list
     dataList[as.character(dataFrame[[variableCol]])] <- 
       as.list(dataFrame[[valueCol]])
-  }
-  else
+  } else {
     readInputDataMsg$ConvertDataFrameToList()
+  }
   
   return(dataList)
 }
@@ -67,30 +65,25 @@ ConvertDataFrameToList <- function(dataFrame, variableCol = "Variable",
 # 
 # @param fileName Excel file name
 # @return A list with the sheets as data.frames
-ReadDataExcel <- function(fileName  = "DGM Inputs/dgmParameterInput.xlsx")
-{
+ReadDataExcel <- function(fileName  = "DGM Inputs/dgmParameterInput.xlsx") { 
   # read data from excel file with one or more sheets
   sheets <- readxl::excel_sheets(fileName)
   
-  modelParms <- lapply(sheets, function(x) 
-  {
-    tryCatch(
-      {
-        df <- readxl::read_excel(path = fileName, sheet = x, 
-                                 trim_ws = T, col_types = "text")
-        row.names(df) <- NULL
-        return(df)
-      },
-      error=function(e) 
-      {
-        readInputDataMsg$ReadDataExcel1(fileName, e)
-        return(data.frame())
-      },
-      warning=function(w) 
-      {
-        readInputDataMsg$ReadDataExcel2(fileName, w)
-        return(data.frame())
-      })
+  modelParms <- lapply(sheets, function(x) { 
+    tryCatch( { 
+      df <- readxl::read_excel(path = fileName, sheet = x, 
+                               trim_ws = T, col_types = "text")
+      row.names(df) <- NULL
+      return(df)
+    },
+    error=function(e) { 
+      readInputDataMsg$ReadDataExcel1(fileName, e)
+      return(data.frame())
+    },
+    warning=function(w) { 
+      readInputDataMsg$ReadDataExcel2(fileName, w)
+      return(data.frame())
+    })
   })
   names(modelParms) <- sheets
   
@@ -107,21 +100,17 @@ ConvertListDataFrameToList <- function(listDataFrames,
                                        descriptionCol = "Description", 
                                        unitCol = "Interpolation",
                                        interpolationCol = "Interpolation",
-                                       dec = ".")
-{
+                                       dec = ".") { 
   # convert data.frames variables into lists of variables, with each value
   # converted to its correct type
   listInputs <- list()
   
-  for (dfName in tolower(names(listDataFrames)))
-  {
+  for (dfName in tolower(names(listDataFrames))) { 
     parm <- listDataFrames[[dfName]]
     
-    if (!is.null(parm) && nrow(parm) > 0)  # if file is not empty
-    {
+    if (!is.null(parm) && nrow(parm) > 0) { # if file is not empty
       # inputs
-      if (dfName == "input") 
-      {
+      if (dfName == "input") { 
         # if there is time series also save the interpolation methods
         if (interpolationCol %in% names(parm) && 
             !is.null(parm[[interpolationCol]]))  
@@ -141,19 +130,19 @@ ConvertListDataFrameToList <- function(listDataFrames,
       if (!is.null(parm[[descriptionCol]]) &&
           !all(parm[[descriptionCol]] %in% ""))
         listInputs[["description"]] <- c(listInputs[["description"]], 
-                                       ConvertDataFrameToList(
-                                         parm, 
-                                         variableCol = variableCol, 
-                                         valueCol = descriptionCol,
-                                         dec = dec))
+                                         ConvertDataFrameToList(
+                                           parm, 
+                                           variableCol = variableCol, 
+                                           valueCol = descriptionCol,
+                                           dec = dec))
       if (!is.null(parm[[unitCol]]) && 
           !all(parm[[unitCol]] %in% ""))
         listInputs[["unit"]] <- c(listInputs[["unit"]], 
-                                       ConvertDataFrameToList(
-                                         parm, 
-                                         variableCol = variableCol, 
-                                         valueCol = unitCol,
-                                         dec = dec))
+                                  ConvertDataFrameToList(
+                                    parm, 
+                                    variableCol = variableCol, 
+                                    valueCol = unitCol,
+                                    dec = dec))
     }
   }
   
@@ -304,13 +293,11 @@ LoadModelScenario <- function(file,
                               valueCol = "Value", 
                               unitCol = "Unit", 
                               descriptionCol = "Description", 
-                              interpolationCol = "Interpolation")
-{ 
+                              interpolationCol = "Interpolation") {  
   scen <- list()
   
   # read defaults
-  if (file.exists(file)) 
-  {
+  if (file.exists(file)) { 
     modelScenario <- ReadDataExcel(file)
     
     # convert the sheet names to the expected names (hard coded as bellow)
@@ -327,41 +314,36 @@ LoadModelScenario <- function(file,
     
     # Convert data.frames to list extracting description, unit and interpolation
     scen <- ConvertListDataFrameToList(modelScenario, 
-                                        variableCol = variableCol, 
-                                        valueCol = valueCol, 
-                                        interpolationCol = interpolationCol,
+                                       variableCol = variableCol, 
+                                       valueCol = valueCol, 
+                                       interpolationCol = interpolationCol,
                                        descriptionCol = descriptionCol,
                                        unitCol = unitCol,
-                                        dec = dec) 
+                                       dec = dec) 
     
     # get the simulation options
-    if (!is.null(scen$simulation))
-    {
+    if (!is.null(scen$simulation)) { 
       scen$times <- scen$simulation[names(scen$simulation) %in% 
-                                        c("from", "to", "by")]
+                                      c("from", "to", "by")]
       scen$method <- scen$simulation$method
       scen$id <- scen$simulation$id
       scen$simulation <- NULL
       
       # move the times description and units from the 'from', 'to' and 'by'
-      if (!is.null(unlist(scen$description[c("from", "to", "by")])))
-      {
+      if (!is.null(unlist(scen$description[c("from", "to", "by")]))) { 
         scen$description$times <- paste(scen$description[c("from", "to", "by")], 
-                                      collapse = " ")
+                                        collapse = " ")
         scen$description[c("from", "to", "by")] <- NULL
       }
-      if (!is.null(unlist(scen$unit[c("from", "to", "by")])))
-      {
+      if (!is.null(unlist(scen$unit[c("from", "to", "by")]))) { 
         scen$unit$times <- paste(scen$unit[c("from", "to", "by")], 
-                                        collapse = " ")
+                                 collapse = " ")
         scen$unit[c("from", "to", "by")] <- NULL
       }
     }
-  }
-  else
-  {
+  } else { 
     readInputDataMsg$LoadModelScenario1(file)
   }
-
+  
   return(scen)
 }

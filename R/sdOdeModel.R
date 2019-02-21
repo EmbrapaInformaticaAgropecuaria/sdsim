@@ -263,8 +263,7 @@ sdOdeModelClass <- R6::R6Class(
                           PostProcessVars, 
                           RootSpecification,
                           EventFunction,
-                          globalFunctions)
-    {
+                          globalFunctions) { 
       # Create new environment for model functions
       # modelEnvironment <- new.env(parent = baseenv())
       modelEnvironment <- new.env(parent = parent.env(globalenv()))
@@ -279,8 +278,7 @@ sdOdeModelClass <- R6::R6Class(
         self$id <- NULL
       id <- private$pid
       
-      if (!missing(DifferentialEquations) && !is.null(DifferentialEquations))
-      {
+      if (!missing(DifferentialEquations) && !is.null(DifferentialEquations)) { 
         # TODO: do this verification in sdOde class
         # if (is.function(DifferentialEquations) && 
         #     all(funDefaultArgs %in% names(formals(DifferentialEquations))))
@@ -295,8 +293,7 @@ sdOdeModelClass <- R6::R6Class(
         self$defaultScenario <- defaultScenario
       
       # Optional parameters
-      if (!missing(InitVars) && !is.null(InitVars))
-      {
+      if (!missing(InitVars) && !is.null(InitVars)) { 
         if (is.function(InitVars) && 
             all(funDefaultArgs[-1] %in% names(formals(InitVars))))
           private$pInitVars <- InitVars
@@ -304,8 +301,7 @@ sdOdeModelClass <- R6::R6Class(
           sdOdeModelMsg$initialize2(id)
       }
       
-      if (!missing(PostProcessVars) && !is.null(PostProcessVars))
-      {
+      if (!missing(PostProcessVars) && !is.null(PostProcessVars)) { 
         if (is.function(PostProcessVars) &&
             all(c("outputTrajectory", "auxTrajectory", "ct", "par", "inp", "sw") 
                 %in% names(formals(PostProcessVars))))
@@ -314,8 +310,7 @@ sdOdeModelClass <- R6::R6Class(
           sdOdeModelMsg$initialize3(id)
       }
       
-      if (!missing(RootSpecification) && !is.null(RootSpecification))
-      {
+      if (!missing(RootSpecification) && !is.null(RootSpecification)) { 
         # convert the RootSpecification to df or a vector
         if (is.vector(RootSpecification) && is.character(RootSpecification[[1]]) 
             &&  length(RootSpecification) == 4)
@@ -325,8 +320,7 @@ sdOdeModelClass <- R6::R6Class(
           RootSpecification <- StringToFun(RootSpecification)
         
         # convert df elements type to avoid errors
-        if (is.data.frame(RootSpecification))
-        {
+        if (is.data.frame(RootSpecification)) { 
           RootSpecification$var <- as.character(RootSpecification$var)
           RootSpecification$method <- lapply(
             as.character(RootSpecification$method), type.convert, as.is = TRUE)
@@ -344,8 +338,7 @@ sdOdeModelClass <- R6::R6Class(
           sdOdeModelMsg$initialize4(id)
       }
       
-      if (!missing(EventFunction) && !is.null(EventFunction))
-      {
+      if (!missing(EventFunction) && !is.null(EventFunction)) { 
         if (is.function(EventFunction) && 
             all(funDefaultArgs %in% names(formals(EventFunction))))
           private$pEventFunction <- EventFunction
@@ -354,40 +347,33 @@ sdOdeModelClass <- R6::R6Class(
       }
       
       # suppressWarnings(sdInitEquations(aux))
-      if (!missing(aux) && !is.null(aux)) # set aux
-      {
+      if (!missing(aux) && !is.null(aux)) { # set aux
         # If aux is a list
-        if (is.list(aux))
-        {
+        if (is.list(aux)) { 
           aux <- tryCatch(sdInitEquations(aux, eqName = "aux"),
-                          error = function(e)
-                          {
+                          error = function(e) { 
                             sdOdeModelMsg$initialize6(id, e)
                             return(list())
                           })
-        }
-        # If aux is a string containing a file path
-        else if (is.character(aux) && nchar(aux) <= 255 && file.exists(aux))
-        {
+        } else if (is.character(aux) && nchar(aux) <= 255 && file.exists(aux)) { 
+          # If aux is a string containing a file path
+          
           aux <- paste(readLines(aux), collapse = "\n")
           aux <- tryCatch(sdInitEquations(aux, eqName = "aux"),
-                          error = function(e)
-                          {
+                          error = function(e) { 
                             sdOdeModelMsg$initialize6(id, e)
                             return(list())
                           })
-        }
-        else
-        {
+        } else { 
           aux <- list()
           sdOdeModelMsg$initialize7(id)
         }
+        
         # remove equations with reserved names
-        if (any(names(aux) %in% sdsimReserved))
-        {
+        if (any(names(aux) %in% sdsimReserved)) { 
           warning(sprintf(sdOdeModelMsg$initialize10, id, 
                           paste0(names(aux)[names(aux) %in% sdsimReserved], 
-                            collapse = ", ")), call. = FALSE)
+                                 collapse = ", ")), call. = FALSE)
           aux <- aux[!(names(aux) %in% sdsimReserved)]
         }
         
@@ -407,21 +393,15 @@ sdOdeModelClass <- R6::R6Class(
       
       # assign the global functions in the model functions environment
       if (!missing(globalFunctions) && !is.null(globalFunctions) && 
-          length(globalFunctions) > 0)
-      {
+          length(globalFunctions) > 0) { 
         if (is.list(globalFunctions) && !is.null(names(globalFunctions)) && 
-            all(names(globalFunctions) != "")) # must be a named list
-        {
+            all(names(globalFunctions) != "")) { # must be a named list
           remGlobalFun <- c()
-          for (i in 1:length(globalFunctions))
-          {
-            if (!is.function(globalFunctions[[i]]))
-            {
+          for (i in 1:length(globalFunctions)) { 
+            if (!is.function(globalFunctions[[i]])) { 
               remGlobalFun <- c(remGlobalFun, i)
               sdOdeModelMsg$initialize8(id, names(globalFunctions)[[i]])
-            } 
-            else
-            {
+            } else { 
               environment(globalFunctions[[i]]) <- modelEnvironment
               assign(names(globalFunctions)[[i]], globalFunctions[[i]], 
                      modelEnvironment)
@@ -432,9 +412,10 @@ sdOdeModelClass <- R6::R6Class(
             globalFunctions <- globalFunctions[-remGlobalFun]
           
           private$pglobalFunctions <- globalFunctions
-        }
-        else
+        } else {
           sdOdeModelMsg$initialize9(id)
+        }
+          
       }
       
       if (!missing(description) && !is.null(description))
@@ -442,13 +423,11 @@ sdOdeModelClass <- R6::R6Class(
       
       private$flagVerify <- FALSE
     },
-    print = function()
-    {
+    print = function() { 
       # convert all the attributes to string 
       modelFuns <- list("DifferentialEquations", "InitVars", "PostProcessVars", 
                         "RootSpecification", "EventFunction")
-      modelStr <- lapply(modelFuns, function(f)
-      {
+      modelStr <- lapply(modelFuns, function(f) { 
         if (is.function(private[[paste0("p", f)]]))
           FunToString(private[[paste0("p", f)]])
         else
@@ -468,8 +447,7 @@ sdOdeModelClass <- R6::R6Class(
       cat(indent(private$pdescription, indent = 4), sep = "\n")
       cat("\n")
       
-      if (!is.null(modelStr[["DifferentialEquations"]]))
-      {
+      if (!is.null(modelStr[["DifferentialEquations"]])) { 
         cat(indent("$DifferentialEquations", indent = 4), sep = "\n")
         cat(indent(modelStr[["DifferentialEquations"]], indent = 4), sep = "\n")
         cat("\n")
@@ -480,10 +458,8 @@ sdOdeModelClass <- R6::R6Class(
       # remove aux and DifferentialEquations replicate
       for (f in names(modelStr)[!(names(modelStr) %in% 
                                   c("DifferentialEquations", "aux", 
-                                    "globalFunctions"))]) 
-      {
-        if (!is.null(modelStr[[f]]))
-        {
+                                    "globalFunctions"))]) { 
+        if (!is.null(modelStr[[f]])) { 
           cat(indent(paste0("$", f), indent = 4), sep = "\n")
           cat(indent(modelStr[f], indent = 4), sep = "\n")
           cat("\n")
@@ -492,27 +468,24 @@ sdOdeModelClass <- R6::R6Class(
       
       if (length(modelStr[["globalFunctions"]]) > 0)
         cat(indent(capture.output(modelStr["globalFunctions"]), indent = 4), 
-          sep = "\n")
+            sep = "\n")
       
       cat(indent("$defaultScenario", indent = 4), sep = "\n")
       cat(indent(capture.output(private$pdefaultScenario), indent = 4), 
           sep = "\n")
       cat("\n")
     },
-    verifyModel = function(scenario = NULL, verbose = F)
-    {
+    verifyModel = function(scenario = NULL, verbose = F) { 
       if (is.null(private$pDifferentialEquations))
         stop(sprintf(sdOdeModelMsg$verifyModel0, private$pid), call. = FALSE)
       
       # get the simulation scenario
-      if (!is.null(private$pdefaultScenario))
-      {
+      if (!is.null(private$pdefaultScenario)) { 
         # get the model scenario 
         defaultScenario <- private$pdefaultScenario$clone(deep = TRUE)
         
         # overwrite default variables with the given scenario values
-        if (!is.null(scenario))
-        {
+        if (!is.null(scenario)) { 
           if (is.character(scenario))
             scenario <- sdLoadScenario(file = scenario)
           
@@ -521,23 +494,20 @@ sdOdeModelClass <- R6::R6Class(
           else
             sdOdeModelMsg$verifyModel12(private$pid, typeof(scenario))
         }
-      }
-      else if (!is.null(scenario))
-      {
+      } else if (!is.null(scenario)) { 
         if (is.character(scenario))
           scenario <- sdLoadScenario(file = scenario)
         
-        if (inherits(scenario, sdScenarioClass$classname))
+        if (inherits(scenario, sdScenarioClass$classname)) {
           defaultScenario <- scenario
-        else
-        {
+        } else { 
           sdOdeModelMsg$verifyModel12(private$pid, typeof(scenario))
           sdOdeModelMsg$verifyModel1(private$pid)
         }
-      }
-      else
+      } else {
         sdOdeModelMsg$verifyModel1(private$pid)
-      
+      }
+        
       # Get variables from default scenario
       st <- defaultScenario$state
       ct <- defaultScenario$constant
@@ -548,17 +518,15 @@ sdOdeModelClass <- R6::R6Class(
       
       aux <- private$paux
       
-      if (!is.null(times) && length(unlist(times)) > 0)
+      if (!is.null(times) && length(unlist(times)) > 0) {
         t <- times[[1]]
-      else
-      {
+      } else { 
         sdOdeModelMsg$verifyModel2(private$pid)
         t <- 0
       }
       
       # run the initialization fun
-      if (!is.null(private$pInitVars))
-      {
+      if (!is.null(private$pInitVars)) { 
         initVars <- private$pInitVars(st = st, ct = ct, par = par, inp = inp, 
                                       sw = sw, aux = aux)
         st <- initVars$st
@@ -573,8 +541,7 @@ sdOdeModelClass <- R6::R6Class(
         sdOdeModelMsg$verifyModel13(private$pid)
       
       # compute the input time Series values for the initial time
-      for (var in names(inp$fun_))
-      {
+      for (var in names(inp$fun_)) { 
         if (!is.null(inp$fun_[[var]]))
           inp[[var]] <- inp$fun_[[var]](t)
         else
@@ -585,23 +552,20 @@ sdOdeModelClass <- R6::R6Class(
       appendEnv(auxEnv, private$pModelEnvironment)
       
       # evaluates the auxiliary variables and update the aux list
-      for (auxVar in names(aux))
-      {
-        aux[[auxVar]] <- tryCatch(
-          {
-            eval(aux[[auxVar]], 
-                 envir = auxEnv)
-          },
-          error = function(e)
-          {
-            sdOdeModelMsg$verifyModel3(private$pid, auxVar, e)
-            invisible(numeric(0))
-          })
+      for (auxVar in names(aux)) { 
+        aux[[auxVar]] <- tryCatch( { 
+          eval(aux[[auxVar]], 
+               envir = auxEnv)
+        },
+        error = function(e) { 
+          sdOdeModelMsg$verifyModel3(private$pid, auxVar, e)
+          invisible(numeric(0))
+        })
         
         if (is.null(aux[[auxVar]]) || is.na(aux[[auxVar]]) ||
             length(aux[[auxVar]]) == 0 || is.infinite(aux[[auxVar]]))
           sdOdeModelMsg$verifyModel4(private$pid, auxVar, 
-                                  capture.output(aux[[auxVar]]))
+                                     capture.output(aux[[auxVar]]))
       }
       
       #### Model Definition Validation
@@ -609,91 +573,79 @@ sdOdeModelClass <- R6::R6Class(
       
       trace_env <- new.env()
       # call the model definition and also return the auxiliary values
-      res <- tryCatch(
-        {
-          trace(DifferentialEquations,
-                exit = function() trace_env <<- parent.frame(), 
-                print = F, where = environment())
-          
-          DifferentialEquations(t = t, st = st, ct = ct, par = par, inp = inp, 
-                                sw = sw, aux = aux)
-        },
-        error = function(e)
-        {
-          sdOdeModelMsg$verifyModel5(private$pid, e)
-          invisible(NULL)
-        })
+      res <- tryCatch( { 
+        trace(DifferentialEquations,
+              exit = function() trace_env <<- parent.frame(), 
+              print = F, where = environment())
+        
+        DifferentialEquations(t = t, st = st, ct = ct, par = par, inp = inp, 
+                              sw = sw, aux = aux)
+      },
+      error = function(e) { 
+        sdOdeModelMsg$verifyModel5(private$pid, e)
+        invisible(NULL)
+      })
       
       lsVars <- ls(trace_env)
       # Display warnings if any variables during the Model Definition
       # execution are NULL, numeric(0), Inf or NA
-      lapply(lsVars, function(x)
-      {
+      lapply(lsVars, function(x) { 
         var <- get(x, envir = trace_env)
-        if (is.function(var) || is.environment(var))
-        {
+        if (is.function(var) || is.environment(var)) { 
           var <- NULL
           # do nothing
-        }
-        else if ( (is.list(var) && length(var) > 0) ||
-                  ( is.vector(var) && length(var) > 1 ))
-        {
+        } else if ( (is.list(var) && length(var) > 0) ||
+                  ( is.vector(var) && length(var) > 1 )) { 
           xUnlist <- unlist(var, recursive = TRUE)
-          for (i in 1:length(xUnlist))
-          {
+          for (i in 1:length(xUnlist)) { 
             if (is.function(xUnlist[[i]]) || is.environment(xUnlist[[i]]))
-            {
               next
               # do nothing
-            }
             else if (is.null(xUnlist[[i]]))
               sdOdeModelMsg$verifyModel6(private$pid, names(xUnlist)[[i]], x,
-                                      "NULL")
+                                         "NULL")
             else if (length(var) == 0 && is.numeric(var))
               sdOdeModelMsg$verifyModel6(private$pid, names(xUnlist)[[i]], x,
-                                      "numeric(0)")
+                                         "numeric(0)")
             else if (is.na(xUnlist[[i]]))
               sdOdeModelMsg$verifyModel6(private$pid, names(xUnlist)[[i]], x,
-                                      "NA")
+                                         "NA")
             else if (is.infinite(xUnlist[[i]]))
               sdOdeModelMsg$verifyModel6(private$pid, names(xUnlist)[[i]], x,
-                                      "Inf")
+                                         "Inf")
           }
-        }
-        else if (x %in% c('st', 'ct', 'par', 'inp', 'sw', 'aux'))
-        { # do nothing if an arg is empty
-        }
-        else if (is.null(unlist(var)))
+        } else if (x %in% c('st', 'ct', 'par', 'inp', 'sw', 'aux')) {
+          # do nothing if an arg is empty
+        } else if (is.null(unlist(var))) {
           sdOdeModelMsg$verifyModel7(private$pid, x, "NULL")
-        else if (length(var) == 0 && is.numeric(var))
+        } else if (length(var) == 0 && is.numeric(var)) {
           sdOdeModelMsg$verifyModel7(private$pid, x, "numeric(0)")
-        else if (is.na(unlist(var)))
+        } else if (is.na(unlist(var))) {
           sdOdeModelMsg$verifyModel7(private$pid, x, "NA")
-        else if (is.infinite(unlist(var)))
+        } else if (is.infinite(unlist(var))) {
           sdOdeModelMsg$verifyModel7(private$pid, x, "Inf")
+        }
       })
       
       # Check the return of Model Definition contains invalid values
-      if (is.list(res))
-      {
+      if (is.list(res)) { 
         dRes <- res[[1]]
         
         if (!is.numeric(dRes))
           sdOdeModelMsg$verifyModel8(private$pid, typeof(dRes)) 
         
         if (length(dRes) != length(st))
-          sdOdeModelMsg$verifyModel9(private$pid, dRes, length(st)) 
-      }
-      else
+          sdOdeModelMsg$verifyModel9(private$pid, dRes, length(st))
+      } else {
         sdOdeModelMsg$verifyModel10(private$pid, typeof(res)) 
+      }
       
       if (verbose)
         sdOdeModelMsg$verifyModel11(private$pid) 
       
       private$flagVerify <- TRUE
     },
-    saveXml = function(file = "sdOdeModel.xml")
-    {
+    saveXml = function(file = "sdOdeModel.xml") { 
       # save model to XML
       doc = XML::newXMLDoc()
       rootsdModel <- XML::newXMLNode(class(self)[[1]], doc = doc)
@@ -716,8 +668,7 @@ sdOdeModelClass <- R6::R6Class(
       else
         RootSpecification <- NULL
       
-      globalFunctions <- lapply(private$pglobalFunctions, function(x)
-      {
+      globalFunctions <- lapply(private$pglobalFunctions, function(x) { 
         if (is.function(x))
           return(FunToString(x))
         else
@@ -736,8 +687,7 @@ sdOdeModelClass <- R6::R6Class(
       ListToXML(rootsdModel, lModel)
       
       # add the defaultScenario XML
-      if (!is.null(private$pdefaultScenario))
-      {
+      if (!is.null(private$pdefaultScenario)) { 
         defaultScenarioXML <- XML::newXMLNode(
           "defaultScenario", 
           .children = list(private$pdefaultScenario$saveXml()))
@@ -753,36 +703,28 @@ sdOdeModelClass <- R6::R6Class(
     }
   ),
   active = list(
-    DifferentialEquations = function()
-    {
+    DifferentialEquations = function() { 
       return(private$pDifferentialEquations$getOdeFunction())
     },
-    InitVars = function()
-    {
+    InitVars = function() { 
       return(private$pInitVars)
     },
-    PostProcessVars = function()
-    {
+    PostProcessVars = function() { 
       return(private$pPostProcessVars)
     },
-    RootSpecification = function()
-    {
+    RootSpecification = function() { 
       return(private$pRootSpecification)
     },
-    EventFunction = function()
-    {
+    EventFunction = function() { 
       return(private$pEventFunction)
     },
-    GlobalFunctions = function()
-    {
+    GlobalFunctions = function() { 
       return(private$pglobalFunctions)
     },
-    aux = function()
-    {
+    aux = function() { 
       return(private$paux)
     },
-    modelEnvironment = function()
-    {
+    modelEnvironment = function() { 
       return(private$pModelEnvironment)
     }
   ),
@@ -796,6 +738,7 @@ sdOdeModelClass <- R6::R6Class(
     pglobalFunctions = list(),
     paux = list(),
     pModelEnvironment = NULL
-  ))
+  )
+)
 
 

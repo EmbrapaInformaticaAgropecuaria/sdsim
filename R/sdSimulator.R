@@ -7,21 +7,18 @@ CreateFuncEval <-
            auxiliary,
            lastEvalTime,
            unlistReturn = F,
-           storeAuxTrajectory = F)
-  {
+           storeAuxTrajectory = F) { 
     aux <- vector("list", length = length(auxiliary))
     names(aux) <- names(auxiliary)
     auxseq <- seq_along(auxiliary)
     timeSeries <- match(names(inp$fun_), names(inp))
     
-    FuncEval <- function(t, st, parms)
-    {
+    FuncEval <- function(t, st, parms) { 
       st <- as.list(st)
       
       # evaluate time series and auxiliary varibles if the last evaluation time
       # is different than the current time
-      if (lastEvalTime != t)
-      {
+      if (lastEvalTime != t) { 
         # compute the time series contained in the input
         inp[timeSeries] <<- lapply(inp$fun_, function(x) x(t))
         
@@ -31,7 +28,7 @@ CreateFuncEval <-
       # evaluate the auxiliary variables and update the aux list
       for (var in auxseq)
         aux[[var]] <- eval(auxiliary[[var]])
-
+      
       output <- func(t = t, st = st, ct = ct, par = par, 
                      inp = inp, sw = sw, aux = aux)
       
@@ -64,8 +61,7 @@ CreateCoupledFuncEval <- function(componentsId,
                                   inp,
                                   sw,
                                   auxiliary,
-                                  storeAuxTrajectory = F) 
-{
+                                  storeAuxTrajectory = F) { 
   lastEvalTime <- -Inf
   
   modelseq <- seq_along(componentsId)
@@ -78,15 +74,13 @@ CreateCoupledFuncEval <- function(componentsId,
   dState <- vector("numeric", length = lenst)
   dAux <- list()
   
-  CoupledFuncEval <- function(t, state, parms)
-  {
+  CoupledFuncEval <- function(t, state, parms) { 
     # stores the model definitions result
     st <- as.list(state)
     
     # evaluate time series varibles if the last evaluation time
     # is different than the current time
-    if (lastEvalTime != t)
-    {
+    if (lastEvalTime != t) { 
       # compute the time series in the inputs
       inp[timeSeries] <<- lapply(inp$fun_, function(x) x(t))
       
@@ -103,25 +97,22 @@ CreateCoupledFuncEval <- function(componentsId,
     inp[conAuxInps] <<- aux[conAux]
     
     # run the components model definitions
-    for (i in modelseq)
-    {
+    for (i in modelseq) { 
       # run the model definition
       mDef <- funcs[[i]](t = t,
-        st = st[compIndex[["st"]][[componentsId[[i]]]]],
-        ct = ct[compIndex[["ct"]][[componentsId[[i]]]]],
-        par = par[compIndex[["par"]][[componentsId[[i]]]]],
-        inp = inp[compIndex[["inp"]][[componentsId[[i]]]]],
-        sw = sw[compIndex[["sw"]][[componentsId[[i]]]]],
-        aux = aux[compIndex[["aux"]][[componentsId[[i]]]]])
+                         st = st[compIndex[["st"]][[componentsId[[i]]]]],
+                         ct = ct[compIndex[["ct"]][[componentsId[[i]]]]],
+                         par = par[compIndex[["par"]][[componentsId[[i]]]]],
+                         inp = inp[compIndex[["inp"]][[componentsId[[i]]]]],
+                         sw = sw[compIndex[["sw"]][[componentsId[[i]]]]],
+                         aux = aux[compIndex[["aux"]][[componentsId[[i]]]]])
       
       # concatenate the states derivatives
       dState[compIndex[["st"]][[componentsId[[i]]]]] <- mDef[[1]]
       # concatenate the global auxiliary values
       mAux <- mDef[-1]
       
-      if (length(mAux) > 0)
-        # there is auxiliary values
-      {
+      if (length(mAux) > 0) { # there is auxiliary values
         names(mAux)[names(mAux) %in% ""] <- "noname"
         names(mAux) <- paste0(componentsId[[i]], ".", names(mAux))
         dAux <- c(dAux, mAux)
@@ -151,8 +142,7 @@ CreateCoupledRootEventFunc <-
            par,
            inp,
            sw,
-           auxiliary)
-  {
+           auxiliary) { 
     triggedEvents <- c()  # stores which models trigged events
     lastEvalTime <- -Inf
     
@@ -162,16 +152,14 @@ CreateCoupledRootEventFunc <-
     
     timeSeries <- match(names(inp$fun_), names(inp))
     
-    CoupledRootEval <- function(t, state, parms)
-    {
+    CoupledRootEval <- function(t, state, parms) { 
       triggedEvents <<- c()
       modelRoots <- roots <- c() # the roots returned by all models
       st <- as.list(state)
       
       # evaluate time series varibles if the last evaluation time
       # is different than the current time
-      if (lastEvalTime != t)
-      {
+      if (lastEvalTime != t) { 
         # compute the time series in the inputs
         inp[timeSeries] <<- lapply(inp$fun_, function(x) x(t))
         
@@ -188,8 +176,7 @@ CreateCoupledRootEventFunc <-
       inp[conAuxInps] <<- aux[conAux]
       
       # run the components root funcs
-      for (modelId in componentsId)
-      {
+      for (modelId in componentsId) { 
         if (is.function(rootFuncs[[modelId]]))
           modelRoots <- rootFuncs[[modelId]](
             t = t,
@@ -199,18 +186,15 @@ CreateCoupledRootEventFunc <-
             inp = inp[compIndex[["inp"]][[modelId]]],
             sw = sw[compIndex[["sw"]][[modelId]]],
             aux = aux[compIndex[["aux"]][[modelId]]])
-        else if (is.data.frame(rootFuncs[[modelId]]))
-        {
+        else if (is.data.frame(rootFuncs[[modelId]])) { 
           if (any(rootFuncs[[modelId]]$time == t))
             modelRoots <- 0
           else 
             modelRoots <- 1
-        }
-        else if (is.numeric(rootFuncs[[modelId]]))
-        {
+        } else if (is.numeric(rootFuncs[[modelId]])) { 
           modelRoots <- rootFuncs[[modelId]] - t
         }
-          
+        
         roots <- c(roots, modelRoots)
         
         # save the models that trigged an event
@@ -221,39 +205,31 @@ CreateCoupledRootEventFunc <-
       return(roots)
     }
     
-    CoupledEventEval <- function(t, state, parms)
-    {
+    CoupledEventEval <- function(t, state, parms) { 
       st <- as.list(state)
       
-      if (!is.null(triggedEvents) || length(triggedEvents) > 0)
-      {
+      if (!is.null(triggedEvents) || length(triggedEvents) > 0) { 
         triggedEvents <<- unique(triggedEvents)
         
-        for (modelId in triggedEvents)
-        {
-          if (!is.null(eventFuncs[[modelId]]))
-          {
+        for (modelId in triggedEvents) { 
+          if (!is.null(eventFuncs[[modelId]])) { 
             # run event
-            if (is.function(eventFuncs[[modelId]]))
-            {
-            newState <- eventFuncs[[modelId]](
-              t = t,
-              st = st[compIndex[["st"]][[modelId]]],
-              ct = ct[compIndex[["ct"]][[modelId]]],
-              par = par[compIndex[["par"]][[modelId]]],
-              inp = inp[compIndex[["inp"]][[modelId]]],
-              sw = sw[compIndex[["sw"]][[modelId]]],
-              aux = aux[compIndex[["aux"]][[modelId]]])
-            
-            # update state variables
-            st[compIndex[["st"]][[modelId]]] <- newState
-            }
-            else if (is.data.frame(eventFuncs[[modelId]]))
-            {
+            if (is.function(eventFuncs[[modelId]])) { 
+              newState <- eventFuncs[[modelId]](
+                t = t,
+                st = st[compIndex[["st"]][[modelId]]],
+                ct = ct[compIndex[["ct"]][[modelId]]],
+                par = par[compIndex[["par"]][[modelId]]],
+                inp = inp[compIndex[["inp"]][[modelId]]],
+                sw = sw[compIndex[["sw"]][[modelId]]],
+                aux = aux[compIndex[["aux"]][[modelId]]])
+              
+              # update state variables
+              st[compIndex[["st"]][[modelId]]] <- newState
+            } else if (is.data.frame(eventFuncs[[modelId]])) { 
               trigged <- eventFuncs[[modelId]][eventFuncs[[modelId]]$time == t,]
               
-              for (i in 1:nrow(trigged))
-              {
+              for (i in 1:nrow(trigged)) { 
                 st[trigged[i,1]] <- switch(
                   trigged[[i, 4]],
                   replace = trigged[[i, 3]],
@@ -368,8 +344,7 @@ sdSimulate <- function(model,
                        ties = "notordered",
                        storeAuxTrajectory = T,
                        storeTimeSeriesTrajectory = F,
-                       verbose = F)
-{
+                       verbose = F) { 
   if (missing(model))
     sdSimulatorMsg$sdSimulate()
   
@@ -377,8 +352,7 @@ sdSimulate <- function(model,
   methodArg <- method
   
   # If the model is atomic
-  if (inherits(model, sdOdeModelClass$classname))
-  {
+  if (inherits(model, sdOdeModelClass$classname)) { 
     # stop if model is empty
     if (is.null(model$DifferentialEquations))
       stop(sprintf(sdSimulatorMsg$sdSimulateAtomic7, model$id), call. = FALSE)
@@ -394,14 +368,12 @@ sdSimulate <- function(model,
     auxiliary <- model$aux
     
     # get the simulation scenario
-    if (!is.null(model$defaultScenario))
-    {
+    if (!is.null(model$defaultScenario)) { 
       # get the model scenario 
       defaultScenario <- model$defaultScenario$clone(deep = TRUE)
-    
+      
       # overwrite default variables with the given scenario values
-      if (!is.null(scenario))
-      {
+      if (!is.null(scenario)) { 
         if (is.character(scenario))
           scenario <- sdLoadScenario(file = scenario)
         
@@ -410,9 +382,7 @@ sdSimulate <- function(model,
         else
           sdSimulatorMsg$sdSimulateAtomic6(model$id, typeof(scenario))
       }
-    }
-    else if (!is.null(scenario))
-    {
+    } else if (!is.null(scenario)) { 
       if (is.character(scenario))
         scenario <- sdLoadScenario(file = scenario)
       
@@ -421,11 +391,11 @@ sdSimulate <- function(model,
       else
         stop(sprintf(sdSimulatorMsg$sdSimulateModel, "Ode", model$id), 
              call. = FALSE)
-    }
-    else
+    } else {
       stop(sprintf(sdSimulatorMsg$sdSimulateModel, "Ode", model$id), 
            call. = FALSE)
-
+    }
+      
     # Get variables from default scenario
     state <- defaultScenario$state
     ct <- defaultScenario$constant
@@ -449,24 +419,22 @@ sdSimulate <- function(model,
     if (is.null(times) || !all(c("from", "to", "by") %in% names(times)))
       sdSimulatorMsg$sdSimulateAtomic2(model$id)
     else if (!(abs(times$to - times$from) >= abs(times$by) && 
-             (times$to - times$from)*times$by > 0)) # invalid time sequence
+               (times$to - times$from)*times$by > 0)) # invalid time sequence
       sdSimulatorMsg$sdSimulateAtomic0(model$id)
     
-    if (is.null(method))
-    {
+    if (is.null(method)) { 
       sdSimulatorMsg$sdSimulateAtomic5(model$id)
       method <- "lsoda"
     }
-      
+    
     # run the InitVars function
-    if (!is.null(InitVars))
-    {
+    if (!is.null(InitVars)) { 
       modelInit <- InitVars(st = state,
-                           ct = ct,
-                           par = par,
-                           inp = inp,
-                           sw = sw,
-                           aux = auxiliary)
+                            ct = ct,
+                            par = par,
+                            inp = inp,
+                            sw = sw,
+                            aux = auxiliary)
       state <- modelInit$st
       ct <- modelInit$ct
       par <- modelInit$par
@@ -494,9 +462,8 @@ sdSimulate <- function(model,
     # Run simulation without root function, data frame or times vector
     if (!events || is.null(RootSpecification) ||
         (!is.function(RootSpecification) &&
-          !is.data.frame(RootSpecification)
-          && !is.numeric(RootSpecification)))
-    {
+         !is.data.frame(RootSpecification)
+         && !is.numeric(RootSpecification))) { 
       # Run simulation without support to events
       outTrajectory <- deSolve::ode(
         y = unlist(state),
@@ -505,19 +472,14 @@ sdSimulate <- function(model,
         func = DifferentialEquationsEval,
         method = method
       )
-    }
-    else
-      # Run simulation with support to events
-    {
-      if (is.function(RootSpecification))
-      {
+    } else { # Run simulation with support to events
+      if (is.function(RootSpecification)) { 
         # check if the method support events
         if (!identical(method, deSolve::radau) &&
             !identical(method, deSolve::lsoda) &&
             !identical(method, deSolve::lsode) &&
             (!is.vector(method) ||
-             !method %in% c("lsoda", "lsode", "radau")))
-        {
+             !method %in% c("lsoda", "lsode", "radau"))) { 
           sdSimulatorMsg$sdSimulateAtomic3(model$id)
           method <- "lsoda"
         }
@@ -526,8 +488,7 @@ sdSimulate <- function(model,
                          inp = inp, sw = sw, auxiliary = auxiliary, 
                          lastEvalTime = (times$from - 1))
         
-        if (is.function(EventFunction))
-        {
+        if (is.function(EventFunction)) { 
           
           # EVENTS func triggered by a root function
           EventFunctionEval <- createFuncEval(EventFunction,
@@ -549,8 +510,7 @@ sdSimulate <- function(model,
               terminalroot = terminalroot),
             method = method
           )
-        }
-        else
+        } else {
           # no event func, stop in the first root func
           outTrajectory <- deSolve::ode(
             y = unlist(state),
@@ -565,17 +525,15 @@ sdSimulate <- function(model,
             ),
             method = method
           )
-      }
-      else if (is.numeric(RootSpecification) &&
-               is.function(EventFunction))
-      {
+        }
+      } else if (is.numeric(RootSpecification) &&
+                 is.function(EventFunction)) { 
         # check if the method support events
         if (!identical(method, deSolve::radau) &&
             !identical(method, deSolve::lsoda) &&
             !identical(method, deSolve::lsode) &&
             (!is.vector(method) ||
-             !method %in% c("lsoda", "lsode", "radau")))
-        {
+             !method %in% c("lsoda", "lsode", "radau"))) { 
           sdSimulatorMsg$sdSimulateAtomic3(model$id)
           method <- "lsoda"
         }
@@ -598,16 +556,13 @@ sdSimulate <- function(model,
           events = list(func = EventFunctionEval,
                         time = RootSpecification),
           method = method)
-      }
-      else if (is.data.frame(RootSpecification))
-      {
+      } else if (is.data.frame(RootSpecification)) { 
         # check if the method support events
         if (!identical(method, deSolve::radau) &&
             !identical(method, deSolve::lsoda) &&
             !identical(method, deSolve::lsode) &&
             (!is.vector(method) ||
-             !method %in% c("lsoda", "lsode", "radau")))
-        {
+             !method %in% c("lsoda", "lsode", "radau"))) { 
           sdSimulatorMsg$sdSimulateAtomic3(model$id)
           method <- "lsoda"
         }
@@ -619,10 +574,7 @@ sdSimulate <- function(model,
           events = list(data = RootSpecification,
                         ties = ties),
           method = method)
-      }
-      else
-        # run without events / maybe no event func for the time vector
-      {
+      } else { # run without events / maybe no event func for the time vector
         outTrajectory <- deSolve::ode(
           y = unlist(state),
           times = seq(times$from, times$to, times$by),
@@ -637,8 +589,7 @@ sdSimulate <- function(model,
             collapse = "\n")
     
     # Calculate time series trajectory
-    if (storeTimeSeriesTrajectory && length(inp$interpolation_) > 0)
-    {
+    if (storeTimeSeriesTrajectory && length(inp$interpolation_) > 0) { 
       tsTrajectory <- data.frame(time = outTrajectory[, "time"])
       
       for (x in inp$fun_)
@@ -646,23 +597,18 @@ sdSimulate <- function(model,
           cbind(tsTrajectory, as.numeric(x(tsTrajectory[, "time"])))
       
       colnames(tsTrajectory) <- c("time", names(inp$fun_))
-    }
-    else
-    {
+    } else { 
       tsTrajectory <- NULL
     }
     
-    if (storeAuxTrajectory && length(auxiliary) > 0)
-    {
+    if (storeAuxTrajectory && length(auxiliary) > 0) { 
       # separate the aux trajectory from the output trajectory
       # Auxiliaries begin at time column + length(state) + 1
       iAuxBegin <- 2 + length(state)
       outTrajectory <- as.data.frame(outTrajectory)
       auxTrajectory <- outTrajectory[, c(1, iAuxBegin:ncol(outTrajectory))]
       outTrajectory <- outTrajectory[, 1:(iAuxBegin - 1)]
-    }
-    else
-    {
+    } else { 
       outTrajectory <- as.data.frame(outTrajectory)
       auxTrajectory <- NULL
     }
@@ -674,8 +620,7 @@ sdSimulate <- function(model,
         PostProcessVars(outTrajectory,
                         auxTrajectory, tsTrajectory,
                         ct, par, inp, sw),
-        error = function(e)
-        {
+        error = function(e) { 
           sdSimulatorMsg$sdSimulateAtomic4(model$id, e)
           return(NULL)
         })
@@ -691,9 +636,7 @@ sdSimulate <- function(model,
       postProcessValue = postProcess)
     
     return(output)
-  }
-  else if (inherits(model, sdStaticModelClass$classname))
-  {
+  } else if (inherits(model, sdStaticModelClass$classname)) { 
     # Get model attributes
     equations <- model$algebraicEquations
     InitVars <- model$InitVars
@@ -708,14 +651,12 @@ sdSimulate <- function(model,
     
     
     # get the simulation scenario
-    if (!is.null(model$defaultScenario))
-    {
+    if (!is.null(model$defaultScenario)) { 
       # get the model scenario 
       defaultScenario <- model$defaultScenario$clone(deep = TRUE)
       
       # overwrite default variables with the given scenario values
-      if (!is.null(scenario))
-      {
+      if (!is.null(scenario)) { 
         if (is.character(scenario))
           scenario <- sdLoadScenario(file = scenario)
         
@@ -724,9 +665,7 @@ sdSimulate <- function(model,
         else
           sdSimulatorMsg$sdSimulateAtomic6(model$id, typeof(scenario))
       }
-    }
-    else if (!is.null(scenario))
-    {
+    } else if (!is.null(scenario)) { 
       if (is.character(scenario))
         scenario <- sdLoadScenario(file = scenario)
       
@@ -735,11 +674,11 @@ sdSimulate <- function(model,
       else
         stop(sprintf(sdSimulatorMsg$sdSimulateModel, "Static", model$id), 
              call. = FALSE)
-    }
-    else
+    } else {
       stop(sprintf(sdSimulatorMsg$sdSimulateModel, "Static", model$id), 
            call. = FALSE)
-    
+    }
+      
     # Get variables from default scenario
     ct <- defaultScenario$constant
     par <- defaultScenario$parameter
@@ -762,14 +701,13 @@ sdSimulate <- function(model,
                (times$to - times$from)*times$by > 0)) # invalid time sequence
       sdSimulatorMsg$sdSimulateStatic2(model$id)
     
-    if (!is.null(InitVars))
-    {
+    if (!is.null(InitVars)) { 
       modelInit <-
         InitVars(ct = ct,
-          par = par,
-          inp = inp,
-          sw = sw,
-          eq = eq)
+                 par = par,
+                 inp = inp,
+                 sw = sw,
+                 eq = eq)
       ct <- modelInit$ct
       par <- modelInit$par
       inp <- modelInit$inp
@@ -785,11 +723,9 @@ sdSimulate <- function(model,
     eqTrajectory <- c()
     tsTrajectory <- NULL
     eq <- list()
-    if (length(inp$fun_) > 0)
-    {
+    if (length(inp$fun_) > 0) { 
       timeSeries <- which(names(inp) %in% names(inp$fun_))
-      for (t in seq(times$from, times$to, times$by))
-      {
+      for (t in seq(times$from, times$to, times$by)) { 
         # compute the input time Series values 
         inp[timeSeries] <- lapply(inp$fun_, function(x) x(t))
         
@@ -810,9 +746,7 @@ sdSimulate <- function(model,
       
       if (storeTimeSeriesTrajectory)
         tsTrajectory <- as.data.frame(tsTrajectory, row.names = NULL)
-    }
-    else # no time series, output is constant
-    {
+    } else { # no time series, output is constant
       for (equationsVar in names(equations))
         eq[[equationsVar]] <- eval(equations[[equationsVar]],
                                    envir = auxenv)
@@ -832,12 +766,9 @@ sdSimulate <- function(model,
       postProcessValue = NULL)
     
     return(output)
-  }
-  else if (inherits(model, sdCoupledModelClass$classname))
-  {
+  } else if (inherits(model, sdCoupledModelClass$classname)) { 
     # Try to build the coupled model if it is not built
-    if (!model$isBuilt)
-    {
+    if (!model$isBuilt) { 
       model$buildCoupledModel(from = from,
                               to = to,
                               by = by,
@@ -870,14 +801,12 @@ sdSimulate <- function(model,
     componentsId <- model$componentsId
     
     # get the simulation scenario
-    if (!is.null(model$defaultScenario))
-    {
+    if (!is.null(model$defaultScenario)) { 
       # get the model scenario 
       defaultScenario <- model$defaultScenario$clone(deep = TRUE)
       
       # overwrite default variables with the given scenario values
-      if (!is.null(scenario))
-      {
+      if (!is.null(scenario)) { 
         if (is.character(scenario))
           scenario <- sdLoadScenario(file = scenario)
         
@@ -886,9 +815,7 @@ sdSimulate <- function(model,
         else
           sdSimulatorMsg$sdSimulateAtomic6(model$id, typeof(scenario))
       }
-    }
-    else if (!is.null(scenario))
-    {
+    } else if (!is.null(scenario)) { 
       if (is.character(scenario))
         scenario <- sdLoadScenario(file = scenario)
       
@@ -897,11 +824,11 @@ sdSimulate <- function(model,
       else
         stop(sprintf(sdSimulatorMsg$sdSimulateModel, "Coupled", model$id), 
              call. = FALSE)
-    }
-    else
+    } else {
       stop(sprintf(sdSimulatorMsg$sdSimulateModel, "Coupled", model$id), 
            call. = FALSE)
-    
+    }
+      
     # get model variables
     st <- defaultScenario$state
     ct <- defaultScenario$constant
@@ -930,12 +857,10 @@ sdSimulate <- function(model,
     
     # Run the model Init Vars
     modelInit <- list()
-    for (modelId in componentsId)
-    {
+    for (modelId in componentsId) { 
       # run the init vars
-      if (!is.null(componentsInitVars[[modelId]]))
-      {
-        if (inherits(model$components[[modelId]], sdOdeModelClass$classname))
+      if (!is.null(componentsInitVars[[modelId]])) { 
+        if (inherits(model$components[[modelId]], sdOdeModelClass$classname)) {
           modelInitVars <-
             componentsInitVars[[modelId]](
               st = st[model$indexComponents$st[[modelId]]],
@@ -944,8 +869,8 @@ sdSimulate <- function(model,
               inp = inp[model$indexComponents$inp[[modelId]]],
               sw = sw[model$indexComponents$sw[[modelId]]],
               aux = aux[model$indexComponents$aux[[modelId]]])
-        else if (inherits(model$components[[modelId]], 
-                          sdStaticModelClass$classname))
+        } else if (inherits(model$components[[modelId]], 
+                            sdStaticModelClass$classname)) {
           modelInitVars <-
             componentsInitVars[[modelId]](
               ct = ct[model$indexComponents$ct[[modelId]]],
@@ -953,9 +878,10 @@ sdSimulate <- function(model,
               inp = inp[model$indexComponents$inp[[modelId]]],
               sw = sw[model$indexComponents$sw[[modelId]]],
               eq = aux[model$indexComponents$aux[[modelId]]])
-        else
+        } else {
           next()
-        
+        }
+          
         # concatenate the initVars return
         modelInit$st <- c(modelInit$st, modelInitVars$st)
         modelInit$ct <- c(modelInit$ct, modelInitVars$ct)
@@ -967,8 +893,7 @@ sdSimulate <- function(model,
       }
     }
     
-    if (length(modelInit) > 0)
-    {
+    if (length(modelInit) > 0) { 
       st  <- MergeLists(modelInit$st, st, "coupledState")
       ct  <- MergeLists(modelInit$ct, ct, "coupledConstant")
       par <- MergeLists(modelInit$par, par, "coupledParameter")
@@ -977,16 +902,13 @@ sdSimulate <- function(model,
     }
     
     # only static components
-    if (length(componentsEquations) == 0)
-    {
+    if (length(componentsEquations) == 0) { 
       eqTrajectory <- c()
       tsTrajectory <- NULL
       eq <- list()
-      if (length(inp$fun_) > 0)
-      {
+      if (length(inp$fun_) > 0) { 
         timeSeries <- which(names(inp) %in% names(inp$fun_))
-        for (t in seq(times$from, times$to, times$by))
-        {
+        for (t in seq(times$from, times$to, times$by)) { 
           # compute the input time Series values 
           inp[timeSeries] <- lapply(inp$fun_, function(x) x(t))
           
@@ -1005,9 +927,7 @@ sdSimulate <- function(model,
         
         if (storeTimeSeriesTrajectory)
           tsTrajectory <- as.data.frame(tsTrajectory, row.names = NULL)
-      }
-      else # no time series, output is constant
-      {
+      } else { # no time series, output is constant
         for (var in names(aux))
           eq[[var]] <- aux[[var]] <- eval(aux[[var]], enclos = model$modelEnv)
         
@@ -1025,11 +945,8 @@ sdSimulate <- function(model,
         scenario = scenario,
         diagnostics = NULL,
         postProcessValue = NULL)
-    }
-    else # at least one atomic component
-    {
-      if (is.null(method))
-      {
+    } else { # at least one atomic component
+      if (is.null(method)) { 
         sdSimulatorMsg$sdSimulateAtomic5(model$id)
         method <- "lsoda"
       }
@@ -1072,8 +989,7 @@ sdSimulate <- function(model,
       
       # Run simulation without root function
       if (!events || is.null(componentsRootSpecification) ||
-          length(componentsRootSpecification) == 0)
-      {
+          length(componentsRootSpecification) == 0) { 
         outTrajectory <- deSolve::ode(
           y = unlist(st),
           times = times,
@@ -1081,17 +997,13 @@ sdSimulate <- function(model,
           parms = NULL,
           method = method
         )
-      }
-      # Run simulation with root
-      else
-      {
+      } else { # Run simulation with root 
         # check if the method support events
         if (!identical(method, deSolve::radau) &&
             !identical(method, deSolve::lsoda) &&
             !identical(method, deSolve::lsode) &&
             (!is.vector(method) ||
-             !method %in% c("lsoda", "lsode", "radau")))
-        {
+             !method %in% c("lsoda", "lsode", "radau"))) { 
           sdSimulatorMsg$sdSimulateCoupled5(model$id)
           method <- "lsoda"
         }
@@ -1116,8 +1028,7 @@ sdSimulate <- function(model,
         
         # Run simulation without event, stop in 1st root
         if (is.null(componentsEventFunction) ||
-            length(componentsEventFunction) == 0)
-        {
+            length(componentsEventFunction) == 0) { 
           outTrajectory <- deSolve::ode(
             y = unlist(st),
             times = times,
@@ -1128,10 +1039,7 @@ sdSimulate <- function(model,
                           root = T,
                           maxroots = maxroots),
             method = method)
-        }
-        # Run simulation with event
-        else
-        {
+        } else { # Run simulation with event
           outTrajectory <- deSolve::ode(
             y = unlist(st),
             times = times,
@@ -1149,21 +1057,18 @@ sdSimulate <- function(model,
                            collapse = "\n")
       
       # Calculate input trajectory
-      if (storeTimeSeriesTrajectory && length(inp$fun_) > 0)
-      {
+      if (storeTimeSeriesTrajectory && length(inp$fun_) > 0) { 
         tsTrajectory <- data.frame(time = outTrajectory[, "time"])
         
         for (x in inp$fun_)
           tsTrajectory <- cbind(tsTrajectory, x(tsTrajectory[, "time"]))
         
         colnames(tsTrajectory) <- c("time", names(inp$fun_))
-      }
-      else
+      } else {
         tsTrajectory <- NULL
+      }
       
-      
-      if (storeAuxTrajectory && length(aux) > 0)
-      {
+      if (storeAuxTrajectory && length(aux) > 0) { 
         # separate the aux trajectory from the output trajectory
         iAuxBegin <- 2 + length(st)
         auxTrajectory <-
@@ -1175,21 +1080,18 @@ sdSimulate <- function(model,
         
         outTrajectory <-
           as.data.frame(outTrajectory[, c(1:(iAuxBegin - 1), 
-          unlist(compIndex$aux[staticComponents]) + iAuxBegin - 2 +
-            length(auxTrajectory) - length(aux))])
+                                          unlist(compIndex$aux[staticComponents]) + iAuxBegin - 2 +
+                                            length(auxTrajectory) - length(aux))])
         
         auxTrajectory[unlist(compIndex$aux[staticComponents]) + 
                         length(auxTrajectory) - length(aux)] <- NULL
-      }
-      else
-      {
+      } else { 
         outTrajectory <- as.data.frame(outTrajectory)
         auxTrajectory <- NULL
       }
       
       # run post process func
-      if (!is.null(componentsPostProcessVars))
-      {
+      if (!is.null(componentsPostProcessVars)) { 
         postProcess <- list()
         for (modelId in names(componentsPostProcessVars))
           postProcess[[modelId]] <- tryCatch(
@@ -1200,14 +1102,13 @@ sdSimulate <- function(model,
                                                  par,
                                                  inp,
                                                  sw),
-            error = function(e)
-            {
+            error = function(e) { 
               sdSimulatorMsg$sdSimulateCoupled6(model$id, modelId)
               return(NULL)
             })
-      }
-      else
+      } else {
         postProcess <- NULL
+      }
       
       # Assemble output object
       output <- sdOutputClass$new(
@@ -1221,8 +1122,8 @@ sdSimulate <- function(model,
     }
     
     return(output)
-  }
-  else
+  } else {
     stop(sdSimulatorMsg$sdSimulate, call. = F)
+  }
 }
 

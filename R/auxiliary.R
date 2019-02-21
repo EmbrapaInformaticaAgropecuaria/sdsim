@@ -83,34 +83,28 @@ sdsimModelLabelingRules <- NULL
 #' print(eval(aux$cDiff))
 #' #> [1] 0.125
 sdInitEquations <- function (equations, separator = "<-", 
-                             eqName = "aux")
-{
+                             eqName = "aux") { 
   equationList <- list()
   
   # If equations is a list containing expressions and/or characters
-  if (is.list(equations) && length(equations) > 0)
-  {
+  if (is.list(equations) && length(equations) > 0) { 
     # Process separator parameter regex to accept spaces
     separator <- paste0("[ \t\n]*", separator, "[ \t\n]*")
     nameList <- names(equations)
     
-    for (i in 1:length(equations))
-    {
+    for (i in 1:length(equations)) { 
       
       eq <- equations[[i]]
-      if (is.character(eq))
-      {
+      if (is.character(eq)) { 
         # If the equation has variable attribution
-        if (grepl("<-", eq))
-        {
+        if (grepl("<-", eq)) { 
           # Splits the equation into resulting variable and body
           eqSplit <- strsplit(sub(separator, "\01", eq), "\01")
           equationBody <- eqSplit[[1]][[2]]
           equationVariable <- gsub("[ \t]*", "", eqSplit[[1]][[1]])
           
           # check if element is named
-          if (equationVariable == "")
-          {
+          if (equationVariable == "") { 
             warning(sprintf(auxiliaryMsg$sdInitEq1, eqName, equationBody), 
                     call. = FALSE)
             next()
@@ -118,14 +112,12 @@ sdInitEquations <- function (equations, separator = "<-",
           
           # Assemble the expression
           equation <- parse(text = equationBody)
-        }
-        # If the variable correspondant to the equation is the element name
-        # in the list
-        else
-        {
+        } else { 
+          # If the variable correspondant to the equation is the element name
+          # in the list
+          
           # check if element is named
-          if (is.null(nameList) || nameList[[i]] == "")
-          {
+          if (is.null(nameList) || nameList[[i]] == "") { 
             warning(sprintf(auxiliaryMsg$sdInitEq1, eqName, eq), call. = FALSE)
             next()
           }
@@ -137,21 +129,16 @@ sdInitEquations <- function (equations, separator = "<-",
           equation <- parse(text = equationBody)
         }
         
-      }
-      else if (is.expression(eq) || is.language(eq))
-      {
+      } else if (is.expression(eq) || is.language(eq)) { 
         # check if element is named
-        if (is.null(nameList) || nameList[[i]] == "")
-        {
+        if (is.null(nameList) || nameList[[i]] == "") { 
           warning(sprintf(auxiliaryMsg$sdInitEq1, eqName, eq), call. = FALSE)
           next()
         }
         
         equationVariable <- nameList[[i]]
         equation <- eq
-      }
-      else
-      {
+      } else { 
         auxiliaryMsg$sdInitEq(paste(eqName, collapse = " and "), eq)
         next()
       }
@@ -164,8 +151,7 @@ sdInitEquations <- function (equations, separator = "<-",
 }
 
 # Sort the auxiliary equations by dependency
-topologicalSortEquations <- function(equations, eqName = c("aux","eq"))
-{
+topologicalSortEquations <- function(equations, eqName = c("aux","eq")) { 
   dependents <- list() # store the dependents of each eq
   eqdegree <- list() # store the dependency degree of each eq
   eqorder <- c() # store the eqs in the right order
@@ -177,8 +163,7 @@ topologicalSortEquations <- function(equations, eqName = c("aux","eq"))
   patterneq <- paste0("((?<=", eqName[[1]], "\\$|", eqName[[1]], "\\[\\'|", 
                       eqName[[1]], "\\[\\\"|", eqName[[1]], "\\[\\", 
                       "[\\'|", eqName[[1]], "\\[\\[\\\")\\w+(\\.\\w*)*)")
-  if (length(eqName) > 1)
-  {
+  if (length(eqName) > 1) { 
     for (i in 2:length(eqName))
       patterneq <- paste0(patterneq, "|","((?<=", eqName[[i]], "\\$|", 
                           eqName[[i]], "\\[\\'|", eqName[[i]], 
@@ -187,8 +172,7 @@ topologicalSortEquations <- function(equations, eqName = c("aux","eq"))
   }
   
   # build the equations dependent lists
-  for (eqVar in names(equations))
-  {
+  for (eqVar in names(equations)) { 
     # get the dependency list of each eq and set its degree
     dependency <- unique(unlist(regmatches(
       toString(equations[[eqVar]]), 
@@ -206,16 +190,14 @@ topologicalSortEquations <- function(equations, eqName = c("aux","eq"))
   }
   
   # perform the topological ordering while there are free equaitons left
-  while (!is.null(eqfree[1]) && !is.na(eqfree[1]))
-  {
+  while (!is.null(eqfree[1]) && !is.na(eqfree[1])) { 
     # put the firs free eq in the order list and remove it from the free list
     eqVar <- eqfree[[1]]
     eqorder <- c(eqorder, eqVar)
     eqfree <- eqfree[-1]
     
     # decrease the dependents equations degree
-    for (e in dependents[[eqVar]])
-    {
+    for (e in dependents[[eqVar]]) { 
       eqdegree[[e]] <- eqdegree[[e]] - 1
       # add the new free eqs
       if (eqdegree[[e]] == 0)
@@ -224,8 +206,7 @@ topologicalSortEquations <- function(equations, eqName = c("aux","eq"))
   }
   
   # check for circular dependency
-  if (length(eqorder) != length(equations))
-  {
+  if (length(eqorder) != length(equations)) { 
     auxiliaryMsg$topologicalSortEq(eqName, equations, eqorder, dependents)
     return(list())
   }
@@ -294,20 +275,17 @@ topologicalSortEquations <- function(equations, eqName = c("aux","eq"))
 sdTemporalFunctionList <- function(x, colTimes = 1, colValue = 2, 
                                    methods, 
                                    sep = ",", dec = ".", header = TRUE,
-                                   timeSeriesDirectory = "")
-{
+                                   timeSeriesDirectory = "") { 
   if (length(x) == 0)
     return(x)
   
-  if (length(x) != length(methods)) 
-  {
+  if (length(x) != length(methods)) { 
     auxiliaryMsg$sdTemporalFunctionList()
     return(NULL)
   }
   
   # transform the time series into temporal functions
-  timeSeriesFun <- lapply(1:length(x), FUN = function(i) 
-  { 
+  timeSeriesFun <- lapply(1:length(x), FUN = function(i) {  
     sdTemporalFunction(x = x[[i]], colTimes = colTimes, 
                        colValue = colValue, 
                        method = methods[[i]], sep = sep, dec = dec, 
@@ -397,62 +375,49 @@ sdTemporalFunctionList <- function(x, colTimes = 1, colValue = 2,
 sdTemporalFunction <- function(x, colTimes = 1, colValue = 2, 
                                method = "linear", 
                                sep = ",", dec = ".", header = TRUE,
-                               timeSeriesDirectory = "")
-{ 
+                               timeSeriesDirectory = "") {  
   splineMethods <- c("fmm", "natural", "periodic", "monoH.FC" , "hyman")
   approxfunMethods <- c("linear", "constant")
   
   if (length(x) == 0) # empty object
     return(x)
   
-  if (is.numeric(x) && (length(x) == 1))  ## its a fixed value
-  {
+  if (is.numeric(x) && (length(x) == 1)) { ## its a fixed value
     timeS <- c(0, 1)
     values <- c(x, x)
-  } 
-  else if (is.matrix(x) || is.data.frame(x))  ## its a matrix or data frame
-  {   
+  } else if (is.matrix(x) || is.data.frame(x)) { ## its a matrix or data frame   
     # check if the indexes are valid
-    if (!all(c(colTimes, colValue) <= ncol(x)))
-    {
+    if (!all(c(colTimes, colValue) <= ncol(x))) { 
       warning(auxiliaryMsg$sdTemporalFunction6, call. = FALSE)
       return(NULL)
     }
     
     timeS <- x[, colTimes]
     values <- x[, colValue]  # column col must have the values for each time
-  } 
-  else if (is.list(x))
-  {
+  } else if (is.list(x)) { 
     # check if the indexes are valid
-    if (!all(c(colTimes, colValue) <= length(x)))
-    {
+    if (!all(c(colTimes, colValue) <= length(x))) { 
       warning(auxiliaryMsg$sdTemporalFunction6, call. = FALSE)
       return(NULL)
     }
     
     timeS <- x[colTimes]
     values <- x[colValue]  # column col must have the values for each time
-  }
-  else if (is.character(x))  
-  { ## its a character file name - read from file
+  } else if (is.character(x)) {  ## its a character file name - read from file
     if (timeSeriesDirectory != "")
       timeSeriesDirectory <- paste0(timeSeriesDirectory, "/")
-    if (!file.exists(paste0(timeSeriesDirectory, x)))
-    {
+    if (!file.exists(paste0(timeSeriesDirectory, x))) { 
       auxiliaryMsg$sdTemporalFunction1(timeSeriesDirectory, x)
       return(NULL)
     }
     
-    temporal_data <- tryCatch(
-      {
-        read.table(file = paste0(timeSeriesDirectory, x), 
-                   colClasses = c("numeric", "numeric"), 
-                   dec = dec, sep = sep, 
-                   strip.white = TRUE, stringsAsFactors = FALSE,
-                   header = header)},
-      error = function(e)
-      {
+    temporal_data <- tryCatch( { 
+      read.table(file = paste0(timeSeriesDirectory, x), 
+                 colClasses = c("numeric", "numeric"), 
+                 dec = dec, sep = sep, 
+                 strip.white = TRUE, stringsAsFactors = FALSE,
+                 header = header)},
+      error = function(e) { 
         auxiliaryMsg$sdTemporalFunction2(timeSeriesDirectory, x, e)
         return(NULL)
       })
@@ -460,8 +425,7 @@ sdTemporalFunction <- function(x, colTimes = 1, colValue = 2,
     if (is.null(temporal_data))
       return(NULL)
     
-    if (!all(c(colTimes, colValue) <= ncol(x)))
-    {
+    if (!all(c(colTimes, colValue) <= ncol(x))) { 
       warning(auxiliaryMsg$sdTemporalFunction6, call. = FALSE)
       return(NULL)
     }
@@ -470,15 +434,12 @@ sdTemporalFunction <- function(x, colTimes = 1, colValue = 2,
     timeS  <- temporal_data[, colTimes]    
     # second column must have the values for each time
     values <- temporal_data[, colValue]  
-  } 
-  else 
-  {
+  } else { 
     auxiliaryMsg$sdTemporalFunction3(x)
     return(NULL)
   }
   
-  if (length(timeS) == 1) # is a constant value
-  {
+  if (length(timeS) == 1) { # is a constant value
     timeS <- c(timeS, timeS)
     values <- c(values, values)
     method <- "constant"
@@ -489,33 +450,24 @@ sdTemporalFunction <- function(x, colTimes = 1, colValue = 2,
   yr <- values[length(values)]
   
   # check the interpolation type given the wanted method
-  if (method %in% approxfunMethods)
-  {
-    f <- tryCatch(
-      {
-        stats::approxfun(x = timeS, y = values, yleft = yl, yright = yr, 
-                         method = method)
-      },
-      error = function(e) 
-      {
-        auxiliaryMsg$sdTemporalFunction5(e)
-        return(NULL)
-      })
-  }
-  else if (method %in% splineMethods)
-  {
-    f <- tryCatch(
-      {
-        stats::splinefun(x = timeS, y = values, method = method)
-      },
-      error = function(e) 
-      {
-        auxiliaryMsg$sdTemporalFunction5(e)
-        return(NULL)
-      })
-  }
-  else
-  {
+  if (method %in% approxfunMethods) { 
+    f <- tryCatch( { 
+      stats::approxfun(x = timeS, y = values, yleft = yl, yright = yr, 
+                       method = method)
+    },
+    error = function(e) { 
+      auxiliaryMsg$sdTemporalFunction5(e)
+      return(NULL)
+    })
+  } else if (method %in% splineMethods) { 
+    f <- tryCatch( { 
+      stats::splinefun(x = timeS, y = values, method = method)
+    },
+    error = function(e) { 
+      auxiliaryMsg$sdTemporalFunction5(e)
+      return(NULL)
+    })
+  } else { 
     auxiliaryMsg$sdTemporalFunction4()
     f <- NULL
   }
@@ -526,11 +478,9 @@ sdTemporalFunction <- function(x, colTimes = 1, colValue = 2,
 # source: https://stackoverflow.com/questions/6256064/
 # how-to-create-xml-from-r-objects-e-g-is-there-a-listtoxml-function
 # Adapted to transform a list of lists in to a XML node tree
-ListToXML <- function(node, sublist)
-{
+ListToXML <- function(node, sublist) { 
   # vectors leafs
-  if (is.numeric(sublist) || is.character(sublist))
-  {
+  if (is.numeric(sublist) || is.character(sublist)) { 
     child <- XML::newXMLNode(names(sublist)[i], parent=node)
     
     if (is.numeric(sublist[[i]]))
@@ -541,23 +491,17 @@ ListToXML <- function(node, sublist)
   }
   
   # list
-  for (i in 1:length(sublist))
-  {
+  for (i in 1:length(sublist)) { 
     child <- XML::newXMLNode(names(sublist)[i], parent=node)
     
-    if (typeof(sublist[[i]]) == "list" && length(sublist[[i]]) > 0)
-    {
+    if (typeof(sublist[[i]]) == "list" && length(sublist[[i]]) > 0) { 
       ListToXML(child, sublist[[i]])
-    }
-    else if (length(sublist[[i]]) > 1) # to store vectors
-    {
+    } else if (length(sublist[[i]]) > 1) { # to store vectors
       if (is.numeric(sublist[[i]]))
         XML::xmlValue(child) <- VectorToCharDef(sublist[[i]]) 
       else # quote
         XML::xmlValue(child) <- VectorToCharDef(sublist[[i]], quote = T) 
-    }
-    else
-    {
+    } else { 
       XML::xmlValue(child) <- sublist[[i]]
     }
   }
@@ -565,24 +509,21 @@ ListToXML <- function(node, sublist)
   return(node)
 }
 
-VectorToCharDef <- function(x, quote = F)
-{
+VectorToCharDef <- function(x, quote = F) { 
   if (quote)
     return(paste0("c(", paste0("'", x, "'", collapse = ","), ")"))
   else
     return(paste0("c(", paste0(x, collapse = ","), ")"))
 }
 
-FunToString <- function(fun)
-{
+FunToString <- function(fun) { 
   if (!is.null(fun))
     return(paste(format(fun), collapse = "\n"))
   else
     return(NULL)
 }
 
-StringToFun <- function(str)
-{
+StringToFun <- function(str) { 
   if (!is.null(str))
     return(eval(parse(text = str)))
   else
@@ -590,8 +531,7 @@ StringToFun <- function(str)
 }
 
 # source: https://stackoverflow.com/questions/9519543/merge-two-lists-in-r
-appendList <- function (x, val) 
-{
+appendList <- function (x, val) { 
   stopifnot(is.list(x), is.list(val))
   xnames <- names(x)
   for (v in names(val)) {
@@ -614,13 +554,10 @@ indent <- function(str, indent = 0) {
 
 # replace variable names inside the function or the list of expressions with 
 # the standard modelId.variableName, where modelId. is the prefix added
-replaceCoupledVarsNames <- function(func, listExp, componentsVarNames, modelId)
-{
-  if (!missing(func) && is.function(func))
-  {
+replaceCoupledVarsNames <- function(func, listExp, componentsVarNames, modelId) { 
+  if (!missing(func) && is.function(func)) { 
     funstr <- FunToString(func)
-    for (var in componentsVarNames)
-    {
+    for (var in componentsVarNames) { 
       funstr <- gsub(pattern = paste0("(?<!\\.)\\b", var, "\\b(?!\\.)"), 
                      replacement = paste0(modelId, ".", var), x = funstr, 
                      perl = T)
@@ -628,13 +565,10 @@ replaceCoupledVarsNames <- function(func, listExp, componentsVarNames, modelId)
     
     func <- StringToFun(funstr)
     return(func)
-  }
-  else if (!missing(listExp) && is.list(listExp))
-  {
+  } else if (!missing(listExp) && is.list(listExp)) { 
     expstr <- lapply(listExp, function(x) toString(as.expression(x)))
     
-    for (var in componentsVarNames)
-    {
+    for (var in componentsVarNames) { 
       for (varexp in names(listExp))
         expstr[[varexp]] <- gsub(pattern = paste0("(?<!\\.)\\b", var, 
                                                   "\\b(?!\\.)"), 
@@ -651,8 +585,7 @@ replaceCoupledVarsNames <- function(func, listExp, componentsVarNames, modelId)
 }
 
 # merge the default list with a possibly incomplete list
-MergeLists <- function(parm, defaultParm, listName = "var")
-{
+MergeLists <- function(parm, defaultParm, listName = "var") { 
   if (is.null(parm))
     return(defaultParm)
   
@@ -672,12 +605,10 @@ MergeLists <- function(parm, defaultParm, listName = "var")
 
 # Merge environment e1 and e2 into one: e1 <- unique(e1 + e2)
 # e2 vars will overwritte e1 vars with the same name
-appendEnv = function(e1, e2, prefix = NULL) 
-{
+appendEnv = function(e1, e2, prefix = NULL) { 
   listE1 <- ls(e1)
   listE2 <- ls(e2)
-  for(v in listE2)
-  {
+  for(v in listE2) { 
     #if (v %in% listE1) warning(sprintf("Variable %s is in e1, too!", v))
     if (is.null(prefix))
       e1[[v]] <- e2[[v]]
@@ -707,8 +638,7 @@ appendEnv = function(e1, e2, prefix = NULL)
 #' ## Open the sdsim user interface using the given http
 #' #> sdRunApp()
 sdRunApp <- function(launch.browser = T, port = getOption("shiny.port"),
-                     host = getOption("shiny.host", "127.0.0.1"))
-{
+                     host = getOption("shiny.host", "127.0.0.1")) { 
   shiny::runApp(system.file(appDir = "application", package = "sdsim"), 
                 launch.browser = launch.browser, port = port, host = host)
 }
@@ -784,8 +714,7 @@ sdRunApp <- function(launch.browser = T, port = getOption("shiny.port"),
 #' arenstorf$verifyModel(verbose = TRUE)
 #' outaren <- sdSimulate(arenstorf)
 #' outaren$plot("y1 ~ y2")
-sdRepository <- function()
-{
+sdRepository <- function() { 
   modelsRep <- gsub(pattern = "\\.xml", replacement = "", 
                     x = list.files(system.file(appDir = "repository/", 
                                                package = "sdsim"), 
@@ -795,8 +724,7 @@ sdRepository <- function()
 }
 
 # return the sdsim package XML prefix
-xmlPrefix <- function()
-{
+xmlPrefix <- function() { 
   return(paste0("<?sdsim about='R package for ",
                 "modeling and simulation of system dynamics'",
                 " version='",
@@ -823,8 +751,7 @@ xmlPrefix <- function()
 #' scenTest <- sdLoadScenario("test.xlsx")
 #' print(scenTest)
 sdExcelTemplate <- function(file = "Scenario.xlsx", 
-                            colWidth = c(10, 10, 10, 30, 10))
-{
+                            colWidth = c(10, 10, 10, 30, 10)) { 
   inputData <- list(state = data.frame(Variable = c(""), Value = c(""), 
                                        Unit = c(""), Description = c("")), 
                     constant = data.frame(Variable = c(""), Value = c(""), 
@@ -846,8 +773,7 @@ sdExcelTemplate <- function(file = "Scenario.xlsx",
   
   # Save to excel
   wb <- openxlsx::createWorkbook()
-  lapply(names(inputData), function(x)
-  {
+  lapply(names(inputData), function(x) { 
     openxlsx::addWorksheet(wb, sheetName = x)
     openxlsx::writeDataTable(wb = wb, sheet = x, x = inputData[[x]], 
                              colNames = T)
@@ -878,12 +804,10 @@ sdExcelTemplate <- function(file = "Scenario.xlsx",
 #'   x = a + b,
 #'   y = c ^ 2
 #' )
-sdEquationList <- function(...) 
-{
+sdEquationList <- function(...) { 
   # Convert parameters to string
   eqList <- as.list(sapply( substitute(list(...)), deparse)[-1])
-  eqList <- lapply(eqList, function(x) 
-  {
+  eqList <- lapply(eqList, function(x) { 
     # Collapse sublists
     x <- paste(x, collapse = " ")
     # Remove extra spaces
@@ -892,133 +816,9 @@ sdEquationList <- function(...)
   return(eqList)
 }
 
-# Compares the variables in list 'flows' with the list 'boundary' and 'st'. 
-# Gives a warning if there is no match.
-verifyBoundarySt <- function(boundary, st, flows)
-{
-  strFlows <- strsplit(flows, "\\s+\\->\\s+")
-  missingFlows <- list()
-  for(i in 1:length(flows))
-  {
-    if(!length(grep(strFlows[[i]][1], boundary))&& 
-       !length(grep(strFlows[[i]][1], st)))
-        missingFlows <- c(missingFlows, strFlows[[i]][1])
-    if(!length(grep(strFlows[[i]][2], boundary)) && 
-       !length(grep(strFlows[[i]][2], st)))
-        missingFlows <- c(missingFlows, strFlows[[i]][2])
-  }
-  
-  missingFlows <- unique(missingFlows)
-
-  for(e in 1:length(missingFlows))
-    warning(sprintf(auxiliaryMsg$sdMakeFlows6, missingFlows[[e]]))
-}
-
-# Verifies the direction of the flow in list 'flows'. Returns a corrected list. 
-verifyInverseFlow <- function(flows)
-{
-  if(length(grep("<-", flows)))
-  {
-    aux_pos <- grep("<-", flows)
-    aux_str <- strsplit(flows[aux_pos], "\\s+")
-    for (i in 1:length(aux_pos)) 
-      flows[aux_pos[i]] <- paste(aux_str[[i]][3], aux_str[[i]][1],
-                                 sep = " -> ")
-  }
-  return(flows)
-}
-
-#' 
-#' Create a list of flow variables
-#'  
-#'
-#'  This function converts written text to a list of variables in character 
-#' format that contains the flow model. It also guarantees that the arguments to 
-#' are adequated to be used by other sdsim functions.
-#' 
-#' @param connections 
-#' 
-#' @return  
-#'
-#' @examples
-#' flows <- sdMakeFlows(
-#'   connections = c("birth -> prey", 
-#'                   "prey -> death",
-#'                   "birth -> predator",
-#'                   "predator -> death"),
-#'   flow_rate = c(
-#'     sdsim::sdEquationList(
-#'       st$prey * par$a,
-#'       par$b * st$prey * st$predator,
-#'       par$delta * st$prey * st$predator,
-#'       par$gamma * st$predator
-#'     )
-#'   ),
-#'   boundary = c("birth", "death"),
-#'   st = c("prey", "predator")
-#' )
-#' scen <- sdScenario(
-#'   id = "test",
-#'   state = list(prey = 10,
-#'                predator = 10),
-#'   parameter = list(a = 2/3,
-#'                    b = 4/3,
-#'                    delta = 1,
-#'                    gamma = 1),
-#'   times = list(from = 0, to = 100, by = 0.1),
-#'   method = "lsoda"
-#' )
-#' 
-#' model <- sdOdeModel("test",
-#'                     DifferentialEquations = flows,
-#'                     defaultScenario = scen)
-#' out <- sdSimulate(model)
-#' plot(out)
-sdMakeFlows <- function(flows = NULL, flow_rate = NULL, 
-                        st = NULL, boundary = c("boundary")) {
-  if(is.null(flows))
-    stop(sprintf(auxiliaryMsg$sdMakeFlows1))
-  
-  if(is.null(flow_rate))
-    stop(sprintf(auxiliaryMsg$sdMakeFlows2))
-  
-  if(length(flows) == 0)
-    stop(sprintf(auxiliaryMsg$sdMakeFlows3))
-  
-  if(length(flow_rate) == 0)
-    stop(sprintf(auxiliaryMsg$sdMakeFlows4))
-  
-  if(is.list(flows))
-    connections <- unlist(connections)
-
-  if(is.list(flow_rate))
-    flow_rate <- unlist(flow_rate)
-
-  if(length(flows) != length(flow_rate))
-    stop(sprintf(auxiliaryMsg$sdMakeFlows5))
-  
-  flows <- verifyInverseFlow(flows)
-
-  verifyBoundarySt(boundary, st, flows)
-
-
-  split_flow <- strsplit(flows, split = "\\h*->\\h*", perl = T)
-  source <- unlist(lapply(split_flow, `[[`, 1))
-  sink <- unlist(lapply(split_flow, `[[`, 2))
-  
-  list(
-    stateVariables = st,
-    flows = data.frame(source = source,
-                       sink = sink,
-                       flow_rate = flow_rate,
-                       stringsAsFactors = FALSE)
-  )
-}
-
 # Merge the a default scenario with an alternate scenario. Returns the
 # merged scenario.
-mergeScenarios <- function(defaultScenario, alternateScenario, verbose) 
-{
+mergeScenarios <- function(defaultScenario, alternateScenario, verbose) { 
   if (length(alternateScenario$state) > 0)
     defaultScenario$addState(alternateScenario$state, verbose = verbose)
   if (length(alternateScenario$constant) > 0)

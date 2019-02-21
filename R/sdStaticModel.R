@@ -144,8 +144,7 @@ sdStaticModelClass <- R6::R6Class(
                           defaultScenario,
                           algebraicEquations,
                           InitVars,
-                          globalFunctions)
-    {
+                          globalFunctions) { 
       funDefaultArgs <- c("ct", "par", "inp", "sw", "eq")
       # mandatory parameters
       if (!missing(id) && !is.null(id))
@@ -158,8 +157,7 @@ sdStaticModelClass <- R6::R6Class(
         self$defaultScenario <- (defaultScenario) 
       
       # Optional parameters
-      if (!missing(InitVars) && !is.null(InitVars))
-      {
+      if (!missing(InitVars) && !is.null(InitVars)) { 
         if (is.function(InitVars) && 
             all(funDefaultArgs %in% names(formals(InitVars))))
           private$pInitVars <- InitVars
@@ -167,38 +165,30 @@ sdStaticModelClass <- R6::R6Class(
           sdStaticModelMsg$initialize1(id)
       }
       
-      if (!missing(algebraicEquations) && !is.null(algebraicEquations)) # set algebraicEquations
-      {
+      if (!missing(algebraicEquations) && !is.null(algebraicEquations)) { # set algebraicEquations
         # If algebraicEquations is a list
-        if (is.list(algebraicEquations))
-        {
+        if (is.list(algebraicEquations)) { 
           algebraicEquations <- tryCatch(sdInitEquations(algebraicEquations, eqName = "eq"),
-                                error = function(e)
-                                {
-                                  sdStaticModelMsg$initialize2(id, e)
-                                  return(list())
-                                })
-        }
-        # If algebraicEquations is a string containing a file path
-        else if (is.character(algebraicEquations) && nchar(algebraicEquations) <= 255 && 
-                 file.exists(algebraicEquations))
-        {
+                                         error = function(e) { 
+                                           sdStaticModelMsg$initialize2(id, e)
+                                           return(list())
+                                         })
+        } else if (is.character(algebraicEquations) && nchar(algebraicEquations) <= 255 && 
+                 file.exists(algebraicEquations)) { 
+          # If algebraicEquations is a string containing a file path
+          
           algebraicEquations <- paste(readLines(algebraicEquations), collapse = "\n")
           algebraicEquations <- tryCatch(sdInitEquations(algebraicEquations, eqName = "eq"),
-                                error = function(e)
-                                {
-                                  sdStaticModelMsg$initialize2(id, e)
-                                  return(list())
-                                })
-        }
-        else
-        {
+                                         error = function(e) { 
+                                           sdStaticModelMsg$initialize2(id, e)
+                                           return(list())
+                                         })
+        } else { 
           algebraicEquations <- list()
           sdStaticModelMsg$initialize3(id)
         }
         # remove equations with reserved names
-        if (any(names(algebraicEquations) %in% sdsimReserved))
-        {
+        if (any(names(algebraicEquations) %in% sdsimReserved)) { 
           warning(sprintf(sdStaticModelMsg$initialize6, id, 
                           paste0(
                             names(algebraicEquations)[names(algebraicEquations) 
@@ -219,22 +209,16 @@ sdStaticModelClass <- R6::R6Class(
       
       # assign the global functions in the model functions environment
       if (!missing(globalFunctions) && !is.null(globalFunctions) && 
-          length(globalFunctions) > 0)
-      {
+          length(globalFunctions) > 0) { 
         if (is.list(globalFunctions) && !is.null(names(globalFunctions)) && 
-            all(names(globalFunctions) != "")) # must be a named list
-        {
+            all(names(globalFunctions) != "")) { # must be a named list
           remGlobalFun <- c()
-          for (i in 1:length(globalFunctions))
-          {
-            if (!is.function(globalFunctions[[i]]))
-            {
+          for (i in 1:length(globalFunctions)) { 
+            if (!is.function(globalFunctions[[i]])) { 
               remGlobalFun <- c(remGlobalFun, i)
               sdStaticModelMsg$initialize4(id, 
                                            names(globalFunctions)[[i]])
-            } 
-            else
-            {
+            } else { 
               environment(globalFunctions[[i]]) <- modelEnvironment
               assign(names(globalFunctions)[[i]], globalFunctions[[i]], 
                      modelEnvironment)
@@ -245,9 +229,9 @@ sdStaticModelClass <- R6::R6Class(
             globalFunctions <- globalFunctions[-remGlobalFun]
           
           private$pglobalFunctions <- globalFunctions
-        }
-        else
+        } else {
           sdStaticModelMsg$initialize5(id)
+        }
       }
       
       if (!missing(description) && !is.null(description))
@@ -255,8 +239,7 @@ sdStaticModelClass <- R6::R6Class(
       
       private$flagVerify <- FALSE
     },
-    print = function()
-    {
+    print = function() { 
       # convert all the attributes to string 
       modelStr <- list()
       modelStr$algebraicEquations <- lapply(private$palgebraicEquations, toString)
@@ -276,8 +259,7 @@ sdStaticModelClass <- R6::R6Class(
       if (length(modelStr[["algebraicEquations"]]) > 0)
         cat(indent(capture.output(modelStr["algebraicEquations"]), indent = 4), sep = "\n")
       
-      if (!is.null(modelStr[["InitVars"]]))
-      {
+      if (!is.null(modelStr[["InitVars"]])) { 
         cat(indent("$InitVars", indent = 4), sep = "\n")
         cat(indent((modelStr["InitVars"]), indent = 4), sep = "\n")
         cat("\n")
@@ -292,8 +274,7 @@ sdStaticModelClass <- R6::R6Class(
           sep = "\n")
       cat("\n")
     },
-    verifyModel = function(scenario = NULL, verbose = F)
-    {
+    verifyModel = function(scenario = NULL, verbose = F) { 
       # run the equations and model definition validation
       if (is.null(private$pdefaultScenario))
         sdStaticModelMsg$validate0(private$pid)
@@ -302,8 +283,7 @@ sdStaticModelClass <- R6::R6Class(
       defaultScenario <- private$pdefaultScenario$clone(deep = TRUE)
       
       # overwrite default variables with the given scenario values
-      if (!is.null(scenario))
-      {
+      if (!is.null(scenario)) { 
         if (is.character(scenario))
           scenario <- sdLoadScenario(file = scenario)
         
@@ -311,7 +291,7 @@ sdStaticModelClass <- R6::R6Class(
           defaultScenario <- mergeScenarios(defaultScenario, scenario)
         else
           sdStaticModelMsg$validate5(private$pid, 
-                                           typeof(scenario))
+                                     typeof(scenario))
       }
       
       # Get variables from default scenario
@@ -320,20 +300,18 @@ sdStaticModelClass <- R6::R6Class(
       inp <- defaultScenario$input
       sw <- defaultScenario$switch
       times <- defaultScenario$times
-
+      
       eq <- private$palgebraicEquations
       
-      if (!is.null(times) && length(unlist(times)) > 0)
+      if (!is.null(times) && length(unlist(times)) > 0) {
         t <- times[[1]]
-      else
-      {
+      } else { 
         sdStaticModelMsg$validate1(private$pid)
         t <- 0
       }
       
       # run the initialization fun
-      if (!is.null(private$pInitVars))
-      {
+      if (!is.null(private$pInitVars)) { 
         initVars <- private$pInitVars(ct = ct, par = par, inp = inp, sw = sw, 
                                       eq = eq)
         ct <- initVars$ct
@@ -343,8 +321,7 @@ sdStaticModelClass <- R6::R6Class(
       }
       
       # compute the input time Series values for the initial time
-      for (var in names(inp$fun_))
-      {
+      for (var in names(inp$fun_)) { 
         if (!is.null(inp$fun_[[var]]))
           inp[[var]] <- inp$fun_[[var]](t)
         else
@@ -355,18 +332,15 @@ sdStaticModelClass <- R6::R6Class(
       parent.env(equationsEnv) <- environment()
       
       # evaluates the algebraic variables and update the equations list
-      for (equationsVar in names(eq))
-      {
-        eq[[equationsVar]] <- tryCatch(
-          {
-            eval(eq[[equationsVar]], 
-                 envir = equationsEnv)
-          },
-          error = function(e)
-          {
-            sdStaticModelMsg$validate2(private$pid, equationsVar, e)
-            invisible(numeric(0))
-          })
+      for (equationsVar in names(eq)) { 
+        eq[[equationsVar]] <- tryCatch( { 
+          eval(eq[[equationsVar]], 
+               envir = equationsEnv)
+        },
+        error = function(e) { 
+          sdStaticModelMsg$validate2(private$pid, equationsVar, e)
+          invisible(numeric(0))
+        })
         
         if (is.null(eq[[equationsVar]]) || is.na(eq[[equationsVar]]) ||
             length(eq[[equationsVar]]) == 0 || is.infinite(eq[[equationsVar]]))
@@ -379,14 +353,12 @@ sdStaticModelClass <- R6::R6Class(
       
       private$flagVerify <- TRUE
     },
-    saveXml = function(file = "sdStaticModel.xml")
-    {
+    saveXml = function(file = "sdStaticModel.xml") { 
       # save model to XML
       doc = XML::newXMLDoc()
       rootsdModel <- XML::newXMLNode(class(self)[[1]], doc = doc)
       
-      globalFunctions <- lapply(private$pglobalFunctions, function(x)
-      {
+      globalFunctions <- lapply(private$pglobalFunctions, function(x) { 
         if (is.function(x))
           return(FunToString(x))
         else
@@ -401,8 +373,7 @@ sdStaticModelClass <- R6::R6Class(
       invisible(ListToXML(rootsdModel, lModel))
       
       # add the defaultScenario XML
-      if (!is.null(private$pdefaultScenario))
-      {
+      if (!is.null(private$pdefaultScenario)) { 
         defaultScenarioXML <- XML::newXMLNode(
           "defaultScenario", 
           .children = list(private$pdefaultScenario$saveXml()))
@@ -418,20 +389,17 @@ sdStaticModelClass <- R6::R6Class(
     }
   ),
   active = list(
-    defaultScenario = function(defaultScenario)
-    {
-      if (missing(defaultScenario))
+    defaultScenario = function(defaultScenario) { 
+      if (missing(defaultScenario)) {
         return(private$pdefaultScenario)
-      else { # set scenario
+      } else { # set scenario
         if (is.character(defaultScenario))
           defaultScenario <- sdLoadScenario(defaultScenario)
         
         # scenario must be a scenario object 
-        if (inherits(defaultScenario, sdScenarioClass$classname))
-        {
+        if (inherits(defaultScenario, sdScenarioClass$classname)) { 
           dfScen <- defaultScenario$clone()
-          if (length(dfScen$state) > 0)
-          {
+          if (length(dfScen$state) > 0) { 
             dfScen$removeState()
             warning(sprintf(sdStaticModelMsg$defaultscenario1, private$pid), 
                     call. = FALSE)
@@ -439,21 +407,18 @@ sdStaticModelClass <- R6::R6Class(
           private$pdefaultScenario <- dfScen
           private$pdefaultScenario$id <- "Default"
           private$flagVerify <- FALSE
-        }
-        else 
+        } else {
           sdStaticModelMsg$defaultscenario2(private$pid)
+        } 
       }      
     },
-    InitVars = function()
-    {
+    InitVars = function() { 
       return(private$pInitVars)
     },
-    GlobalFunctions = function()
-    {
+    GlobalFunctions = function() { 
       return(private$pglobalFunctions)
     },
-    algebraicEquations = function()
-    {
+    algebraicEquations = function() { 
       return(private$palgebraicEquations)
     }
   ),
@@ -464,4 +429,5 @@ sdStaticModelClass <- R6::R6Class(
     pglobalFunctions = list(),
     palgebraicEquations = list(),
     flagVerify = FALSE
-  ))
+  )
+)

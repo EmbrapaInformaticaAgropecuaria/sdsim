@@ -179,8 +179,7 @@ sdOutputClass <- R6::R6Class(
   public = list(
     initialize = function(outTrajectory, auxTrajectory, 
                           timeSeriesTrajectory, model, scenario, diagnostics, 
-                          postProcessValue)
-    {
+                          postProcessValue) { 
       if (!missing(outTrajectory))
         private[["poutTrajectory"]] <- outTrajectory
       
@@ -204,29 +203,25 @@ sdOutputClass <- R6::R6Class(
       
       private$poutputId <- paste0("Simulation Output ", Sys.time())
     },
-    print = function()
-    {
+    print = function() { 
       cat("<", class(self)[[1]], ">\n", sep = "")
       cat(indent(paste0("$",class(private$pmodel)[[1]]), indent = 4), sep = "\n")
       cat(indent(private$pmodel$id, indent = 4), sep = "\n")
       cat("\n")
       
-      if (!is.null(private$pscenario))
-      {
+      if (!is.null(private$pscenario)) { 
         cat(indent("$sdScenario", indent = 4), sep = "\n")
         cat(indent(private$pscenario$id, indent = 4), sep = "\n")
         cat("\n")
       }
       # static models do not have diagnostics
-      if (!inherits(private$pmodel, sdStaticModelClass$classname))
-      {
+      if (!inherits(private$pmodel, sdStaticModelClass$classname)) { 
         cat(indent("$Simulation Diagnostics", indent = 4))
         cat(indent(private$pdiag, indent = 4))
         cat("\n\n")
       }
       
-      if (!is.null(private[["poutTrajectory"]]))
-      {
+      if (!is.null(private[["poutTrajectory"]])) { 
         cat(indent("$Output Trajectories", indent = 4), sep = "\n")
         cat(indent(paste(capture.output(tail(private[["poutTrajectory"]], n = 10, 
                                              addrownums = FALSE)), 
@@ -234,11 +229,9 @@ sdOutputClass <- R6::R6Class(
         cat("\n\n")
       }
       
-      if (!is.null(private[["pauxTrajectory"]]))
-      {
+      if (!is.null(private[["pauxTrajectory"]])) { 
         # static models do not have auxiliaries
-        if (!inherits(private$pmodel, sdStaticModelClass$classname))
-        {
+        if (!inherits(private$pmodel, sdStaticModelClass$classname)) { 
           cat(indent("$Auxiliary Trajectories", indent = 4), sep = "\n")
           cat(indent(paste(capture.output(tail(private[["pauxTrajectory"]], n = 10, 
                                                addrownums = FALSE)), 
@@ -247,8 +240,7 @@ sdOutputClass <- R6::R6Class(
         }
       }
       
-      if (!is.null(private[["ptimeSeriesTrajectory"]]))
-      {
+      if (!is.null(private[["ptimeSeriesTrajectory"]])) { 
         cat(indent("$Time Series Trajectories", indent = 4), sep = "\n")
         cat(indent(paste(capture.output(tail(private[["ptimeSeriesTrajectory"]], 
                                              n = 10, 
@@ -257,22 +249,18 @@ sdOutputClass <- R6::R6Class(
         cat("\n")
       }
     },
-    summary = function()
-    {
-      if (!is.null(private[["poutTrajectory"]]))
-      {
+    summary = function() { 
+      if (!is.null(private[["poutTrajectory"]])) { 
         sdOutputMsg$summary1()
         print(summary(private[["poutTrajectory"]]))
       }
       
-      if (!is.null(private[["pauxTrajectory"]]))
-      {
+      if (!is.null(private[["pauxTrajectory"]])) { 
         sdOutputMsg$summary2()
         print(summary(private[["pauxTrajectory"]]))
       }
       
-      if (!is.null(private[["ptimeSeriesTrajectory"]]))
-      {
+      if (!is.null(private[["ptimeSeriesTrajectory"]])) { 
         sdOutputMsg$summary3()
         print(summary(private[["ptimeSeriesTrajectory"]]))
       }
@@ -284,8 +272,7 @@ sdOutputClass <- R6::R6Class(
                     units = F,
                     col = c("black", "red", "blue", "green4", "darkorange", 
                             "darkmagenta", "khaki4", "cyan", "gold2", "hotpink")
-    )
-    {
+    ) { 
       if (is.null(legendPosition))
         legendPosition <- NA
       
@@ -297,38 +284,30 @@ sdOutputClass <- R6::R6Class(
       dfscen <- private$pmodel$defaultScenario
       
       # all the labels must be provided, or any will be used
-      if (!is.null(xlab) && length(which) != length(xlab))
-      {
+      if (!is.null(xlab) && length(which) != length(xlab)) { 
         sdOutputMsg$plot1(private$poutputId, "xlab")
         xlab <- NULL
       }
-      if (!is.null(ylab) && length(which) != length(ylab))
-      {
+      if (!is.null(ylab) && length(which) != length(ylab)) { 
         sdOutputMsg$plot1(private$poutputId, "ylab")
         ylab <- NULL
       }
-      if (!is.null(main) && length(which) != length(main))
-      {
+      if (!is.null(main) && length(which) != length(main)) { 
         sdOutputMsg$plot1(private$poutputId, "main")
         main <- NULL
       }
-      if (!is.null(sub) && length(which) != length(sub))
-      {
+      if (!is.null(sub) && length(which) != length(sub)) { 
         sdOutputMsg$plot1(private$poutputId, "sub")
         sub <- NULL
       }
       
-      if (length(which) == 0)
+      if (length(which) == 0) {
         which <- colnames(data)[2:ncol(data)]
-      else
-      {
-        if (!is.character(unlist(which, recursive = T)))
-        {
+      } else { 
+        if (!is.character(unlist(which, recursive = T))) { 
           which <- "all"
           sdOutputMsg$plot2(private$poutputId)
-        }
-        else
-        {
+        } else { 
           if (!is.null(private[["pauxTrajectory"]]))
             data <- merge(data, private[["pauxTrajectory"]],
                           sort = FALSE, by.x = "time", by.y = "time")
@@ -355,8 +334,7 @@ sdOutputClass <- R6::R6Class(
         # plot each formula from ... in a separeted plot
         plots <- list() # list of plots size = i
         i <- 1 # number of plots
-        for (column in which)
-        {
+        for (column in which) { 
           xaxis <- "time"
           yaxis <- column
           xlabel <- ""
@@ -364,8 +342,7 @@ sdOutputClass <- R6::R6Class(
           mainlabel <- ""
           sublabel <- ""
           
-          if (grepl("~", column))
-          {
+          if (grepl("~", column)) { 
             vars <- unlist(strsplit(column, "~"))
             yaxis <- vars[[1]]
             xaxis <- vars[[2]]
@@ -378,13 +355,12 @@ sdOutputClass <- R6::R6Class(
             xlabel <- xaxis
           
           # set main title
-          if (!is.null(main))
-          {
+          if (!is.null(main)) { 
             ylabel <- yaxis
             mainlabel <- main[[i]]
-          }
-          else
+          } else {
             mainlabel <- yaxis
+          }
           
           # set y label
           if (!is.null(ylab))
@@ -401,8 +377,7 @@ sdOutputClass <- R6::R6Class(
           yaxisArray <- unlist(strsplit(yaxis, " "))
           
           # check if all the variables names are valid columns names
-          if (!all(yaxisArray %in% names(data))) 
-          {
+          if (!all(yaxisArray %in% names(data))) { 
             sdOutputMsg$plot3(private$poutputId, yaxisArray, names(data))
             
             # remove the not valid columns
@@ -414,8 +389,7 @@ sdOutputClass <- R6::R6Class(
               next()
           }
           
-          if (!(xaxis %in% names(data)))
-          {
+          if (!(xaxis %in% names(data))) { 
             sdOutputMsg$plot4(private$poutputId, xaxis)
             xaxis <- "time"
           }
@@ -450,10 +424,8 @@ sdOutputClass <- R6::R6Class(
             sdOutputMsg$plot1(private$poutputId, "ylab")
           
           # plot each y variable
-          for (j in 1:nYAxis)
-          {
-            if (multipleYAxis && nYAxis > 1) # when plotting multiple y-axis
-            {
+          for (j in 1:nYAxis) { 
+            if (multipleYAxis && nYAxis > 1) { # when plotting multiple y-axis
               par(new=T)
               plot(x = data[,xaxis],
                    y = data[,yaxisArray[j]],
@@ -486,9 +458,7 @@ sdOutputClass <- R6::R6Class(
               
               # add the ylabel
               mtext(2, text = labeltext, line = 3.5*j - 1.5)
-            }
-            else 
-            { # multipleYAxis = FALSE
+            } else {  # multipleYAxis = FALSE
               lines(data[,xaxis],
                     y = data[,yaxisArray[j]],
                     col = col[j],
@@ -498,21 +468,19 @@ sdOutputClass <- R6::R6Class(
                     type = type)
               
               # add the y label
-              if (nYAxis == 1)
-              {
+              if (nYAxis == 1) { 
                 if (units && !is.null(dfscen$unit[[yaxisArray[[j]]]]))
                   ylabel <- paste0(ylabel, " (", 
                                    dfscen$unit[[yaxisArray[[j]]]], ")")
                 
                 mtext(2, text = paste(ylabel, collapse = " "), line = 2.5)
-              }
-              else
+              } else {
                 mtext(2, text = paste(ylabel, collapse = " "), line = 2.5)
+              }
             }
           }
           
-          if (nYAxis > 1)
-          {
+          if (nYAxis > 1) { 
             if (multipleYAxis)
               legend(legendPosition, paste(1:nYAxis, '.', yaxisArray), 
                      lty = 1, lwd = symbolSize, col = col)
@@ -536,8 +504,7 @@ sdOutputClass <- R6::R6Class(
       
       invisible(plots)
     },
-    saveSimulationOutput = function(path = "directory", scenarioXlsx = TRUE)
-    {
+    saveSimulationOutput = function(path = "directory", scenarioXlsx = TRUE) { 
       if (missing(path))
         path <- private$poutputId
       
@@ -561,14 +528,13 @@ sdOutputClass <- R6::R6Class(
       
       # save model and scenario
       private$pmodel$saveXml(paste0(path, "/", private$pmodel$id, 
-                                        ".xml"))
+                                    ".xml"))
       
-      if (!is.null(private$pscenario))
-      {
+      if (!is.null(private$pscenario)) { 
         if (scenarioXlsx)
           private$pscenario$saveXlsx(paste0(path, "/", 
-                                           private$pscenario$id, 
-                                           ".xlsx"))
+                                            private$pscenario$id, 
+                                            ".xlsx"))
         else
           private$pscenario$saveXml(paste0(path, "/", 
                                            private$pscenario$id, 
@@ -577,45 +543,37 @@ sdOutputClass <- R6::R6Class(
     }
   ),
   active = list(
-    model = function()
-    {
+    model = function() { 
       return(private[["pmodel"]])
     },
-    scenario = function()
-    {
+    scenario = function() { 
       return(private[["pscenario"]])
     },
-    outTrajectory = function()
-    {
+    outTrajectory = function() { 
       if (length(private[["poutTrajectory"]]) == 0)
         return(NULL)
       return(private[["poutTrajectory"]])
     },
-    auxTrajectory = function()
-    {
+    auxTrajectory = function() { 
       if (length(private[["pauxTrajectory"]]) == 0)
         return(NULL)
       return(private[["pauxTrajectory"]])
     },
-    timeSeriesTrajectory = function()
-    {
+    timeSeriesTrajectory = function() { 
       if (length(private[["ptimeSeriesTrajectory"]]) == 0)
         return(NULL)
       return(private[["ptimeSeriesTrajectory"]])
     },
-    PostProcessValue = function()
-    {
+    PostProcessValue = function() { 
       return(private[["ppostProcessValue"]])
     },
-    diagnostics = function()
-    {
-      if (!is.null(private[["pdiag"]]))
-      {
+    diagnostics = function() { 
+      if (!is.null(private[["pdiag"]])) { 
         cat(private[["pdiag"]])
         return(invisible(private[["pdiag"]]))
-      }
-      else
+      } else {
         return(NULL)
+      }
     }
   ),
   private = list(
