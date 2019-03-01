@@ -4,30 +4,36 @@ sdDifferentialEquationsClass <- R6::R6Class(
   
   public = list(
     initialize = function(differentialEquations) { 
-      # add verifications
+      # verifications of argument 'differentialEquations'
+      
+      if(!is.list(differentialEquations))
+        stop(sprintf(auxiliaryMsg$sdDifferentialEquationsClass1))
+      
+      if(is.null(differentialEquations))
+        stop(sprintf(auxiliaryMsg$sdDifferentialEquationsClass2))
       
       private$pDifferentialEquations <- differentialEquations
     },
-    getOdeFunction = function() {
-      # private$pDifferentialEquations
-      eqList <- list(
-        "\td0 <- st$x ^ 1/2",
-        "\td1 <- st$y ^ 1/4"
-      )
+    getOdeFunction <- function(){
       
-      # function(t, st, ct, par, inp, sw, aux) {
-      #   d0 <- st$x ^ 1/2
-      #   d1 <- st$y ^ 1/4
-      #   
-      #   return(list(c(d0, d1)))
-      # }
+      EqList <- private$pDifferentialEquations
+      
+      #transform a list of equations in differential equations 
+      
+      for(i in 1:length(EqList)){
+        EqList[i] <- paste0("\td",toString(i-1)," <- ", EqList[i])
+      }
       
       strParms<- "function(t, st, ct, par, inp, sw, aux) {\n"
-      eqStr <- paste(eqList, collapse = "\n")
-      strReturn <- "\n\n\treturn(list(c(d0, d1)))\n}"
+      eqStr <- paste0(EqList, collapse = "\n")
+      strReturn <- "\n\n\treturn(list(c(d0"
       
+      for(i in 1:(length(EqList)-1)){
+        strReturn <- paste0(strReturn, ", d", toString(i))
+      }
+      strReturn <- paste0(strReturn, ")))\n}")
+  
       strFun <- paste0(strParms, eqStr, strReturn)
-      
       ode <- eval(parse(text = strFun))
       
       return(ode)
