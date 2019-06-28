@@ -15,7 +15,7 @@ sdDifferentialEquationsClass <- R6::R6Class(
       
       private$pDifferentialEquations <- differentialEquations
     },
-    getOdeFunction <- function(){
+    getOdeFunction = function(){
       
       EqList <- private$pDifferentialEquations
       
