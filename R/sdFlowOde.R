@@ -1,6 +1,8 @@
-sdFlowClass <- R6::R6Class(
+sdFlowOdeClass <- R6::R6Class(
   
-  classname = "sdFlow",
+  classname = "sdFlowOde",
+  
+  inherit = sdOdeClass,
   
   public = list(
     initialize = function(flows, flowRate, stocks, boundaries) { 

@@ -264,13 +264,14 @@ sdOdeModelClass <- R6::R6Class(
                           RootSpecification,
                           EventFunction,
                           globalFunctions) { 
+      funDefaultArgs <- c("t", "st", "ct", "par", "inp", "sw", "aux")
+      
       # Create new environment for model functions
       # modelEnvironment <- new.env(parent = baseenv())
       modelEnvironment <- new.env(parent = parent.env(globalenv()))
       
       private[["pModelEnvironment"]] <- modelEnvironment
       
-      funDefaultArgs <- c("t", "st", "ct", "par", "inp", "sw", "aux")
       # mandatory parameters
       if (!missing(id) && !is.null(id))
         self$id <- id
@@ -285,8 +286,18 @@ sdOdeModelClass <- R6::R6Class(
         #   private$pDifferentialEquations <- DifferentialEquations
         # else
         #   sdOdeModelMsg$initialize1(id)
-        private$pDifferentialEquations <- sdOdeClass$new(DifferentialEquations, 
-                                                         modelEnvironment)
+        
+        if(is.function(DifferentialEquations)) {
+          private$pDifferentialEquations <- 
+            sdFunctionOdeClass$new(DifferentialEquations)
+        } else if(inherits(DifferentialEquations, sdFunctionOdeClass$classname)) {
+          private$pDifferentialEquations <- DifferentialEquations
+        } else if(inherits(DifferentialEquations, sdFlowOdeClass$classname)) {
+          private$pDifferentialEquations <- DifferentialEquations
+        } else {
+          # TODO: add message; add equation list class
+          stop(sprintf(""))
+        }
       }
       
       if (!missing(defaultScenario) && !is.null(defaultScenario))
@@ -425,7 +436,7 @@ sdOdeModelClass <- R6::R6Class(
     },
     print = function() { 
       # convert all the attributes to string 
-      modelFuns <- list("DifferentialEquations", "InitVars", "PostProcessVars", 
+      modelFuns <- list("InitVars", "PostProcessVars", 
                         "RootSpecification", "EventFunction")
       modelStr <- lapply(modelFuns, function(f) { 
         if (is.function(private[[paste0("p", f)]]))
@@ -433,6 +444,7 @@ sdOdeModelClass <- R6::R6Class(
         else
           private[[paste0("p", f)]]
       })
+      
       names(modelStr) <- unlist(modelFuns)
       modelStr$aux <- lapply(private$paux, toString)
       modelStr$globalFunctions <- private$pglobalFunctions
@@ -443,15 +455,18 @@ sdOdeModelClass <- R6::R6Class(
       cat(indent(private$pid, indent = 4), sep = "\n")
       cat("\n")
       
-      cat(indent("$description", indent = 4), sep = "\n")
-      cat(indent(private$pdescription, indent = 4), sep = "\n")
-      cat("\n")
-      
-      if (!is.null(modelStr[["DifferentialEquations"]])) { 
-        cat(indent("$DifferentialEquations", indent = 4), sep = "\n")
-        cat(indent(modelStr[["DifferentialEquations"]], indent = 4), sep = "\n")
+      if(!is.null(private$pdescription)) {
+        cat(indent("$description", indent = 4), sep = "\n")
+        cat(indent(private$pdescription, indent = 4), sep = "\n")
         cat("\n")
       }
+      
+      if (!is.null(private$pDifferentialEquations)) {
+        cat(indent("$DifferentialEquations", indent = 4), sep = "\n")
+        cat(indent(capture.output(private$pDifferentialEquations), indent = 4), sep = "\n")
+        cat("\n")
+      }
+      
       if (length(modelStr[["aux"]]) > 0)
         cat(indent(capture.output(modelStr["aux"]), indent = 4), sep = "\n")
       
