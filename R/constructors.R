@@ -196,7 +196,7 @@ sdOdeModel <- function(id = NULL,
                        description = NULL,
                        defaultScenario = NULL,
                        aux = NULL,
-                       DifferentialEquations = NULL, 
+                       modelDynamics = NULL, 
                        InitVars = NULL,
                        PostProcessVars = NULL, 
                        RootSpecification = NULL, 
@@ -206,7 +206,7 @@ sdOdeModel <- function(id = NULL,
   model <- sdOdeModelClass$new(
     id = id,
     description = description,
-    DifferentialEquations = DifferentialEquations,
+    DifferentialEquations = modelDynamics,
     defaultScenario = defaultScenario,
     InitVars = InitVars,
     PostProcessVars = PostProcessVars, 
@@ -1344,8 +1344,8 @@ sdLoadScenario <- function(file,
 #' plot(out)
 sdFlow <- function(flows = NULL, flowRate = NULL, 
                    stocks = NULL, boundaries = c("boundary")) {
-  sdFlowClass$new(flows,
-                  flowRate = flowRate,
-                  stocks = stocks,
-                  boundaries = boundaries)
+  sdFlowOdeClass$new(flows,
+                     flowRate = flowRate,
+                     stocks = stocks,
+                     boundaries = boundaries)
 }

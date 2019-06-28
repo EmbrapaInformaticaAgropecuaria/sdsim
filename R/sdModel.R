@@ -1,8 +1,10 @@
 sdModelClass <- R6::R6Class(
   classname = "sdModel",
+  
   public = list(print = function(){},
                 verifyModel = function() {},
                 saveXml = function(){}),
+  
   active = list(
     id = function(id) { 
       if (missing(id)) {

@@ -125,7 +125,7 @@ AssembleOdeModel <- function(model, timeSeriesDirectory, progressFunction = NULL
   
   modelObj <- sdsim::sdOdeModel(
     id = model$id,
-    DifferentialEquations = DifferentialEquations,
+    modelDynamics = DifferentialEquations,
     defaultScenario = defaultScenarioObj,
     InitVars = InitVars,
     RootSpecification = RootFunction,
