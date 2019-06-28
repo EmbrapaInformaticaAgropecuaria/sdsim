@@ -6,11 +6,12 @@ sdDifferentialEquationsClass <- R6::R6Class(
     initialize = function(differentialEquations) { 
       # verifications of argument 'differentialEquations'
       
+      if(is.null(differentialEquations))
+        stop(sprintf(auxiliaryMsg$sdDifferentialEquationsClass2))
+      
       if(!is.list(differentialEquations))
         stop(sprintf(auxiliaryMsg$sdDifferentialEquationsClass1))
       
-      if(is.null(differentialEquations))
-        stop(sprintf(auxiliaryMsg$sdDifferentialEquationsClass2))
       
       private$pDifferentialEquations <- differentialEquations
     },

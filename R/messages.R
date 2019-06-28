@@ -89,11 +89,11 @@ auxiliaryMsg$sdMakeFlows2 <- paste0(
 
 auxiliaryMsg$sdMakeFlows3 <- paste0(
   "sdsim::sdMakeFlows - Error initializing flow: No elements identified in ",
-  "argument 'flows'. Must be an non-empty Array or List. ")
+  "argument 'flows'. Must be a non-empty Array or List. ")
 
 auxiliaryMsg$sdMakeFlows4 <- paste0(
   "sdsim::sdMakeFlows - Error initializing flow: No elements identified in ",
-  "argument 'flow_rate'. Must be an non-empty Array or List. ")
+  "argument 'flow_rate'. Must be a non-empty Array or List. ")
 
 auxiliaryMsg$sdMakeFlows5 <- paste0(
   "sdsim::sdMakeFlows - Error initializing flow: The length of the argument ",
@@ -102,6 +102,16 @@ auxiliaryMsg$sdMakeFlows5 <- paste0(
 auxiliaryMsg$sdMakeFlows6 <- paste0(
   "sdsim::MakeFlows - The variable '%s' in argument 'flows' ",
   "does not match a boundary or st variable.")
+
+auxiliaryMsg$sdDifferentialEquationsClass1 <- paste0(
+  "sdsim::DifferentialEquationsClass - Error initializing differential ",
+  "equations: No elements identified in argument 'differentialEquations'. Must ",
+  "be a non-empty List.")
+
+auxiliaryMsg$sdDifferentialEquationsClass2 <- paste0(
+  "sdsim::DiffentialEquationsClass - Error initializing differential ",
+  "equations: Argument 'differentialEquations' has value 'NULL'. Must be an ",
+  "Array or List.")
 
 # case use:
 # bb <- sdLoadModel("BouncingBall", repository = T)
