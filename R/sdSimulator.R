@@ -446,6 +446,7 @@ sdSimulate <- function(model,
     if (is.null(state) || length(state) == 0)
       sdSimulatorMsg$sdSimulateAtomic1(model$id)
     
+    # TODO: que isso?
     createFuncEval <- CreateFuncEval
     
     environment(createFuncEval) <- model$modelEnvironment
@@ -456,14 +457,14 @@ sdSimulate <- function(model,
                      inp = inp,
                      sw = sw,
                      auxiliary = auxiliary,
-                     lastEvalTime = (times$from - 1),
+                     lastEvalTime = (times$from - 1), # TODO: mudar para nulo?
                      storeAuxTrajectory = storeAuxTrajectory)
     
     # Run simulation without root function, data frame or times vector
     if (!events || is.null(RootSpecification) ||
         (!is.function(RootSpecification) &&
-         !is.data.frame(RootSpecification)
-         && !is.numeric(RootSpecification))) { 
+         !is.data.frame(RootSpecification) && 
+         !is.numeric(RootSpecification))) { 
       # Run simulation without support to events
       outTrajectory <- deSolve::ode(
         y = unlist(state),
@@ -483,6 +484,7 @@ sdSimulate <- function(model,
           sdSimulatorMsg$sdSimulateAtomic3(model$id)
           method <- "lsoda"
         }
+        
         RootSpecificationEval <-
           createFuncEval(func = RootSpecification, ct = ct, par = par, 
                          inp = inp, sw = sw, auxiliary = auxiliary, 
@@ -504,7 +506,7 @@ sdSimulate <- function(model,
             parms = NULL,
             rootfunc = RootSpecificationEval,
             events = list(
-              func = EventFunctionEval,
+              func = EventFunctionEval, # TODO: da pra passar isso como nulo p/ evitar chamar o ode 2x?
               root = T,
               maxroots = maxroots,
               terminalroot = terminalroot),
