@@ -26,27 +26,39 @@ AceEditorCustom <- function(varName, tabSize = 2, mode = "r",
                             value = "",
                             theme = "crimson_editor",
                             height = "400px") {
-  # Create ace editor
-  editor <- shinyAce::aceEditor(varName, mode = mode, autoComplete = autoComplete, 
-                      highlightActiveLine = highlightActiveLine, 
-                      fontSize = fontSize, theme = theme,
-                      showLineNumbers = showLineNumbers, height = height, 
-                      wordWrap = wordWrap, readOnly = readOnly, value = value)
-  varName <- paste0("editor__", varName)
   
-  # Append setTabSize function
-  editor[[3]][[3]] <- paste0(editor[[3]][[3]], varName, 
-                             ".getSession().setTabSize(", tabSize,");")
+  aceVersion <- as.character(packageVersion("shinyAce"))
   
-  # Append setUseSoftTabs function
-  if(useSoftTabs)
-    editor[[3]][[3]] <- paste0(editor[[3]][[3]], varName, 
-                               ".getSession().setUseSoftTabs(true);")
-  
-  # Append setShowPrintMargin function
-  if(!showPrintMargin)
-    editor[[3]][[3]] <- paste0(editor[[3]][[3]], varName, 
-                               ".renderer.setShowPrintMargin(false);")
+  if(aceVersion >= "0.3.1") {
+    # Create ace editor
+    editor <- shinyAce::aceEditor(
+      varName, mode = mode, autoComplete = autoComplete, 
+      highlightActiveLine = highlightActiveLine, 
+      fontSize = fontSize, theme = theme,
+      showLineNumbers = showLineNumbers, height = height, 
+      wordWrap = wordWrap, readOnly = readOnly, value = value, 
+      tabSize = tabSize, useSoftTabs = useSoftTabs
+    )
+  } else {
+    # Create ace editor
+    editor <- shinyAce::aceEditor(
+      varName, mode = mode, autoComplete = autoComplete, 
+      highlightActiveLine = highlightActiveLine, 
+      fontSize = fontSize, theme = theme,
+      showLineNumbers = showLineNumbers, height = height, 
+      wordWrap = wordWrap, readOnly = readOnly, value = value
+    )
+    varName <- paste0("editor__", varName)
+    
+    # Append setTabSize function
+    editor[[3]][[3]] <- paste0(editor[[3]][[3]], varName,
+                               ".getSession().setTabSize(", tabSize,");")
+    
+    # Append setUseSoftTabs function
+    if(useSoftTabs)
+      editor[[3]][[3]] <- paste0(editor[[3]][[3]], varName,
+                                 ".getSession().setUseSoftTabs(true);")
+  }
   
   return(editor)
 }
