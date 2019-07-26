@@ -22,7 +22,7 @@ test_that("Not empty atomic model object", code =
                     "sdScenario")
   m <- expect_is(sdOdeModel(id = "test",
                                description = "test test",
-                               DifferentialEquations = function(t, st, ct, par, inp, sw, aux)
+                               modelDynamics = function(t, st, ct, par, inp, sw, aux)
                                {
                                  return(list(c(st$a*inp$pow)))
                                },
