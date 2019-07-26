@@ -10,21 +10,22 @@ source("ModelImport.R", local = TRUE)
 server <- shinyServer(function(input, output, session) { 
   nTableRows <- 50
   
-  # Reactive list containing the models, scenarios and simulation results
+  # Reactive list containing the models, scenarios and simulation results ####
   simData <- reactiveValues()
   simData$models <- list()
   simData$changed <- list()
   
-  # Use a temporary directory for saving time series files
+  # Use a temporary directory for saving time series files ####
   timeSeriesDirectory <- paste0(tempdir(), "/", "timeSeriesDir")
   if(dir.exists(timeSeriesDirectory))
     unlink(timeSeriesDirectory, recursive = T)
   dir.create(timeSeriesDirectory)
   
-  # Load empty ode model when starting the application
+  # Load empty ode model when starting the application ####
   isolate(LoadModel("UnnamedOdeModel", simData, session, input, output, 
                     "application/xml", nTableRows = nTableRows))
   
+  # Render model dropdown selector ####
   output$selectModelOutput <- renderUI({
     choices <- names(simData$models)
     if(length(choices) > 0){
@@ -34,6 +35,7 @@ server <- shinyServer(function(input, output, session) {
         choices <- "Unnamed model"
         selected <- "Unnamed model"
       }
+      
       selectInput("selectModel", "Model", 
                   choices = choices, selected = selected)
     } else {
@@ -41,6 +43,7 @@ server <- shinyServer(function(input, output, session) {
     }
   })
   
+  # Render scenario dropdown selector ####
   output$selectScenarioOutput <- renderUI({
     currentModel <- NULL
     choices <- NULL
@@ -65,12 +68,15 @@ server <- shinyServer(function(input, output, session) {
     }
   })
   
+  # When switching models ####
   observeEvent(input$selectModel, {
     # Temporarily disables simulation button
     session$sendCustomMessage("delayExecSim", 1400)
     
     # Update simData changes if switching models
     # Observer is also activated when a model is loaded, but should not update
+    # To solve this, only update when simData$currentModelId != input$selectModel
+    # Because:
     # When a model is loaded simData$currentModelId is equal to input$selectModel
     # When switching using the select input, both are different
     if(simData$currentModelId != input$selectModel)
@@ -85,6 +91,7 @@ server <- shinyServer(function(input, output, session) {
     UpdatePlotInput(simData, session)
   })
   
+  # When switching scenarios ####
   observeEvent(input$selectScenario, {
     # Temporarily disables simulation button
     session$sendCustomMessage("delayExecSim", 1400)
@@ -107,7 +114,7 @@ server <- shinyServer(function(input, output, session) {
     UpdateLoadedScenario(simData, session, input, output, nTableRows)
   })
   
-  # Load new scenario
+  # Load or create new scenario (open modal dialog) ####
   observeEvent(input$newScenario, {
     showModal(modalDialog(
       id = "newScenarioModal",
@@ -154,6 +161,7 @@ server <- shinyServer(function(input, output, session) {
     ))
   })
   
+  # Load or create new model (open modal dialog) ####
   observeEvent(input$newModel, {
     showModal(modalDialog(
       id = "newModelModal",
@@ -222,6 +230,7 @@ server <- shinyServer(function(input, output, session) {
     ))
   })
   
+  # Clone model ####
   observeEvent(input$newCloneModel, {
     UpdateModelData(simData, input)
     modelName <- input$cloneModelIdInput
@@ -243,7 +252,7 @@ server <- shinyServer(function(input, output, session) {
                                 list(message = message, 
                                      responseInputName = responseInputName))
     } else {
-      # If model doesn't have repated ID, load model
+      # If model doesn't have repated ID, clone model
       simData$models[[modelName]] <- simData$models[[simData$currentModelId]]
       simData$currentModelId <- modelName
       
@@ -256,6 +265,7 @@ server <- shinyServer(function(input, output, session) {
     }
   })
   
+  # Clone Scenario ####
   observeEvent(input$newCloneScenario, {
     UpdateModelData(simData, input)
     scenarioName <- input$cloneScenarioIdInput
@@ -286,7 +296,7 @@ server <- shinyServer(function(input, output, session) {
                                 list(message = message,
                                      responseInputName = responseInputName))
     } else {
-      # If scenario doesn't have repated ID, load scenario
+      # If scenario doesn't have repated ID, clone scenario
       currentScenarioId <- currentModel$currentScenarioId
       simData$models[[simData$currentModelId]]$scenarios[[scenarioName]] <-
         simData$models[[simData$currentModelId]]$scenarios[[currentScenarioId]]
@@ -301,7 +311,7 @@ server <- shinyServer(function(input, output, session) {
     }
   })
   
-  # load model if overwrite confirmation is received
+  # load model if overwrite confirmation is received ####
   observeEvent(input$confirmCloneModelOverwrite, {
     if(input$confirmCloneModelOverwrite[[1]] == 1) {
       modelName <- simData$cloningModelName
@@ -318,7 +328,7 @@ server <- shinyServer(function(input, output, session) {
     }
   })
   
-  # load model if overwrite confirmation is received
+  # load model if overwrite confirmation is received ####
   observeEvent(input$confirmCloneScenarioOverwrite, {
     if(input$confirmCloneScenarioOverwrite[[1]] == 1) {
       scenarioName <- simData$cloningScenarioName
@@ -340,7 +350,7 @@ server <- shinyServer(function(input, output, session) {
     }
   })
   
-  # load model if overwrite confirmation is received
+  # load model if overwrite confirmation is received ####
   observeEvent(input$confirmModelOverwrite, {
     if(input$confirmModelOverwrite[[1]] == 1) {
       msg <- ConfirmLoadModel(simData$loadingModel, simData, session, input, 
@@ -350,7 +360,7 @@ server <- shinyServer(function(input, output, session) {
     }
   })
   
-  # load scenario if overwrite confirmation is received
+  # load scenario if overwrite confirmation is received ####
   observeEvent(input$confirmScenarioOverwrite, {
     if(input$confirmScenarioOverwrite[[1]] == 1) {
       msg <- ConfirmLoadScenario(simData$loadingScenario, simData, session, 
@@ -360,7 +370,7 @@ server <- shinyServer(function(input, output, session) {
     }
   })
   
-  # Create an empty model
+  # Create an empty model ####
   observeEvent(input$newEmptyModel, {
     # Update previous model data
     UpdateModelData(simData, input)
@@ -386,7 +396,7 @@ server <- shinyServer(function(input, output, session) {
     session$sendCustomMessage("loadedModelMessage", msg)
   })
   
-  # Delete current model
+  # Delete current model ####
   observeEvent(input$deleteModel, {
     selected <- simData$currentModelId
     simData$models[[selected]] <- NULL
@@ -401,7 +411,7 @@ server <- shinyServer(function(input, output, session) {
     }
   })
   
-  # Delete current model
+  # Delete current model ####
   observeEvent(input$deleteScenario, {
     currentModel <- simData$models[[simData$currentModelId]]
     selected <- currentModel$currentScenarioId
@@ -418,7 +428,7 @@ server <- shinyServer(function(input, output, session) {
     }
   })
   
-  # Change model ID modal
+  # Change model ID modal ####
   observeEvent(input$editModelId, {
     showModal(modalDialog(
       id = "editModelModal",
@@ -435,7 +445,7 @@ server <- shinyServer(function(input, output, session) {
     ))
   })
   
-  # Change scenario ID modal
+  # Change scenario ID modal ####
   observeEvent(input$editScenarioId, {
     showModal(modalDialog(
       id = "editScenarioModal",
@@ -453,7 +463,7 @@ server <- shinyServer(function(input, output, session) {
     ))
   })
   
-  # Update model ID button
+  # Update model ID button ####
   observeEvent(input$updateModelId, {
     if(grepl("^[ \t\n]*$", input$editModelIdTxt)){
       msg <- "Please, choose a new ID for the model"
@@ -479,7 +489,7 @@ server <- shinyServer(function(input, output, session) {
     }
   })
   
-  # Update scenario ID button
+  # Update scenario ID button ####
   observeEvent(input$updateScenarioId, {
     if(grepl("^[ \t\n]*$", input$editScenarioIdTxt)){
       msg <- "Please, choose a new ID for the model"
@@ -508,16 +518,16 @@ server <- shinyServer(function(input, output, session) {
     }
   })
   
-  # Update method select input based on whether a root function is available
+  # Update method select input based on whether a root function is available ####
   ObserveRootMethod(input, session)
   
-  # Check if any changes were made to variables since the last model upload
+  # Check if any changes were made to variables since the last model upload ####
   ObserveRhandsonChanges(simData, input)
   
-  # Force refresh ace editor script areas if a file has been uploaded (ace editor bug)
+  # Force refresh ace editor script areas if a file has been uploaded (ace editor bug) ####
   ObserveScriptChanges(input, session)
   
-  # Observe if a model XML file is uploaded
+  # Observe if a model XML file is uploaded ####
   observeEvent(input$importModel, {
     if(!is.null(input$importModel)) {
       # If file is XML
@@ -533,7 +543,7 @@ server <- shinyServer(function(input, output, session) {
     }
   })
   
-  # Create scenario from XML or XLSX file
+  # Create scenario from XML or XLSX file ####
   observeEvent(input$importScenario, {
     if(!is.null(input$importScenario)) {
       # If file is XML
@@ -554,7 +564,7 @@ server <- shinyServer(function(input, output, session) {
     }
   })
   
-  # Create empty scenario
+  # Create empty scenario ####
   observeEvent(input$newEmptyScenario, {
     # Update previous model data
     UpdateModelData(simData, input)
@@ -565,7 +575,7 @@ server <- shinyServer(function(input, output, session) {
     session$sendCustomMessage("loadedScenarioMessage", msg)
   })
   
-  # Load Examples
+  # Load Examples ####
   observeEvent(input$loadExample, {
     # Update previous model data
     UpdateModelData(simData, input)
@@ -574,7 +584,7 @@ server <- shinyServer(function(input, output, session) {
     session$sendCustomMessage("loadedModelMessage", msg)
   })
   
-  # Observe if time series files are uploaded
+  # Observe if time series files are uploaded ####
   observeEvent(input$importTimeSeries, {
     inFile <- input$importTimeSeries
     if(!is.null(inFile)) {
@@ -615,7 +625,7 @@ server <- shinyServer(function(input, output, session) {
     }
   })
   
-  # Displays modal to view the uploaded time series
+  # Displays modal to view the uploaded time series ####
   output$timeSeriesSelectedFile <- renderText(input$selectTs)
   observeEvent(input$viewTimeSeries, {
     # Keep previously selected radio button when reopening the modal
@@ -671,6 +681,7 @@ server <- shinyServer(function(input, output, session) {
     ))
   })
   
+  # Save plots ####
   observeEvent(input$savePlot, {
     # Keep previous width and height values
     plotWidth <- input$plotWidth
@@ -731,6 +742,7 @@ server <- shinyServer(function(input, output, session) {
     ))
   })
   
+  # Download handler for plots ####
   output$savePlotDl <- downloadHandler(
     filename = function(){
       currentModel <- simData$models[[simData$currentModelId]]
@@ -776,26 +788,26 @@ server <- shinyServer(function(input, output, session) {
     }
   )
   
-  # Modal dialog window to save a model 
+  # Modal dialog window to save a model  ####
   observeEvent(input$saveModel, ShowModelDownloadDialog(simData))
   observeEvent(input$shortcut, ShowModelDownloadDialog(simData))
   observeEvent(input$saveScenario, ShowScenarioDownloadDialog(simData))
   
-  # Render simulation results
+  # Render simulation results ####
   RenderDataTables(simData, output)
   RenderDownloadButtons(simData, output)
   TrajectoriesDownloadHandler(simData, output)
   RenderCustomPlot(simData, input, output)
   
-  # Render time series visualization
+  # Render time series visualization ####
   RenderTimeSeriesDataTable(timeSeriesDirectory, input, output)
   RenderTimeSeriesPlot(timeSeriesDirectory, input, output)
   
-  # Model export
+  # Model export ####
   ModelToXmlHandler(simData, input, output)
   ScenarioToXmlHandler(simData, input, output)
   
-  # Execute simulation
+  # Execute simulation ####
   observeEvent(input$execSim, {
     session$sendCustomMessage("runningSimulation", T)
     
@@ -963,6 +975,7 @@ ObserveRhandsonChanges <- function(simData, input) {
   })
 }
 
+# Modal dialog for downloading models
 ShowModelDownloadDialog <- function(simData) {
   showModal(modalDialog(
     title = "Download Model",
@@ -978,6 +991,7 @@ ShowModelDownloadDialog <- function(simData) {
   ))
 }
 
+# Modal dialog for downloading scenarios
 ShowScenarioDownloadDialog <- function(simData) {
   currentModel <- simData$models[[simData$currentModelId]]
   currentScenarioId <- currentModel$currentScenarioId
