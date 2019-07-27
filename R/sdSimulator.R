@@ -477,12 +477,10 @@ runOdeSimulation <- function(model,
   if (is.null(state) || length(state) == 0)
     sdSimulatorMsg$sdSimulateAtomic1(model$id)
   
-  # TODO: que isso?
-  createFuncEval <- CreateFuncEval
+  environment(CreateFuncEval) <- model$modelEnvironment
   
-  environment(createFuncEval) <- model$modelEnvironment
   DifferentialEquationsEval <-
-    createFuncEval(func = model$DifferentialEquations,
+    CreateFuncEval(func = model$DifferentialEquations,
                    ct = ct,
                    par = par,
                    inp = inp,
@@ -517,14 +515,14 @@ runOdeSimulation <- function(model,
       }
       
       RootSpecificationEval <-
-        createFuncEval(func = RootSpecification, ct = ct, par = par, 
+        CreateFuncEval(func = RootSpecification, ct = ct, par = par, 
                        inp = inp, sw = sw, auxiliary = auxiliary, 
                        lastEvalTime = (times$from - 1))
       
       if (is.function(EventFunction)) { 
         
         # EVENTS func triggered by a root function
-        EventFunctionEval <- createFuncEval(EventFunction,
+        EventFunctionEval <- CreateFuncEval(EventFunction,
                                             ct, par, inp, sw, 
                                             auxiliary = auxiliary,
                                             lastEvalTime = (times$from - 1),
@@ -572,7 +570,7 @@ runOdeSimulation <- function(model,
       }
       # events in a function with the triggers times in RootSpecification
       EventFunctionEval <-
-        createFuncEval(EventFunction,
+        CreateFuncEval(EventFunction,
                        ct,
                        par,
                        inp,
