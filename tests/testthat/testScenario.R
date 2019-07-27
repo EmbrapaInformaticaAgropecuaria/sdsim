@@ -1,7 +1,6 @@
 context("Scenario instantiation")
 
-test_that("Scenario object", code = 
-{
+test_that("Scenario object", code = {
   scen <- expect_is(sdScenario(
     id = "test",
     state = c(a = 2, b = 3),

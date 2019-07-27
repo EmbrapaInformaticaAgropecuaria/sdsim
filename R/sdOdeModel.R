@@ -719,7 +719,10 @@ sdOdeModelClass <- R6::R6Class(
   ),
   active = list(
     DifferentialEquations = function() { 
-      return(private$pDifferentialEquations$getOdeFunction())
+      if(!is.null(private$pDifferentialEquations))
+        return(private$pDifferentialEquations$getOdeFunction())
+      else
+        return(NULL)
     },
     InitVars = function() { 
       return(private$pInitVars)
