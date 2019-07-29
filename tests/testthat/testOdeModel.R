@@ -38,7 +38,7 @@ test_that("Ode model with Global Funs", code = {
     sdScenario(
       "Default",
       times = c(from = 0, to = 2, by = 1),
-      state = c(a=1),
+      state = c(a = 1),
       input = c(pow = 2),
       method = "rk4"),
     "sdScenario")
@@ -61,12 +61,12 @@ test_that("Ode model with Global Funs", code = {
 
 # Testes de Casos de Uso
 test_that("Ode model with Root Specification", code = {
-  # Primeira caso de uso -  Root especificda com vetor numerico
+  # Primeiro caso de uso -  Root especificada com vetor numerico
   m <- expect_is(
     sdOdeModel(
       id = "vec root",
       description = "test test",
-      DifferentialEquations = function(t, st, ct, par,
+      modelDynamics = function(t, st, ct, par,
                                        inp, sw, aux) {
         return(list(c(st$a*inp$pow)))
       },
@@ -87,7 +87,7 @@ test_that("Ode model with Root Specification", code = {
   
   m$defaultScenario$method <- "lsoda"
   
-  # Segunda caso de uso - Root especificada com funcao
+  # Segundo caso de uso - Root especificada com funcao
   m$initialize("fun root", RootSpecification = function(t, st, ct, par, inp, sw, aux) {
     if (t %in% c(1,3))
       return(0)
@@ -97,7 +97,7 @@ test_that("Ode model with Root Specification", code = {
   
   outfun <- expect_is(sdSimulate(m), "sdOutput")
   
-  # Terceira caso de uso - Root especificada com data.frama
+  # Terceiro caso de uso - Root especificada com data.frame
   m$initialize("df root", RootSpecification = data.frame(
     var = c("a", "a"),
     time = c(1, 3),
