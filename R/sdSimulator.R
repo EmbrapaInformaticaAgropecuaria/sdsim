@@ -392,7 +392,7 @@ runOdeSimulation <- function(model,
   #   model$verifyModel(scenario, verbose = verbose)
   
   # Get model functions
-  InitVars <- model$InitVars
+  initVars <- model$initVars
   PostProcessVars <- model$PostProcessVars
   RootSpecification <- model$RootSpecification
   EventFunction <- model$EventFunction
@@ -458,9 +458,9 @@ runOdeSimulation <- function(model,
     method <- "lsoda"
   }
   
-  # run the InitVars function
-  if (!is.null(InitVars)) { 
-    modelInit <- InitVars(st = state,
+  # run the initVars function
+  if (!is.null(initVars)) { 
+    modelInit <- initVars(st = state,
                           ct = ct,
                           par = par,
                           inp = inp,
@@ -683,7 +683,7 @@ runStaticSimulation <- function(model,
   
   # Get model attributes
   equations <- model$algebraicEquations
-  InitVars <- model$InitVars
+  initVars <- model$initVars
   globalfuns <- model$GlobalFunctions
   
   # stop if model is empty
@@ -745,9 +745,9 @@ runStaticSimulation <- function(model,
              (times$to - times$from)*times$by > 0)) # invalid time sequence
     sdSimulatorMsg$sdSimulateStatic2(model$id)
   
-  if (!is.null(InitVars)) { 
+  if (!is.null(initVars)) { 
     modelInit <-
-      InitVars(ct = ct,
+      initVars(ct = ct,
                par = par,
                inp = inp,
                sw = sw,

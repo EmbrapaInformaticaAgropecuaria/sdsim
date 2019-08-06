@@ -482,7 +482,7 @@ sdOdeModelMsg$initialize1 <- function(modelId)
 
 sdOdeModelMsg$initialize2 <- function(modelId)
   warning("sdsim::initialize - Model '", modelId, "' initialization: ", 
-          "The InitVars structure does not match the ", 
+          "The initVars structure does not match the ", 
           "help('sdOdeModel') specification. Replacement aborted.", call. = F)
 
 sdOdeModelMsg$initialize3 <- function(modelId)
@@ -809,7 +809,7 @@ sdStaticModelMsg <- new.env()
 sdStaticModelMsg$initialize1 <- function(staticModelId)
   warning("sdsim::initialize - Static Model '", staticModelId, 
           "' initialization: ", 
-          "The InitVars structure does not match specification. It ", 
+          "The initVars structure does not match specification. It ", 
           "must be a function, see help('sdStaticModel'). ",
           "Replacement aborted.", call. = F)
 

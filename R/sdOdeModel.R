@@ -60,7 +60,7 @@
 #' respect to time, and whose next elements are extra values that are 
 #' computed at each time step and will be included in the simulation output. The 
 #' derivatives must be specified in the same order as the state variables.
-#' @field InitVars (Optional) An R-function that initialize or change the 
+#' @field initVars (Optional) An R-function that initialize or change the 
 #' initial state values and/or other model variables before the solver call when
 #' running a simulation. 
 #' It can be used, for example, to compute some dependent parameter variables or 
@@ -73,7 +73,7 @@
 #' a list with the model switch variables and \code{aux} is a list with the 
 #' model auxiliary equations in R-expression format, as defined by the user.
 #' 
-#' The return value of the \code{InitVars} function should be a list containing 
+#' The return value of the \code{initVars} function should be a list containing 
 #' all the function arguments, except the aux equations, named in the same way, 
 #' e.g. \code{return(list(st = st, ct = ct, inp = inp, par = par, sw = sw))}.
 #' @field PostProcessVars (Optional) An R-function that receives the simulation 
@@ -144,7 +144,7 @@
 #' @section Public Methods Definition:  
 #' \describe{
 #' \item{\code{$initialize(id, description, DifferentialEquations, 
-#' InitVars, PostProcessVars, RootSpecification, EventFunction, aux, 
+#' initVars, PostProcessVars, RootSpecification, EventFunction, aux, 
 #' defaultScenario, globalFunctions)}}{
 #' Class constructor. Sets the model definition fields.
 #' 
@@ -259,7 +259,7 @@ sdOdeModelClass <- R6::R6Class(
                           defaultScenario,
                           aux,
                           DifferentialEquations, 
-                          InitVars,
+                          initVars,
                           PostProcessVars, 
                           RootSpecification,
                           EventFunction,
@@ -304,10 +304,10 @@ sdOdeModelClass <- R6::R6Class(
         self$defaultScenario <- defaultScenario
       
       # Optional parameters
-      if (!missing(InitVars) && !is.null(InitVars)) { 
-        if (is.function(InitVars) && 
-            all(funDefaultArgs[-1] %in% names(formals(InitVars))))
-          private$pInitVars <- InitVars
+      if (!missing(initVars) && !is.null(initVars)) { 
+        if (is.function(initVars) && 
+            all(funDefaultArgs[-1] %in% names(formals(initVars))))
+          private$pInitVars <- initVars
         else
           sdOdeModelMsg$initialize2(id)
       }
@@ -436,7 +436,7 @@ sdOdeModelClass <- R6::R6Class(
     },
     print = function() { 
       # convert all the attributes to string 
-      modelFuns <- list("InitVars", "PostProcessVars", 
+      modelFuns <- list("initVars", "PostProcessVars", 
                         "RootSpecification", "EventFunction")
       modelStr <- lapply(modelFuns, function(f) { 
         if (is.function(private[[paste0("p", f)]]))
@@ -693,7 +693,7 @@ sdOdeModelClass <- R6::R6Class(
       lModel <- list(id = private$pid     ,
                      description = private$pdescription,
                      DifferentialEquations = FunToString(private$pDifferentialEquations),
-                     InitVars = FunToString(private$pInitVars),
+                     initVars = FunToString(private$pInitVars),
                      PostProcessVars = FunToString(private$pPostProcessVars),
                      RootSpecification = RootSpecification,
                      EventFunction = FunToString(private$pEventFunction),
@@ -724,7 +724,7 @@ sdOdeModelClass <- R6::R6Class(
       else
         return(NULL)
     },
-    InitVars = function() { 
+    initVars = function() { 
       return(private$pInitVars)
     },
     PostProcessVars = function() { 

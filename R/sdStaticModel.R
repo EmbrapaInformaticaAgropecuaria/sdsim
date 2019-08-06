@@ -44,7 +44,7 @@
 #' 
 #' See the function \code{\link{sdInitEquations}} to learn how this list is 
 #' generated. 
-#' @field InitVars (Optional) An R-function that initialize or change the 
+#' @field initVars (Optional) An R-function that initialize or change the 
 #' initial values of the model variables before the solver call when
 #' running a simulation. 
 #' It can be used, for example, to compute some dependent parameter variables or 
@@ -57,7 +57,7 @@
 #' with the model algebraic equations in R-expression format, as defined by the 
 #' user.
 #' 
-#' The return value of the \code{InitVars} function should be a list containing 
+#' The return value of the \code{initVars} function should be a list containing 
 #' all the function arguments, except the algebraic equations, named in the same 
 #' way, e.g. \code{return(list(ct = ct, inp = inp, par = par, sw = sw))}.
 #' @field globalFunctions A named list of extra functions that can be executed 
@@ -65,7 +65,7 @@
 #' model. They can be called by their names in the list.
 #' @section Public Methods Definition:  
 #' \describe{
-#' \item{\code{$initialize(id, description, InitVars, 
+#' \item{\code{$initialize(id, description, initVars, 
 #' algebraicEquations, defaultScenario, globalFunctions)}}{
 #' Class constructor. Sets the static model definition fields.
 #' 
@@ -143,7 +143,7 @@ sdStaticModelClass <- R6::R6Class(
                           description,
                           defaultScenario,
                           algebraicEquations,
-                          InitVars,
+                          initVars,
                           globalFunctions) { 
       funDefaultArgs <- c("ct", "par", "inp", "sw", "eq")
       # mandatory parameters
@@ -157,10 +157,10 @@ sdStaticModelClass <- R6::R6Class(
         self$defaultScenario <- (defaultScenario) 
       
       # Optional parameters
-      if (!missing(InitVars) && !is.null(InitVars)) { 
-        if (is.function(InitVars) && 
-            all(funDefaultArgs %in% names(formals(InitVars))))
-          private$pInitVars <- InitVars
+      if (!missing(initVars) && !is.null(initVars)) { 
+        if (is.function(initVars) && 
+            all(funDefaultArgs %in% names(formals(initVars))))
+          private$pInitVars <- initVars
         else
           sdStaticModelMsg$initialize1(id)
       }
@@ -243,7 +243,7 @@ sdStaticModelClass <- R6::R6Class(
       # convert all the attributes to string 
       modelStr <- list()
       modelStr$algebraicEquations <- lapply(private$palgebraicEquations, toString)
-      modelStr$InitVars <- FunToString(private$pInitVars)
+      modelStr$initVars <- FunToString(private$pInitVars)
       modelStr$globalFunctions <- private$pglobalFunctions
       
       # print the attributes
@@ -259,9 +259,9 @@ sdStaticModelClass <- R6::R6Class(
       if (length(modelStr[["algebraicEquations"]]) > 0)
         cat(indent(capture.output(modelStr["algebraicEquations"]), indent = 4), sep = "\n")
       
-      if (!is.null(modelStr[["InitVars"]])) { 
-        cat(indent("$InitVars", indent = 4), sep = "\n")
-        cat(indent((modelStr["InitVars"]), indent = 4), sep = "\n")
+      if (!is.null(modelStr[["initVars"]])) { 
+        cat(indent("$initVars", indent = 4), sep = "\n")
+        cat(indent((modelStr["initVars"]), indent = 4), sep = "\n")
         cat("\n")
       }
       
@@ -367,7 +367,7 @@ sdStaticModelClass <- R6::R6Class(
       
       lModel <- list(id = private$pid      ,
                      description = private$pdescription,
-                     InitVars = FunToString(private$pInitVars),
+                     initVars = FunToString(private$pInitVars),
                      algebraicEquations = private$palgebraicEquations,
                      globalFunctions = globalFunctions)
       invisible(ListToXML(rootsdModel, lModel))
@@ -412,7 +412,7 @@ sdStaticModelClass <- R6::R6Class(
         } 
       }      
     },
-    InitVars = function() { 
+    initVars = function() { 
       return(private$pInitVars)
     },
     GlobalFunctions = function() { 

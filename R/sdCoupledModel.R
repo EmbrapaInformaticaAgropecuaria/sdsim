@@ -609,7 +609,7 @@ sdCoupledModelClass <- R6::R6Class(
           private$pcomponents[[id]] <- model$clone(deep = TRUE)
           private$pcomponentsClass[[id]] <- class(model)[[1]]
           private$pcomponentsEquations[[id]] <- model$DifferentialEquations
-          private$pcomponentsInitVars[[id]] <- model$InitVars
+          private$pcomponentsInitVars[[id]] <- model$initVars
           private$pcomponentsPostProcessVars[[id]] <- model$PostProcessVars
           
           if (is.function(model$RootSpecification) || 
@@ -636,7 +636,7 @@ sdCoupledModelClass <- R6::R6Class(
           private$pcomponentsId <- c(private$pcomponentsId, id)
           private$pcomponents[[id]] <- model$clone(deep = TRUE)
           private$pcomponentsClass[[id]] <- class(model)[[1]]
-          private$pcomponentsInitVars[[id]] <- model$InitVars
+          private$pcomponentsInitVars[[id]] <- model$initVars
           
           private$pcomponentsAux[[id]] <- model$algebraicEquations
           private$pcomponentsGlobal[[id]] <- model$GlobalFunctions

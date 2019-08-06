@@ -55,7 +55,7 @@
 #' with respect to time, and whose next elements are extra values that are 
 #' computed at each time step and need to be included in the simulation output. 
 #' The derivatives must be specified in the same order as the state variables.
-#' @param InitVars (Optional) An R-function that initialize or change the 
+#' @param initVars (Optional) An R-function that initialize or change the 
 #' initial state values and/or other model variables before the solver call when
 #' running a simulation. 
 #' It can be used, for example, to compute some dependent parameter variables or 
@@ -68,7 +68,7 @@
 #' a list with the model switch variables and \code{aux} is a list with the 
 #' model auxiliary equations in R-expression format, as defined by the user.
 #' 
-#' The return value of the \code{InitVars} function must be a list containing 
+#' The return value of the \code{initVars} function must be a list containing 
 #' all the variable arguments named in the same way, except the aux equations; 
 #' e.g. \code{return(list(st = st, ct = ct, inp = inp, par = par, sw = sw))}.
 #' @param PostProcessVars (Optional) An R-function that receives the simulation 
@@ -197,7 +197,7 @@ sdOdeModel <- function(id = NULL,
                        defaultScenario = NULL,
                        aux = NULL,
                        modelDynamics = NULL, 
-                       InitVars = NULL,
+                       initVars = NULL,
                        PostProcessVars = NULL, 
                        RootSpecification = NULL, 
                        EventFunction = NULL,
@@ -208,7 +208,7 @@ sdOdeModel <- function(id = NULL,
     description = description,
     DifferentialEquations = modelDynamics,
     defaultScenario = defaultScenario,
-    InitVars = InitVars,
+    initVars = initVars,
     PostProcessVars = PostProcessVars, 
     RootSpecification = RootSpecification, 
     EventFunction = EventFunction,
@@ -326,7 +326,7 @@ sdLoadModel <- function(file, repository = F,
       id = model$id,
       DifferentialEquations = StringToFun(model$DifferentialEquations),
       defaultScenario = model$defaultScenario,
-      InitVars = StringToFun(model$InitVars),
+      initVars = StringToFun(model$initVars),
       PostProcessVars = StringToFun(model$PostProcessVars),
       RootSpecification = model$RootSpecification,
       EventFunction = StringToFun(model$EventFunction),
@@ -370,7 +370,7 @@ sdLoadModel <- function(file, repository = F,
             description = x$description,
             DifferentialEquations = StringToFun(x$DifferentialEquations),
             defaultScenario = x$defaultScenario,
-            InitVars = StringToFun(x$InitVars),
+            initVars = StringToFun(x$initVars),
             PostProcessVars = StringToFun(x$PostProcessVars),
             RootSpecification = x$RootSpecification,
             EventFunction = StringToFun(x$EventFunction),
@@ -382,7 +382,7 @@ sdLoadModel <- function(file, repository = F,
           component <- sdStaticModelClass$new(
             id = x$id,
             description = x$description,
-            InitVars = StringToFun(x$InitVars),
+            initVars = StringToFun(x$initVars),
             algebraicEquations = x$algebraicEquations,
             defaultScenario = x$defaultScenario,
             globalFunctions = lapply(x$globalFunctions, StringToFun))
@@ -437,7 +437,7 @@ sdLoadModel <- function(file, repository = F,
     # creat a new model
     model <- sdStaticModelClass$new(id = model$id,
                                     defaultScenario = model$defaultScenario,
-                                    InitVars = StringToFun(model$InitVars),
+                                    initVars = StringToFun(model$initVars),
                                     algebraicEquations = model$algebraicEquations,
                                     description = 
                                       model$description,
@@ -629,7 +629,7 @@ sdCoupledModel <- function(id = NULL,
 #' 
 #' See the function \code{\link{sdInitEquations}} to learn how this list is 
 #' generated. 
-#' @param InitVars (Optional) An R-function that initialize or change the 
+#' @param initVars (Optional) An R-function that initialize or change the 
 #' initial values of the model variables before the solver call when
 #' running a simulation. 
 #' It can be used, for example, to compute some dependent parameter variables or 
@@ -642,7 +642,7 @@ sdCoupledModel <- function(id = NULL,
 #' with the model algebraic equations in R-expression format, as defined by the 
 #' user.
 #' 
-#' The return value of the \code{InitVars} function should be a list containing 
+#' The return value of the \code{initVars} function should be a list containing 
 #' all the function arguments, except the algebraic equations, named in the same 
 #' way, e.g. \code{return(list(ct = ct, inp = inp, par = par, sw = sw))}.
 #' @param globalFunctions A named list of extra functions that can be executed 
@@ -687,13 +687,13 @@ sdStaticModel <- function(id = NULL,
                           description = NULL,
                           defaultScenario = NULL,
                           algebraicEquations = NULL,
-                          InitVars = NULL,
+                          initVars = NULL,
                           globalFunctions = NULL) { 
   # create a new model
   model <- sdStaticModelClass$new(
     id = id,
     description = description,
-    InitVars = InitVars,
+    initVars = initVars,
     algebraicEquations = algebraicEquations,
     defaultScenario = defaultScenario,
     globalFunctions = globalFunctions)

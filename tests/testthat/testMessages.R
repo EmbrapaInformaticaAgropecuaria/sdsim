@@ -105,7 +105,7 @@ test_that("sdOdeModel.R", code = {
   #                           DifferentialEquations = function(x) return(x)),
   #                info = "sdOdeModelMsg$initialize1")
   expect_warning(sdOdeModel("test", 
-                            InitVars = function(x) return(x)),
+                            initVars = function(x) return(x)),
                  info = "sdOdeModelMsg$initialize2")
   expect_warning(sdOdeModel("test", 
                             PostProcessVars = function(x) return(x)),
