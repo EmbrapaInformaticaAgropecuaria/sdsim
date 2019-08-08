@@ -388,7 +388,7 @@ sdOdeModelClass <- R6::R6Class(
           aux <- aux[!(names(aux) %in% sdsimReserved)]
         }
         
-        private$paux <- aux
+        private$pAux <- aux
       }
       
       # if (is.function(private[["pDifferentialEquations"]]))
@@ -446,7 +446,7 @@ sdOdeModelClass <- R6::R6Class(
       })
       
       names(modelStr) <- unlist(modelFuns)
-      modelStr$aux <- lapply(private$paux, toString)
+      modelStr$aux <- lapply(private$pAux, toString)
       modelStr$globalFunctions <- private$pGlobalFunctions
       
       # print the attributes
@@ -531,7 +531,7 @@ sdOdeModelClass <- R6::R6Class(
       sw <- defaultScenario$switch
       times <- defaultScenario$times
       
-      aux <- private$paux
+      aux <- private$pAux
       
       if (!is.null(times) && length(unlist(times)) > 0) {
         t <- times[[1]]
@@ -697,7 +697,7 @@ sdOdeModelClass <- R6::R6Class(
                      postProcess = FunToString(private$pPostProcessVars),
                      trigger = trigger,
                      event = FunToString(private$pEvent),
-                     aux = private$paux,
+                     aux = private$pAux,
                      globalFunctions = globalFunctions)
       ListToXML(rootsdModel, lModel)
       
@@ -740,7 +740,7 @@ sdOdeModelClass <- R6::R6Class(
       return(private$pGlobalFunctions)
     },
     aux = function() { 
-      return(private$paux)
+      return(private$pAux)
     },
     modelEnvironment = function() { 
       return(private$pModelEnvironment)
@@ -754,7 +754,7 @@ sdOdeModelClass <- R6::R6Class(
     pTrigger = NULL,
     pEvent = NULL,
     pGlobalFunctions = list(),
-    paux = list(),
+    pAux = list(),
     pModelEnvironment = NULL
   )
 )
