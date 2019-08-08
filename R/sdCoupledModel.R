@@ -631,7 +631,7 @@ sdCoupledModelClass <- R6::R6Class(
           }
           
           private$pComponentsAux[[id]] <- model$aux
-          private$pComponentsGlobal[[id]] <- model$GlobalFunctions
+          private$pComponentsGlobal[[id]] <- model$globalFunctions
         } else if (inherits(model, sdStaticModelClass$classname)) { 
           private$pComponentsId <- c(private$pComponentsId, id)
           private$pComponents[[id]] <- model$clone(deep = TRUE)
@@ -639,7 +639,7 @@ sdCoupledModelClass <- R6::R6Class(
           private$pComponentsInitVars[[id]] <- model$initVars
           
           private$pComponentsAux[[id]] <- model$algebraicEquations
-          private$pComponentsGlobal[[id]] <- model$GlobalFunctions
+          private$pComponentsGlobal[[id]] <- model$globalFunctions
         } else if (inherits(model, sdCoupledModelClass$classname)) { 
           # add the components with the coupled model id as prefix
           for (j in seq_along(model$components)) { 

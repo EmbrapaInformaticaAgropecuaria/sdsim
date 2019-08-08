@@ -684,7 +684,7 @@ runStaticSimulation <- function(model,
   # Get model attributes
   equations <- model$algebraicEquations
   initVars <- model$initVars
-  globalfuns <- model$GlobalFunctions
+  globalfuns <- model$globalFunctions
   
   # stop if model is empty
   if (length(equations) == 0)

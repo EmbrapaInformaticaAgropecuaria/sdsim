@@ -422,7 +422,7 @@ sdOdeModelClass <- R6::R6Class(
           if (length(remGlobalFun) > 0)
             globalFunctions <- globalFunctions[-remGlobalFun]
           
-          private$pglobalFunctions <- globalFunctions
+          private$pGlobalFunctions <- globalFunctions
         } else {
           sdOdeModelMsg$initialize9(id)
         }
@@ -447,7 +447,7 @@ sdOdeModelClass <- R6::R6Class(
       
       names(modelStr) <- unlist(modelFuns)
       modelStr$aux <- lapply(private$paux, toString)
-      modelStr$globalFunctions <- private$pglobalFunctions
+      modelStr$globalFunctions <- private$pGlobalFunctions
       
       # print the attributes
       cat("<",class(self)[[1]],">\n", sep = "")
@@ -683,7 +683,7 @@ sdOdeModelClass <- R6::R6Class(
       else
         trigger <- NULL
       
-      globalFunctions <- lapply(private$pglobalFunctions, function(x) { 
+      globalFunctions <- lapply(private$pGlobalFunctions, function(x) { 
         if (is.function(x))
           return(FunToString(x))
         else
@@ -736,8 +736,8 @@ sdOdeModelClass <- R6::R6Class(
     event = function() { 
       return(private$pEvent)
     },
-    GlobalFunctions = function() { 
-      return(private$pglobalFunctions)
+    globalFunctions = function() { 
+      return(private$pGlobalFunctions)
     },
     aux = function() { 
       return(private$paux)
@@ -753,7 +753,7 @@ sdOdeModelClass <- R6::R6Class(
     pPostProcessVars = NULL,
     pTrigger = NULL,
     pEvent = NULL,
-    pglobalFunctions = list(),
+    pGlobalFunctions = list(),
     paux = list(),
     pModelEnvironment = NULL
   )
