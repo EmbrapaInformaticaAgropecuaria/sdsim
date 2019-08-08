@@ -612,13 +612,13 @@ sdCoupledModelClass <- R6::R6Class(
           private$pComponentsInitVars[[id]] <- model$initVars
           private$pComponentsPostProcess[[id]] <- model$postProcess
           
-          if (is.function(model$RootSpecification) || 
-              is.numeric(model$RootSpecification)) { 
-            private$pComponentsRootSpecification[[id]] <- 
-              model$RootSpecification
+          if (is.function(model$trigger) || 
+              is.numeric(model$trigger)) { 
+            private$pComponentsTrigger[[id]] <- 
+              model$trigger
             private$pComponentsEventFunction[[id]] <- model$EventFunction
-          } else if (is.data.frame(model$RootSpecification)) { 
-            rootdf <- model$RootSpecification
+          } else if (is.data.frame(model$trigger)) { 
+            rootdf <- model$trigger
             rootdf$var <- paste0(id, ".", as.character(rootdf$var))
             # convert the columns for errors prevention
             rootdf$method <- lapply(as.character(rootdf$method), 
@@ -626,7 +626,7 @@ sdCoupledModelClass <- R6::R6Class(
             rootdf$time <- as.numeric(rootdf$time)
             rootdf$value <- as.numeric(rootdf$value)
             
-            private$pComponentsRootSpecification[[id]] <- rootdf
+            private$pComponentsTrigger[[id]] <- rootdf
             private$pComponentsEventFunction[[id]] <- rootdf
           }
           
@@ -694,9 +694,9 @@ sdCoupledModelClass <- R6::R6Class(
       private$pComponentsPostProcess <- private$pComponentsPostProcess[
         !(names(private$pComponentsPostProcess) %in% componentName)]
       
-      private$pComponentsRootSpecification <- 
-        private$pComponentsRootSpecification[
-          !(names(private$pComponentsRootSpecification) %in% componentName)]
+      private$pComponentsTrigger <- 
+        private$pComponentsTrigger[
+          !(names(private$pComponentsTrigger) %in% componentName)]
       
       private$pComponentsEventFunction <- private$pComponentsEventFunction[
         !(names(private$pComponentsEventFunction) %in% componentName)]
@@ -801,7 +801,7 @@ sdCoupledModelClass <- R6::R6Class(
       componentsEquations <- private$pComponentsEquations
       namesCompEqs <- names(private$pComponentsEquations)
       componentsInitVars <- private$pComponentsInitVars
-      componentsRootSpecification <- private$pComponentsRootSpecification
+      componentsTrigger <- private$pComponentsTrigger
       componentsEventFunction <- private$pComponentsEventFunction
       eq <- aux <- private$pComponentsAux
       componentsId <- private$pComponentsId
@@ -1157,14 +1157,14 @@ sdCoupledModelClass <- R6::R6Class(
             coupledEnv
         }
         
-        if (is.function(private$pComponentsRootSpecification[[modelId]])) { 
-          private$pComponentsRootSpecification[[modelId]] <-
+        if (is.function(private$pComponentsTrigger[[modelId]])) { 
+          private$pComponentsTrigger[[modelId]] <-
             replaceCoupledVarsNames(
-              func = private$pComponentsRootSpecification[[modelId]],
+              func = private$pComponentsTrigger[[modelId]],
               componentsVarNames = componentsVarNames[[modelId]],
               modelId = modelId)
           
-          environment(private$pComponentsRootSpecification[[modelId]]) <-
+          environment(private$pComponentsTrigger[[modelId]]) <-
             coupledEnv
         }
         
@@ -1401,8 +1401,8 @@ sdCoupledModelClass <- R6::R6Class(
     componentsPostProcessVars = function() { 
       return(private$pComponentsPostProcess)
     },
-    componentsRootSpecification = function() { 
-      return(private$pComponentsRootSpecification)
+    componentsTrigger = function() { 
+      return(private$pComponentsTrigger)
     },
     componentsEventFunction = function() { 
       return(private$pComponentsEventFunction)
@@ -1464,7 +1464,7 @@ sdCoupledModelClass <- R6::R6Class(
     pComponentsEquations = list(),
     pComponentsInitVars = list(),
     pComponentsPostProcess = list(),
-    pComponentsRootSpecification = list(),
+    pComponentsTrigger = list(),
     pComponentsEventFunction = list(),
     pComponentsAux = list(),
     pComponentsGlobal = list(),

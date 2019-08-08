@@ -492,7 +492,7 @@ sdOdeModelMsg$initialize3 <- function(modelId)
 
 sdOdeModelMsg$initialize4 <- function(modelId)
   warning("sdsim::initialize - Model '", modelId, "' initialization: ",
-          "The RootSpecification structure does not match specification. It ", 
+          "The trigger structure does not match specification. It ", 
           "must be a data.frame, a numeric vector or a function, ", 
           "see help('sdOdeModel'). If it is a character or list of ",
           "characters all the elements will be evaluated or ",

@@ -70,7 +70,7 @@ test_that("Ode model with Root Specification", code = {
                                        inp, sw, aux) {
         return(list(c(st$a*inp$pow)))
       },
-      RootSpecification = c(1, 3),
+      trigger = c(1, 3),
       EventFunction = function(t, st, ct, par,
                                inp, sw, aux) {
         st$a <- st$a*2
@@ -88,7 +88,7 @@ test_that("Ode model with Root Specification", code = {
   m$defaultScenario$method <- "lsoda"
   
   # Segundo caso de uso - Root especificada com funcao
-  m$initialize("fun root", RootSpecification = function(t, st, ct, par, inp, sw, aux) {
+  m$initialize("fun root", trigger = function(t, st, ct, par, inp, sw, aux) {
     if (t %in% c(1,3))
       return(0)
     else
@@ -98,7 +98,7 @@ test_that("Ode model with Root Specification", code = {
   outfun <- expect_is(sdSimulate(m), "sdOutput")
   
   # Terceiro caso de uso - Root especificada com data.frame
-  m$initialize("df root", RootSpecification = data.frame(
+  m$initialize("df root", trigger = data.frame(
     var = c("a", "a"),
     time = c(1, 3),
     value = c(2, 2),

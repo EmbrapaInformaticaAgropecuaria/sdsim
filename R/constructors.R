@@ -89,7 +89,7 @@
 #' The return value of \code{postProcess} will be stored in the postProcess
 #' field of the \code{\link{sdOutput}} simulation output object and can be 
 #' anything that suits the user needs.
-#' @param RootSpecification (Optional) A numeric vector containing the times to 
+#' @param trigger (Optional) A numeric vector containing the times to 
 #' trigger the \code{EventFunction}, or a data.frame as specified in the 
 #' \code{\link[deSolve]{events}} documentation, or an R-function that becomes 
 #' zero when a root occur. 
@@ -199,7 +199,7 @@ sdOdeModel <- function(id = NULL,
                        modelDynamics = NULL, 
                        initVars = NULL,
                        postProcess = NULL, 
-                       RootSpecification = NULL, 
+                       trigger = NULL, 
                        EventFunction = NULL,
                        globalFunctions = NULL) { 
   # create a new model
@@ -210,7 +210,7 @@ sdOdeModel <- function(id = NULL,
     defaultScenario = defaultScenario,
     initVars = initVars,
     postProcess = postProcess, 
-    RootSpecification = RootSpecification, 
+    trigger = trigger, 
     EventFunction = EventFunction,
     aux = aux,
     globalFunctions = globalFunctions)
@@ -328,7 +328,7 @@ sdLoadModel <- function(file, repository = F,
       defaultScenario = model$defaultScenario,
       initVars = StringToFun(model$initVars),
       postProcess = StringToFun(model$postProcess),
-      RootSpecification = model$RootSpecification,
+      trigger = model$trigger,
       EventFunction = StringToFun(model$EventFunction),
       aux = model$aux ,
       description = model$description,
@@ -372,7 +372,7 @@ sdLoadModel <- function(file, repository = F,
             defaultScenario = x$defaultScenario,
             initVars = StringToFun(x$initVars),
             postProcess = StringToFun(x$postProcess),
-            RootSpecification = x$RootSpecification,
+            trigger = x$trigger,
             EventFunction = StringToFun(x$EventFunction),
             aux = x$aux,
             globalFunctions = lapply(x$globalFunctions, StringToFun))
