@@ -71,7 +71,7 @@
 #' The return value of the \code{initVars} function must be a list containing 
 #' all the variable arguments named in the same way, except the aux equations; 
 #' e.g. \code{return(list(st = st, ct = ct, inp = inp, par = par, sw = sw))}.
-#' @param PostProcessVars (Optional) An R-function that receives the simulation 
+#' @param postProcess (Optional) An R-function that receives the simulation 
 #' output inside the \code{sdSimulate} function and process it to derive further 
 #' conclusions. 
 #' 
@@ -86,7 +86,7 @@
 #' model input variables and \code{sw} is a list with the model switch 
 #' variables.
 #' 
-#' The return value of \code{PostProcessVars} will be stored in the postProcess
+#' The return value of \code{postProcess} will be stored in the postProcess
 #' field of the \code{\link{sdOutput}} simulation output object and can be 
 #' anything that suits the user needs.
 #' @param RootSpecification (Optional) A numeric vector containing the times to 
@@ -198,7 +198,7 @@ sdOdeModel <- function(id = NULL,
                        aux = NULL,
                        modelDynamics = NULL, 
                        initVars = NULL,
-                       PostProcessVars = NULL, 
+                       postProcess = NULL, 
                        RootSpecification = NULL, 
                        EventFunction = NULL,
                        globalFunctions = NULL) { 
@@ -209,7 +209,7 @@ sdOdeModel <- function(id = NULL,
     DifferentialEquations = modelDynamics,
     defaultScenario = defaultScenario,
     initVars = initVars,
-    PostProcessVars = PostProcessVars, 
+    postProcess = postProcess, 
     RootSpecification = RootSpecification, 
     EventFunction = EventFunction,
     aux = aux,
@@ -327,7 +327,7 @@ sdLoadModel <- function(file, repository = F,
       DifferentialEquations = StringToFun(model$DifferentialEquations),
       defaultScenario = model$defaultScenario,
       initVars = StringToFun(model$initVars),
-      PostProcessVars = StringToFun(model$PostProcessVars),
+      postProcess = StringToFun(model$postProcess),
       RootSpecification = model$RootSpecification,
       EventFunction = StringToFun(model$EventFunction),
       aux = model$aux ,
@@ -371,7 +371,7 @@ sdLoadModel <- function(file, repository = F,
             DifferentialEquations = StringToFun(x$DifferentialEquations),
             defaultScenario = x$defaultScenario,
             initVars = StringToFun(x$initVars),
-            PostProcessVars = StringToFun(x$PostProcessVars),
+            postProcess = StringToFun(x$postProcess),
             RootSpecification = x$RootSpecification,
             EventFunction = StringToFun(x$EventFunction),
             aux = x$aux,

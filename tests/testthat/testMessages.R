@@ -108,7 +108,7 @@ test_that("sdOdeModel.R", code = {
                             initVars = function(x) return(x)),
                  info = "sdOdeModelMsg$initialize2")
   expect_warning(sdOdeModel("test", 
-                            PostProcessVars = function(x) return(x)),
+                            postProcess = function(x) return(x)),
                  info = "sdOdeModelMsg$initialize3")
   expect_warning(sdOdeModel("test", 
                             RootSpecification = function(x) return(x)),

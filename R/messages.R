@@ -487,7 +487,7 @@ sdOdeModelMsg$initialize2 <- function(modelId)
 
 sdOdeModelMsg$initialize3 <- function(modelId)
   warning("sdsim::initialize - Model '", modelId, "' initialization: ",
-          "The PostProcessVars structure does not match the ", 
+          "The postProcess structure does not match the ", 
           "help('sdOdeModel') specification. Replacement aborted.", call. = F)
 
 sdOdeModelMsg$initialize4 <- function(modelId)

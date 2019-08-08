@@ -76,7 +76,7 @@
 #' The return value of the \code{initVars} function should be a list containing 
 #' all the function arguments, except the aux equations, named in the same way, 
 #' e.g. \code{return(list(st = st, ct = ct, inp = inp, par = par, sw = sw))}.
-#' @field PostProcessVars (Optional) An R-function that receives the simulation 
+#' @field postProcess (Optional) An R-function that receives the simulation 
 #' output inside the \code{sdSimulate} function and process it to derive further 
 #' conclusions. 
 #' 
@@ -91,7 +91,7 @@
 #' model input variables and \code{sw} is a list with the model switch 
 #' variables.
 #' 
-#' The return value of \code{PostProcessVars} will be stored in the postProcess
+#' The return value of \code{postProcess} will be stored in the postProcess
 #' field of the \code{\link{sdOutput}} simulation output object and can be 
 #' anything that suits the user needs.
 #' @field RootSpecification (Optional) A numeric vector containing the times to 
@@ -144,7 +144,7 @@
 #' @section Public Methods Definition:  
 #' \describe{
 #' \item{\code{$initialize(id, description, DifferentialEquations, 
-#' initVars, PostProcessVars, RootSpecification, EventFunction, aux, 
+#' initVars, postProcess, RootSpecification, EventFunction, aux, 
 #' defaultScenario, globalFunctions)}}{
 #' Class constructor. Sets the model definition fields.
 #' 
@@ -260,7 +260,7 @@ sdOdeModelClass <- R6::R6Class(
                           aux,
                           DifferentialEquations, 
                           initVars,
-                          PostProcessVars, 
+                          postProcess, 
                           RootSpecification,
                           EventFunction,
                           globalFunctions) { 
@@ -312,11 +312,11 @@ sdOdeModelClass <- R6::R6Class(
           sdOdeModelMsg$initialize2(id)
       }
       
-      if (!missing(PostProcessVars) && !is.null(PostProcessVars)) { 
-        if (is.function(PostProcessVars) &&
+      if (!missing(postProcess) && !is.null(postProcess)) { 
+        if (is.function(postProcess) &&
             all(c("outputTrajectory", "auxTrajectory", "ct", "par", "inp", "sw") 
-                %in% names(formals(PostProcessVars))))
-          private$pPostProcessVars <- PostProcessVars
+                %in% names(formals(postProcess))))
+          private$pPostProcessVars <- postProcess
         else
           sdOdeModelMsg$initialize3(id)
       }
@@ -436,7 +436,7 @@ sdOdeModelClass <- R6::R6Class(
     },
     print = function() { 
       # convert all the attributes to string 
-      modelFuns <- list("initVars", "PostProcessVars", 
+      modelFuns <- list("initVars", "postProcess", 
                         "RootSpecification", "EventFunction")
       modelStr <- lapply(modelFuns, function(f) { 
         if (is.function(private[[paste0("p", f)]]))
@@ -694,7 +694,7 @@ sdOdeModelClass <- R6::R6Class(
                      description = private$pdescription,
                      DifferentialEquations = FunToString(private$pDifferentialEquations),
                      initVars = FunToString(private$pInitVars),
-                     PostProcessVars = FunToString(private$pPostProcessVars),
+                     postProcess = FunToString(private$pPostProcessVars),
                      RootSpecification = RootSpecification,
                      EventFunction = FunToString(private$pEventFunction),
                      aux = private$paux,
@@ -727,7 +727,7 @@ sdOdeModelClass <- R6::R6Class(
     initVars = function() { 
       return(private$pInitVars)
     },
-    PostProcessVars = function() { 
+    postProcess = function() { 
       return(private$pPostProcessVars)
     },
     RootSpecification = function() { 

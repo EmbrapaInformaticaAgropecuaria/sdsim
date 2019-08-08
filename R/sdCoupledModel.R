@@ -610,7 +610,7 @@ sdCoupledModelClass <- R6::R6Class(
           private$pcomponentsClass[[id]] <- class(model)[[1]]
           private$pcomponentsEquations[[id]] <- model$DifferentialEquations
           private$pcomponentsInitVars[[id]] <- model$initVars
-          private$pcomponentsPostProcessVars[[id]] <- model$PostProcessVars
+          private$pcomponentsPostProcessVars[[id]] <- model$postProcess
           
           if (is.function(model$RootSpecification) || 
               is.numeric(model$RootSpecification)) { 

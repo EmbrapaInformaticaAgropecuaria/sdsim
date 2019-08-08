@@ -393,7 +393,7 @@ runOdeSimulation <- function(model,
   
   # Get model functions
   initVars <- model$initVars
-  PostProcessVars <- model$PostProcessVars
+  postProcess <- model$postProcess
   RootSpecification <- model$RootSpecification
   EventFunction <- model$EventFunction
   auxiliary <- model$aux
@@ -646,9 +646,9 @@ runOdeSimulation <- function(model,
   
   # run post process func
   postProcess <- NULL
-  if (!is.null(PostProcessVars))
+  if (!is.null(postProcess))
     postProcess <- tryCatch(
-      PostProcessVars(outTrajectory,
+      postProcess(outTrajectory,
                       auxTrajectory, tsTrajectory,
                       ct, par, inp, sw),
       error = function(e) { 
@@ -664,7 +664,7 @@ runOdeSimulation <- function(model,
     model = model,
     scenario = scenario,
     diagnostics = diagnostics,
-    postProcessValue = postProcess)
+    postProcessOut = postProcess)
   
   return(output)
 }
@@ -807,7 +807,7 @@ runStaticSimulation <- function(model,
     model = model,
     scenario = scenario,
     diagnostics = NULL,
-    postProcessValue = NULL)
+    postProcessOut = NULL)
   
   return(output)
 }
@@ -1004,7 +1004,7 @@ runCoupledSimulation <- function(model,
       model = model,
       scenario = scenario,
       diagnostics = NULL,
-      postProcessValue = NULL)
+      postProcessOut = NULL)
   } else { # at least one atomic component
     if (is.null(method)) { 
       sdSimulatorMsg$sdSimulateAtomic5(model$id)
@@ -1178,7 +1178,7 @@ runCoupledSimulation <- function(model,
       model = model,
       scenario = scenario,
       diagnostics = diagnostics,
-      postProcessValue = postProcess)
+      postProcessOut = postProcess)
   }
   return(output)
 }

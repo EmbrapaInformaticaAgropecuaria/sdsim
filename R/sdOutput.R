@@ -52,8 +52,8 @@
 #' @field diagnostics A string with the simulation diagnostics, e.g. 
 #' number of steps taken, the last step size, root informations, etc. See
 #' \code{\link[deSolve]{diagnostics}} for more informations.
-#' @field postProcessValue The return value of the \code{model} 
-#' \code{PostProcessVars} function.
+#' @field postProcessOut The return value of the \code{model} 
+#' \code{postProcess} function.
 #'
 #' @section Public Methods Definition:  
 #' \describe{
@@ -179,7 +179,7 @@ sdOutputClass <- R6::R6Class(
   public = list(
     initialize = function(outTrajectory, auxTrajectory, 
                           timeSeriesTrajectory, model, scenario, diagnostics, 
-                          postProcessValue) { 
+                          postProcessOut) { 
       if (!missing(outTrajectory))
         private[["poutTrajectory"]] <- outTrajectory
       
@@ -198,8 +198,8 @@ sdOutputClass <- R6::R6Class(
       if (!missing(diagnostics))
         private[["pdiag"]] <- diagnostics
       
-      if (!missing(postProcessValue))
-        private[["ppostProcessValue"]] <- postProcessValue
+      if (!missing(postProcessOut))
+        private[["pPostProcessOut"]] <- postProcessOut
       
       private$poutputId <- paste0("Simulation Output ", Sys.time())
     },
@@ -564,8 +564,8 @@ sdOutputClass <- R6::R6Class(
         return(NULL)
       return(private[["ptimeSeriesTrajectory"]])
     },
-    PostProcessValue = function() { 
-      return(private[["ppostProcessValue"]])
+    postProcessOut = function() { 
+      return(private[["pPostProcessOut"]])
     },
     diagnostics = function() { 
       if (!is.null(private[["pdiag"]])) { 
@@ -581,7 +581,7 @@ sdOutputClass <- R6::R6Class(
     poutTrajectory = NULL,
     pauxTrajectory = NULL,
     ptimeSeriesTrajectory = NULL,
-    ppostProcessValue = NULL,
+    pPostProcessOut = NULL,
     pmodel = NULL,
     pscenario = NULL,
     pdiag = NULL
