@@ -500,7 +500,7 @@ sdOdeModelMsg$initialize4 <- function(modelId)
 
 sdOdeModelMsg$initialize5 <- function(modelId)
   warning("sdsim::initialize - Model '", modelId, "' initialization: ",
-          "The EventFunction structure does not match the ", 
+          "The event structure does not match the ", 
           "help('sdOdeModel') specification. Replacement aborted.", call. = F)
 
 sdOdeModelMsg$initialize6 <- function(modelId, e)

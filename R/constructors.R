@@ -90,12 +90,12 @@
 #' field of the \code{\link{sdOutput}} simulation output object and can be 
 #' anything that suits the user needs.
 #' @param trigger (Optional) A numeric vector containing the times to 
-#' trigger the \code{EventFunction}, or a data.frame as specified in the 
+#' trigger the \code{event}, or a data.frame as specified in the 
 #' \code{\link[deSolve]{events}} documentation, or an R-function that becomes 
 #' zero when a root occur. 
 #' 
 #' When a root is found, the simulation triggers an event by calling 
-#' the \code{EventFunction}. If no \code{EventFunction} is defined, when a root 
+#' the \code{event}. If no \code{event} is defined, when a root 
 #' is found the simulation stops. 
 #' 
 #' When specified as a function it must be defined as: function(t, st, ct, par, 
@@ -111,7 +111,7 @@
 #' 
 #' It should return a numeric vector. If any element of this vector is zero an 
 #' event is trigged.
-#' @param EventFunction (Optional) An R-function that specifies the event. 
+#' @param event (Optional) An R-function that specifies the event. 
 #' 
 #' It must be defined as: function(t, st, ct, par, inp, sw, aux). 
 #' Where \code{t} is the current time point in the integration, \code{st} is 
@@ -124,7 +124,7 @@
 #' current time step. 
 #' 
 #' It should return the state-values (some of which modified), as a vector with 
-#' the variables in the right order. If no \code{EventFunction} is defined, when 
+#' the variables in the right order. If no \code{event} is defined, when 
 #' a root is found the simulation stops.
 #' @param globalFunctions A named list of extra functions that can be executed 
 #' in the scope of any other function or auxiliary equation defined in the 
@@ -200,7 +200,7 @@ sdOdeModel <- function(id = NULL,
                        initVars = NULL,
                        postProcess = NULL, 
                        trigger = NULL, 
-                       EventFunction = NULL,
+                       event = NULL,
                        globalFunctions = NULL) { 
   # create a new model
   model <- sdOdeModelClass$new(
@@ -211,7 +211,7 @@ sdOdeModel <- function(id = NULL,
     initVars = initVars,
     postProcess = postProcess, 
     trigger = trigger, 
-    EventFunction = EventFunction,
+    event = event,
     aux = aux,
     globalFunctions = globalFunctions)
   
@@ -329,7 +329,7 @@ sdLoadModel <- function(file, repository = F,
       initVars = StringToFun(model$initVars),
       postProcess = StringToFun(model$postProcess),
       trigger = model$trigger,
-      EventFunction = StringToFun(model$EventFunction),
+      event = StringToFun(model$event),
       aux = model$aux ,
       description = model$description,
       globalFunctions = lapply(model$globalFunctions, 
@@ -373,7 +373,7 @@ sdLoadModel <- function(file, repository = F,
             initVars = StringToFun(x$initVars),
             postProcess = StringToFun(x$postProcess),
             trigger = x$trigger,
-            EventFunction = StringToFun(x$EventFunction),
+            event = StringToFun(x$event),
             aux = x$aux,
             globalFunctions = lapply(x$globalFunctions, StringToFun))
         } else if (names(model$components)[[i]] == sdStaticModelClass$classname) {

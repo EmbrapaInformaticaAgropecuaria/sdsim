@@ -616,7 +616,7 @@ sdCoupledModelClass <- R6::R6Class(
               is.numeric(model$trigger)) { 
             private$pComponentsTrigger[[id]] <- 
               model$trigger
-            private$pComponentsEventFunction[[id]] <- model$EventFunction
+            private$pComponentsEvent[[id]] <- model$event
           } else if (is.data.frame(model$trigger)) { 
             rootdf <- model$trigger
             rootdf$var <- paste0(id, ".", as.character(rootdf$var))
@@ -627,7 +627,7 @@ sdCoupledModelClass <- R6::R6Class(
             rootdf$value <- as.numeric(rootdf$value)
             
             private$pComponentsTrigger[[id]] <- rootdf
-            private$pComponentsEventFunction[[id]] <- rootdf
+            private$pComponentsEvent[[id]] <- rootdf
           }
           
           private$pComponentsAux[[id]] <- model$aux
@@ -698,8 +698,8 @@ sdCoupledModelClass <- R6::R6Class(
         private$pComponentsTrigger[
           !(names(private$pComponentsTrigger) %in% componentName)]
       
-      private$pComponentsEventFunction <- private$pComponentsEventFunction[
-        !(names(private$pComponentsEventFunction) %in% componentName)]
+      private$pComponentsEvent <- private$pComponentsEvent[
+        !(names(private$pComponentsEvent) %in% componentName)]
       
       for (model in componentName)
         private$pComponentsAux <-  private$pComponentsAux[
@@ -802,7 +802,7 @@ sdCoupledModelClass <- R6::R6Class(
       namesCompEqs <- names(private$pComponentsEquations)
       componentsInitVars <- private$pComponentsInitVars
       componentsTrigger <- private$pComponentsTrigger
-      componentsEventFunction <- private$pComponentsEventFunction
+      componentsEvent <- private$pComponentsEvent
       eq <- aux <- private$pComponentsAux
       componentsId <- private$pComponentsId
       iComps <- private$pindexComponents
@@ -1168,14 +1168,14 @@ sdCoupledModelClass <- R6::R6Class(
             coupledEnv
         }
         
-        if (is.function(private$pComponentsEventFunction[[modelId]])) { 
-          private$pComponentsEventFunction[[modelId]] <-
+        if (is.function(private$pComponentsEvent[[modelId]])) { 
+          private$pComponentsEvent[[modelId]] <-
             replaceCoupledVarsNames(
-              func = private$pComponentsEventFunction[[modelId]],
+              func = private$pComponentsEvent[[modelId]],
               componentsVarNames = componentsVarNames[[modelId]],
               modelId = modelId)
           
-          environment(private$pComponentsEventFunction[[modelId]]) <-
+          environment(private$pComponentsEvent[[modelId]]) <-
             coupledEnv
         }
         
@@ -1404,8 +1404,8 @@ sdCoupledModelClass <- R6::R6Class(
     componentsTrigger = function() { 
       return(private$pComponentsTrigger)
     },
-    componentsEventFunction = function() { 
-      return(private$pComponentsEventFunction)
+    componentsEvent = function() { 
+      return(private$pComponentsEvent)
     },
     componentsAux = function() { 
       return(private$pComponentsAux)
@@ -1465,7 +1465,7 @@ sdCoupledModelClass <- R6::R6Class(
     pComponentsInitVars = list(),
     pComponentsPostProcess = list(),
     pComponentsTrigger = list(),
-    pComponentsEventFunction = list(),
+    pComponentsEvent = list(),
     pComponentsAux = list(),
     pComponentsGlobal = list(),
     pCoupledEnv = NULL

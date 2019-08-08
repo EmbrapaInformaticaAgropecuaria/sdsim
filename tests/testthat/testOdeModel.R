@@ -71,7 +71,7 @@ test_that("Ode model with Root Specification", code = {
         return(list(c(st$a*inp$pow)))
       },
       trigger = c(1, 3),
-      EventFunction = function(t, st, ct, par,
+      event = function(t, st, ct, par,
                                inp, sw, aux) {
         st$a <- st$a*2
         return(st)

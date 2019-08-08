@@ -95,12 +95,12 @@
 #' field of the \code{\link{sdOutput}} simulation output object and can be 
 #' anything that suits the user needs.
 #' @field trigger (Optional) A numeric vector containing the times to 
-#' trigger the \code{EventFunction}, or a data.frame as specified in the 
+#' trigger the \code{event}, or a data.frame as specified in the 
 #' \code{\link[deSolve]{events}} documentation, or an R-function that becomes 
 #' zero when a root occur. 
 #' 
 #' When a root is found, the simulation triggers an event by calling 
-#' the \code{EventFunction}. If no \code{EventFunction} is defined, when a root 
+#' the \code{event}. If no \code{event} is defined, when a root 
 #' is found the simulation stops. 
 #' 
 #' When specified as a function it must be defined as: function(t, st, ct, par, 
@@ -116,7 +116,7 @@
 #' 
 #' It should return a numeric vector. If any element of this vector is zero an 
 #' event is trigged.
-#' @field EventFunction (Optional) An R-function that specifies the event. 
+#' @field event (Optional) An R-function that specifies the event. 
 #' 
 #' It must be defined as: function(t, st, ct, par, inp, sw, aux). 
 #' Where \code{t} is the current time point in the integration, \code{st} is 
@@ -129,7 +129,7 @@
 #' current time step. 
 #' 
 #' It should return the state-values (some of which modified), as a vector with 
-#' the variables in the right order. If no \code{EventFunction} is defined, when 
+#' the variables in the right order. If no \code{event} is defined, when 
 #' a root is found the simulation stops.
 #' @field description A list with the model dafault scenario variables 
 #' descriptions. 
@@ -144,7 +144,7 @@
 #' @section Public Methods Definition:  
 #' \describe{
 #' \item{\code{$initialize(id, description, DifferentialEquations, 
-#' initVars, postProcess, trigger, EventFunction, aux, 
+#' initVars, postProcess, trigger, event, aux, 
 #' defaultScenario, globalFunctions)}}{
 #' Class constructor. Sets the model definition fields.
 #' 
@@ -262,7 +262,7 @@ sdOdeModelClass <- R6::R6Class(
                           initVars,
                           postProcess, 
                           trigger,
-                          EventFunction,
+                          event,
                           globalFunctions) { 
       funDefaultArgs <- c("t", "st", "ct", "par", "inp", "sw", "aux")
       
@@ -349,10 +349,10 @@ sdOdeModelClass <- R6::R6Class(
           sdOdeModelMsg$initialize4(id)
       }
       
-      if (!missing(EventFunction) && !is.null(EventFunction)) { 
-        if (is.function(EventFunction) && 
-            all(funDefaultArgs %in% names(formals(EventFunction))))
-          private$pEventFunction <- EventFunction
+      if (!missing(event) && !is.null(event)) { 
+        if (is.function(event) && 
+            all(funDefaultArgs %in% names(formals(event))))
+          private$pEvent <- event
         else
           sdOdeModelMsg$initialize5(id)
       }
@@ -399,8 +399,8 @@ sdOdeModelClass <- R6::R6Class(
         environment(private[["pPostProcessVars"]]) <- modelEnvironment
       if (is.function(private[["pTrigger"]]))
         environment(private[["pTrigger"]]) <- modelEnvironment
-      if (is.function(private[["pEventFunction"]]))
-        environment(private[["pEventFunction"]]) <- modelEnvironment
+      if (is.function(private[["pEvent"]]))
+        environment(private[["pEvent"]]) <- modelEnvironment
       
       # assign the global functions in the model functions environment
       if (!missing(globalFunctions) && !is.null(globalFunctions) && 
@@ -437,7 +437,7 @@ sdOdeModelClass <- R6::R6Class(
     print = function() { 
       # convert all the attributes to string 
       modelFuns <- list("initVars", "postProcess", 
-                        "trigger", "EventFunction")
+                        "trigger", "event")
       modelStr <- lapply(modelFuns, function(f) { 
         if (is.function(private[[paste0("p", f)]]))
           FunToString(private[[paste0("p", f)]])
@@ -696,7 +696,7 @@ sdOdeModelClass <- R6::R6Class(
                      initVars = FunToString(private$pInitVars),
                      postProcess = FunToString(private$pPostProcessVars),
                      trigger = trigger,
-                     EventFunction = FunToString(private$pEventFunction),
+                     event = FunToString(private$pEvent),
                      aux = private$paux,
                      globalFunctions = globalFunctions)
       ListToXML(rootsdModel, lModel)
@@ -733,8 +733,8 @@ sdOdeModelClass <- R6::R6Class(
     trigger = function() { 
       return(private$pTrigger)
     },
-    EventFunction = function() { 
-      return(private$pEventFunction)
+    event = function() { 
+      return(private$pEvent)
     },
     GlobalFunctions = function() { 
       return(private$pglobalFunctions)
@@ -752,7 +752,7 @@ sdOdeModelClass <- R6::R6Class(
     pInitVars = NULL,
     pPostProcessVars = NULL,
     pTrigger = NULL,
-    pEventFunction = NULL,
+    pEvent = NULL,
     pglobalFunctions = list(),
     paux = list(),
     pModelEnvironment = NULL
