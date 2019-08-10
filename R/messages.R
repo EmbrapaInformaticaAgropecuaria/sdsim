@@ -242,8 +242,8 @@ sdCoupledModelMsg$sdBuildCoupledScenario2 <- function(scenComponent, modelId)
           "' could not be added.", call. = F)
 
 # sdCoupledModel("test", components = sdOdeModel("test"))
-sdCoupledModelMsg$addComponent0 <- function(pcoupledModelId, id)
-  warning("sdsim::addComponent - Coupled Model '", pcoupledModelId, 
+sdCoupledModelMsg$addComponent0 <- function(pCoupledModelId, id)
+  warning("sdsim::addComponent - Coupled Model '", pCoupledModelId, 
           "' adding component: The component '", (id), 
           "' identification is equal to the coupled model ID. ",
           "Component skipped, refactor its ID and try to add it again.", 
@@ -251,8 +251,8 @@ sdCoupledModelMsg$addComponent0 <- function(pcoupledModelId, id)
 
 # sdCoupledModel("teste", components = c(sdOdeModel("test"), 
 # sdStaticModel("test")))
-sdCoupledModelMsg$addComponent1 <- function(pcoupledModelId, id)
-  warning("sdsim::addComponent - Coupled Model '", pcoupledModelId, 
+sdCoupledModelMsg$addComponent1 <- function(pCoupledModelId, id)
+  warning("sdsim::addComponent - Coupled Model '", pCoupledModelId, 
           "' adding component: The component '", (id), 
           "' already exists in the coupled model. ",
           "It will be removed and overwritten.", call. = F)
@@ -276,8 +276,8 @@ sdCoupledModelMsg$addConnection1 <- paste0(
   "will be skipped.")
 
 # sdCoupledModel("test", connections = list(c(1,2,3,4,5)))
-sdCoupledModelMsg$addConnection2 <- function(pcoupledModelId, con)
-  warning("sdsim::addConnection - Coupled Model '", pcoupledModelId, 
+sdCoupledModelMsg$addConnection2 <- function(pCoupledModelId, con)
+  warning("sdsim::addConnection - Coupled Model '", pCoupledModelId, 
           "' adding connection: The 5th element of the connection vector must ",
           "include the prefix st$, aux$ or eq$, indicating a state variable, ",
           "an auxiliary or an algebraic equation connection, respectively. ",
@@ -286,8 +286,8 @@ sdCoupledModelMsg$addConnection2 <- function(pcoupledModelId, con)
 
 # sdCoupledModel("test", connections = list(c(1,2,3,4,"aux$5"), 
 #c(1,2,3,4,"aux$5")))
-sdCoupledModelMsg$addConnection3 <- function(pcoupledModelId, conid)
-  warning("sdsim::addConnection - Coupled Model '", pcoupledModelId, 
+sdCoupledModelMsg$addConnection3 <- function(pCoupledModelId, conid)
+  warning("sdsim::addConnection - Coupled Model '", pCoupledModelId, 
           "' adding connection: The connection '", (conid), 
           "' already exists in the coupled model. It will be overwritten.", 
           call. = F)
@@ -299,13 +299,13 @@ sdCoupledModelMsg$removeConnection <- paste0(
   "thus can not be removed.")
 
 # sdCoupledModel("test")$verifyModel()
-sdCoupledModelMsg$verifyModel1 <- function(pcoupledModelId)
-  stop("sdsim::verifyModel - Coupled Model '", pcoupledModelId, 
+sdCoupledModelMsg$verifyModel1 <- function(pCoupledModelId)
+  stop("sdsim::verifyModel - Coupled Model '", pCoupledModelId, 
        "' verification error: Build the coupled model first using the method ",
        "'$buildCoupledModel'. Coupled model verification aborted.", call. = F)
 
-sdCoupledModelMsg$verifyModel2 <- function(pcoupledModelId, typeofscenario)
-  warning("sdsim::verifyModel - Coupled Model '", pcoupledModelId, 
+sdCoupledModelMsg$verifyModel2 <- function(pCoupledModelId, typeofscenario)
+  warning("sdsim::verifyModel - Coupled Model '", pCoupledModelId, 
           "' verification: The given scenario must be of type list containing ",
           "multiple sdScenario objects named with the respective component ID,",
           " or of type sdScenarioClass containing a single coupled ",
@@ -313,64 +313,64 @@ sdCoupledModelMsg$verifyModel2 <- function(pcoupledModelId, typeofscenario)
           "The given scenario of type '", typeofscenario, "' will not be used.", 
           call. = F)
 
-sdCoupledModelMsg$verifyModel3 <- function(pcoupledModelId)
-  warning("sdsim::verifyModel - Coupled Model '", pcoupledModelId,
+sdCoupledModelMsg$verifyModel3 <- function(pCoupledModelId)
+  warning("sdsim::verifyModel - Coupled Model '", pCoupledModelId,
           "' verification: No time sequence informed. Define the time ",
           "sequence in the default scenario and reset it. ",
           "Initial time equal 0 will be used instead.", call. = F)
 
-sdCoupledModelMsg$verifyModel4 <- function(pcoupledModelId, auxVar, e)
-  warning("sdsim::verifyModel - Coupled Model '", pcoupledModelId,
+sdCoupledModelMsg$verifyModel4 <- function(pCoupledModelId, auxVar, e)
+  warning("sdsim::verifyModel - Coupled Model '", pCoupledModelId,
           "' verification: Error evaluating the auxiliary equation ", 
           auxVar,". ", e, call. = F)
 
-sdCoupledModelMsg$verifyModel5 <- function(pcoupledModelId, aux, auxVar)
-  warning("sdsim::verifyModel - Coupled Model '", pcoupledModelId,
+sdCoupledModelMsg$verifyModel5 <- function(pCoupledModelId, aux, auxVar)
+  warning("sdsim::verifyModel - Coupled Model '", pCoupledModelId,
           "' verification: Evaluation of the auxiliary variable ", auxVar, 
           " may be incorrect. Value: ", utils::capture.output(aux[[auxVar]]),
           ".", call. = F)
 
-sdCoupledModelMsg$verifyModel6 <- function(pcoupledModelId, modelId, e)
-  warning("sdsim::verifyModel - Coupled Model '", pcoupledModelId, 
+sdCoupledModelMsg$verifyModel6 <- function(pCoupledModelId, modelId, e)
+  warning("sdsim::verifyModel - Coupled Model '", pCoupledModelId, 
           "' component '", modelId, 
           "' verification: Error running the DifferentialEquations. ", 
           e, call. = F)
 
-sdCoupledModelMsg$verifyModel7 <- function(pcoupledModelId, modelId, 
+sdCoupledModelMsg$verifyModel7 <- function(pCoupledModelId, modelId, 
                                            namex, x, valuex)
-  warning("sdsim::verifyModel - Coupled Model '", pcoupledModelId, 
+  warning("sdsim::verifyModel - Coupled Model '", pCoupledModelId, 
           "' component '", modelId, "' verification: variable $", namex, 
           " from the '", x, "' list in the $componentsEquations may be ",
           "incorrect. It has '", valuex,"' value.", call. = F)
 
-sdCoupledModelMsg$verifyModel8 <- function(pcoupledModelId, modelId, x, valuex)
-  warning("sdsim::verifyModel - Coupled Model '", pcoupledModelId, 
+sdCoupledModelMsg$verifyModel8 <- function(pCoupledModelId, modelId, x, valuex)
+  warning("sdsim::verifyModel - Coupled Model '", pCoupledModelId, 
           "' component '", modelId, "' verification: variable $", x, 
           " in the $componentsEquations may be incorrect. It has '", valuex,
           "' value.", call. = F)  
 
-sdCoupledModelMsg$verifyModel9 <- function(pcoupledModelId, typeofdres)
-  warning("sdsim::verifyModel - Coupled Model '", pcoupledModelId, 
+sdCoupledModelMsg$verifyModel9 <- function(pCoupledModelId, typeofdres)
+  warning("sdsim::verifyModel - Coupled Model '", pCoupledModelId, 
           "' verification: the first element of the coupled model ",
           "definition return value should be a numeric vector ",
           "containg the state variables derivatives. ",
           "Wrong derivative return type: '", typeofdres, "'.", call. = F)
 
-sdCoupledModelMsg$verifyModel10 <- function(pcoupledModelId, dRes, lenst)
-  warning("sdsim::verifyModel - Coupled Model '", pcoupledModelId, 
+sdCoupledModelMsg$verifyModel10 <- function(pCoupledModelId, dRes, lenst)
+  warning("sdsim::verifyModel - Coupled Model '", pCoupledModelId, 
           "' verification: the number of derivatives returned by ", 
           " $componentsEquations (", length(dRes), " - ", 
           paste0(names(dRes), collapse = ', '), 
           ") must equal the length of the initial conditions vector (", 
           lenst, ").", call. = F)
 
-sdCoupledModelMsg$verifyModel11 <- function(pcoupledModelId, typeofdres)
-  warning("sdsim::verifyModel - Coupled Model '", pcoupledModelId, 
+sdCoupledModelMsg$verifyModel11 <- function(pCoupledModelId, typeofdres)
+  warning("sdsim::verifyModel - Coupled Model '", pCoupledModelId, 
           "' verification: the coupled model definition function should ",
           "return a list. Wrong return type: '", typeofdres,"'.", call. = F)
 
-sdCoupledModelMsg$verifyModel12 <- function(pcoupledModelId)
-  message("sdsim::verifyModel - Coupled Model '", pcoupledModelId, 
+sdCoupledModelMsg$verifyModel12 <- function(pCoupledModelId)
+  message("sdsim::verifyModel - Coupled Model '", pCoupledModelId, 
           "' Ordinary Differential Equations verified.")
 
 sdCoupledModelMsg$buildCoupledModel0 <- paste0(
@@ -382,23 +382,23 @@ sdCoupledModelMsg$buildCoupledModel1 <- paste0(
   "sdsim::buildCoupledModel - Coupled Model '%s' build error: no component was", 
   " added. Add a component before building the coupled model.")
 
-sdCoupledModelMsg$buildCoupledModel2 <- function(pcoupledModelId, m, id)
-  warning("sdsim::buildCoupledModel - Coupled Model '", pcoupledModelId, 
+sdCoupledModelMsg$buildCoupledModel2 <- function(pCoupledModelId, m, id)
+  warning("sdsim::buildCoupledModel - Coupled Model '", pCoupledModelId, 
           "' Error building the connection vectors: The model '", 
           m, "' is not present in the coupled components. Refactor the ",
           "connection to make it valid. Connection '", id, "' skipped.", 
           call. = F)
 
-sdCoupledModelMsg$buildCoupledModel3 <- function(pcoupledModelId, vartype,
+sdCoupledModelMsg$buildCoupledModel3 <- function(pCoupledModelId, vartype,
                                                  var, m, id)
-  warning("sdsim::buildCoupledModel - Coupled Model '", pcoupledModelId, 
+  warning("sdsim::buildCoupledModel - Coupled Model '", pCoupledModelId, 
           "' Error Building the connection vectors: The ", vartype, " ", 
           var, " from the model '", m, "' do not exist. Refactor ",
           "the connection to make it valid. Connection '", id, 
           "' skipped.", call. = F)
 
-sdCoupledModelMsg$buildCoupledModel4 <- function(pcoupledModelId, m, id)
-  warning("sdsim::buildCoupledModel - Coupled Model '", pcoupledModelId, 
+sdCoupledModelMsg$buildCoupledModel4 <- function(pCoupledModelId, m, id)
+  warning("sdsim::buildCoupledModel - Coupled Model '", pCoupledModelId, 
           "' Error Building the connection vectors: The ",
           "connected output can only come from the auxiliary ", 
           " equations list (aux$<varName>), from the state ",
@@ -407,9 +407,9 @@ sdCoupledModelMsg$buildCoupledModel4 <- function(pcoupledModelId, m, id)
           "'. Refactor the connection to make it valid. Connection '", id, 
           "' skipped.", call. = F)
 
-sdCoupledModelMsg$buildCoupledModel5 <- function(pcoupledModelId, in1, u1, m1,
+sdCoupledModelMsg$buildCoupledModel5 <- function(pCoupledModelId, in1, u1, m1,
                                                  out2, u2, m2, id)
-  warning("sdsim::buildCoupledModel - Coupled Model '", pcoupledModelId, 
+  warning("sdsim::buildCoupledModel - Coupled Model '", pCoupledModelId, 
           "' warning building the connection vectors - The input '",
           in1, "' unit '",  u1, "' from the model '", m1,
           "' is different from the output '", out2[[1]], "' '", 
@@ -417,9 +417,9 @@ sdCoupledModelMsg$buildCoupledModel5 <- function(pcoupledModelId, in1, u1, m1,
           "' from the model '", m2,"'. Refactor the connection '", id, 
           "' if this is not wanted.", call. = F)
 
-sdCoupledModelMsg$buildCoupledModel6 <- function(pcoupledModelId, m1, in1,
+sdCoupledModelMsg$buildCoupledModel6 <- function(pCoupledModelId, m1, in1,
                                                  vartype)
-  warning("sdsim::buildCoupledModel - Coupled Model '", pcoupledModelId, 
+  warning("sdsim::buildCoupledModel - Coupled Model '", pCoupledModelId, 
           "' build error: The input '", paste0(m1, ".", in1), 
           "' is connected to more then one ", vartype, 
           ". This input will only receive the last connection. Refactor the ",
@@ -427,24 +427,24 @@ sdCoupledModelMsg$buildCoupledModel6 <- function(pcoupledModelId, m1, in1,
           call. = F)
 
 #sdCoupledModel("test")$defaultScenario
-sdCoupledModelMsg$defaultScenario <- function(pcoupledModelId)
-  warning("sdsim::defaultScenario - Coupled Model '", pcoupledModelId, 
+sdCoupledModelMsg$defaultScenario <- function(pCoupledModelId)
+  warning("sdsim::defaultScenario - Coupled Model '", pCoupledModelId, 
           "' get default scenario: The default coupled scenario must be built ",
           "to retrieve it. Build it first with the method $buildCoupledModel ",
           "(see help('sdCoupledModelClass')).", call. = F)
 
 # sdCoupledModel("test")$stConnections
 # sdCoupledModel("test")$eqConnections
-sdCoupledModelMsg$connectionsList <- function(pcoupledModelId, vartype)
-  warning("sdsim::connectionsList - Coupled Model '", pcoupledModelId, "' ", 
+sdCoupledModelMsg$connectionsList <- function(pCoupledModelId, vartype)
+  warning("sdsim::connectionsList - Coupled Model '", pCoupledModelId, "' ", 
           vartype, " connection list: The default coupled scenario must be ", 
           "built to retrieve the connections. Build it first with the ", 
           "method $buildCoupledModel(see help('sdCoupledModelClass')).", 
           call. = F)
 
 # sdCoupledModel("test")$indexComponents
-sdCoupledModelMsg$indexComponents <- function(pcoupledModelId)
-  warning("sdsim::indexComponents - Coupled Model '", pcoupledModelId,
+sdCoupledModelMsg$indexComponents <- function(pCoupledModelId)
+  warning("sdsim::indexComponents - Coupled Model '", pCoupledModelId,
           "' components index list: The default coupled scenario must be ", 
           "built to retrieve the index list. Build it first with the ", 
           "method $buildCoupledModel (see help('sdCoupledModelClass')).", 
@@ -492,7 +492,7 @@ sdOdeModelMsg$initialize3 <- function(modelId)
 
 sdOdeModelMsg$initialize4 <- function(modelId)
   warning("sdsim::initialize - Model '", modelId, "' initialization: ",
-          "The RootSpecification structure does not match specification. It ", 
+          "The trigger structure does not match specification. It ", 
           "must be a data.frame, a numeric vector or a function, ", 
           "see help('sdOdeModel'). If it is a character or list of ",
           "characters all the elements will be evaluated or ",
@@ -500,7 +500,7 @@ sdOdeModelMsg$initialize4 <- function(modelId)
 
 sdOdeModelMsg$initialize5 <- function(modelId)
   warning("sdsim::initialize - Model '", modelId, "' initialization: ",
-          "The EventFunction structure does not match the ", 
+          "The event structure does not match the ", 
           "help('sdOdeModel') specification. Replacement aborted.", call. = F)
 
 sdOdeModelMsg$initialize6 <- function(modelId, e)

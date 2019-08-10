@@ -94,13 +94,13 @@
 #' The return value of \code{postProcess} will be stored in the postProcess
 #' field of the \code{\link{sdOutput}} simulation output object and can be 
 #' anything that suits the user needs.
-#' @field RootSpecification (Optional) A numeric vector containing the times to 
-#' trigger the \code{EventFunction}, or a data.frame as specified in the 
+#' @field trigger (Optional) A numeric vector containing the times to 
+#' trigger the \code{event}, or a data.frame as specified in the 
 #' \code{\link[deSolve]{events}} documentation, or an R-function that becomes 
 #' zero when a root occur. 
 #' 
 #' When a root is found, the simulation triggers an event by calling 
-#' the \code{EventFunction}. If no \code{EventFunction} is defined, when a root 
+#' the \code{event}. If no \code{event} is defined, when a root 
 #' is found the simulation stops. 
 #' 
 #' When specified as a function it must be defined as: function(t, st, ct, par, 
@@ -116,7 +116,7 @@
 #' 
 #' It should return a numeric vector. If any element of this vector is zero an 
 #' event is trigged.
-#' @field EventFunction (Optional) An R-function that specifies the event. 
+#' @field event (Optional) An R-function that specifies the event. 
 #' 
 #' It must be defined as: function(t, st, ct, par, inp, sw, aux). 
 #' Where \code{t} is the current time point in the integration, \code{st} is 
@@ -129,7 +129,7 @@
 #' current time step. 
 #' 
 #' It should return the state-values (some of which modified), as a vector with 
-#' the variables in the right order. If no \code{EventFunction} is defined, when 
+#' the variables in the right order. If no \code{event} is defined, when 
 #' a root is found the simulation stops.
 #' @field description A list with the model dafault scenario variables 
 #' descriptions. 
@@ -144,7 +144,7 @@
 #' @section Public Methods Definition:  
 #' \describe{
 #' \item{\code{$initialize(id, description, DifferentialEquations, 
-#' initVars, postProcess, RootSpecification, EventFunction, aux, 
+#' initVars, postProcess, trigger, event, aux, 
 #' defaultScenario, globalFunctions)}}{
 #' Class constructor. Sets the model definition fields.
 #' 
@@ -261,8 +261,8 @@ sdOdeModelClass <- R6::R6Class(
                           DifferentialEquations, 
                           initVars,
                           postProcess, 
-                          RootSpecification,
-                          EventFunction,
+                          trigger,
+                          event,
                           globalFunctions) { 
       funDefaultArgs <- c("t", "st", "ct", "par", "inp", "sw", "aux")
       
@@ -321,38 +321,38 @@ sdOdeModelClass <- R6::R6Class(
           sdOdeModelMsg$initialize3(id)
       }
       
-      if (!missing(RootSpecification) && !is.null(RootSpecification)) { 
-        # convert the RootSpecification to df or a vector
-        if (is.vector(RootSpecification) && is.character(RootSpecification[[1]]) 
-            &&  length(RootSpecification) == 4)
-          RootSpecification <- as.data.frame(lapply(RootSpecification, 
+      if (!missing(trigger) && !is.null(trigger)) { 
+        # convert the trigger to df or a vector
+        if (is.vector(trigger) && is.character(trigger[[1]]) 
+            &&  length(trigger) == 4)
+          trigger <- as.data.frame(lapply(trigger, 
                                                     StringToFun))
-        else if (is.character(RootSpecification))
-          RootSpecification <- StringToFun(RootSpecification)
+        else if (is.character(trigger))
+          trigger <- StringToFun(trigger)
         
         # convert df elements type to avoid errors
-        if (is.data.frame(RootSpecification)) { 
-          RootSpecification$var <- as.character(RootSpecification$var)
-          RootSpecification$method <- lapply(
-            as.character(RootSpecification$method), type.convert, as.is = TRUE)
-          RootSpecification$time <- as.numeric(RootSpecification$time)
-          RootSpecification$value <- as.numeric(RootSpecification$value)
+        if (is.data.frame(trigger)) { 
+          trigger$var <- as.character(trigger$var)
+          trigger$method <- lapply(
+            as.character(trigger$method), type.convert, as.is = TRUE)
+          trigger$time <- as.numeric(trigger$time)
+          trigger$value <- as.numeric(trigger$value)
         }
         
         # check if the type is valid before definition
-        if (is.data.frame(RootSpecification) || is.numeric(RootSpecification) 
-            || (is.function(RootSpecification) && 
-                all(funDefaultArgs %in% names(formals(RootSpecification)))) || 
-            is.null(RootSpecification))
-          private$pRootSpecification <- RootSpecification
+        if (is.data.frame(trigger) || is.numeric(trigger) 
+            || (is.function(trigger) && 
+                all(funDefaultArgs %in% names(formals(trigger)))) || 
+            is.null(trigger))
+          private$pTrigger <- trigger
         else
           sdOdeModelMsg$initialize4(id)
       }
       
-      if (!missing(EventFunction) && !is.null(EventFunction)) { 
-        if (is.function(EventFunction) && 
-            all(funDefaultArgs %in% names(formals(EventFunction))))
-          private$pEventFunction <- EventFunction
+      if (!missing(event) && !is.null(event)) { 
+        if (is.function(event) && 
+            all(funDefaultArgs %in% names(formals(event))))
+          private$pEvent <- event
         else
           sdOdeModelMsg$initialize5(id)
       }
@@ -388,7 +388,7 @@ sdOdeModelClass <- R6::R6Class(
           aux <- aux[!(names(aux) %in% sdsimReserved)]
         }
         
-        private$paux <- aux
+        private$pAux <- aux
       }
       
       # if (is.function(private[["pDifferentialEquations"]]))
@@ -397,10 +397,10 @@ sdOdeModelClass <- R6::R6Class(
         environment(private[["pInitVars"]]) <- modelEnvironment
       if (is.function(private[["pPostProcessVars"]]))
         environment(private[["pPostProcessVars"]]) <- modelEnvironment
-      if (is.function(private[["pRootSpecification"]]))
-        environment(private[["pRootSpecification"]]) <- modelEnvironment
-      if (is.function(private[["pEventFunction"]]))
-        environment(private[["pEventFunction"]]) <- modelEnvironment
+      if (is.function(private[["pTrigger"]]))
+        environment(private[["pTrigger"]]) <- modelEnvironment
+      if (is.function(private[["pEvent"]]))
+        environment(private[["pEvent"]]) <- modelEnvironment
       
       # assign the global functions in the model functions environment
       if (!missing(globalFunctions) && !is.null(globalFunctions) && 
@@ -422,7 +422,7 @@ sdOdeModelClass <- R6::R6Class(
           if (length(remGlobalFun) > 0)
             globalFunctions <- globalFunctions[-remGlobalFun]
           
-          private$pglobalFunctions <- globalFunctions
+          private$pGlobalFunctions <- globalFunctions
         } else {
           sdOdeModelMsg$initialize9(id)
         }
@@ -437,7 +437,7 @@ sdOdeModelClass <- R6::R6Class(
     print = function() { 
       # convert all the attributes to string 
       modelFuns <- list("initVars", "postProcess", 
-                        "RootSpecification", "EventFunction")
+                        "trigger", "event")
       modelStr <- lapply(modelFuns, function(f) { 
         if (is.function(private[[paste0("p", f)]]))
           FunToString(private[[paste0("p", f)]])
@@ -446,8 +446,8 @@ sdOdeModelClass <- R6::R6Class(
       })
       
       names(modelStr) <- unlist(modelFuns)
-      modelStr$aux <- lapply(private$paux, toString)
-      modelStr$globalFunctions <- private$pglobalFunctions
+      modelStr$aux <- lapply(private$pAux, toString)
+      modelStr$globalFunctions <- private$pGlobalFunctions
       
       # print the attributes
       cat("<",class(self)[[1]],">\n", sep = "")
@@ -531,7 +531,7 @@ sdOdeModelClass <- R6::R6Class(
       sw <- defaultScenario$switch
       times <- defaultScenario$times
       
-      aux <- private$paux
+      aux <- private$pAux
       
       if (!is.null(times) && length(unlist(times)) > 0) {
         t <- times[[1]]
@@ -665,25 +665,25 @@ sdOdeModelClass <- R6::R6Class(
       doc = XML::newXMLDoc()
       rootsdModel <- XML::newXMLNode(class(self)[[1]], doc = doc)
       
-      if (is.function(private$pRootSpecification))
-        RootSpecification <- FunToString(private$pRootSpecification)
-      else if (is.data.frame(private$pRootSpecification))
-        RootSpecification <- 
+      if (is.function(private$pTrigger))
+        trigger <- FunToString(private$pTrigger)
+      else if (is.data.frame(private$pTrigger))
+        trigger <- 
         paste0("data.frame(var = ", 
-               VectorToCharDef(private$pRootSpecification$var, quote = TRUE), 
+               VectorToCharDef(private$pTrigger$var, quote = TRUE), 
                ", time = ", 
-               VectorToCharDef(private$pRootSpecification$time), 
+               VectorToCharDef(private$pTrigger$time), 
                ", value = ", 
-               VectorToCharDef(private$pRootSpecification$value), 
+               VectorToCharDef(private$pTrigger$value), 
                ", method = ", 
-               VectorToCharDef(private$pRootSpecification$method, quote = TRUE), 
+               VectorToCharDef(private$pTrigger$method, quote = TRUE), 
                ")")
-      else if (is.numeric(private$pRootSpecification))
-        RootSpecification <- VectorToCharDef(private$pRootSpecification)
+      else if (is.numeric(private$pTrigger))
+        trigger <- VectorToCharDef(private$pTrigger)
       else
-        RootSpecification <- NULL
+        trigger <- NULL
       
-      globalFunctions <- lapply(private$pglobalFunctions, function(x) { 
+      globalFunctions <- lapply(private$pGlobalFunctions, function(x) { 
         if (is.function(x))
           return(FunToString(x))
         else
@@ -695,9 +695,9 @@ sdOdeModelClass <- R6::R6Class(
                      DifferentialEquations = FunToString(private$pDifferentialEquations),
                      initVars = FunToString(private$pInitVars),
                      postProcess = FunToString(private$pPostProcessVars),
-                     RootSpecification = RootSpecification,
-                     EventFunction = FunToString(private$pEventFunction),
-                     aux = private$paux,
+                     trigger = trigger,
+                     event = FunToString(private$pEvent),
+                     aux = private$pAux,
                      globalFunctions = globalFunctions)
       ListToXML(rootsdModel, lModel)
       
@@ -730,17 +730,17 @@ sdOdeModelClass <- R6::R6Class(
     postProcess = function() { 
       return(private$pPostProcessVars)
     },
-    RootSpecification = function() { 
-      return(private$pRootSpecification)
+    trigger = function() { 
+      return(private$pTrigger)
     },
-    EventFunction = function() { 
-      return(private$pEventFunction)
+    event = function() { 
+      return(private$pEvent)
     },
-    GlobalFunctions = function() { 
-      return(private$pglobalFunctions)
+    globalFunctions = function() { 
+      return(private$pGlobalFunctions)
     },
     aux = function() { 
-      return(private$paux)
+      return(private$pAux)
     },
     modelEnvironment = function() { 
       return(private$pModelEnvironment)
@@ -751,10 +751,10 @@ sdOdeModelClass <- R6::R6Class(
     pDifferentialEquations = NULL,
     pInitVars = NULL,
     pPostProcessVars = NULL,
-    pRootSpecification = NULL,
-    pEventFunction = NULL,
-    pglobalFunctions = list(),
-    paux = list(),
+    pTrigger = NULL,
+    pEvent = NULL,
+    pGlobalFunctions = list(),
+    pAux = list(),
     pModelEnvironment = NULL
   )
 )

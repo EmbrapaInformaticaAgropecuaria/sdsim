@@ -394,8 +394,8 @@ runOdeSimulation <- function(model,
   # Get model functions
   initVars <- model$initVars
   postProcess <- model$postProcess
-  RootSpecification <- model$RootSpecification
-  EventFunction <- model$EventFunction
+  trigger <- model$trigger
+  event <- model$event
   auxiliary <- model$aux
   
   # get the simulation scenario
@@ -490,10 +490,10 @@ runOdeSimulation <- function(model,
                    storeAuxTrajectory = storeAuxTrajectory)
   
   # Run simulation without root function, data frame or times vector
-  if (!events || is.null(RootSpecification) ||
-      (!is.function(RootSpecification) &&
-       !is.data.frame(RootSpecification) && 
-       !is.numeric(RootSpecification))) { 
+  if (!events || is.null(trigger) ||
+      (!is.function(trigger) &&
+       !is.data.frame(trigger) && 
+       !is.numeric(trigger))) { 
     # Run simulation without support to events
     outTrajectory <- deSolve::ode(
       y = unlist(state),
@@ -503,7 +503,7 @@ runOdeSimulation <- function(model,
       method = method
     )
   } else { # Run simulation with support to events
-    if (is.function(RootSpecification)) { 
+    if (is.function(trigger)) { 
       # check if the method support events
       if (!identical(method, deSolve::radau) &&
           !identical(method, deSolve::lsoda) &&
@@ -514,15 +514,15 @@ runOdeSimulation <- function(model,
         method <- "lsoda"
       }
       
-      RootSpecificationEval <-
-        CreateFuncEval(func = RootSpecification, ct = ct, par = par, 
+      triggerEval <-
+        CreateFuncEval(func = trigger, ct = ct, par = par, 
                        inp = inp, sw = sw, auxiliary = auxiliary, 
                        lastEvalTime = (times$from - 1))
       
-      if (is.function(EventFunction)) { 
+      if (is.function(event)) { 
         
         # EVENTS func triggered by a root function
-        EventFunctionEval <- CreateFuncEval(EventFunction,
+        eventEval <- CreateFuncEval(event,
                                             ct, par, inp, sw, 
                                             auxiliary = auxiliary,
                                             lastEvalTime = (times$from - 1),
@@ -533,9 +533,9 @@ runOdeSimulation <- function(model,
           times = seq(times$from, times$to, times$by),
           func = DifferentialEquationsEval,
           parms = NULL,
-          rootfunc = RootSpecificationEval,
+          rootfunc = triggerEval,
           events = list(
-            func = EventFunctionEval, # TODO: da pra passar isso como nulo p/ evitar chamar o ode 2x?
+            func = eventEval, # TODO: da pra passar isso como nulo p/ evitar chamar o ode 2x?
             root = T,
             maxroots = maxroots,
             terminalroot = terminalroot),
@@ -548,7 +548,7 @@ runOdeSimulation <- function(model,
           times = seq(times$from, times$to, times$by),
           func = DifferentialEquationsEval,
           parms = NULL,
-          rootfunc = RootSpecificationEval,
+          rootfunc = triggerEval,
           events = list(
             root = T,
             maxroots = maxroots,
@@ -557,8 +557,8 @@ runOdeSimulation <- function(model,
           method = method
         )
       }
-    } else if (is.numeric(RootSpecification) &&
-               is.function(EventFunction)) { 
+    } else if (is.numeric(trigger) &&
+               is.function(event)) { 
       # check if the method support events
       if (!identical(method, deSolve::radau) &&
           !identical(method, deSolve::lsoda) &&
@@ -568,9 +568,9 @@ runOdeSimulation <- function(model,
         sdSimulatorMsg$sdSimulateAtomic3(model$id)
         method <- "lsoda"
       }
-      # events in a function with the triggers times in RootSpecification
-      EventFunctionEval <-
-        CreateFuncEval(EventFunction,
+      # events in a function with the triggers times in trigger
+      eventEval <-
+        CreateFuncEval(event,
                        ct,
                        par,
                        inp,
@@ -584,10 +584,10 @@ runOdeSimulation <- function(model,
         times = seq(times$from, times$to, times$by),
         func = DifferentialEquationsEval,
         parms = NULL,
-        events = list(func = EventFunctionEval,
-                      time = RootSpecification),
+        events = list(func = eventEval,
+                      time = trigger),
         method = method)
-    } else if (is.data.frame(RootSpecification)) { 
+    } else if (is.data.frame(trigger)) { 
       # check if the method support events
       if (!identical(method, deSolve::radau) &&
           !identical(method, deSolve::lsoda) &&
@@ -602,7 +602,7 @@ runOdeSimulation <- function(model,
         times = seq(times$from, times$to, times$by),
         func = DifferentialEquationsEval,
         parms = NULL,
-        events = list(data = RootSpecification,
+        events = list(data = trigger,
                       ties = ties),
         method = method)
     } else { # run without events / maybe no event func for the time vector
@@ -684,7 +684,7 @@ runStaticSimulation <- function(model,
   # Get model attributes
   equations <- model$algebraicEquations
   initVars <- model$initVars
-  globalfuns <- model$GlobalFunctions
+  globalfuns <- model$globalFunctions
   
   # stop if model is empty
   if (length(equations) == 0)
@@ -854,9 +854,9 @@ runCoupledSimulation <- function(model,
   componentsEquations <- model$componentsEquations
   componentsInitVars <- model$componentsInitVars
   componentsPostProcessVars <- model$componentsPostProcessVars
-  componentsRootSpecification <-
-    model$componentsRootSpecification
-  componentsEventFunction <- model$componentsEventFunction
+  componentsTrigger <-
+    model$componentsTrigger
+  componentsEvent <- model$componentsEvent
   aux <- model$componentsAux
   componentsId <- model$componentsId
   
@@ -1048,8 +1048,8 @@ runCoupledSimulation <- function(model,
                  by = times$by)
     
     # Run simulation without root function
-    if (!events || is.null(componentsRootSpecification) ||
-        length(componentsRootSpecification) == 0) { 
+    if (!events || is.null(componentsTrigger) ||
+        length(componentsTrigger) == 0) { 
       outTrajectory <- deSolve::ode(
         y = unlist(st),
         times = times,
@@ -1072,9 +1072,9 @@ runCoupledSimulation <- function(model,
       environment(createCoupledRootEventFunc) <-  environment(
         createCoupledFuncEval)
       RootEventFuncsEval <- createCoupledRootEventFunc(
-        componentsId = names(componentsRootSpecification),
-        rootFuncs = componentsRootSpecification,
-        eventFuncs = componentsEventFunction,
+        componentsId = names(componentsTrigger),
+        rootFuncs = componentsTrigger,
+        eventFuncs = componentsEvent,
         conSt = conSt,
         conStInps = conStInps,
         conAux = conAux,
@@ -1087,8 +1087,8 @@ runCoupledSimulation <- function(model,
         auxiliary = aux)
       
       # Run simulation without event, stop in 1st root
-      if (is.null(componentsEventFunction) ||
-          length(componentsEventFunction) == 0) { 
+      if (is.null(componentsEvent) ||
+          length(componentsEvent) == 0) { 
         outTrajectory <- deSolve::ode(
           y = unlist(st),
           times = times,

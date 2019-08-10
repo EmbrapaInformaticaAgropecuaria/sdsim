@@ -228,7 +228,7 @@ sdStaticModelClass <- R6::R6Class(
           if (length(remGlobalFun) > 0)
             globalFunctions <- globalFunctions[-remGlobalFun]
           
-          private$pglobalFunctions <- globalFunctions
+          private$pGlobalFunctions <- globalFunctions
         } else {
           sdStaticModelMsg$initialize5(id)
         }
@@ -244,7 +244,7 @@ sdStaticModelClass <- R6::R6Class(
       modelStr <- list()
       modelStr$algebraicEquations <- lapply(private$pAlgebraicEquations, toString)
       modelStr$initVars <- FunToString(private$pInitVars)
-      modelStr$globalFunctions <- private$pglobalFunctions
+      modelStr$globalFunctions <- private$pGlobalFunctions
       
       # print the attributes
       cat("<",class(self)[[1]],">\n", sep = "")
@@ -358,7 +358,7 @@ sdStaticModelClass <- R6::R6Class(
       doc = XML::newXMLDoc()
       rootsdModel <- XML::newXMLNode(class(self)[[1]], doc = doc)
       
-      globalFunctions <- lapply(private$pglobalFunctions, function(x) { 
+      globalFunctions <- lapply(private$pGlobalFunctions, function(x) { 
         if (is.function(x))
           return(FunToString(x))
         else
@@ -415,8 +415,8 @@ sdStaticModelClass <- R6::R6Class(
     initVars = function() { 
       return(private$pInitVars)
     },
-    GlobalFunctions = function() { 
-      return(private$pglobalFunctions)
+    globalFunctions = function() { 
+      return(private$pGlobalFunctions)
     },
     algebraicEquations = function() { 
       return(private$pAlgebraicEquations)
@@ -426,7 +426,7 @@ sdStaticModelClass <- R6::R6Class(
     #@@ Class Private Atributes
     pstaticModelEnv = NULL,
     pInitVars = NULL,
-    pglobalFunctions = list(),
+    pGlobalFunctions = list(),
     pAlgebraicEquations = list(),
     flagVerify = FALSE
   )
