@@ -24,7 +24,7 @@ test_that("Not empty atomic model object", code = {
     sdOdeModel(
       id = "test",
       description = "test test",
-      modelDynamics = function(t, st, ct, par, inp, sw, aux) {
+      ode = function(t, st, ct, par, inp, sw, aux) {
         return(list(c(st$a*inp$pow)))
       },
       defaultScenario = scen),
@@ -46,7 +46,7 @@ test_that("Ode model with Global Funs", code = {
     sdOdeModel(
       id = "test",
       description = "test test",
-      modelDynamics = function(t, st, ct, par,
+      ode = function(t, st, ct, par,
                                        inp, sw, aux) {
         return(list(c(a(st$a)*inp$pow)))
       },
@@ -66,7 +66,7 @@ test_that("Ode model with Root Specification", code = {
     sdOdeModel(
       id = "vec root",
       description = "test test",
-      modelDynamics = function(t, st, ct, par,
+      ode = function(t, st, ct, par,
                                        inp, sw, aux) {
         return(list(c(st$a*inp$pow)))
       },

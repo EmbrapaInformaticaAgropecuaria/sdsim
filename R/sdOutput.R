@@ -30,7 +30,7 @@
 #' as many rows as elements in the time sequence and as many columns as 
 #' variables in the \code{state} list plus the number of auxiliary values 
 #' returned in the second and following elements of the return list from 
-#' \code{DifferentialEquations}, plus an additional column (the first) for the 
+#' \code{ode}, plus an additional column (the first) for the 
 #' time sequence values. There will be one row for each element in times unless 
 #' the integrator returns with an unrecoverable error. 
 #' If the \code{state} list and the auxiliary values have a names attribute, 

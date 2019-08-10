@@ -1,23 +1,23 @@
-sdDifferentialEquationsClass <- R6::R6Class(
+sdOdeClass <- R6::R6Class(
   
-  classname = "sdDifferentialEquations",
+  classname = "sdOde",
   
   public = list(
-    initialize = function(differentialEquations) { 
-      # verifications of argument 'differentialEquations'
+    initialize = function(ode) { 
+      # verifications of argument 'ode'
       
-      if(is.null(differentialEquations))
-        stop(sprintf(auxiliaryMsg$sdDifferentialEquationsClass2))
+      if(is.null(ode))
+        stop(sprintf(auxiliaryMsg$sdOdeClass2))
       
-      if(!is.list(differentialEquations))
-        stop(sprintf(auxiliaryMsg$sdDifferentialEquationsClass1))
+      if(!is.list(ode))
+        stop(sprintf(auxiliaryMsg$sdOdeClass1))
       
       
-      private$pDifferentialEquations <- differentialEquations
+      private$pOde <- ode
     },
     getOdeFunction = function(){
       
-      EqList <- private$pDifferentialEquations
+      EqList <- private$pOde
       
       #transform a list of equations in differential equations 
       
@@ -50,6 +50,6 @@ sdDifferentialEquationsClass <- R6::R6Class(
   active = list(),
   
   private = list(
-    pDifferentialEquations = NULL
+    pOde = NULL
   )
 )

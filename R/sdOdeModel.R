@@ -21,7 +21,7 @@
 #' variables initialized with default values that ensures the model simulation.
 #' @field aux (Optional) A list with the model auxiliary equations in strings or 
 #' R-expressions written in R-format to assist in the 
-#' \code{DifferentialEquations} computation.
+#' \code{ode} computation.
 #' 
 #' They have access to the following variables: (t, st, ct, par, inp, sw, aux). 
 #' Where \code{t} is 
@@ -39,11 +39,11 @@
 #' 
 #' See the function \code{\link{sdInitEquations}} to learn how this list is 
 #' generated.
-#' @field DifferentialEquations An R-function that computes the values of the 
+#' @field ode An R-function that computes the values of the 
 #' state variables derivatives in the ODE system (the model definition) at time 
 #' t.
 #' 
-#' It must be defined as: DifferentialEquations <- function(t, st, ct, par, inp, 
+#' It must be defined as: ode <- function(t, st, ct, par, inp, 
 #' sw, aux). 
 #' Where \code{t} is the current time point in the integration, \code{st} is 
 #' a list with the current estimate of the state variables in the ODE system, 
@@ -55,7 +55,7 @@
 #' current time step.
 #' 
 #' 
-#' The return value of \code{DifferentialEquations} must be a list, whose first 
+#' The return value of \code{ode} must be a list, whose first 
 #' element is a vector containing the derivatives of the state variables with 
 #' respect to time, and whose next elements are extra values that are 
 #' computed at each time step and will be included in the simulation output. The 
@@ -143,7 +143,7 @@
 #' model. They can be called using the list names.
 #' @section Public Methods Definition:  
 #' \describe{
-#' \item{\code{$initialize(id, description, DifferentialEquations, 
+#' \item{\code{$initialize(id, description, ode, 
 #' initVars, postProcess, trigger, event, aux, 
 #' defaultScenario, globalFunctions)}}{
 #' Class constructor. Sets the model definition fields.
@@ -229,7 +229,7 @@
 #' 
 #' # create the model object
 #' lv <- sdOdeModel(id = "Lotka-Volterra", defaultScenario = lvscen, 
-#'               DifferentialEquations = LVode,
+#'               ode = LVode,
 #'               aux = aux)
 #'               
 #' # validate the model ode
@@ -258,7 +258,7 @@ sdOdeModelClass <- R6::R6Class(
                           description,
                           defaultScenario,
                           aux,
-                          DifferentialEquations, 
+                          ode, 
                           initVars,
                           postProcess, 
                           trigger,
@@ -279,21 +279,21 @@ sdOdeModelClass <- R6::R6Class(
         self$id <- NULL
       id <- private$pid
       
-      if (!missing(DifferentialEquations) && !is.null(DifferentialEquations)) { 
+      if (!missing(ode) && !is.null(ode)) { 
         # TODO: do this verification in sdOde class
-        # if (is.function(DifferentialEquations) && 
-        #     all(funDefaultArgs %in% names(formals(DifferentialEquations))))
-        #   private$pDifferentialEquations <- DifferentialEquations
+        # if (is.function(ode) && 
+        #     all(funDefaultArgs %in% names(formals(ode))))
+        #   private$pOde <- ode
         # else
         #   sdOdeModelMsg$initialize1(id)
         
-        if(is.function(DifferentialEquations)) {
-          private$pDifferentialEquations <- 
-            sdFunctionOdeClass$new(DifferentialEquations)
-        } else if(inherits(DifferentialEquations, sdFunctionOdeClass$classname)) {
-          private$pDifferentialEquations <- DifferentialEquations
-        } else if(inherits(DifferentialEquations, sdFlowOdeClass$classname)) {
-          private$pDifferentialEquations <- DifferentialEquations
+        if(is.function(ode)) {
+          private$pOde <- 
+            sdFunctionOdeClass$new(ode)
+        } else if(inherits(ode, sdFunctionOdeClass$classname)) {
+          private$pOde <- ode
+        } else if(inherits(ode, sdFlowOdeClass$classname)) {
+          private$pOde <- ode
         } else {
           # TODO: add message; add equation list class
           stop(sprintf(""))
@@ -391,8 +391,8 @@ sdOdeModelClass <- R6::R6Class(
         private$pAux <- aux
       }
       
-      # if (is.function(private[["pDifferentialEquations"]]))
-      #   environment(private[["pDifferentialEquations"]]) <- modelEnvironment
+      # if (is.function(private[["pOde"]]))
+      #   environment(private[["pOde"]]) <- modelEnvironment
       if (is.function(private[["pInitVars"]]))
         environment(private[["pInitVars"]]) <- modelEnvironment
       if (is.function(private[["pPostProcessVars"]]))
@@ -461,18 +461,18 @@ sdOdeModelClass <- R6::R6Class(
         cat("\n")
       }
       
-      if (!is.null(private$pDifferentialEquations)) {
-        cat(indent("$DifferentialEquations", indent = 4), sep = "\n")
-        cat(indent(capture.output(private$pDifferentialEquations), indent = 4), sep = "\n")
+      if (!is.null(private$pOde)) {
+        cat(indent("$ode", indent = 4), sep = "\n")
+        cat(indent(capture.output(private$pOde), indent = 4), sep = "\n")
         cat("\n")
       }
       
       if (length(modelStr[["aux"]]) > 0)
         cat(indent(capture.output(modelStr["aux"]), indent = 4), sep = "\n")
       
-      # remove aux and DifferentialEquations replicate
+      # remove aux and ode replicate
       for (f in names(modelStr)[!(names(modelStr) %in% 
-                                  c("DifferentialEquations", "aux", 
+                                  c("ode", "aux", 
                                     "globalFunctions"))]) { 
         if (!is.null(modelStr[[f]])) { 
           cat(indent(paste0("$", f), indent = 4), sep = "\n")
@@ -491,7 +491,7 @@ sdOdeModelClass <- R6::R6Class(
       cat("\n")
     },
     verifyModel = function(scenario = NULL, verbose = F) { 
-      if (is.null(private$pDifferentialEquations))
+      if (is.null(private$pOde))
         stop(sprintf(sdOdeModelMsg$verifyModel0, private$pid), call. = FALSE)
       
       # get the simulation scenario
@@ -584,16 +584,16 @@ sdOdeModelClass <- R6::R6Class(
       }
       
       #### Model Definition Validation
-      DifferentialEquations <- private$pDifferentialEquations$getOdeFunction()
+      ode <- private$pOde$getOdeFunction()
       
       trace_env <- new.env()
       # call the model definition and also return the auxiliary values
       res <- tryCatch( { 
-        trace(DifferentialEquations,
+        trace(ode,
               exit = function() trace_env <<- parent.frame(), 
               print = F, where = environment())
         
-        DifferentialEquations(t = t, st = st, ct = ct, par = par, inp = inp, 
+        ode(t = t, st = st, ct = ct, par = par, inp = inp, 
                               sw = sw, aux = aux)
       },
       error = function(e) { 
@@ -692,7 +692,7 @@ sdOdeModelClass <- R6::R6Class(
       
       lModel <- list(id = private$pid     ,
                      description = private$pdescription,
-                     DifferentialEquations = FunToString(private$pDifferentialEquations),
+                     ode = FunToString(private$pOde),
                      initVars = FunToString(private$pInitVars),
                      postProcess = FunToString(private$pPostProcessVars),
                      trigger = trigger,
@@ -718,9 +718,9 @@ sdOdeModelClass <- R6::R6Class(
     }
   ),
   active = list(
-    DifferentialEquations = function() { 
-      if(!is.null(private$pDifferentialEquations))
-        return(private$pDifferentialEquations$getOdeFunction())
+    ode = function() { 
+      if(!is.null(private$pOde))
+        return(private$pOde$getOdeFunction())
       else
         return(NULL)
     },
@@ -748,7 +748,7 @@ sdOdeModelClass <- R6::R6Class(
   ),
   private = list(
     #@@ Class Private Atributes
-    pDifferentialEquations = NULL,
+    pOde = NULL,
     pInitVars = NULL,
     pPostProcessVars = NULL,
     pTrigger = NULL,

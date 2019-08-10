@@ -422,7 +422,7 @@ sdBuildCoupledScenario = function(id = NULL,
 #'     input = inpPrey,
 #'     description = descriptionsPrey),
 #'   aux = auxPrey,
-#'   DifferentialEquations = LVodePrey)
+#'   ode = LVodePrey)
 #' 
 #' # Consumer model variables and ode function
 #' stConsumer <- list(C = 2)
@@ -456,7 +456,7 @@ sdBuildCoupledScenario = function(id = NULL,
 #'     input = inpConsumer,
 #'     description = descriptionsConsumer),
 #'   aux = auxConsumer,
-#'   DifferentialEquations = LVodeConsumer)
+#'   ode = LVodeConsumer)
 #' 
 #' # Environment model variables and algebraic equations
 #' parEnv <- data.frame(Variable = c("K"),
@@ -608,7 +608,7 @@ sdCoupledModelClass <- R6::R6Class(
           private$pComponentsId <- c(private$pComponentsId, id)
           private$pComponents[[id]] <- model$clone(deep = TRUE)
           private$pComponentsClass[[id]] <- class(model)[[1]]
-          private$pComponentsEquations[[id]] <- model$DifferentialEquations
+          private$pComponentsEquations[[id]] <- model$ode
           private$pComponentsInitVars[[id]] <- model$initVars
           private$pComponentsPostProcess[[id]] <- model$postProcess
           
