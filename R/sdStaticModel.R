@@ -198,7 +198,7 @@ sdStaticModelClass <- R6::R6Class(
                                                      %in% sdsimReserved)]
         }
         
-        private$palgebraicEquations <- algebraicEquations
+        private$pAlgebraicEquations <- algebraicEquations
       }
       
       # Create new environment for model functions
@@ -242,7 +242,7 @@ sdStaticModelClass <- R6::R6Class(
     print = function() { 
       # convert all the attributes to string 
       modelStr <- list()
-      modelStr$algebraicEquations <- lapply(private$palgebraicEquations, toString)
+      modelStr$algebraicEquations <- lapply(private$pAlgebraicEquations, toString)
       modelStr$initVars <- FunToString(private$pInitVars)
       modelStr$globalFunctions <- private$pglobalFunctions
       
@@ -301,7 +301,7 @@ sdStaticModelClass <- R6::R6Class(
       sw <- defaultScenario$switch
       times <- defaultScenario$times
       
-      eq <- private$palgebraicEquations
+      eq <- private$pAlgebraicEquations
       
       if (!is.null(times) && length(unlist(times)) > 0) {
         t <- times[[1]]
@@ -368,7 +368,7 @@ sdStaticModelClass <- R6::R6Class(
       lModel <- list(id = private$pid      ,
                      description = private$pdescription,
                      initVars = FunToString(private$pInitVars),
-                     algebraicEquations = private$palgebraicEquations,
+                     algebraicEquations = private$pAlgebraicEquations,
                      globalFunctions = globalFunctions)
       invisible(ListToXML(rootsdModel, lModel))
       
@@ -419,7 +419,7 @@ sdStaticModelClass <- R6::R6Class(
       return(private$pglobalFunctions)
     },
     algebraicEquations = function() { 
-      return(private$palgebraicEquations)
+      return(private$pAlgebraicEquations)
     }
   ),
   private = list(
@@ -427,7 +427,7 @@ sdStaticModelClass <- R6::R6Class(
     pstaticModelEnv = NULL,
     pInitVars = NULL,
     pglobalFunctions = list(),
-    palgebraicEquations = list(),
+    pAlgebraicEquations = list(),
     flagVerify = FALSE
   )
 )
