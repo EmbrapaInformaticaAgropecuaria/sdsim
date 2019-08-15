@@ -187,7 +187,7 @@ sdOutputClass <- R6::R6Class(
         private[["pAuxTrajectory"]] <- auxTrajectory
       
       if (!missing(timeSeriesTrajectory))
-        private[["ptimeSeriesTrajectory"]] <- timeSeriesTrajectory
+        private[["pTimeSeriesTrajectory"]] <- timeSeriesTrajectory
       
       if (!missing(model))
         private[["pModel"]] <- model
@@ -240,9 +240,9 @@ sdOutputClass <- R6::R6Class(
         }
       }
       
-      if (!is.null(private[["ptimeSeriesTrajectory"]])) { 
+      if (!is.null(private[["pTimeSeriesTrajectory"]])) { 
         cat(indent("$Time Series Trajectories", indent = 4), sep = "\n")
-        cat(indent(paste(capture.output(tail(private[["ptimeSeriesTrajectory"]], 
+        cat(indent(paste(capture.output(tail(private[["pTimeSeriesTrajectory"]], 
                                              n = 10, 
                                              addrownums = FALSE)), 
                          collapse =  "\n"), indent = 4))
@@ -260,9 +260,9 @@ sdOutputClass <- R6::R6Class(
         print(summary(private[["pAuxTrajectory"]]))
       }
       
-      if (!is.null(private[["ptimeSeriesTrajectory"]])) { 
+      if (!is.null(private[["pTimeSeriesTrajectory"]])) { 
         sdOutputMsg$summary3()
-        print(summary(private[["ptimeSeriesTrajectory"]]))
+        print(summary(private[["pTimeSeriesTrajectory"]]))
       }
     },
     plot = function(..., xlab = NULL, ylab = NULL, main = NULL, 
@@ -312,8 +312,8 @@ sdOutputClass <- R6::R6Class(
             data <- merge(data, private[["pAuxTrajectory"]],
                           sort = FALSE, by.x = "time", by.y = "time")
           
-          if (!is.null(private[["ptimeSeriesTrajectory"]]))
-            data <- merge(data, private[["ptimeSeriesTrajectory"]],
+          if (!is.null(private[["pTimeSeriesTrajectory"]]))
+            data <- merge(data, private[["pTimeSeriesTrajectory"]],
                           sort = FALSE, by.x = "time", by.y = "time")
         }
       }
@@ -521,8 +521,8 @@ sdOutputClass <- R6::R6Class(
         write.csv(x = private$pAuxTrajectory, 
                   file = paste0(path, "/auxTrajectory.csv"), row.names = F)
       
-      if (!is.null(private$ptimeSeriesTrajectory))
-        write.csv(x = private$ptimeSeriesTrajectory, 
+      if (!is.null(private$pTimeSeriesTrajectory))
+        write.csv(x = private$pTimeSeriesTrajectory, 
                   file = paste0(path, "/timeSeriesTrajectory.csv"),
                   row.names = F)
       
@@ -560,9 +560,9 @@ sdOutputClass <- R6::R6Class(
       return(private[["pAuxTrajectory"]])
     },
     timeSeriesTrajectory = function() { 
-      if (length(private[["ptimeSeriesTrajectory"]]) == 0)
+      if (length(private[["pTimeSeriesTrajectory"]]) == 0)
         return(NULL)
-      return(private[["ptimeSeriesTrajectory"]])
+      return(private[["pTimeSeriesTrajectory"]])
     },
     postProcessOut = function() { 
       return(private[["pPostProcessOut"]])
@@ -580,7 +580,7 @@ sdOutputClass <- R6::R6Class(
     poutputId = NULL,
     pOutTrajectory = NULL,
     pAuxTrajectory = NULL,
-    ptimeSeriesTrajectory = NULL,
+    pTimeSeriesTrajectory = NULL,
     pPostProcessOut = NULL,
     pModel = NULL,
     pScenario = NULL,

@@ -555,7 +555,7 @@ sdScenarioClass <- R6::R6Class(
       rootScenario <- XML::newXMLNode(class(self)[[1]], doc = doc)
       
       lscenario <- list(id = private[["pId"]],
-                        times = private[["ptimes"]],
+                        times = private[["pTimes"]],
                         method = private[["pmethod"]],
                         state = private[["pstate"]],
                         constant = private[["pconstant"]],
@@ -598,17 +598,17 @@ sdScenarioClass <- R6::R6Class(
       # (to - from) >= by && (to - from)*by > 0
       if (!missing(from) && is.numeric(from) && 
           length(from) == 1 && !is.na(from)) { 
-        if (is.null(private[["ptimes"]]$to) || 
-            is.null(private[["ptimes"]]$by)) { 
-          if (!is.null(private[["ptimes"]]$to) && 
-              private[["ptimes"]]$to == from)
+        if (is.null(private[["pTimes"]]$to) || 
+            is.null(private[["pTimes"]]$by)) { 
+          if (!is.null(private[["pTimes"]]$to) && 
+              private[["pTimes"]]$to == from)
             sdScenarioMsg$setTimeSequence1(private$pId, "from")
           else
-            private[["ptimes"]]$from <- from
-        } else if (abs(private[["ptimes"]]$to - from) >= 
-                 abs(private[["ptimes"]]$by) && 
-                 (private[["ptimes"]]$to - from)*private[["ptimes"]]$by > 0)
-          private[["ptimes"]]$from <- from
+            private[["pTimes"]]$from <- from
+        } else if (abs(private[["pTimes"]]$to - from) >= 
+                 abs(private[["pTimes"]]$by) && 
+                 (private[["pTimes"]]$to - from)*private[["pTimes"]]$by > 0)
+          private[["pTimes"]]$from <- from
         else
           sdScenarioMsg$setTimeSequence2(private$pId, "from")
       } else if (!missing(from) && !is.null(from))
@@ -616,18 +616,18 @@ sdScenarioClass <- R6::R6Class(
       
       if (!missing(to) && is.numeric(to) && 
           length(to) == 1 && !is.na(to)) { 
-        if (is.null(private[["ptimes"]]$from) || 
-            is.null(private[["ptimes"]]$by)) { 
-          if (!is.null(private[["ptimes"]]$from) && 
-              private[["ptimes"]]$from == to) {
+        if (is.null(private[["pTimes"]]$from) || 
+            is.null(private[["pTimes"]]$by)) { 
+          if (!is.null(private[["pTimes"]]$from) && 
+              private[["pTimes"]]$from == to) {
             sdScenarioMsg$setTimeSequence1(private$pId, "to")
           } else {
-            private[["ptimes"]]$to <- to
+            private[["pTimes"]]$to <- to
           }
-        } else if (abs(to - private[["ptimes"]]$from) >= 
-                 abs(private[["ptimes"]]$by) && 
-                 (to - private[["ptimes"]]$from)*private[["ptimes"]]$by > 0) {
-          private[["ptimes"]]$to <- to
+        } else if (abs(to - private[["pTimes"]]$from) >= 
+                 abs(private[["pTimes"]]$by) && 
+                 (to - private[["pTimes"]]$from)*private[["pTimes"]]$by > 0) {
+          private[["pTimes"]]$to <- to
         } else {
           sdScenarioMsg$setTimeSequence2(private$pId, "to")
         }
@@ -638,13 +638,13 @@ sdScenarioClass <- R6::R6Class(
       
       if (!missing(by) && is.numeric(by) && 
           length(by) == 1 && !is.na(by)) { 
-        if (is.null(private[["ptimes"]]$to) || 
-            is.null(private[["ptimes"]]$from)) {
-          private[["ptimes"]]$by <- by
-        } else if (abs(private[["ptimes"]]$to - private[["ptimes"]]$from) >= 
+        if (is.null(private[["pTimes"]]$to) || 
+            is.null(private[["pTimes"]]$from)) {
+          private[["pTimes"]]$by <- by
+        } else if (abs(private[["pTimes"]]$to - private[["pTimes"]]$from) >= 
                    abs(by) && 
-                   (private[["ptimes"]]$to - private[["ptimes"]]$from)*by > 0) {
-          private[["ptimes"]]$by <- by
+                   (private[["pTimes"]]$to - private[["pTimes"]]$from)*by > 0) {
+          private[["pTimes"]]$by <- by
         } else{ # invalid by
           sdScenarioMsg$setTimeSequence2(private$pId, "by")
         }
@@ -879,14 +879,14 @@ sdScenarioClass <- R6::R6Class(
       # Simulation tab containing id, method and times values
       if (is.null(private[["pmethod"]])) # no method
         inputData[["simulation"]] <- data.frame(
-          Variable = c(names(private[["ptimes"]])), 
-          Value = c(unlist(private[["ptimes"]], use.names = FALSE)), 
+          Variable = c(names(private[["pTimes"]])), 
+          Value = c(unlist(private[["pTimes"]], use.names = FALSE)), 
           stringsAsFactors = FALSE)
       else 
         inputData[["simulation"]] <- data.frame(
-          Variable = c("method", names(private[["ptimes"]])), 
+          Variable = c("method", names(private[["pTimes"]])), 
           Value = c(private[["pmethod"]], 
-                    unlist(private[["ptimes"]], use.names = FALSE)), 
+                    unlist(private[["pTimes"]], use.names = FALSE)), 
           stringsAsFactors = FALSE)
       
       if (showId)
@@ -978,7 +978,7 @@ sdScenarioClass <- R6::R6Class(
     },
     times = function(times) { 
       if (missing(times)) {
-        return(private[["ptimes"]])
+        return(private[["pTimes"]])
       } else { 
         if (is.vector(times) && any(names(times) %in% c("from", "to", "by")))
           self[["setTimeSequence"]](times[["from"]], 
@@ -1019,7 +1019,7 @@ sdScenarioClass <- R6::R6Class(
     pDescription = list(),
     punit = list(),
     pmethod = NULL,
-    ptimes = list(),
+    pTimes = list(),
     pFlush = function() { 
       private[["pId"]] <- NULL
       private[["pstate"]] <- list()
@@ -1030,7 +1030,7 @@ sdScenarioClass <- R6::R6Class(
       private[["pDescription"]] <- list()
       private[["punit"]] <- list()
       private[["pmethod"]] <- NULL
-      private[["ptimes"]] <- NULL
+      private[["pTimes"]] <- NULL
     },
     paddVar = function(varList = list(), varType = NULL, checkNumeric = FALSE, 
                        verbose = FALSE, sortVars = FALSE, overwrite = FALSE) { 
