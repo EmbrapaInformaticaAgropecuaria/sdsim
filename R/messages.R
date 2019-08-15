@@ -531,69 +531,69 @@ sdOdeModelMsg$initialize10 <- paste0(
 sdOdeModelMsg$verifyModel0 <- paste0("sdsim::verifyModel - Model '%s' ODE ",
        "verification aborted: No differential equations function was set.")
 
-sdOdeModelMsg$verifyModel1 <- function(pmodelId)
-  stop("sdsim::verifyModel - Model '", pmodelId, 
+sdOdeModelMsg$verifyModel1 <- function(pModelId)
+  stop("sdsim::verifyModel - Model '", pModelId, 
        "' ODE verification aborted: No valid scenario was set.", call. = F)
 
-sdOdeModelMsg$verifyModel2 <- function(pmodelId)
-  warning("sdsim::verifyModel - Model '", pmodelId, 
+sdOdeModelMsg$verifyModel2 <- function(pModelId)
+  warning("sdsim::verifyModel - Model '", pModelId, 
           "' verification: No time sequence informed. Define the time ",
           "sequence in the default scenario. ",
           "Initial time equals 0 will be used.", call. = F)
 
-sdOdeModelMsg$verifyModel3 <- function(pmodelId, auxVar, e)
-  warning("sdsim::verifyModel - Model '", pmodelId, 
+sdOdeModelMsg$verifyModel3 <- function(pModelId, auxVar, e)
+  warning("sdsim::verifyModel - Model '", pModelId, 
           "' verification: error evaluating the auxiliary equation '", 
           auxVar, "'. ", e, call. = F)
 
-sdOdeModelMsg$verifyModel4 <- function(pmodelId, auxVar, auxValue)
-  warning("sdsim::verifyModel - Model '", pmodelId, 
+sdOdeModelMsg$verifyModel4 <- function(pModelId, auxVar, auxValue)
+  warning("sdsim::verifyModel - Model '", pModelId, 
           "' verification: Evaluation of the auxiliary variable '", auxVar, 
           "' may be incorrect. Value: ", auxValue, ".", call. = F)
 
-sdOdeModelMsg$verifyModel5 <- function(pmodelId, e)
-  warning("sdsim::verifyModel - Model '", pmodelId, 
+sdOdeModelMsg$verifyModel5 <- function(pModelId, e)
+  warning("sdsim::verifyModel - Model '", pModelId, 
           "' verification: error running the ode. ", e, 
           call. = F)
 
-sdOdeModelMsg$verifyModel6 <- function(pmodelId, xname, x, xvalue)
-  warning("sdsim::verifyModel - Model '", pmodelId, 
+sdOdeModelMsg$verifyModel6 <- function(pModelId, xname, x, xvalue)
+  warning("sdsim::verifyModel - Model '", pModelId, 
           "' verification: variable $", xname, " from the '", x,
           "' list in the $ode may be incorrect. ",
           "It has ", xvalue, " value.", call. = F)
 
-sdOdeModelMsg$verifyModel7 <- function(pmodelId, x, xvalue)
-  warning("sdsim::verifyModel - Model '", pmodelId, 
+sdOdeModelMsg$verifyModel7 <- function(pModelId, x, xvalue)
+  warning("sdsim::verifyModel - Model '", pModelId, 
           "' verification: variable $", x, 
           " in the $ode may be incorrect. It has ", xvalue, 
           " value.", call. = F) 
 
-sdOdeModelMsg$verifyModel8 <- function(pmodelId, typeofres) 
-  warning("sdsim::verifyModel - Model '", pmodelId, 
+sdOdeModelMsg$verifyModel8 <- function(pModelId, typeofres) 
+  warning("sdsim::verifyModel - Model '", pModelId, 
           "' verification: the first element of the $ode ",
           "return value should be a numeric vector containg the ",
           "state derivatives. Wrong derivative return type: ", typeofres, ".", 
           call. = F)
 
-sdOdeModelMsg$verifyModel9 <- function(pmodelId, dRes, lenst) 
-  warning("sdsim::verifyModel - Model '", pmodelId, 
+sdOdeModelMsg$verifyModel9 <- function(pModelId, dRes, lenst) 
+  warning("sdsim::verifyModel - Model '", pModelId, 
           "' verification: the number of derivatives returned by the ", 
           "$ode (", length(dRes), " - ", 
           paste0(names(dRes), collapse = ', '), 
           ") must equal the length of the initial conditions vector (", 
           lenst, ").", call. = F)
 
-sdOdeModelMsg$verifyModel10 <- function(pmodelId, typeofres) 
-  warning("sdsim::verifyModel - Model '", pmodelId, 
+sdOdeModelMsg$verifyModel10 <- function(pModelId, typeofres) 
+  warning("sdsim::verifyModel - Model '", pModelId, 
           "' verification: the $ode function should return ",
           "a list. Wrong return type: ", typeofres,".", call. = F)
 
-sdOdeModelMsg$verifyModel11 <- function(pmodelId) 
-  message("sdsim::verifyModel - Model '", pmodelId, 
+sdOdeModelMsg$verifyModel11 <- function(pModelId) 
+  message("sdsim::verifyModel - Model '", pModelId, 
           "' Ordinary Differential Equations verified.")
 
-sdOdeModelMsg$verifyModel12 <- function(pmodelId, typeofscen) 
-  warning("sdsim::verifyModel - Model '", pmodelId, 
+sdOdeModelMsg$verifyModel12 <- function(pModelId, typeofscen) 
+  warning("sdsim::verifyModel - Model '", pModelId, 
           "' verification: Scenario argument of type '", typeofscen, 
           "' discarted. It must be a valid sdScenarioClass object or ", 
           "a character string with a scenario XML or EXCEL file name.", 
@@ -613,8 +613,8 @@ sdOdeModelMsg$verifyModel13 <- function(modelId)
 #   warning("sdsim::modelId - Invalid model ID type: The model ID must be a ",
 #           "string. It was set to '", modelId, "'.", call. = F)
 
-sdOdeModelMsg$defaultScenario <- function(pmodelId)
-  warning("sdsim::defaultScenario - Model '", pmodelId, 
+sdOdeModelMsg$defaultScenario <- function(pModelId)
+  warning("sdsim::defaultScenario - Model '", pModelId, 
           "' set default scenario: The default scenario ",
           "must be a sdScenario object or a character string with the name of ", 
           "a scenario XML or Excel file. Create one using the ",
@@ -675,25 +675,25 @@ sdScenarioMsg$initialize2 <- function(scenarioId, varType)
           " variables must be in a named list. Scenario initialized without ", 
           varType, " variables.", call. = F)
 
-sdScenarioMsg$setTimeSequence <- function(pscenarioId, varType)
-  warning("sdsim::setTimeSequence - Scenario '", pscenarioId, 
+sdScenarioMsg$setTimeSequence <- function(pScenarioId, varType)
+  warning("sdsim::setTimeSequence - Scenario '", pScenarioId, 
           "': Sequence element '", varType, "' not set. ",
           "It must be a numeric value.", call. = F)
 
-sdScenarioMsg$setTimeSequence1 <- function(pscenarioId, varType)
-  warning("sdsim::setTimeSequence - Scenario '", pscenarioId, 
+sdScenarioMsg$setTimeSequence1 <- function(pScenarioId, varType)
+  warning("sdsim::setTimeSequence - Scenario '", pScenarioId, 
           "': The end value of the time sequence must be different from the ", 
           "starting value. Argument '", varType, "' not set.", call. = F)
 
-sdScenarioMsg$setTimeSequence2 <- function(pscenarioId, varType)
-  warning("sdsim::setTimeSequence - Scenario '", pscenarioId, 
+sdScenarioMsg$setTimeSequence2 <- function(pScenarioId, varType)
+  warning("sdsim::setTimeSequence - Scenario '", pScenarioId, 
           "': The increment of the time sequence must be inside the starting ", 
           "and end values of the sequence and have the right sign (positive ", 
           "for crescent sequences and negative for descreasing ones). ", 
           "Argument '", varType, "' not set.", call. = F)
 
-sdScenarioMsg$addInput <- function(pscenarioId, namesInterpol, namesInput)
-  warning("sdsim::addInput - Scenario '", pscenarioId, 
+sdScenarioMsg$addInput <- function(pScenarioId, namesInterpol, namesInput)
+  warning("sdsim::addInput - Scenario '", pScenarioId, 
           "' invalid interpolations: The following time series interpolation ",
           "variables are not present in the input list and will be skipped: ",
           capture.output(namesInterpol[!(namesInterpol %in% namesInput)]),
@@ -703,8 +703,8 @@ sdScenarioMsg$id <- function(scenarioId)
   warning("sdsim::id - Invalid scenario ID type: The scenario ID must ",
           "be a string. It was set to '", scenarioId, "'.", call. = F)
 
-sdScenarioMsg$method1 <- function(pscenarioId)
-  warning("sdsim::method - Scenario '", pscenarioId,"' set integration method ", 
+sdScenarioMsg$method1 <- function(pScenarioId)
+  warning("sdsim::method - Scenario '", pScenarioId,"' set integration method ", 
           "aborted: The 'method' argument must be a string with a valid ",
           "deSolve solver name. Available solver methods: ",
           "'lsoda', 'lsode', 'lsodes', 'lsodar', 'vode', 'daspk', ",
@@ -712,8 +712,8 @@ sdScenarioMsg$method1 <- function(pscenarioId)
           "'adams', 'impAdams', 'impAdams_d'. The default method ",
           "'lsoda' was set.", call. = F)
 
-sdScenarioMsg$method2 <- function(pscenarioId)
-  warning("sdsim::method - Scenario '",pscenarioId,"' set integration method: ", 
+sdScenarioMsg$method2 <- function(pScenarioId)
+  warning("sdsim::method - Scenario '",pScenarioId,"' set integration method: ", 
           "The given method is not valid. Available solver methods: ",
           "'lsoda', 'lsode', 'lsodes', 'lsodar', 'vode', 'daspk', ",
           "'euler', 'rk4', 'ode23', 'ode45', 'radau', 'bdf', 'bdf_d', ",
@@ -721,61 +721,61 @@ sdScenarioMsg$method2 <- function(pscenarioId)
           "'lsoda' was set.", call. = F)
 
 
-sdScenarioMsg$times <- function(pscenarioId)
-  warning("sdsim::times - Scenario '", pscenarioId, "' set time sequence: ",
+sdScenarioMsg$times <- function(pScenarioId)
+  warning("sdsim::times - Scenario '", pScenarioId, "' set time sequence: ",
           "The simulation time sequence must be a numeric named list ",
           "with at least one of the following three elements: 'from', ",
           "'to' and 'by', representing the initial time, the final ",
           "time and the simulation time step. ",
           "Scenario initialized without time sequence.", call. = F)
 
-sdScenarioMsg$description <- function(pscenarioId, typeofdescription)
-  warning("sdsim::description - Scenario '", pscenarioId, 
+sdScenarioMsg$description <- function(pScenarioId, typeofdescription)
+  warning("sdsim::description - Scenario '", pScenarioId, 
           "' set description aborted: ",
           "Description type (", typeofdescription,
           ") not supported. It should be a named list.", call. = F)
 
-sdScenarioMsg$unit <- function(pscenarioId, typeofunit)
-  warning("sdsim::unit - Scenario '", pscenarioId, 
+sdScenarioMsg$unit <- function(pScenarioId, typeofunit)
+  warning("sdsim::unit - Scenario '", pScenarioId, 
           "' set unit aborted: ",
           "Unit type (", typeofunit,
           ") not supported. It should be a named list. ", call. = F)
 
-sdScenarioMsg$addVar1 <- function(pscenarioId, varType)
-  warning("sdsim::addVar - Scenario '", pscenarioId, "' add ", 
+sdScenarioMsg$addVar1 <- function(pScenarioId, varType)
+  warning("sdsim::addVar - Scenario '", pScenarioId, "' add ", 
           varType, " aborted: All the scenario variables must be named.",
           call. = F)
 
-sdScenarioMsg$addVar2 <- function(pscenarioId, varType)
-  warning("sdsim::addVar - Scenario '", pscenarioId, "' add ", 
+sdScenarioMsg$addVar2 <- function(pScenarioId, varType)
+  warning("sdsim::addVar - Scenario '", pScenarioId, "' add ", 
           varType, ": Unnamed variable skipped. ",
           "All the scenario variables must be named.", call. = F)
 
-sdScenarioMsg$addVar3 <- function(pscenarioId, varType, var)
-  warning("sdsim::addVar - Scenario '", pscenarioId, "' add variable: ",
+sdScenarioMsg$addVar3 <- function(pScenarioId, varType, var)
+  warning("sdsim::addVar - Scenario '", pScenarioId, "' add variable: ",
           paste(gsub("(^.)", "\\U\\1", varType, perl = T), 
                 "values should be numeric. Variable "), var, 
           " will be skipped.", call. = F)
 
-sdScenarioMsg$addVar4 <- function(pscenarioId, varType, var, varValue)
-  message("sdsim::addVar - Scenario '", pscenarioId, 
+sdScenarioMsg$addVar4 <- function(pScenarioId, varType, var, varValue)
+  message("sdsim::addVar - Scenario '", pScenarioId, 
           "' add variable: ",
           gsub("(^.)", "\\U\\1", varType, perl = T), " of ", var, " set to ", 
           capture.output(varValue))
 
-sdScenarioMsg$addVar5 <- function(pscenarioId, varType, var, varValue)
-  message("sdsim::addVar - Scenario '", pscenarioId, 
+sdScenarioMsg$addVar5 <- function(pScenarioId, varType, var, varValue)
+  message("sdsim::addVar - Scenario '", pScenarioId, 
           "' add variable: ", "Value of ", varType, " '", var, "' set to ", 
           capture.output(varValue))
 
-sdScenarioMsg$addVar6 <- function(pscenarioId, varType, var, varValue)
-  warning("sdsim::addVar - Scenario '", pscenarioId, 
+sdScenarioMsg$addVar6 <- function(pScenarioId, varType, var, varValue)
+  warning("sdsim::addVar - Scenario '", pScenarioId, 
           "' add variable: The ", varType, " '", var, 
           "' already exists in this scenario. It will be reset to ", 
           capture.output(varValue), ".", call. = F)
 
-sdScenarioMsg$addVar7 <- function(pscenarioId, varType, var)
-  warning("sdsim::addVar - Scenario '", pscenarioId, 
+sdScenarioMsg$addVar7 <- function(pScenarioId, varType, var)
+  warning("sdsim::addVar - Scenario '", pScenarioId, 
           "' add variable: ", paste(gsub("(^.)", "\\U\\1", varType, perl = T), 
                                     "values should not be null. Variable "), 
           var, " will be skipped.", call. = F)
@@ -786,19 +786,19 @@ sdScenarioMsg$addVar8 <- paste0(
   "respective %s variables were skipped: %s."
 )
 
-sdScenarioMsg$removeVar1 <- function(pscenarioId, varType, typeofx)
-  warning("sdsim::removeVar - Scenario '", pscenarioId, 
+sdScenarioMsg$removeVar1 <- function(pScenarioId, varType, typeofx)
+  warning("sdsim::removeVar - Scenario '", pScenarioId, 
           "' remove ", varType,
           ": the variable name must be a string, wrong type: ", typeofx, 
           call. = F)
 
-sdScenarioMsg$removeVar2 <- function(pscenarioId, varType, var)
-  message("sdsim::removeVar - Scenario '", pscenarioId, 
+sdScenarioMsg$removeVar2 <- function(pScenarioId, varType, var)
+  message("sdsim::removeVar - Scenario '", pScenarioId, 
           "' remove variable: ", gsub("(^.)", "\\U\\1", varType, perl = T), 
           " variable ", var, " removed")
 
-sdScenarioMsg$removeVar3 <- function(pscenarioId, varType, var)
-  warning("sdsim::removeVar - Scenario '", pscenarioId, 
+sdScenarioMsg$removeVar3 <- function(pScenarioId, varType, var)
+  warning("sdsim::removeVar - Scenario '", pScenarioId, 
           "' remove variable: ", gsub("(^.)", "\\U\\1", varType, perl = T), 
           " variable ", var, " not found.", call. = F) 
 

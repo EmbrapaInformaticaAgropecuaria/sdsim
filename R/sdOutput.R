@@ -181,7 +181,7 @@ sdOutputClass <- R6::R6Class(
                           timeSeriesTrajectory, model, scenario, diagnostics, 
                           postProcessOut) { 
       if (!missing(outTrajectory))
-        private[["poutTrajectory"]] <- outTrajectory
+        private[["pOutTrajectory"]] <- outTrajectory
       
       if (!missing(auxTrajectory))
         private[["pAuxTrajectory"]] <- auxTrajectory
@@ -190,10 +190,10 @@ sdOutputClass <- R6::R6Class(
         private[["ptimeSeriesTrajectory"]] <- timeSeriesTrajectory
       
       if (!missing(model))
-        private[["pmodel"]] <- model
+        private[["pModel"]] <- model
       
       if (!missing(scenario))
-        private[["pscenario"]] <- scenario
+        private[["pScenario"]] <- scenario
       
       if (!missing(diagnostics))
         private[["pDiag"]] <- diagnostics
@@ -205,25 +205,25 @@ sdOutputClass <- R6::R6Class(
     },
     print = function() { 
       cat("<", class(self)[[1]], ">\n", sep = "")
-      cat(indent(paste0("$",class(private$pmodel)[[1]]), indent = 4), sep = "\n")
-      cat(indent(private$pmodel$id, indent = 4), sep = "\n")
+      cat(indent(paste0("$",class(private$pModel)[[1]]), indent = 4), sep = "\n")
+      cat(indent(private$pModel$id, indent = 4), sep = "\n")
       cat("\n")
       
-      if (!is.null(private$pscenario)) { 
+      if (!is.null(private$pScenario)) { 
         cat(indent("$sdScenario", indent = 4), sep = "\n")
-        cat(indent(private$pscenario$id, indent = 4), sep = "\n")
+        cat(indent(private$pScenario$id, indent = 4), sep = "\n")
         cat("\n")
       }
       # static models do not have diagnostics
-      if (!inherits(private$pmodel, sdStaticModelClass$classname)) { 
+      if (!inherits(private$pModel, sdStaticModelClass$classname)) { 
         cat(indent("$Simulation Diagnostics", indent = 4))
         cat(indent(private$pDiag, indent = 4))
         cat("\n\n")
       }
       
-      if (!is.null(private[["poutTrajectory"]])) { 
+      if (!is.null(private[["pOutTrajectory"]])) { 
         cat(indent("$Output Trajectories", indent = 4), sep = "\n")
-        cat(indent(paste(capture.output(tail(private[["poutTrajectory"]], n = 10, 
+        cat(indent(paste(capture.output(tail(private[["pOutTrajectory"]], n = 10, 
                                              addrownums = FALSE)), 
                          collapse =  "\n"), indent = 4))
         cat("\n\n")
@@ -231,7 +231,7 @@ sdOutputClass <- R6::R6Class(
       
       if (!is.null(private[["pAuxTrajectory"]])) { 
         # static models do not have auxiliaries
-        if (!inherits(private$pmodel, sdStaticModelClass$classname)) { 
+        if (!inherits(private$pModel, sdStaticModelClass$classname)) { 
           cat(indent("$Auxiliary Trajectories", indent = 4), sep = "\n")
           cat(indent(paste(capture.output(tail(private[["pAuxTrajectory"]], n = 10, 
                                                addrownums = FALSE)), 
@@ -250,9 +250,9 @@ sdOutputClass <- R6::R6Class(
       }
     },
     summary = function() { 
-      if (!is.null(private[["poutTrajectory"]])) { 
+      if (!is.null(private[["pOutTrajectory"]])) { 
         sdOutputMsg$summary1()
-        print(summary(private[["poutTrajectory"]]))
+        print(summary(private[["pOutTrajectory"]]))
       }
       
       if (!is.null(private[["pAuxTrajectory"]])) { 
@@ -278,10 +278,10 @@ sdOutputClass <- R6::R6Class(
       
       which <- list(...)
       
-      data <- private[["poutTrajectory"]]
+      data <- private[["pOutTrajectory"]]
       
       # retrieve the model default scenario
-      dfscen <- private$pmodel$defaultScenario
+      dfscen <- private$pModel$defaultScenario
       
       # all the labels must be provided, or any will be used
       if (!is.null(xlab) && length(which) != length(xlab)) { 
@@ -512,8 +512,8 @@ sdOutputClass <- R6::R6Class(
         dir.create(path = paste0(path, "/"), recursive = TRUE)
       
       # save the trajectories
-      if (!is.null(private$poutTrajectory))
-        write.csv(x = private$poutTrajectory, 
+      if (!is.null(private$pOutTrajectory))
+        write.csv(x = private$pOutTrajectory, 
                   file = paste0(path, "/outputTrajectory.csv"),
                   row.names = F)
       
@@ -527,32 +527,32 @@ sdOutputClass <- R6::R6Class(
                   row.names = F)
       
       # save model and scenario
-      private$pmodel$saveXml(paste0(path, "/", private$pmodel$id, 
+      private$pModel$saveXml(paste0(path, "/", private$pModel$id, 
                                     ".xml"))
       
-      if (!is.null(private$pscenario)) { 
+      if (!is.null(private$pScenario)) { 
         if (scenarioXlsx)
-          private$pscenario$saveXlsx(paste0(path, "/", 
-                                            private$pscenario$id, 
+          private$pScenario$saveXlsx(paste0(path, "/", 
+                                            private$pScenario$id, 
                                             ".xlsx"))
         else
-          private$pscenario$saveXml(paste0(path, "/", 
-                                           private$pscenario$id, 
+          private$pScenario$saveXml(paste0(path, "/", 
+                                           private$pScenario$id, 
                                            ".xml"))
       }
     }
   ),
   active = list(
     model = function() { 
-      return(private[["pmodel"]])
+      return(private[["pModel"]])
     },
     scenario = function() { 
-      return(private[["pscenario"]])
+      return(private[["pScenario"]])
     },
     outTrajectory = function() { 
-      if (length(private[["poutTrajectory"]]) == 0)
+      if (length(private[["pOutTrajectory"]]) == 0)
         return(NULL)
-      return(private[["poutTrajectory"]])
+      return(private[["pOutTrajectory"]])
     },
     auxTrajectory = function() { 
       if (length(private[["pAuxTrajectory"]]) == 0)
@@ -578,12 +578,12 @@ sdOutputClass <- R6::R6Class(
   ),
   private = list(
     poutputId = NULL,
-    poutTrajectory = NULL,
+    pOutTrajectory = NULL,
     pAuxTrajectory = NULL,
     ptimeSeriesTrajectory = NULL,
     pPostProcessOut = NULL,
-    pmodel = NULL,
-    pscenario = NULL,
+    pModel = NULL,
+    pScenario = NULL,
     pDiag = NULL
   )
 )
