@@ -18,7 +18,7 @@
 #' variables initialized with default values that ensures the model simulation.
 #' @param aux (Optional) A list with the model auxiliary equations in strings or 
 #' R-expressions written in R-format to assist in the 
-#' \code{DifferentialEquations} computation.
+#' \code{ode} computation.
 #' 
 #' They have access to the following variables: (t, st, ct, par, inp, sw, aux). 
 #' Where \code{t} is 
@@ -36,7 +36,7 @@
 #' 
 #' See the function \code{\link{sdInitEquations}} to learn how this list is 
 #' generated.
-#' @param DifferentialEquations An R-function that computes the values of the 
+#' @param ode An R-function that computes the values of the 
 #' state variables derivatives in the ODE system (the model definition) at time 
 #' t. 
 #' 
@@ -50,7 +50,7 @@
 #' switch variables and \code{aux} is a list with the model auxiliary equations 
 #' (which will be evaluated for each time step during the simulations).
 #' 
-#' The return value of the \code{DifferentialEquations} must be a list, whose 
+#' The return value of the \code{ode} must be a list, whose 
 #' first element is a vector containing the derivatives of the state variables 
 #' with respect to time, and whose next elements are extra values that are 
 #' computed at each time step and need to be included in the simulation output. 
@@ -180,7 +180,7 @@
 #' # create the model object
 #' lv <- sdOdeModel(id = "Lotka-Volterra",
 #'                    defaultScenario = lvscen,
-#'                    DifferentialEquations = LVode,
+#'                    ode = LVode,
 #'                    aux = aux)
 #'               
 #' # validate the model ode
@@ -196,7 +196,7 @@ sdOdeModel <- function(id = NULL,
                        description = NULL,
                        defaultScenario = NULL,
                        aux = NULL,
-                       modelDynamics = NULL, 
+                       ode = NULL, 
                        initVars = NULL,
                        postProcess = NULL, 
                        trigger = NULL, 
@@ -206,7 +206,7 @@ sdOdeModel <- function(id = NULL,
   model <- sdOdeModelClass$new(
     id = id,
     description = description,
-    DifferentialEquations = modelDynamics,
+    ode = ode,
     defaultScenario = defaultScenario,
     initVars = initVars,
     postProcess = postProcess, 
@@ -324,7 +324,7 @@ sdLoadModel <- function(file, repository = F,
     # creat a new model
     model <- sdOdeModelClass$new(
       id = model$id,
-      DifferentialEquations = StringToFun(model$DifferentialEquations),
+      ode = StringToFun(model$ode),
       defaultScenario = model$defaultScenario,
       initVars = StringToFun(model$initVars),
       postProcess = StringToFun(model$postProcess),
@@ -368,7 +368,7 @@ sdLoadModel <- function(file, repository = F,
           component <- sdOdeModelClass$new(
             id = x$id,
             description = x$description,
-            DifferentialEquations = StringToFun(x$DifferentialEquations),
+            ode = StringToFun(x$ode),
             defaultScenario = x$defaultScenario,
             initVars = StringToFun(x$initVars),
             postProcess = StringToFun(x$postProcess),
@@ -526,7 +526,7 @@ sdLoadModel <- function(file, repository = F,
 #'                                parameter = parsPrey,
 #'                                input = inpPrey),
 #'   aux = auxPrey,
-#'   DifferentialEquations = LVodePrey)
+#'   ode = LVodePrey)
 #' 
 #' # Consumer model variables and ode function
 #' stConsumer <- list(C = 2)
@@ -554,7 +554,7 @@ sdLoadModel <- function(file, repository = F,
 #'     parameter = parsConsumer,
 #'     input = inpConsumer),
 #'   aux = auxConsumer,
-#'   DifferentialEquations = LVodeConsumer)
+#'   ode = LVodeConsumer)
 #' 
 #' # create the coupled model connections list 
 #' # conP: inform the consumer model about the amount of preys and 
@@ -740,7 +740,7 @@ sdStaticModel <- function(id = NULL,
 #' @param state A numeric list with the default initial state values 
 #' for the ODE system. The state variables are used to describe the mathematical 
 #' "state" of a dynamic system. The continuous rate of change of these variables 
-#' is determined by the model \code{DifferentialEquations} function. All the 
+#' is determined by the model \code{ode} function. All the 
 #' elements in this list must be named. Or a data.frame following the 
 #' guidelines in the Data.frame Format section.
 #' @param constant A numeric list with the model constant variables. 
@@ -1338,7 +1338,7 @@ sdLoadScenario <- function(file,
 #' )
 #' 
 #' model <- sdOdeModel("test",
-#'                     DifferentialEquations = flows,
+#'                     ode = flows,
 #'                     defaultScenario = scen)
 #' out <- sdSimulate(model)
 #' plot(out)

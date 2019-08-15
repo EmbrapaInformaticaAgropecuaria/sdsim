@@ -102,7 +102,7 @@ test_that("sdModel.R", code = {
 
 test_that("sdOdeModel.R", code = {
   # expect_warning(sdOdeModel("test", 
-  #                           DifferentialEquations = function(x) return(x)),
+  #                           ode = function(x) return(x)),
   #                info = "sdOdeModelMsg$initialize1")
   expect_warning(sdOdeModel("test", 
                             initVars = function(x) return(x)),
@@ -123,7 +123,7 @@ test_that("sdOdeModel.R", code = {
   expect_warning(sdOdeModel("test", globalFunctions = list(2)),
                  info = "sdOdeModelMsg$initialize9")
   m <- expect_warning(sdOdeModel("test", aux = list(st ="2"),
-                                 modelDynamics = 
+                                 ode = 
                                    function(t, st, ct, par, inp, sw, aux) 
                                      return(t)),
                       info = "sdOdeModelMsg$initialize10")

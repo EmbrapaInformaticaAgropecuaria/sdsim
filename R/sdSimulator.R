@@ -385,7 +385,7 @@ runOdeSimulation <- function(model,
   methodArg <- method
   
   # stop if model is empty
-  if (is.null(model$DifferentialEquations))
+  if (is.null(model$ode))
     stop(sprintf(sdSimulatorMsg$sdSimulateAtomic7, model$id), call. = FALSE)
   
   # if (!model$isVerified)
@@ -479,8 +479,8 @@ runOdeSimulation <- function(model,
   
   environment(CreateFuncEval) <- model$modelEnvironment
   
-  DifferentialEquationsEval <-
-    CreateFuncEval(func = model$DifferentialEquations,
+  odeEval <-
+    CreateFuncEval(func = model$ode,
                    ct = ct,
                    par = par,
                    inp = inp,
@@ -499,7 +499,7 @@ runOdeSimulation <- function(model,
       y = unlist(state),
       times = seq(times$from, times$to, times$by),
       parms = NULL,
-      func = DifferentialEquationsEval,
+      func = odeEval,
       method = method
     )
   } else { # Run simulation with support to events
@@ -531,7 +531,7 @@ runOdeSimulation <- function(model,
         outTrajectory <- deSolve::ode(
           y = unlist(state),
           times = seq(times$from, times$to, times$by),
-          func = DifferentialEquationsEval,
+          func = odeEval,
           parms = NULL,
           rootfunc = triggerEval,
           events = list(
@@ -546,7 +546,7 @@ runOdeSimulation <- function(model,
         outTrajectory <- deSolve::ode(
           y = unlist(state),
           times = seq(times$from, times$to, times$by),
-          func = DifferentialEquationsEval,
+          func = odeEval,
           parms = NULL,
           rootfunc = triggerEval,
           events = list(
@@ -582,7 +582,7 @@ runOdeSimulation <- function(model,
       outTrajectory <- deSolve::ode(
         y = unlist(state),
         times = seq(times$from, times$to, times$by),
-        func = DifferentialEquationsEval,
+        func = odeEval,
         parms = NULL,
         events = list(func = eventEval,
                       time = trigger),
@@ -600,7 +600,7 @@ runOdeSimulation <- function(model,
       outTrajectory <- deSolve::ode(
         y = unlist(state),
         times = seq(times$from, times$to, times$by),
-        func = DifferentialEquationsEval,
+        func = odeEval,
         parms = NULL,
         events = list(data = trigger,
                       ties = ties),
@@ -610,7 +610,7 @@ runOdeSimulation <- function(model,
         y = unlist(state),
         times = seq(times$from, times$to, times$by),
         parms = NULL,
-        func = DifferentialEquationsEval,
+        func = odeEval,
         method = method)
     }
   }
@@ -1027,7 +1027,7 @@ runCoupledSimulation <- function(model,
     
     # check if the match outputed any NA values
     compIndex <- model$indexComponents
-    DifferentialEquationsCoupledEval <- createCoupledFuncEval(
+    odeCoupledEval <- createCoupledFuncEval(
       componentsId = names(componentsEquations),
       funcs = componentsEquations,
       conSt = conSt,
@@ -1053,7 +1053,7 @@ runCoupledSimulation <- function(model,
       outTrajectory <- deSolve::ode(
         y = unlist(st),
         times = times,
-        func = DifferentialEquationsCoupledEval,
+        func = odeCoupledEval,
         parms = NULL,
         method = method
       )
@@ -1092,7 +1092,7 @@ runCoupledSimulation <- function(model,
         outTrajectory <- deSolve::ode(
           y = unlist(st),
           times = times,
-          func = DifferentialEquationsCoupledEval,
+          func = odeCoupledEval,
           parms = NULL,
           rootfunc = RootEventFuncsEval$coupledRootFunc,
           events = list(func = NULL,
@@ -1103,7 +1103,7 @@ runCoupledSimulation <- function(model,
         outTrajectory <- deSolve::ode(
           y = unlist(st),
           times = times,
-          func = DifferentialEquationsCoupledEval,
+          func = odeCoupledEval,
           parms = NULL,
           rootfunc = RootEventFuncsEval$coupledRootFunc,
           events = list(func = RootEventFuncsEval$coupledEventFunc,

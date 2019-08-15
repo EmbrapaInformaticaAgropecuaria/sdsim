@@ -103,14 +103,14 @@ auxiliaryMsg$sdMakeFlows6 <- paste0(
   "sdsim::MakeFlows - The variable '%s' in argument 'flows' ",
   "does not match a boundary or st variable.")
 
-auxiliaryMsg$sdDifferentialEquationsClass1 <- paste0(
-  "sdsim::DifferentialEquationsClass - Error initializing differential ",
-  "equations: No elements identified in argument 'differentialEquations'. Must ",
+auxiliaryMsg$sdOdeClass1 <- paste0(
+  "sdsim::OdeClass - Error initializing differential ",
+  "equations: No elements identified in argument 'ode'. Must ",
   "be a non-empty List.")
 
-auxiliaryMsg$sdDifferentialEquationsClass2 <- paste0(
-  "sdsim::DiffentialEquationsClass - Error initializing differential ",
-  "equations: Argument 'differentialEquations' has value 'NULL'. Must be an ",
+auxiliaryMsg$sdOde2 <- paste0(
+  "sdsim::odeClass - Error initializing differential ",
+  "equations: Argument 'ode' has value 'NULL'. Must be an ",
   "Array or List.")
 
 # case use:
@@ -333,7 +333,7 @@ sdCoupledModelMsg$verifyModel5 <- function(pCoupledModelId, aux, auxVar)
 sdCoupledModelMsg$verifyModel6 <- function(pCoupledModelId, modelId, e)
   warning("sdsim::verifyModel - Coupled Model '", pCoupledModelId, 
           "' component '", modelId, 
-          "' verification: Error running the DifferentialEquations. ", 
+          "' verification: Error running the ode. ", 
           e, call. = F)
 
 sdCoupledModelMsg$verifyModel7 <- function(pCoupledModelId, modelId, 
@@ -477,7 +477,7 @@ sdOdeModelMsg <- new.env()
 
 sdOdeModelMsg$initialize1 <- function(modelId)
   warning("sdsim::initialize - Model '", modelId, "' initialization: ", 
-          "The DifferentialEquations structure does not match the ", 
+          "The ode structure does not match the ", 
           "help('sdOdeModel') specification. Replacement aborted.", call. = F)
 
 sdOdeModelMsg$initialize2 <- function(modelId)
@@ -553,24 +553,24 @@ sdOdeModelMsg$verifyModel4 <- function(pmodelId, auxVar, auxValue)
 
 sdOdeModelMsg$verifyModel5 <- function(pmodelId, e)
   warning("sdsim::verifyModel - Model '", pmodelId, 
-          "' verification: error running the DifferentialEquations. ", e, 
+          "' verification: error running the ode. ", e, 
           call. = F)
 
 sdOdeModelMsg$verifyModel6 <- function(pmodelId, xname, x, xvalue)
   warning("sdsim::verifyModel - Model '", pmodelId, 
           "' verification: variable $", xname, " from the '", x,
-          "' list in the $DifferentialEquations may be incorrect. ",
+          "' list in the $ode may be incorrect. ",
           "It has ", xvalue, " value.", call. = F)
 
 sdOdeModelMsg$verifyModel7 <- function(pmodelId, x, xvalue)
   warning("sdsim::verifyModel - Model '", pmodelId, 
           "' verification: variable $", x, 
-          " in the $DifferentialEquations may be incorrect. It has ", xvalue, 
+          " in the $ode may be incorrect. It has ", xvalue, 
           " value.", call. = F) 
 
 sdOdeModelMsg$verifyModel8 <- function(pmodelId, typeofres) 
   warning("sdsim::verifyModel - Model '", pmodelId, 
-          "' verification: the first element of the $DifferentialEquations ",
+          "' verification: the first element of the $ode ",
           "return value should be a numeric vector containg the ",
           "state derivatives. Wrong derivative return type: ", typeofres, ".", 
           call. = F)
@@ -578,14 +578,14 @@ sdOdeModelMsg$verifyModel8 <- function(pmodelId, typeofres)
 sdOdeModelMsg$verifyModel9 <- function(pmodelId, dRes, lenst) 
   warning("sdsim::verifyModel - Model '", pmodelId, 
           "' verification: the number of derivatives returned by the ", 
-          "$DifferentialEquations (", length(dRes), " - ", 
+          "$ode (", length(dRes), " - ", 
           paste0(names(dRes), collapse = ', '), 
           ") must equal the length of the initial conditions vector (", 
           lenst, ").", call. = F)
 
 sdOdeModelMsg$verifyModel10 <- function(pmodelId, typeofres) 
   warning("sdsim::verifyModel - Model '", pmodelId, 
-          "' verification: the $DifferentialEquations function should return ",
+          "' verification: the $ode function should return ",
           "a list. Wrong return type: ", typeofres,".", call. = F)
 
 sdOdeModelMsg$verifyModel11 <- function(pmodelId) 

@@ -104,7 +104,7 @@ test_that("Coupled model valid connections", code = {
                                    times = list(from = 0, to = 10, by = 1)),
       aux = list(a1 = "inp$b * 3",
                  a2 = "st$a * ct$c"),
-      modelDynamics = function(t, st, ct, par, inp, sw, aux) {
+      ode = function(t, st, ct, par, inp, sw, aux) {
         da <- st$a * inp$b/1000
         return(list(da))
       }),
