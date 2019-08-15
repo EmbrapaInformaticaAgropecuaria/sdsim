@@ -556,7 +556,7 @@ sdScenarioClass <- R6::R6Class(
       
       lscenario <- list(id = private[["pId"]],
                         times = private[["pTimes"]],
-                        method = private[["pmethod"]],
+                        method = private[["pMethod"]],
                         state = private[["pstate"]],
                         constant = private[["pconstant"]],
                         input = inputs,
@@ -877,7 +877,7 @@ sdScenarioClass <- R6::R6Class(
       }
       
       # Simulation tab containing id, method and times values
-      if (is.null(private[["pmethod"]])) # no method
+      if (is.null(private[["pMethod"]])) # no method
         inputData[["simulation"]] <- data.frame(
           Variable = c(names(private[["pTimes"]])), 
           Value = c(unlist(private[["pTimes"]], use.names = FALSE)), 
@@ -885,7 +885,7 @@ sdScenarioClass <- R6::R6Class(
       else 
         inputData[["simulation"]] <- data.frame(
           Variable = c("method", names(private[["pTimes"]])), 
-          Value = c(private[["pmethod"]], 
+          Value = c(private[["pMethod"]], 
                     unlist(private[["pTimes"]], use.names = FALSE)), 
           stringsAsFactors = FALSE)
       
@@ -955,12 +955,12 @@ sdScenarioClass <- R6::R6Class(
     },
     method = function(method) { 
       if (missing(method))
-        return(private[["pmethod"]])
+        return(private[["pMethod"]])
       else {  
         # SET method
         if (!is.character(method)) { 
           sdScenarioMsg$method1(private$pId)
-          private[["pmethod"]] <- "lsoda"
+          private[["pMethod"]] <- "lsoda"
         }
         
         # check if method is valid
@@ -968,11 +968,11 @@ sdScenarioClass <- R6::R6Class(
                           "daspk", "euler", "rk4", "ode23", "ode45", 
                           "radau", "bdf", "bdf_d", "adams", "impAdams", 
                           "impAdams_d")) {
-          private[["pmethod"]] <- method
+          private[["pMethod"]] <- method
         } else { 
           # Invalid method argument
           sdScenarioMsg$method2(private$pId)
-          private[["pmethod"]] <- "lsoda"
+          private[["pMethod"]] <- "lsoda"
         }
       }
     },
@@ -1018,7 +1018,7 @@ sdScenarioClass <- R6::R6Class(
     pswitch = list(),
     pDescription = list(),
     punit = list(),
-    pmethod = NULL,
+    pMethod = NULL,
     pTimes = list(),
     pFlush = function() { 
       private[["pId"]] <- NULL
@@ -1029,7 +1029,7 @@ sdScenarioClass <- R6::R6Class(
       private[["pswitch"]] <- list()
       private[["pDescription"]] <- list()
       private[["punit"]] <- list()
-      private[["pmethod"]] <- NULL
+      private[["pMethod"]] <- NULL
       private[["pTimes"]] <- NULL
     },
     paddVar = function(varList = list(), varType = NULL, checkNumeric = FALSE, 
