@@ -253,7 +253,7 @@ sdStaticModelClass <- R6::R6Class(
       cat("\n")
       
       cat(indent("$description", indent = 4), sep = "\n")
-      cat(indent(private$pdescription, indent = 4), sep = "\n")
+      cat(indent(private$pDescription, indent = 4), sep = "\n")
       cat("\n")
       
       if (length(modelStr[["algebraicEquations"]]) > 0)
@@ -366,7 +366,7 @@ sdStaticModelClass <- R6::R6Class(
       })
       
       lModel <- list(id = private$pId      ,
-                     description = private$pdescription,
+                     description = private$pDescription,
                      initVars = FunToString(private$pInitVars),
                      algebraicEquations = private$pAlgebraicEquations,
                      globalFunctions = globalFunctions)

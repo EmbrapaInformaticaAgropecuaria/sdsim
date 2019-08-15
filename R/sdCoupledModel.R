@@ -552,7 +552,7 @@ sdCoupledModelClass <- R6::R6Class(
       cat("\n")
       
       cat(indent("$description", indent = 4), sep = "\n")
-      cat(indent(private$pdescription, indent = 4), sep = "\n")
+      cat(indent(private$pDescription, indent = 4), sep = "\n")
       cat("\n")
       
       cat(indent("$components", indent = 4), sep = "\n")
@@ -1353,7 +1353,7 @@ sdCoupledModelClass <- R6::R6Class(
       lCoupledModel <-
         list(
           id = private$pId,
-          description = private$pdescription,
+          description = private$pDescription,
           connections = private$pconnections
         )
       ListToXML(rootsdCoupledModel, lCoupledModel)

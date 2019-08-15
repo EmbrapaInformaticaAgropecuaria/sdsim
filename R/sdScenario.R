@@ -564,7 +564,7 @@ sdScenarioClass <- R6::R6Class(
                         parameter = private[["pparameter"]],
                         switch = switches,
                         unit = private[["punit"]],
-                        description = private[["pdescription"]])
+                        description = private[["pDescription"]])
       ListToXML(rootScenario, lscenario)
       
       if (!missing(file))
@@ -777,7 +777,7 @@ sdScenarioClass <- R6::R6Class(
       varList <- list(...)
       
       if (length(varList) == 0) # remove all variables
-        private[["premoveVar"]](names(private$pdescription), "description", 
+        private[["premoveVar"]](names(private$pDescription), "description", 
                                 verbose = verbose)
       else # remove the given variables
         private[["premoveVar"]](varList, "description", verbose = verbose)
@@ -864,10 +864,10 @@ sdScenarioClass <- R6::R6Class(
       # Add descriptions and units to dataframe
       for (dfNm in names(inputData)) { 
         for (varNm in inputData[[dfNm]][["Variable"]]) { 
-          if (varNm %in% names(private[["pdescription"]]))
+          if (varNm %in% names(private[["pDescription"]]))
             inputData[[dfNm]][["Description"]][[which(
               inputData[[dfNm]][["Variable"]] == varNm)]] <- 
-              private[["pdescription"]][[varNm]]
+              private[["pDescription"]][[varNm]]
           
           if (varNm %in% names(private[["punit"]]))
             inputData[[dfNm]][["Unit"]][[which(
@@ -990,10 +990,10 @@ sdScenarioClass <- R6::R6Class(
     },
     description = function(descriptions) { 
       if (missing(descriptions)) {
-        return(private[["pdescription"]])
+        return(private[["pDescription"]])
       } else { # set
         if (is.list(descriptions))
-          private[["pdescription"]] <- descriptions
+          private[["pDescription"]] <- descriptions
         else
           sdScenarioMsg$description(private$pId, typeof(descriptions))
       }
@@ -1016,7 +1016,7 @@ sdScenarioClass <- R6::R6Class(
     pparameter = list(),
     pinput = list(),
     pswitch = list(),
-    pdescription = list(),
+    pDescription = list(),
     punit = list(),
     pmethod = NULL,
     ptimes = list(),
@@ -1027,7 +1027,7 @@ sdScenarioClass <- R6::R6Class(
       private[["pinput"]] <- list()
       private[["pparameter"]] <- list()
       private[["pswitch"]] <- list()
-      private[["pdescription"]] <- list()
+      private[["pDescription"]] <- list()
       private[["punit"]] <- list()
       private[["pmethod"]] <- NULL
       private[["ptimes"]] <- NULL
@@ -1167,7 +1167,7 @@ sdScenarioClass <- R6::R6Class(
           
           # also remove units and descriptions from variables
           if (!(varType %in% c("description", "unit"))) { 
-            private[["pdescription"]][[var]] <- NULL
+            private[["pDescription"]][[var]] <- NULL
             private[["punit"]][[var]] <- NULL
           }
           

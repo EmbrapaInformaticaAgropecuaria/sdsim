@@ -37,10 +37,10 @@ sdModelClass <- R6::R6Class(
     },
     description = function(description) { 
       if (missing(description)) {
-        return(private$pdescription)
+        return(private$pDescription)
       } else { 
         if (is.character(description))
-          private$pdescription <- description
+          private$pDescription <- description
         else
           warning(sprintf(fmt = sdModelMsg$description, private$pId), call. = F)
       }
@@ -68,6 +68,6 @@ sdModelClass <- R6::R6Class(
   ),
   private = list(pId = NULL,
                  pdefaultScenario = NULL,
-                 pdescription = NULL,
+                 pDescription = NULL,
                  flagVerify = FALSE)
 )

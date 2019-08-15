@@ -455,9 +455,9 @@ sdOdeModelClass <- R6::R6Class(
       cat(indent(private$pId, indent = 4), sep = "\n")
       cat("\n")
       
-      if(!is.null(private$pdescription)) {
+      if(!is.null(private$pDescription)) {
         cat(indent("$description", indent = 4), sep = "\n")
-        cat(indent(private$pdescription, indent = 4), sep = "\n")
+        cat(indent(private$pDescription, indent = 4), sep = "\n")
         cat("\n")
       }
       
@@ -691,7 +691,7 @@ sdOdeModelClass <- R6::R6Class(
       })
       
       lModel <- list(id = private$pId     ,
-                     description = private$pdescription,
+                     description = private$pDescription,
                      ode = FunToString(private$pOde),
                      initVars = FunToString(private$pInitVars),
                      postProcess = FunToString(private$pPostProcessVars),
