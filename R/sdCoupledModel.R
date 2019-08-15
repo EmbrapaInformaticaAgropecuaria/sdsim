@@ -560,7 +560,7 @@ sdCoupledModelClass <- R6::R6Class(
       cat("\n")
       
       cat(indent("$connections", indent = 4), sep = "\n")
-      cat(indent(capture.output(private$pconnections), indent = 4), sep = "\n")
+      cat(indent(capture.output(private$pConnections), indent = 4), sep = "\n")
       cat("\n")
       
       cat(indent("$defaultScenario", indent = 4), sep = "\n")
@@ -654,7 +654,7 @@ sdCoupledModelClass <- R6::R6Class(
             con[[2]] <- paste0(model$id, ".", con[[2]])
             con[[4]] <- paste0(model$id, ".", con[[4]])
             
-            # private$pconnections[[con[[1]]]] <- con
+            # private$pConnections[[con[[1]]]] <- con
             self$addConnection(con)
           }
         }
@@ -710,7 +710,7 @@ sdCoupledModelClass <- R6::R6Class(
         !(names(private$pComponentsGlobal) %in% componentName)]
       
       # remove the connections involving the removed model
-      connections <- private$pconnections
+      connections <- private$pConnections
       if (!is.null(connections) && length(connections) > 0) { 
         for (model in componentName) { 
           remCon <- sapply(1:length(connections), function(i) { 
@@ -736,10 +736,10 @@ sdCoupledModelClass <- R6::R6Class(
           sdCoupledModelMsg$addConnection2(private$pId, con)
         } else { 
           # add connection
-          if (con[[1]] %in% names(private$pconnections))
+          if (con[[1]] %in% names(private$pConnections))
             sdCoupledModelMsg$addConnection3(private$pId, con[[1]])
           
-          private$pconnections[[con[[1]]]] <- con
+          private$pConnections[[con[[1]]]] <- con
           
         }
       }
@@ -752,7 +752,7 @@ sdCoupledModelClass <- R6::R6Class(
       
       # refactor the aux lists removing the connection dependency
       for (conId in connectionsId) { 
-        con <- private$pconnections[[conId]]
+        con <- private$pConnections[[conId]]
         
         if (!is.null(con)) { 
           id <- con[[1]]
@@ -787,7 +787,7 @@ sdCoupledModelClass <- R6::R6Class(
       private$pComponentsAux <- sdInitEquations(auxComponents, eqName = "NULL")
       
       # remove the connections with id in the connecitonId vector
-      private$pconnections <- private$pconnections[!(names(private$pconnections) 
+      private$pConnections <- private$pConnections[!(names(private$pConnections) 
                                                      %in% connectionsId)]
       private$flagVerify <- private$flagBuild <- FALSE
     },
@@ -1248,7 +1248,7 @@ sdCoupledModelClass <- R6::R6Class(
       stConnections <- list()
       
       # Build the transformation vectors from the given connections
-      connections <- private$pconnections
+      connections <- private$pConnections
       if (!is.null(connections) && length(connections) > 0) { 
         
         for (con in connections) { 
@@ -1354,7 +1354,7 @@ sdCoupledModelClass <- R6::R6Class(
         list(
           id = private$pId,
           description = private$pDescription,
-          connections = private$pconnections
+          connections = private$pConnections
         )
       ListToXML(rootsdCoupledModel, lCoupledModel)
       
@@ -1414,7 +1414,7 @@ sdCoupledModelClass <- R6::R6Class(
       return(private$pComponentsGlobal)
     },
     connections = function() { 
-      return(private$pconnections)
+      return(private$pConnections)
     },
     eqConnections = function() { 
       # check if the matrix exist - flagBuild = TRUE
@@ -1453,7 +1453,7 @@ sdCoupledModelClass <- R6::R6Class(
   private = list(
     # Class Private Atributes
     pindexComponents = NULL,
-    pconnections = list(),
+    pConnections = list(),
     auxCon = NULL,
     stCon = NULL,
     flagBuild = FALSE,
