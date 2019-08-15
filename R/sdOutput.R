@@ -196,7 +196,7 @@ sdOutputClass <- R6::R6Class(
         private[["pscenario"]] <- scenario
       
       if (!missing(diagnostics))
-        private[["pdiag"]] <- diagnostics
+        private[["pDiag"]] <- diagnostics
       
       if (!missing(postProcessOut))
         private[["pPostProcessOut"]] <- postProcessOut
@@ -217,7 +217,7 @@ sdOutputClass <- R6::R6Class(
       # static models do not have diagnostics
       if (!inherits(private$pmodel, sdStaticModelClass$classname)) { 
         cat(indent("$Simulation Diagnostics", indent = 4))
-        cat(indent(private$pdiag, indent = 4))
+        cat(indent(private$pDiag, indent = 4))
         cat("\n\n")
       }
       
@@ -568,9 +568,9 @@ sdOutputClass <- R6::R6Class(
       return(private[["pPostProcessOut"]])
     },
     diagnostics = function() { 
-      if (!is.null(private[["pdiag"]])) { 
-        cat(private[["pdiag"]])
-        return(invisible(private[["pdiag"]]))
+      if (!is.null(private[["pDiag"]])) { 
+        cat(private[["pDiag"]])
+        return(invisible(private[["pDiag"]]))
       } else {
         return(NULL)
       }
@@ -584,6 +584,6 @@ sdOutputClass <- R6::R6Class(
     pPostProcessOut = NULL,
     pmodel = NULL,
     pscenario = NULL,
-    pdiag = NULL
+    pDiag = NULL
   )
 )
