@@ -4,26 +4,26 @@
   <description>Source: Soetaert K., Cash_J., Mazzia F. - Solving Differential Equations in R - Springer(2012)
 Simulates a bouncing ball specified by its position above the ground (height). The ball is thrown vertically, from the ground (height(0) = 0 meter), with initial velocity (speed) of 10 meter / second. 
 As the ball hits the ground, it bounces. This causes a sudden change in the value of the ball’s velocity (a sign-reversal and reduction of its magnitude directly proportional to the coefficient of restitution (k)).</description>
-  <DifferentialEquations>function (t, st, ct, par, inp, sw, aux) 
+  <ode>function (t, st, ct, par, inp, sw, aux) 
 {
     dHeight &lt;- st$speed
     dSpeed &lt;- -ct$gravity
     return(list(c(dHeight, dSpeed)))
-}</DifferentialEquations>
-  <InitVars/>
-  <PostProcessVars/>
-  <RootSpecification>function (t, st, ct, par, inp, sw, aux) 
+}</ode>
+  <initVars/>
+  <postProcess/>
+  <trigger>function (t, st, ct, par, inp, sw, aux) 
 {
     if (st$height &lt;= 0 &amp;&amp; st$speed &lt; 0) 
         return(0)
     else return(1)
-}</RootSpecification>
-  <EventFunction>function (t, st, ct, par, inp, sw, aux) 
+}</trigger>
+  <event>function (t, st, ct, par, inp, sw, aux) 
 {
     st$height &lt;- 0
     st$speed &lt;- -inp$k * st$speed
     return(st)
-}</EventFunction>
+}</event>
   <aux/>
   <globalFunctions/>
   <defaultScenario>

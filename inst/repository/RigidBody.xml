@@ -5,23 +5,23 @@
 A standard test problem for non-stiff solvers, as proposed by Krogh. It describes the Euler equations of a rigid body without external forces.&#13;
 The three dependent variables (x , y , z) are the coordinates of the rotation vector, while I1, I2 and I3 are the principal moments of inertia.&#13;
 </description>
-  <DifferentialEquations>function (t, st, ct, par, inp, sw, aux) 
+  <ode>function (t, st, ct, par, inp, sw, aux) 
 {
     dX &lt;- par$k1 * st$y * st$z
     dY &lt;- par$k2 * st$x * st$z
     dZ &lt;- par$k3 * st$x * st$y
     return(list(c(dX, dY, dZ)))
-}</DifferentialEquations>
-  <InitVars>function (st, ct, par, inp, sw, aux) 
+}</ode>
+  <initVars>function (st, ct, par, inp, sw, aux) 
 {
     par$k1 &lt;- (par$I2 - par$I3)/par$I1
     par$k2 &lt;- (par$I3 - par$I1)/par$I2
     par$k3 &lt;- (par$I1 - par$I2)/par$I3
     return(list(st = st, ct = ct, inp = inp, par = par, sw = sw))
-}</InitVars>
-  <PostProcessVars/>
-  <RootSpecification/>
-  <EventFunction/>
+}</initVars>
+  <postProcess/>
+  <trigger/>
+  <event/>
   <aux/>
   <globalFunctions/>
   <defaultScenario>
