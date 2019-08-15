@@ -151,7 +151,7 @@ sdStaticModelClass <- R6::R6Class(
         self$id <- (id)
       else
         self$id <- NULL
-      id <- private$pid
+      id <- private$pId
       
       if (!missing(defaultScenario) && !is.null(defaultScenario))
         self$defaultScenario <- (defaultScenario) 
@@ -249,7 +249,7 @@ sdStaticModelClass <- R6::R6Class(
       # print the attributes
       cat("<",class(self)[[1]],">\n", sep = "")
       cat(indent("$id", indent = 4), sep = "\n")
-      cat(indent(private$pid, indent = 4), sep = "\n")
+      cat(indent(private$pId, indent = 4), sep = "\n")
       cat("\n")
       
       cat(indent("$description", indent = 4), sep = "\n")
@@ -277,7 +277,7 @@ sdStaticModelClass <- R6::R6Class(
     verifyModel = function(scenario = NULL, verbose = F) { 
       # run the equations and model definition validation
       if (is.null(private$pdefaultScenario))
-        sdStaticModelMsg$validate0(private$pid)
+        sdStaticModelMsg$validate0(private$pId)
       
       # get the model scenario 
       defaultScenario <- private$pdefaultScenario$clone(deep = TRUE)
@@ -290,7 +290,7 @@ sdStaticModelClass <- R6::R6Class(
         if (inherits(scenario, sdScenarioClass$classname))
           defaultScenario <- mergeScenarios(defaultScenario, scenario)
         else
-          sdStaticModelMsg$validate5(private$pid, 
+          sdStaticModelMsg$validate5(private$pId, 
                                      typeof(scenario))
       }
       
@@ -306,7 +306,7 @@ sdStaticModelClass <- R6::R6Class(
       if (!is.null(times) && length(unlist(times)) > 0) {
         t <- times[[1]]
       } else { 
-        sdStaticModelMsg$validate1(private$pid)
+        sdStaticModelMsg$validate1(private$pId)
         t <- 0
       }
       
@@ -338,18 +338,18 @@ sdStaticModelClass <- R6::R6Class(
                envir = equationsEnv)
         },
         error = function(e) { 
-          sdStaticModelMsg$validate2(private$pid, equationsVar, e)
+          sdStaticModelMsg$validate2(private$pId, equationsVar, e)
           invisible(numeric(0))
         })
         
         if (is.null(eq[[equationsVar]]) || is.na(eq[[equationsVar]]) ||
             length(eq[[equationsVar]]) == 0 || is.infinite(eq[[equationsVar]]))
-          sdStaticModelMsg$validate3(private$pid, equationsVar, 
+          sdStaticModelMsg$validate3(private$pId, equationsVar, 
                                      eq[[equationsVar]])
       }
       
       if (verbose)
-        sdStaticModelMsg$validate4(private$pid)
+        sdStaticModelMsg$validate4(private$pId)
       
       private$flagVerify <- TRUE
     },
@@ -365,7 +365,7 @@ sdStaticModelClass <- R6::R6Class(
           return(x)
       })
       
-      lModel <- list(id = private$pid      ,
+      lModel <- list(id = private$pId      ,
                      description = private$pdescription,
                      initVars = FunToString(private$pInitVars),
                      algebraicEquations = private$pAlgebraicEquations,
@@ -401,14 +401,14 @@ sdStaticModelClass <- R6::R6Class(
           dfScen <- defaultScenario$clone()
           if (length(dfScen$state) > 0) { 
             dfScen$removeState()
-            warning(sprintf(sdStaticModelMsg$defaultscenario1, private$pid), 
+            warning(sprintf(sdStaticModelMsg$defaultscenario1, private$pId), 
                     call. = FALSE)
           }
           private$pdefaultScenario <- dfScen
           private$pdefaultScenario$id <- "Default"
           private$flagVerify <- FALSE
         } else {
-          sdStaticModelMsg$defaultscenario2(private$pid)
+          sdStaticModelMsg$defaultscenario2(private$pId)
         } 
       }      
     },

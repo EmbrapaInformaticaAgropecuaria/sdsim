@@ -9,7 +9,7 @@ sdModelClass <- R6::R6Class(
     id = function(id) { 
       if (missing(id)) {
         
-        return(private$pid)
+        return(private$pId)
       } else if (is.null(id)) { 
         
         id <- gsub("\\s", "", paste(class(self)[[1]], Sys.Date()), perl = TRUE)
@@ -31,7 +31,7 @@ sdModelClass <- R6::R6Class(
         id <- gsub("\\s", "", paste(class(self)[[1]], Sys.Date()), perl = TRUE)
       }
       
-      private[["pid"]] <- make.names(gsub("\\s", "", 
+      private[["pId"]] <- make.names(gsub("\\s", "", 
                                           id, 
                                           perl = TRUE))
     },
@@ -42,7 +42,7 @@ sdModelClass <- R6::R6Class(
         if (is.character(description))
           private$pdescription <- description
         else
-          warning(sprintf(fmt = sdModelMsg$description, private$pid), call. = F)
+          warning(sprintf(fmt = sdModelMsg$description, private$pId), call. = F)
       }
     },
     defaultScenario = function(defaultScenario) { 
@@ -58,7 +58,7 @@ sdModelClass <- R6::R6Class(
           private$pdefaultScenario$id <- "Default"
           private$flagVerify <- FALSE
         } else {
-          sdOdeModelMsg$defaultScenario(private$pid)
+          sdOdeModelMsg$defaultScenario(private$pId)
         } 
       }
     },
@@ -66,7 +66,7 @@ sdModelClass <- R6::R6Class(
       return(private$flagVerify)
     }
   ),
-  private = list(pid = NULL,
+  private = list(pId = NULL,
                  pdefaultScenario = NULL,
                  pdescription = NULL,
                  flagVerify = FALSE)
