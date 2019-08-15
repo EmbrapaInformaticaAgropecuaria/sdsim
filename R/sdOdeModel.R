@@ -486,7 +486,7 @@ sdOdeModelClass <- R6::R6Class(
             sep = "\n")
       
       cat(indent("$defaultScenario", indent = 4), sep = "\n")
-      cat(indent(capture.output(private$pdefaultScenario), indent = 4), 
+      cat(indent(capture.output(private$pDefaultScenario), indent = 4), 
           sep = "\n")
       cat("\n")
     },
@@ -495,9 +495,9 @@ sdOdeModelClass <- R6::R6Class(
         stop(sprintf(sdOdeModelMsg$verifyModel0, private$pId), call. = FALSE)
       
       # get the simulation scenario
-      if (!is.null(private$pdefaultScenario)) { 
+      if (!is.null(private$pDefaultScenario)) { 
         # get the model scenario 
-        defaultScenario <- private$pdefaultScenario$clone(deep = TRUE)
+        defaultScenario <- private$pDefaultScenario$clone(deep = TRUE)
         
         # overwrite default variables with the given scenario values
         if (!is.null(scenario)) { 
@@ -702,10 +702,10 @@ sdOdeModelClass <- R6::R6Class(
       ListToXML(rootsdModel, lModel)
       
       # add the defaultScenario XML
-      if (!is.null(private$pdefaultScenario)) { 
+      if (!is.null(private$pDefaultScenario)) { 
         defaultScenarioXML <- XML::newXMLNode(
           "defaultScenario", 
-          .children = list(private$pdefaultScenario$saveXml()))
+          .children = list(private$pDefaultScenario$saveXml()))
         XML::addChildren(rootsdModel, kids = list(defaultScenarioXML))
       }
       

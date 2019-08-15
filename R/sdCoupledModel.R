@@ -565,7 +565,7 @@ sdCoupledModelClass <- R6::R6Class(
       
       cat(indent("$defaultScenario", indent = 4), sep = "\n")
       if (private$flagBuild)
-        cat(indent(capture.output(private$pdefaultScenario), indent = 4), 
+        cat(indent(capture.output(private$pDefaultScenario), indent = 4), 
             sep = "\n")
       else
         cat(indent("Not built.", indent = 4), sep = "\n")
@@ -1093,7 +1093,7 @@ sdCoupledModelClass <- R6::R6Class(
         by = by,
         varNames = TRUE,
         timeSeriesDirectory = timeSeriesDirectory)
-      private$pdefaultScenario <-
+      private$pDefaultScenario <-
         defaultScenarioVars$coupledScenario
       
       # build the components list of indexes
@@ -1377,7 +1377,7 @@ sdCoupledModelClass <- R6::R6Class(
   active = list(
     defaultScenario = function() { 
       if (private$flagBuild)
-        return(private$pdefaultScenario)
+        return(private$pDefaultScenario)
       else
         sdCoupledModelMsg$defaultScenario(private$pId)
       

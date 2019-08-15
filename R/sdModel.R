@@ -47,15 +47,15 @@ sdModelClass <- R6::R6Class(
     },
     defaultScenario = function(defaultScenario) { 
       if (missing(defaultScenario)) {
-        return(private$pdefaultScenario)
+        return(private$pDefaultScenario)
       } else { 
         if (is.character(defaultScenario))
           defaultScenario <- sdLoadScenario(defaultScenario)
         
         # scenario must be a scenario object 
         if (inherits(defaultScenario, sdScenarioClass$classname)) { 
-          private$pdefaultScenario <- defaultScenario$clone()
-          private$pdefaultScenario$id <- "Default"
+          private$pDefaultScenario <- defaultScenario$clone()
+          private$pDefaultScenario$id <- "Default"
           private$flagVerify <- FALSE
         } else {
           sdOdeModelMsg$defaultScenario(private$pId)
@@ -67,7 +67,7 @@ sdModelClass <- R6::R6Class(
     }
   ),
   private = list(pId = NULL,
-                 pdefaultScenario = NULL,
+                 pDefaultScenario = NULL,
                  pDescription = NULL,
                  flagVerify = FALSE)
 )

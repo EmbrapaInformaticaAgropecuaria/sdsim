@@ -270,17 +270,17 @@ sdStaticModelClass <- R6::R6Class(
             sep = "\n")
       
       cat(indent("$defaultScenario", indent = 4), sep = "\n")
-      cat(indent(capture.output(private$pdefaultScenario), indent = 4), 
+      cat(indent(capture.output(private$pDefaultScenario), indent = 4), 
           sep = "\n")
       cat("\n")
     },
     verifyModel = function(scenario = NULL, verbose = F) { 
       # run the equations and model definition validation
-      if (is.null(private$pdefaultScenario))
+      if (is.null(private$pDefaultScenario))
         sdStaticModelMsg$validate0(private$pId)
       
       # get the model scenario 
-      defaultScenario <- private$pdefaultScenario$clone(deep = TRUE)
+      defaultScenario <- private$pDefaultScenario$clone(deep = TRUE)
       
       # overwrite default variables with the given scenario values
       if (!is.null(scenario)) { 
@@ -373,10 +373,10 @@ sdStaticModelClass <- R6::R6Class(
       invisible(ListToXML(rootsdModel, lModel))
       
       # add the defaultScenario XML
-      if (!is.null(private$pdefaultScenario)) { 
+      if (!is.null(private$pDefaultScenario)) { 
         defaultScenarioXML <- XML::newXMLNode(
           "defaultScenario", 
-          .children = list(private$pdefaultScenario$saveXml()))
+          .children = list(private$pDefaultScenario$saveXml()))
         XML::addChildren(rootsdModel, kids = list(defaultScenarioXML))
       }
       
@@ -391,7 +391,7 @@ sdStaticModelClass <- R6::R6Class(
   active = list(
     defaultScenario = function(defaultScenario) { 
       if (missing(defaultScenario)) {
-        return(private$pdefaultScenario)
+        return(private$pDefaultScenario)
       } else { # set scenario
         if (is.character(defaultScenario))
           defaultScenario <- sdLoadScenario(defaultScenario)
@@ -404,8 +404,8 @@ sdStaticModelClass <- R6::R6Class(
             warning(sprintf(sdStaticModelMsg$defaultscenario1, private$pId), 
                     call. = FALSE)
           }
-          private$pdefaultScenario <- dfScen
-          private$pdefaultScenario$id <- "Default"
+          private$pDefaultScenario <- dfScen
+          private$pDefaultScenario$id <- "Default"
           private$flagVerify <- FALSE
         } else {
           sdStaticModelMsg$defaultscenario2(private$pId)
