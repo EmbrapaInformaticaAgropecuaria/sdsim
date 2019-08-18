@@ -522,9 +522,9 @@ sdScenarioClass <- R6::R6Class(
       }
     },
     saveXml = function(file = "Scenario.xml") { 
-      inputs <- private[["pinput"]][!(names(private[["pinput"]]) 
+      inputs <- private[["pInput"]][!(names(private[["pInput"]]) 
                                       %in% c("interpolation_", "fun_"))]
-      switches <- private[["pswitch"]]
+      switches <- private[["pSwitch"]]
       
       # convert any vector to character to be able to print
       inputs <- lapply(inputs, 
@@ -557,13 +557,13 @@ sdScenarioClass <- R6::R6Class(
       lscenario <- list(id = private[["pId"]],
                         times = private[["pTimes"]],
                         method = private[["pMethod"]],
-                        state = private[["pstate"]],
-                        constant = private[["pconstant"]],
+                        state = private[["pState"]],
+                        constant = private[["pConstant"]],
                         input = inputs,
-                        interpolation = private[["pinput"]][["interpolation_"]],
-                        parameter = private[["pparameter"]],
+                        interpolation = private[["pInput"]][["interpolation_"]],
+                        parameter = private[["pParameter"]],
                         switch = switches,
-                        unit = private[["punit"]],
+                        unit = private[["pUnit"]],
                         description = private[["pDescription"]])
       ListToXML(rootScenario, lscenario)
       
@@ -672,27 +672,27 @@ sdScenarioClass <- R6::R6Class(
       # check if the interpolation names are valid
       if (length(interpolation) > 0 && 
           (is.null(names(interpolation)) || 
-           !all(names(interpolation) %in% names(private[["pinput"]])))) { 
+           !all(names(interpolation) %in% names(private[["pInput"]])))) { 
         sdScenarioMsg$addInput(private$pId, names(interpolation), 
-                               names(private[["pinput"]]))
+                               names(private[["pInput"]]))
         
         interpolation <- interpolation[
-          names(interpolation) %in% names(private[["pinput"]])]
+          names(interpolation) %in% names(private[["pInput"]])]
       }
       
       # set time series funcs
       if (length(interpolation) > 0) { 
         # transform the time series data to temporal functions
         temporalfuns <- sdTemporalFunctionList(
-          x = private[["pinput"]][names(interpolation)],
+          x = private[["pInput"]][names(interpolation)],
           methods = interpolation,
           timeSeriesDirectory = timeSeriesDirectory,
           sep = ",", dec = ".", header = TRUE)
         
         # update input list with the successful transformed time series
-        private[["pinput"]][["interpolation_"]][names(temporalfuns)] <- 
+        private[["pInput"]][["interpolation_"]][names(temporalfuns)] <- 
           interpolation[names(temporalfuns)]
-        private[["pinput"]][["fun_"]][names(temporalfuns)] <- temporalfuns
+        private[["pInput"]][["fun_"]][names(temporalfuns)] <- temporalfuns
       }
       invisible()
     },
@@ -727,7 +727,7 @@ sdScenarioClass <- R6::R6Class(
       varList <- list(...)
       
       if (length(varList) == 0) # remove all variables
-        private[["premoveVar"]](names(private$pstate), "state", 
+        private[["premoveVar"]](names(private$pState), "state", 
                                 verbose = verbose)
       else # remove the given variables
         private[["premoveVar"]](varList, "state", verbose = verbose)
@@ -737,7 +737,7 @@ sdScenarioClass <- R6::R6Class(
       varList <- list(...)
       
       if (length(varList) == 0) # remove all variables
-        private[["premoveVar"]](names(private$pconstant), "constant", 
+        private[["premoveVar"]](names(private$pConstant), "constant", 
                                 verbose = verbose)
       else # remove the given variables
         private[["premoveVar"]](varList, "constant", verbose = verbose)
@@ -747,7 +747,7 @@ sdScenarioClass <- R6::R6Class(
       varList <- list(...)
       
       if (length(varList) == 0) # remove all variables
-        private[["premoveVar"]](names(private$pinput), "input", 
+        private[["premoveVar"]](names(private$pInput), "input", 
                                 verbose = verbose)
       else # remove the given variables
         private[["premoveVar"]](varList, "input", verbose = verbose)
@@ -757,7 +757,7 @@ sdScenarioClass <- R6::R6Class(
       varList <- list(...)
       
       if (length(varList) == 0) # remove all variables
-        private[["premoveVar"]](names(private$pparameter), "parameter", 
+        private[["premoveVar"]](names(private$pParameter), "parameter", 
                                 verbose = verbose)
       else # remove the given variables
         private[["premoveVar"]](varList, "parameter", verbose = verbose)
@@ -767,7 +767,7 @@ sdScenarioClass <- R6::R6Class(
       varList <- list(...)
       
       if (length(varList) == 0) # remove all variables
-        private[["premoveVar"]](names(private$pswitch), "switch", 
+        private[["premoveVar"]](names(private$pSwitch), "switch", 
                                 verbose = verbose)
       else # remove the given variables
         private[["premoveVar"]](varList, "switch", verbose = verbose)
@@ -787,7 +787,7 @@ sdScenarioClass <- R6::R6Class(
       varList <- list(...)
       
       if (length(varList) == 0) # remove all variables
-        private[["premoveVar"]](names(private$punit), "unit", 
+        private[["premoveVar"]](names(private$pUnit), "unit", 
                                 verbose = verbose)
       else # remove the given variables
         private[["premoveVar"]](varList, "unit", verbose = verbose)
@@ -796,7 +796,7 @@ sdScenarioClass <- R6::R6Class(
     buildDataFrames = function(showId = TRUE) { 
       # Create list of data.frames containing variable names and their
       # respective values
-      varTypes <- list("pstate", "pconstant", "pparameter", "pinput", "pswitch")
+      varTypes <- list("pState", "pConstant", "pParameter", "pInput", "pSwitch")
       varTypesNames <- list("state", "constant", "parameter", "input", "switch")
       
       # check which lists are not empty
@@ -839,7 +839,7 @@ sdScenarioClass <- R6::R6Class(
                               Description = character(nRows),
                               row.names = NULL, stringsAsFactors = FALSE)
         # add the interpolation column in the input sheet
-        if (varType == "pinput") { 
+        if (varType == "pInput") { 
           interpolation <- rep(list(""), nRows)
           if (!is.null(private[[varType]][["interpolation_"]])) { 
             interpolation <- lapply(variable, function(var) { 
@@ -869,10 +869,10 @@ sdScenarioClass <- R6::R6Class(
               inputData[[dfNm]][["Variable"]] == varNm)]] <- 
               private[["pDescription"]][[varNm]]
           
-          if (varNm %in% names(private[["punit"]]))
+          if (varNm %in% names(private[["pUnit"]]))
             inputData[[dfNm]][["Unit"]][[which(
               inputData[[dfNm]][["Variable"]] == varNm)]] <- 
-              private[["punit"]][[varNm]]
+              private[["pUnit"]][[varNm]]
         }
       }
       
@@ -915,7 +915,7 @@ sdScenarioClass <- R6::R6Class(
     },
     state = function(varList) { 
       if (missing(varList))
-        return(private[["pstate"]])
+        return(private[["pState"]])
       else if (length(varList) == 0)
         self$removeState()
       else # set
@@ -923,7 +923,7 @@ sdScenarioClass <- R6::R6Class(
     },
     constant = function(varList) { 
       if (missing(varList))
-        return(private[["pconstant"]])
+        return(private[["pConstant"]])
       else if (length(varList) == 0)
         self$removeConstant()
       else # set
@@ -931,7 +931,7 @@ sdScenarioClass <- R6::R6Class(
     },
     input = function(varList) { 
       if (missing(varList))
-        return(private[["pinput"]])
+        return(private[["pInput"]])
       else if (length(varList) == 0)
         self$removeInput()
       else # set
@@ -939,7 +939,7 @@ sdScenarioClass <- R6::R6Class(
     },
     parameter = function(varList) { 
       if (missing(varList))
-        return(private[["pparameter"]])
+        return(private[["pParameter"]])
       else if (length(varList) == 0)
         self$removeParameter()
       else # set
@@ -947,7 +947,7 @@ sdScenarioClass <- R6::R6Class(
     },
     switch = function(varList) { 
       if (missing(varList))
-        return(private[["pswitch"]])
+        return(private[["pSwitch"]])
       else if (length(varList) == 0)
         self$removeSwitch()
       else # set
@@ -1000,10 +1000,10 @@ sdScenarioClass <- R6::R6Class(
     },
     unit = function(units) { 
       if (missing(units)) {
-        return(private[["punit"]])
+        return(private[["pUnit"]])
       } else { # set
         if (is.list(units))
-          private[["punit"]] <- units
+          private[["pUnit"]] <- units
         else
           sdScenarioMsg$unit(private$pId, typeof(units))
       }
@@ -1011,24 +1011,24 @@ sdScenarioClass <- R6::R6Class(
   ),
   private = list(
     pId = NULL,
-    pstate = list(),
-    pconstant = list(),
-    pparameter = list(),
-    pinput = list(),
-    pswitch = list(),
+    pState = list(),
+    pConstant = list(),
+    pParameter = list(),
+    pInput = list(),
+    pSwitch = list(),
     pDescription = list(),
-    punit = list(),
+    pUnit = list(),
     pMethod = NULL,
     pTimes = list(),
     pFlush = function() { 
       private[["pId"]] <- NULL
-      private[["pstate"]] <- list()
-      private[["pconstant"]] <- list()
-      private[["pinput"]] <- list()
-      private[["pparameter"]] <- list()
-      private[["pswitch"]] <- list()
+      private[["pState"]] <- list()
+      private[["pConstant"]] <- list()
+      private[["pInput"]] <- list()
+      private[["pParameter"]] <- list()
+      private[["pSwitch"]] <- list()
       private[["pDescription"]] <- list()
-      private[["punit"]] <- list()
+      private[["pUnit"]] <- list()
       private[["pMethod"]] <- NULL
       private[["pTimes"]] <- NULL
     },
@@ -1113,12 +1113,12 @@ sdScenarioClass <- R6::R6Class(
               
               # if it was a ts also remove the previous interpolation and fun
               if (varType == "input") { 
-                private[["pinput"]][["interpolation_"]][[var]] <- NULL
-                private[["pinput"]][["fun_"]][[var]] <- NULL
+                private[["pInput"]][["interpolation_"]][[var]] <- NULL
+                private[["pInput"]][["fun_"]][[var]] <- NULL
                 
-                if (length(private[["pinput"]][["interpolation_"]]) == 0) { 
-                  private[["pinput"]][["interpolation_"]] <- NULL
-                  private[["pinput"]][["fun_"]] <- NULL
+                if (length(private[["pInput"]][["interpolation_"]]) == 0) { 
+                  private[["pInput"]][["interpolation_"]] <- NULL
+                  private[["pInput"]][["fun_"]] <- NULL
                 }
               }
             } else { 
@@ -1168,17 +1168,17 @@ sdScenarioClass <- R6::R6Class(
           # also remove units and descriptions from variables
           if (!(varType %in% c("description", "unit"))) { 
             private[["pDescription"]][[var]] <- NULL
-            private[["punit"]][[var]] <- NULL
+            private[["pUnit"]][[var]] <- NULL
           }
           
           # in case of inputs, also remove from the interpolation and fun lists
           if (varType == "input") { 
-            private[["pinput"]][["interpolation_"]][[var]] <- NULL
-            private[["pinput"]][["fun_"]][[var]] <- NULL
+            private[["pInput"]][["interpolation_"]][[var]] <- NULL
+            private[["pInput"]][["fun_"]][[var]] <- NULL
             
-            if (length(private[["pinput"]][["interpolation_"]]) == 0) { 
-              private[["pinput"]][["interpolation_"]] <- NULL
-              private[["pinput"]][["fun_"]] <- NULL
+            if (length(private[["pInput"]][["interpolation_"]]) == 0) { 
+              private[["pInput"]][["interpolation_"]] <- NULL
+              private[["pInput"]][["fun_"]] <- NULL
             }
           }
         } else {
