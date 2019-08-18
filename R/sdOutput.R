@@ -201,7 +201,7 @@ sdOutputClass <- R6::R6Class(
       if (!missing(postProcessOut))
         private[["pPostProcessOut"]] <- postProcessOut
       
-      private$poutputId <- paste0("Simulation Output ", Sys.time())
+      private$pOutputId <- paste0("Simulation Output ", Sys.time())
     },
     print = function() { 
       cat("<", class(self)[[1]], ">\n", sep = "")
@@ -285,19 +285,19 @@ sdOutputClass <- R6::R6Class(
       
       # all the labels must be provided, or any will be used
       if (!is.null(xlab) && length(which) != length(xlab)) { 
-        sdOutputMsg$plot1(private$poutputId, "xlab")
+        sdOutputMsg$plot1(private$pOutputId, "xlab")
         xlab <- NULL
       }
       if (!is.null(ylab) && length(which) != length(ylab)) { 
-        sdOutputMsg$plot1(private$poutputId, "ylab")
+        sdOutputMsg$plot1(private$pOutputId, "ylab")
         ylab <- NULL
       }
       if (!is.null(main) && length(which) != length(main)) { 
-        sdOutputMsg$plot1(private$poutputId, "main")
+        sdOutputMsg$plot1(private$pOutputId, "main")
         main <- NULL
       }
       if (!is.null(sub) && length(which) != length(sub)) { 
-        sdOutputMsg$plot1(private$poutputId, "sub")
+        sdOutputMsg$plot1(private$pOutputId, "sub")
         sub <- NULL
       }
       
@@ -306,7 +306,7 @@ sdOutputClass <- R6::R6Class(
       } else { 
         if (!is.character(unlist(which, recursive = T))) { 
           which <- "all"
-          sdOutputMsg$plot2(private$poutputId)
+          sdOutputMsg$plot2(private$pOutputId)
         } else { 
           if (!is.null(private[["pAuxTrajectory"]]))
             data <- merge(data, private[["pAuxTrajectory"]],
@@ -378,7 +378,7 @@ sdOutputClass <- R6::R6Class(
           
           # check if all the variables names are valid columns names
           if (!all(yaxisArray %in% names(data))) { 
-            sdOutputMsg$plot3(private$poutputId, yaxisArray, names(data))
+            sdOutputMsg$plot3(private$pOutputId, yaxisArray, names(data))
             
             # remove the not valid columns
             yaxisArray <- yaxisArray[
@@ -390,7 +390,7 @@ sdOutputClass <- R6::R6Class(
           }
           
           if (!(xaxis %in% names(data))) { 
-            sdOutputMsg$plot4(private$poutputId, xaxis)
+            sdOutputMsg$plot4(private$pOutputId, xaxis)
             xaxis <- "time"
           }
           
@@ -421,7 +421,7 @@ sdOutputClass <- R6::R6Class(
           # check the ylabel size when plotting more than one YAxis
           if (!is.null(ylab) && ylabel != "" && multipleYAxis && 
               length(ylabel) < nYAxis)
-            sdOutputMsg$plot1(private$poutputId, "ylab")
+            sdOutputMsg$plot1(private$pOutputId, "ylab")
           
           # plot each y variable
           for (j in 1:nYAxis) { 
@@ -506,7 +506,7 @@ sdOutputClass <- R6::R6Class(
     },
     saveSimulationOutput = function(path = "directory", scenarioXlsx = TRUE) { 
       if (missing(path))
-        path <- private$poutputId
+        path <- private$pOutputId
       
       if (!dir.exists(path)) 
         dir.create(path = paste0(path, "/"), recursive = TRUE)
@@ -577,7 +577,7 @@ sdOutputClass <- R6::R6Class(
     }
   ),
   private = list(
-    poutputId = NULL,
+    pOutputId = NULL,
     pOutTrajectory = NULL,
     pAuxTrajectory = NULL,
     pTimeSeriesTrajectory = NULL,

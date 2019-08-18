@@ -625,27 +625,27 @@ sdOdeModelMsg$defaultScenario <- function(pModelId)
 ## 
 sdOutputMsg <- new.env()
 
-sdOutputMsg$plot1 <- function(poutputId, plotarg)
-  warning("sdsim::plot - Plot output '", poutputId, "': The '...' and the '", 
+sdOutputMsg$plot1 <- function(pOutputId, plotarg)
+  warning("sdsim::plot - Plot output '", pOutputId, "': The '...' and the '", 
           plotarg, "' arguments must have the same length. The '", plotarg, 
           "' will not be used.", call. = F)
 
-sdOutputMsg$plot2 <- function(poutputId)
-  warning("sdsim::plot - Plot output '", poutputId, "': the argument '...' ",
+sdOutputMsg$plot2 <- function(pOutputId)
+  warning("sdsim::plot - Plot output '", pOutputId, "': the argument '...' ",
           "must be a list of character vectors containing ",
           "the formulas with the name of the variables to be plotted. See ",
           "help('sdOutput'). All the output variables will be ploted instead.",
           call. = F)
 
-sdOutputMsg$plot3 <- function(poutputId, yaxisArray, namesData)
-  warning("sdsim::plot - Plot output '", poutputId, 
+sdOutputMsg$plot3 <- function(pOutputId, yaxisArray, namesData)
+  warning("sdsim::plot - Plot output '", pOutputId, 
           "': Not all the formula variables are valid column names. ",
           "The following variables will be skipped: ", 
           paste(yaxisArray[!(yaxisArray %in% namesData)], 
                 collapse = ", "), call. = F)
 
-sdOutputMsg$plot4 <- function(poutputId, xaxis)
-  warning("sdsim::plot - Plot output '", poutputId, "': The x-axis variable '", 
+sdOutputMsg$plot4 <- function(pOutputId, xaxis)
+  warning("sdsim::plot - Plot output '", pOutputId, "': The x-axis variable '", 
           xaxis, 
           "' is not valid, the simulation time sequence will be used instead.",
           call. = F)
