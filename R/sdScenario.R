@@ -654,19 +654,19 @@ sdScenarioClass <- R6::R6Class(
     },
     # Add variables to the scenario
     addState = function(..., verbose = FALSE, overwrite = FALSE) { 
-      private[["paddVar"]](unlist(list(...)), "state", checkNumeric = TRUE, 
+      private[["paddVar"]](unlist(list(...)), "State", checkNumeric = TRUE, 
                            verbose = verbose, overwrite = overwrite)
       invisible()
     },
     addConstant = function(..., verbose = FALSE, overwrite = FALSE) { 
-      private[["paddVar"]](list(...), "constant", checkNumeric = TRUE, 
+      private[["paddVar"]](list(...), "Constant", checkNumeric = TRUE, 
                            verbose = verbose, overwrite = overwrite)
       invisible()
     },
     addInput = function(..., interpolation = NULL, verbose = FALSE, 
                         overwrite = FALSE,
                         timeSeriesDirectory = "") { 
-      private[["paddVar"]](list(...), "input", checkNumeric = FALSE, 
+      private[["paddVar"]](list(...), "Input", checkNumeric = FALSE, 
                            verbose = verbose, overwrite = overwrite)
       
       # check if the interpolation names are valid
@@ -697,19 +697,19 @@ sdScenarioClass <- R6::R6Class(
       invisible()
     },
     addParameter = function(..., verbose = FALSE, overwrite = FALSE) { 
-      private[["paddVar"]](list(...), "parameter", checkNumeric = TRUE, 
+      private[["paddVar"]](list(...), "Parameter", checkNumeric = TRUE, 
                            verbose = verbose, overwrite = overwrite)
       invisible()
     },
     addSwitch = function(..., verbose = FALSE, overwrite = FALSE) { 
-      private[["paddVar"]](list(...), "switch", checkNumeric = FALSE, 
+      private[["paddVar"]](list(...), "Switch", checkNumeric = FALSE, 
                            verbose = verbose, overwrite = overwrite)
       invisible()
     },
     addDescription = function(..., verbose = FALSE, overwrite = FALSE) { 
       varList <- list(...)
       
-      private[["paddVar"]](varList, "description", checkNumeric = FALSE, 
+      private[["paddVar"]](varList, "Description", checkNumeric = FALSE, 
                            verbose = verbose, sortVars = TRUE, 
                            overwrite = overwrite)
       invisible()
@@ -717,7 +717,7 @@ sdScenarioClass <- R6::R6Class(
     addUnit = function(..., verbose = FALSE, overwrite = FALSE) { 
       varList <- list(...)
       
-      private[["paddVar"]](varList, "unit", checkNumeric = FALSE, 
+      private[["paddVar"]](varList, "Unit", checkNumeric = FALSE, 
                            verbose = verbose,
                            sortVars = TRUE, overwrite = overwrite)
       invisible()
@@ -1034,6 +1034,7 @@ sdScenarioClass <- R6::R6Class(
     },
     paddVar = function(varList = list(), varType = NULL, checkNumeric = FALSE, 
                        verbose = FALSE, sortVars = FALSE, overwrite = FALSE) { 
+      
       # if an unnamed list is passed, add its elements
       if (length(varList) == 1 && is.vector(varList[[1]]) 
           && is.null(names(varList)))
@@ -1089,9 +1090,11 @@ sdScenarioClass <- R6::R6Class(
         varList <- varList[!(names(varList) %in% sdsimReserved)]
       }
       
-      if (overwrite)
-        private[[paste0("p", varType)]] <- list()
       
+      if (overwrite) {
+        private[[paste0("p", varType)]] <- list()
+      }
+        
       for (var in names(varList)) { 
         if (var == "") { # skip unnamed vars
           sdScenarioMsg$addVar2(private$pId, varType)
