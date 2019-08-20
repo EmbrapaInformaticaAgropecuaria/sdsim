@@ -139,7 +139,10 @@ sdInitEquations <- function (equations, separator = "<-",
         equationVariable <- nameList[[i]]
         equation <- eq
       } else { 
-        auxiliaryMsg$sdInitEq(paste(eqName, collapse = " and "), eq)
+        # TODO: Vitor
+        # auxiliaryMsg$sdInitEq(paste(eqName, collapse = " and "), eq)
+        warning(sprintf(auxiliaryMsg$sdInitEq, 
+                        paste(eqName, collapse = " and "), typeof(eq)))
         next()
       }
       

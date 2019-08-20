@@ -6,12 +6,20 @@ auxiliaryMsg <- new.env()
 
 # use case:
 # sdInitEquations(list(2,3))
-auxiliaryMsg$sdInitEq <- function(eqName, eq)
-  warning("sdsim::sdInitEquations - Initializing equations: The ", eqName, 
-          " equations argument must be a ",
-          "named list of R-expressions and/or strings with equations in ",
-          "R-format. The element of type ", typeof(eq), 
-          " will be skipped.", call. = F)
+# auxiliaryMsg$sdInitEq <- function(eqName, eq)
+#   warning("sdsim::sdInitEquations - Initializing equations: The ", eqName,
+#           " equations argument must be a ",
+#           "named list of R-expressions and/or strings with equations in ",
+#           "R-format. The element of type ", typeof(eq),
+#           " will be skipped.", call. = F)
+# TODO: Vitor
+auxiliaryMsg$sdInitEq <- paste0(
+  "sdsim::sdInitEquations - Initializing equations: The %s ",
+  "equations argument must be a ",
+  "named list of R-expressions and/or strings with equations in ",
+  "R-format. The element of type %s ",
+  "will be skipped."
+)
 
 auxiliaryMsg$sdInitEq1 <- paste0("sdsim::sdInitEquations - Initializing ", 
           "equations: The '%s' equations argument must be a ",
