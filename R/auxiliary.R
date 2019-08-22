@@ -283,7 +283,7 @@ sdTemporalFunctionList <- function(x, colTimes = 1, colValue = 2,
     return(x)
   
   if (length(x) != length(methods)) { 
-    auxiliaryMsg$sdTemporalFunctionList()
+    warning(sprintf(auxiliaryMsg$sdTemporalFunctionList))
     return(NULL)
   }
   
@@ -410,7 +410,7 @@ sdTemporalFunction <- function(x, colTimes = 1, colValue = 2,
     if (timeSeriesDirectory != "")
       timeSeriesDirectory <- paste0(timeSeriesDirectory, "/")
     if (!file.exists(paste0(timeSeriesDirectory, x))) { 
-      auxiliaryMsg$sdTemporalFunction1(timeSeriesDirectory, x)
+      warning(sprintf(auxiliaryMsg$sdTemporalFunction1,paste0(timeSeriesDirectory, x)))
       return(NULL)
     }
     

@@ -41,19 +41,20 @@ auxiliaryMsg$topologicalSortEq <- function(eqName, equations, eqorder,
               names(dependents)]), 
             collapse = "\n"), call. = F)
 
-auxiliaryMsg$sdTemporalFunctionList <- function() 
-  warning("sdsim::sdTemporalFunctionList - Error Transforming the time series ",
-          "variables: The size of the list 'x' must match the size of the list ",
-          "'methods'. Transformation aborted, returned NULL.", call. = F)
+auxiliaryMsg$sdTemporalFunctionList <- paste0(
+  "sdsim::sdTemporalFunctionList - Error Transforming the time series ",
+  "variables: The size of the list 'x' must match the size of the list ",
+  "'methods'. Transformation aborted, returned NULL."
+  )
 
 # case use:
 # sdTemporalFunction(x = "lala")
-auxiliaryMsg$sdTemporalFunction1  <- function(timeSeriesDirectory, x) 
-  warning("sdsim::sdTemporalFunction - Error: The time series file '", 
-          paste0(timeSeriesDirectory, x), "' does not exist. Use the argument ",
+auxiliaryMsg$sdTemporalFunction1  <- paste0( 
+  "sdsim::sdTemporalFunction - Error: The time series file '%s' ", 
+          " does not exist. Use the argument ",
           "'timeSeriesDirectory' to set the right path to the time series ", 
-          "files. Temporal function transformation aborted, returned NULL.", 
-          call. = F)
+          "files. Temporal function transformation aborted, returned NULL."
+  )
 
 # case use:
 # sdTemporalFunction(x = "DESCRIPTION")
