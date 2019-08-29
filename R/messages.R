@@ -217,23 +217,27 @@ constructorsMsg$sdLoadScenario4 <- function(file)
 ##
 readInputDataMsg <- new.env()
 
-readInputDataMsg$ConvertDataFrameToList <- function()
+readInputDataMsg$ConvertDataFrameToList <- paste0(
   warning("sdsim::sdLoadScenario - Load Scenario from EXCEL: an invalid ",
           "data.frame was skipped, probably with empty values. Refactor your ",
-          "file if it is not wanted.", call. = F)
+          "file if it is not wanted.")
+)
 
-readInputDataMsg$ReadDataExcel1 <- function(fileName, e)
+readInputDataMsg$ReadDataExcel1 <- paste0(
   warning("sdsim::sdLoadScenario - Load Scenario from EXCEL: Error opening ", 
-          "the file '", fileName, "'. ", e, call. = F)
+          "the file '%s'. %s")
+)
 
-readInputDataMsg$ReadDataExcel2 <- function(fileName, w)
+readInputDataMsg$ReadDataExcel2 <- paste0(
   warning("sdsim::sdLoadScenario - Load Scenario from EXCEL: Warning opening ", 
-          "the file '", fileName, "'. ", w,  call. = F)
+          "the file '%s'. %s")
+)
 
-readInputDataMsg$LoadModelScenario1 <- function(file)
-  warning("sdsim::sdLoadScenario - Loading scenario '", file, 
-          "' from EXCEL aborted: The scenario file path do not exist. ",
-          "No variable will be loaded.", call. = F)
+readInputDataMsg$LoadModelScenario1 <- paste0(
+  warning("sdsim::sdLoadScenario - Loading scenario '%s'",
+          " from EXCEL aborted: The scenario file path do not exist. ",
+          "No variable will be loaded.")
+)
 
 ## FILE sdCoupledModel.R
 ## 

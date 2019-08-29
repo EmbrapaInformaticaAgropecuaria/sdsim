@@ -53,7 +53,7 @@ ConvertDataFrameToList <- function(dataFrame, variableCol = "Variable",
     dataList[as.character(dataFrame[[variableCol]])] <- 
       as.list(dataFrame[[valueCol]])
   } else {
-    readInputDataMsg$ConvertDataFrameToList()
+    warning(sprintf(readInputDataMsg$ConvertDataFrameToList))
   }
   
   return(dataList)
@@ -76,12 +76,12 @@ ReadDataExcel <- function(fileName  = "DGM Inputs/dgmParameterInput.xlsx") {
       row.names(df) <- NULL
       return(df)
     },
-    error=function(e) { 
-      readInputDataMsg$ReadDataExcel1(fileName, e)
+    error=function(e) {
+      warning(sprintf(readInputDataMsg$ReadDataExcel1, fileName, e))
       return(data.frame())
     },
     warning=function(w) { 
-      readInputDataMsg$ReadDataExcel2(fileName, w)
+      warning(sprintf(readInputDataMsg$ReadDataExcel2,fileName,w))
       return(data.frame())
     })
   })
@@ -342,7 +342,7 @@ LoadModelScenario <- function(file,
       }
     }
   } else { 
-    readInputDataMsg$LoadModelScenario1(file)
+    warning(sprintf(readInputDataMsg$LoadModelScenario1, file))
   }
   
   return(scen)
