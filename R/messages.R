@@ -58,31 +58,36 @@ auxiliaryMsg$sdTemporalFunction1  <- paste0(
 
 # case use:
 # sdTemporalFunction(x = "DESCRIPTION")
-auxiliaryMsg$sdTemporalFunction2  <- function(timeSeriesDirectory, x, e) 
-  warning("sdsim::sdTemporalFunction - Error opening the time series file '", 
-          paste0(timeSeriesDirectory, x), "'. The default separator is ", 
-          "',' and the default decimal point is '.'. ",
-          "Temporal function transformation aborted, returned NULL. ", 
-          e, call. = F)
+
+auxiliaryMsg$sdTemporalFunction2  <- paste0( 
+  warning("sdsim::sdTemporalFunction - Error opening the time series file '%s'.", 
+          " The default separator is ',' and the default decimal point is '.'.",
+          " Temporal function transformation aborted, returned NULL. %s"
+          )
+)
 
 # case use:
 # sdTemporalFunction(x = TRUE)
-auxiliaryMsg$sdTemporalFunction3  <- function(x) 
-  warning("sdsim::sdTemporalFunction - Wrong time series variable 'x' type '",
-          typeof(x), "': Please use one of the following types: fixed numeric ",
-          "value, matrix, data.frame or character (text file name). ",
-          "Transformation aborted, returned NULL.", call. = F)
+auxiliaryMsg$sdTemporalFunction3  <- paste0( 
+  warning("sdsim::sdTemporalFunction - Wrong time series variable 'x' type '%s':",
+          " Please use one of the following types: fixed numeric",
+          " value, matrix, data.frame or character (text file name).",
+          " Transformation aborted, returned NULL.")
+ )
 
 # case use:
 # sdTemporalFunction(x = 2, method = T)
-auxiliaryMsg$sdTemporalFunction4  <- function() 
-  warning("sdsim::sdTemporalFunction - The given interpolation method is not ", 
-          "supported: See help('sdTemporalFunction') for the supported ", 
-          "methods. Transformation aborted, returned NULL.", call. = F)
 
-auxiliaryMsg$sdTemporalFunction5  <- function(e) 
+auxiliaryMsg$sdTemporalFunction4  <- paste0(
+  warning("sdsim::sdTemporalFunction - The given interpolation method is not", 
+          " supported: See help('sdTemporalFunction') for the supported", 
+          " methods. Transformation aborted, returned NULL.")
+)
+
+auxiliaryMsg$sdTemporalFunction5  <- paste0(
   warning("sdsim::sdTemporalFunction - Error interpolating the time series ", 
-          "data points: Transformation aborted, returned NULL. ", e, call. = F)
+          "data points: Transformation aborted, returned NULL. %s")
+)
 
 auxiliaryMsg$sdTemporalFunction6 <- paste0(
   "sdsim::sdTemporalFunction - Error in the time serie data points: Missing ",

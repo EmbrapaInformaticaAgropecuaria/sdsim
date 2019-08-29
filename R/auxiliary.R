@@ -421,7 +421,7 @@ sdTemporalFunction <- function(x, colTimes = 1, colValue = 2,
                  strip.white = TRUE, stringsAsFactors = FALSE,
                  header = header)},
       error = function(e) { 
-        auxiliaryMsg$sdTemporalFunction2(timeSeriesDirectory, x, e)
+        warning(sprintf(auxiliaryMsg$sdTemporalFunction2, paste0(timeSeriesDirectory, x), e))
         return(NULL)
       })
     
@@ -437,8 +437,8 @@ sdTemporalFunction <- function(x, colTimes = 1, colValue = 2,
     timeS  <- temporal_data[, colTimes]    
     # second column must have the values for each time
     values <- temporal_data[, colValue]  
-  } else { 
-    auxiliaryMsg$sdTemporalFunction3(x)
+  } else {
+    warning(sprintf(auxiliaryMsg$sdTemporalFunction3,typeof(x)))
     return(NULL)
   }
   
@@ -459,7 +459,7 @@ sdTemporalFunction <- function(x, colTimes = 1, colValue = 2,
                        method = method)
     },
     error = function(e) { 
-      auxiliaryMsg$sdTemporalFunction5(e)
+      warning(sprintf(auxiliaryMsg$sdTemporalFunction5,e))
       return(NULL)
     })
   } else if (method %in% splineMethods) { 
@@ -467,11 +467,11 @@ sdTemporalFunction <- function(x, colTimes = 1, colValue = 2,
       stats::splinefun(x = timeS, y = values, method = method)
     },
     error = function(e) { 
-      auxiliaryMsg$sdTemporalFunction5(e)
+      warning(sprintf(auxiliaryMsg$sdTemporalFunction5,e))
       return(NULL)
     })
   } else { 
-    auxiliaryMsg$sdTemporalFunction4()
+    warning(sprintf(auxiliaryMsg$sdTemporalFunction4))
     f <- NULL
   }
   
