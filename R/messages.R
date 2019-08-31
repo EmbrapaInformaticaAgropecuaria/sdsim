@@ -60,33 +60,33 @@ auxiliaryMsg$sdTemporalFunction1  <- paste0(
 # sdTemporalFunction(x = "DESCRIPTION")
 
 auxiliaryMsg$sdTemporalFunction2  <- paste0( 
-  warning("sdsim::sdTemporalFunction - Error opening the time series file '%s'.", 
+  "sdsim::sdTemporalFunction - Error opening the time series file '%s'.", 
           " The default separator is ',' and the default decimal point is '.'.",
           " Temporal function transformation aborted, returned NULL. %s"
-          )
+          
 )
 
 # case use:
 # sdTemporalFunction(x = TRUE)
 auxiliaryMsg$sdTemporalFunction3  <- paste0( 
-  warning("sdsim::sdTemporalFunction - Wrong time series variable 'x' type '%s':",
+  "sdsim::sdTemporalFunction - Wrong time series variable 'x' type '%s':",
           " Please use one of the following types: fixed numeric",
           " value, matrix, data.frame or character (text file name).",
-          " Transformation aborted, returned NULL.")
+          " Transformation aborted, returned NULL."
  )
 
 # case use:
 # sdTemporalFunction(x = 2, method = T)
 
 auxiliaryMsg$sdTemporalFunction4  <- paste0(
-  warning("sdsim::sdTemporalFunction - The given interpolation method is not", 
+  "sdsim::sdTemporalFunction - The given interpolation method is not", 
           " supported: See help('sdTemporalFunction') for the supported", 
-          " methods. Transformation aborted, returned NULL.")
+          " methods. Transformation aborted, returned NULL."
 )
 
 auxiliaryMsg$sdTemporalFunction5  <- paste0(
-  warning("sdsim::sdTemporalFunction - Error interpolating the time series ", 
-          "data points: Transformation aborted, returned NULL. %s")
+  "sdsim::sdTemporalFunction - Error interpolating the time series ", 
+          "data points: Transformation aborted, returned NULL. %s"
 )
 
 auxiliaryMsg$sdTemporalFunction6 <- paste0(
@@ -218,25 +218,25 @@ constructorsMsg$sdLoadScenario4 <- function(file)
 readInputDataMsg <- new.env()
 
 readInputDataMsg$ConvertDataFrameToList <- paste0(
-  warning("sdsim::sdLoadScenario - Load Scenario from EXCEL: an invalid ",
+  "sdsim::sdLoadScenario - Load Scenario from EXCEL: an invalid ",
           "data.frame was skipped, probably with empty values. Refactor your ",
-          "file if it is not wanted.")
+          "file if it is not wanted."
 )
 
 readInputDataMsg$ReadDataExcel1 <- paste0(
-  warning("sdsim::sdLoadScenario - Load Scenario from EXCEL: Error opening ", 
-          "the file '%s'. %s")
+  "sdsim::sdLoadScenario - Load Scenario from EXCEL: Error opening ", 
+          "the file '%s'. %s"
 )
 
 readInputDataMsg$ReadDataExcel2 <- paste0(
-  warning("sdsim::sdLoadScenario - Load Scenario from EXCEL: Warning opening ", 
-          "the file '%s'. %s")
+  "sdsim::sdLoadScenario - Load Scenario from EXCEL: Warning opening ", 
+          "the file '%s'. %s"
 )
 
 readInputDataMsg$LoadModelScenario1 <- paste0(
-  warning("sdsim::sdLoadScenario - Loading scenario '%s'",
+  "sdsim::sdLoadScenario - Loading scenario '%s'",
           " from EXCEL aborted: The scenario file path do not exist. ",
-          "No variable will be loaded.")
+          "No variable will be loaded."
 )
 
 ## FILE sdCoupledModel.R
