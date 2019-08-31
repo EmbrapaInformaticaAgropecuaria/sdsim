@@ -267,16 +267,16 @@ sdLoadModel <- function(file, repository = F,
   
   # check if file exists
   if (!file.exists(file)) 
-    constructorsMsg$sdLoadModel3(file)
+    stop(sprintf(constructorsMsg$sdLoadModel3,file))
   
   # read the file
   model <- tryCatch(
     XML::xmlParse(file),
     error = function(e) { 
-      constructorsMsg$sdLoadModel4(file, e)
+      stop(sprintf(constructorsMsg$sdLoadModel4,file,e))
     },
     warning = function(w) { 
-      constructorsMsg$sdLoadModel5(file, w)
+      warning(sprintf(constructorsMsg$sdLoadModel5, file, w))
     })
   
   # Check if file is a valid xml file from the sdsim package
@@ -284,7 +284,8 @@ sdLoadModel <- function(file, repository = F,
   sdsimprefix <- paste(readLines(file, n = 3), collapse = "\n")
   if (!grepl(pattern = "<\\?sdsim.*version.*\\?>", sdsimprefix, 
              ignore.case = TRUE))
-    constructorsMsg$sdLoadModel6()
+    stop(sprintf(constructorsMsg$sdLoadModel6))
+  
   # else
   # {
   #   # valid prefix, now check version
@@ -446,7 +447,8 @@ sdLoadModel <- function(file, repository = F,
     
     return(model)
   } else {
-    constructorsMsg$sdLoadModel7()
+    stop(sprintf(constructorsMsg$sdLoadModel7))
+    
   }
 }
 
@@ -1224,7 +1226,7 @@ sdLoadScenario <- function(file,
   
   # check if file exists
   if (!file.exists(file)) 
-    constructorsMsg$sdLoadScenario1(file)
+    stop(sprintf(constructorsMsg$sdLoadScenario1, file))
   
   if (isXml) { 
     # read the file
@@ -1234,7 +1236,7 @@ sdLoadScenario <- function(file,
         constructorsMsg$sdLoadScenario2(file, e)
       },
       warning = function(w) { 
-        constructorsMsg$sdLoadScenario3(file, w)
+        warning(sprintf(constructorsMsg$sdLoadScenario3,file,w))
       })
     
     # Check if file is a valid sdsim xml file containing a scenario XML
@@ -1269,7 +1271,8 @@ sdLoadScenario <- function(file,
                                     descriptionCol = "Description", 
                                     interpolationCol = "Interpolation")
   } else {
-    constructorsMsg$sdLoadScenario4(file)
+    stop(sprintf(constructorsMsg$sdLoadScenario4, file))
+    
   }
   
   return(sdScenarioClass$new(id = loadedScen$id,

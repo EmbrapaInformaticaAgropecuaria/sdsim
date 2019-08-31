@@ -161,39 +161,39 @@ constructorsMsg$sdLoadModel2 <- function(file)
 
 # case use:
 # sdLoadModel("la")
-constructorsMsg$sdLoadModel3 <- function(file)
-  stop("sdsim::sdLoadModel - Load Model aborted: The given file '", file, 
-       "' do not exists.", call. = F)
+constructorsMsg$sdLoadModel3 <- paste0(
+  "sdsim::sdLoadModel - Load Model aborted: The given file '%s'", 
+       " do not exists.")
 
 # case use:
 # sdLoadModel("DESCRIPTION")
-constructorsMsg$sdLoadModel4 <- function(file, e)
-  stop("sdsim::sdLoadModel - Load Model '", file, 
-       "': The given file is not a valid XML. Use the package functions to ", 
+constructorsMsg$sdLoadModel4 <- paste0(
+  "sdsim::sdLoadModel - Load Model '%s':", 
+       " The given file is not a valid XML. Use the package functions to ", 
        "generate it. See help('sdLoadModel') and in the desired model ", 
-       "help pages look for the method '$saveXml'. ", e, call. = F)
+       "help pages look for the method '$saveXml'. %s")
 
 # warning when reading file
-constructorsMsg$sdLoadModel5 <- function(file, w)
-  warning("sdsim::sdLoadModel - Load Model from file '", file, "': ", w, call. = F)
+constructorsMsg$sdLoadModel5 <- paste0(
+  "sdsim::sdLoadModel - Load Model from file '%s': %s")
 
 # prefix not valid
-constructorsMsg$sdLoadModel6 <- function()
-  stop("sdsim::sdLoadModel - Load Model aborted: The given file is not a ", 
+constructorsMsg$sdLoadModel6 <- paste0(
+    "sdsim::sdLoadModel - Load Model aborted: The given file is not a ", 
        "valid XML file. Generate your XML files using the sdsim package ", 
        "functions. See help('sdLoadModel') and in the desired type of model ", 
-       "help pages look for the method '$saveXml'.", call. = F)
+       "help pages look for the method '$saveXml'.")
 
 # valid xml without a model
-constructorsMsg$sdLoadModel7 <- function()
-  stop("sdsim::sdLoadModel - Load Model aborted: The given XML file do not ",
-       "contain a model.", call. = F)
+constructorsMsg$sdLoadModel7 <- paste0(
+  "sdsim::sdLoadModel - Load Model aborted: The given XML file do not ",
+       "contain a model.")
 
 # case use:
 # sdLoadScenario(file = "")
-constructorsMsg$sdLoadScenario1 <- function(file)
-  stop("sdsim::sdLoadScenario - Load Scenario aborted: The given file '", file, 
-       "' do not exist.", call. = F)
+constructorsMsg$sdLoadScenario1 <- paste0(
+  "sdsim::sdLoadScenario - Load Scenario aborted: The given file '%s'", 
+       " do not exist.")
 
 constructorsMsg$sdLoadScenario2 <- function(file, e = NULL)
   stop("sdsim::sdLoadScenario - Load Scenario '", file, "' aborted: ",
@@ -202,16 +202,16 @@ constructorsMsg$sdLoadScenario2 <- function(file, e = NULL)
        "method '$saveXml' present in the help('sdScenarioClass') to generate",
        " a valid XML.", e, call. = F)
 
-constructorsMsg$sdLoadScenario3 <- function(file, w)
-  warning("sdsim::sdLoadScenario - Load Scenario '", file, "': ", w, call. = F)
+constructorsMsg$sdLoadScenario3 <- paste0(
+  "sdsim::sdLoadScenario - Load Scenario '%s': %s")
 
 # CASE USE
 # sdLoadScenario(file = "DESCRIPTION")
-constructorsMsg$sdLoadScenario4 <- function(file)
-  stop("sdsim::sdLoadScenario - Load Scenario '", file, 
-       "' aborted: Wrong file extension. It should be a Extensible ", 
+constructorsMsg$sdLoadScenario4 <- paste0(
+  "sdsim::sdLoadScenario - Load Scenario '%s'", 
+       " aborted: Wrong file extension. It should be a Extensible ", 
        "Markup Language (XML) or an EXCEL file. See help('sdLoadScenario') for",
-       " the set of rules to encode a sdScenario.", call. = F)
+       " the set of rules to encode a sdScenario.")
 
 ## FILE: readInputData.R
 ##
