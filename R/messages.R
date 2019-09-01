@@ -244,20 +244,20 @@ readInputDataMsg$LoadModelScenario1 <- paste0(
 sdCoupledModelMsg <- new.env()
 
 # sdBuildCoupledScenario(scenarios = list(2,3))
-sdCoupledModelMsg$sdBuildCoupledScenario1 <- function()
-  stop("sdsim::sdBuildCoupledScenario - Error building the coupled scenario: ",
+sdCoupledModelMsg$sdBuildCoupledScenario1 <- paste0(
+  "sdsim::sdBuildCoupledScenario - Error building the coupled scenario: ",
        "The 'scenarios' argument must be a list named with the component ID ",
        "that will use each scenario in the coupled model. ", 
-       "At least one name was missing.", call. = F)
+       "At least one name was missing.")
 
 # use case
 # sdBuildCoupledScenario(scenarios = list(a = 2))
-sdCoupledModelMsg$sdBuildCoupledScenario2 <- function(scenComponent, modelId)
-  warning("sdsim::sdBuildCoupledScenario - Building Coupled Scenario: The ", 
+sdCoupledModelMsg$sdBuildCoupledScenario2 <- paste0(
+  "sdsim::sdBuildCoupledScenario - Building Coupled Scenario: The ", 
           "argument 'scenarios' must be a named list of not empty ", 
-          "sdScenario's objects or character file names. Scenario of type '", 
-          typeof(scenComponent), "' of the component '", modelId, 
-          "' could not be added.", call. = F)
+          "sdScenario's objects or character file names. Scenario of type '%s'", 
+          " of the component '%s'",
+          " could not be added.")
 
 # sdCoupledModel("test", components = sdOdeModel("test"))
 sdCoupledModelMsg$addComponent0 <- function(pCoupledModelId, id)
@@ -294,13 +294,13 @@ sdCoupledModelMsg$addConnection1 <- paste0(
   "will be skipped.")
 
 # sdCoupledModel("test", connections = list(c(1,2,3,4,5)))
-sdCoupledModelMsg$addConnection2 <- function(pCoupledModelId, con)
-  warning("sdsim::addConnection - Coupled Model '", pCoupledModelId, 
-          "' adding connection: The 5th element of the connection vector must ",
+sdCoupledModelMsg$addConnection2 <- paste0(
+    "sdsim::addConnection - Coupled Model '%s'",
+          " adding connection: The 5th element of the connection vector must ",
           "include the prefix st$, aux$ or eq$, indicating a state variable, ",
           "an auxiliary or an algebraic equation connection, respectively. ",
-          "The connection: c(", paste(con, collapse = ","), 
-          ") will be skipped.", call. = F)
+          "The connection: c(%s", 
+          ") will be skipped.")
 
 # sdCoupledModel("test", connections = list(c(1,2,3,4,"aux$5"), 
 #c(1,2,3,4,"aux$5")))
@@ -317,10 +317,10 @@ sdCoupledModelMsg$removeConnection <- paste0(
   "thus can not be removed.")
 
 # sdCoupledModel("test")$verifyModel()
-sdCoupledModelMsg$verifyModel1 <- function(pCoupledModelId)
-  stop("sdsim::verifyModel - Coupled Model '", pCoupledModelId, 
-       "' verification error: Build the coupled model first using the method ",
-       "'$buildCoupledModel'. Coupled model verification aborted.", call. = F)
+sdCoupledModelMsg$verifyModel1 <- paste0(
+    "sdsim::verifyModel - Coupled Model '%s'", 
+       " verification error: Build the coupled model first using the method ",
+       "'$buildCoupledModel'. Coupled model verification aborted.")
 
 sdCoupledModelMsg$verifyModel2 <- function(pCoupledModelId, typeofscenario)
   warning("sdsim::verifyModel - Coupled Model '", pCoupledModelId, 
