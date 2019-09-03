@@ -822,7 +822,7 @@ sdCoupledModelClass <- R6::R6Class(
         if (inherits(scenario, sdScenarioClass$classname))
           defaultScenario <- mergeScenarios(defaultScenario, scenario)
         else
-          sdCoupledModelMsg$verifyModel2(private$pId, typeof(scenario))
+          warning(sprintf(sdCoupledModelMsg$verifyModel2,private$pId,typeof(scenario)))
       }
       # get model variables
       st <- defaultScenario$state
@@ -885,7 +885,7 @@ sdCoupledModelClass <- R6::R6Class(
       if (!is.null(times) && length(unlist(times)) > 0) { 
         t <- times[[1]]
       } else { 
-        sdCoupledModelMsg$verifyModel3(private$pId)
+        warning(sprintf(sdCoupledModelMsg$verifyModel3, private$pId))
         t <- 0
       }
       
@@ -910,7 +910,8 @@ sdCoupledModelClass <- R6::R6Class(
                envir = auxenv)
         },
         error = function(e) { 
-          sdCoupledModelMsg$verifyModel4(private$pId, auxVar, e)
+          warning(sprintf(sdCoupledModelMsg$verifyModel4, private$pId,
+                          auxVar, e))
           invisible(numeric(0))
         })
         
@@ -965,8 +966,8 @@ sdCoupledModelClass <- R6::R6Class(
                                      aux = aux[iComps$aux[[namesCompEqs[[i]]]]])
           },
           error = function(e) { 
-            sdCoupledModelMsg$verifyModel6(private$pId, 
-                                           namesCompEqs[[i]], e)
+            warning(sprintf(sdCoupledModelMsg$verifyModel6, private$pId,
+                            namesCompEqs[[i]], e))
             invisible(NULL)
           })
           
@@ -1005,35 +1006,34 @@ sdCoupledModelClass <- R6::R6Class(
                     is.language(xUnlist[[i]])) {
                   next # do nothing
                 } else if (is.null(xUnlist[[i]])) {
-                  sdCoupledModelMsg$verifyModel7(private$pId, modelId, 
-                                                 names(xUnlist)[[i]], x, "NULL")
+                  warning(sprintf(sdCoupledModelMsg$verifyModel7, private$pId,
+                                  modelId, names(xUnlist)[[i]], x, "NULL"))
                 } else if (length(xUnlist[[i]]) == 0 && is.numeric(xUnlist[[i]])) {
-                  sdCoupledModelMsg$verifyModel7(private$pId, modelId, 
-                                                 names(xUnlist)[[i]], x, 
-                                                 "numeric(0)")
+                  warning(sprintf(sdCoupledModelMsg$verifyModel7, private$pId,
+                                  modelId, names(xUnlist)[[i]], x, "numeric(0)"))
                 } else if (is.na(xUnlist[[i]])) {
-                  sdCoupledModelMsg$verifyModel7(private$pId, modelId, 
-                                                 names(xUnlist)[[i]], x, "NA")
+                  warning(sprintf(sdCoupledModelMsg$verifyModel7, private$pId,
+                                  modelId, names(xUnlist)[[i]], x, "NA"))
                 } else if (is.infinite(xUnlist[[i]])) {
-                  sdCoupledModelMsg$verifyModel7(private$pId, modelId, 
-                                                 names(xUnlist)[[i]], x, "Inf")
+                  warning(sprintf(sdCoupledModelMsg$verifyModel7, private$pId,
+                                  modelId, names(xUnlist)[[i]], x, "Inf"))
                 }
               } 
             }
             else if (x %in% c('st', 'ct', 'par', 'inp', 'sw', 'aux'))
               next # do nothing if an arg is empty
             else if (is.null(unlist(var)))
-              sdCoupledModelMsg$verifyModel8(private$pId, modelId, x, 
-                                             "NULL")
+              warning(sprintf(sdCoupledModelMsg$verifyModel8, private$pId,
+                              modelId, x, "NULL"))
             else if (length(var) == 0 && is.numeric(var))
-              sdCoupledModelMsg$verifyModel8(private$pId, modelId, x, 
-                                             "numeric(0)")
+              warning(sprintf(sdCoupledModelMsg$verifyModel8, private$pId,
+                              modelId, x, "numeric(0)"))
             else if (is.na(unlist(var)))
-              sdCoupledModelMsg$verifyModel8(private$pId, modelId, x, 
-                                             "NA")
+              warning(sprintf(sdCoupledModelMsg$verifyModel8, private$pId,
+                              modelId, x, "NA"))
             else if (is.infinite(unlist(var)))
-              sdCoupledModelMsg$verifyModel8(private$pId, modelId, x, 
-                                             "Inf")
+              warning(sprintf(sdCoupledModelMsg$verifyModel8, private$pId,
+                              modelId, x, "Inf"))
           }
         }
         
@@ -1042,13 +1042,15 @@ sdCoupledModelClass <- R6::R6Class(
           dRes <- res[[1]]
           
           if (!is.numeric(dRes))
-            sdCoupledModelMsg$verifyModel9(private$pId, typeof(dRes))
+            warning(sprintf(sdCoupledModelMsg$verifyModel9, private$pId, 
+                            typeof(dRes)))
           
           if (length(dRes) != length(st))
             sdCoupledModelMsg$verifyModel10(private$pId, dRes,
                                             length(st))
         } else {
-          sdCoupledModelMsg$verifyModel11(private$pId, typeof(res))
+          warning(sprintf(sdCoupledModelMsg$verifyModel11, private$pId,
+                          typeof(res)))
         }
       }
       

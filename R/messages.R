@@ -322,25 +322,25 @@ sdCoupledModelMsg$verifyModel1 <- function(pCoupledModelId)
        "' verification error: Build the coupled model first using the method ",
        "'$buildCoupledModel'. Coupled model verification aborted.", call. = F)
 
-sdCoupledModelMsg$verifyModel2 <- function(pCoupledModelId, typeofscenario)
-  warning("sdsim::verifyModel - Coupled Model '", pCoupledModelId, 
-          "' verification: The given scenario must be of type list containing ",
+sdCoupledModelMsg$verifyModel2 <- paste0(
+  "sdsim::verifyModel - Coupled Model '%s'",
+          " verification: The given scenario must be of type list containing ",
           "multiple sdScenario objects named with the respective component ID,",
-          " or of type sdScenarioClass containing a single coupled ",
-          "scenario object (see help('sdBuildCoupledScenario')). ",
-          "The given scenario of type '", typeofscenario, "' will not be used.", 
-          call. = F)
+          " or of type sdScenarioClass containing a single coupled",
+          " scenario object (see help('sdBuildCoupledScenario')).",
+          " The given scenario of type '%s' will not be used."
+          )
 
-sdCoupledModelMsg$verifyModel3 <- function(pCoupledModelId)
-  warning("sdsim::verifyModel - Coupled Model '", pCoupledModelId,
-          "' verification: No time sequence informed. Define the time ",
-          "sequence in the default scenario and reset it. ",
-          "Initial time equal 0 will be used instead.", call. = F)
+sdCoupledModelMsg$verifyModel3 <- paste0(
+  "sdsim::verifyModel - Coupled Model '%s'",
+          " verification: No time sequence informed. Define the time",
+          " sequence in the default scenario and reset it.",
+          " Initial time equal 0 will be used instead.")
 
-sdCoupledModelMsg$verifyModel4 <- function(pCoupledModelId, auxVar, e)
-  warning("sdsim::verifyModel - Coupled Model '", pCoupledModelId,
-          "' verification: Error evaluating the auxiliary equation ", 
-          auxVar,". ", e, call. = F)
+sdCoupledModelMsg$verifyModel4 <- paste0(
+  "sdsim::verifyModel - Coupled Model '%s'",
+          " verification: Error evaluating the auxiliary equation %s. %s" 
+          )
 
 sdCoupledModelMsg$verifyModel5 <- function(pCoupledModelId, aux, auxVar)
   warning("sdsim::verifyModel - Coupled Model '", pCoupledModelId,
@@ -348,31 +348,28 @@ sdCoupledModelMsg$verifyModel5 <- function(pCoupledModelId, aux, auxVar)
           " may be incorrect. Value: ", utils::capture.output(aux[[auxVar]]),
           ".", call. = F)
 
-sdCoupledModelMsg$verifyModel6 <- function(pCoupledModelId, modelId, e)
-  warning("sdsim::verifyModel - Coupled Model '", pCoupledModelId, 
-          "' component '", modelId, 
-          "' verification: Error running the ode. ", 
-          e, call. = F)
+sdCoupledModelMsg$verifyModel6 <- paste0(
+  "sdsim::verifyModel - Coupled Model '%s' component '%s'",
+          " verification: Error running the ode. %s")
 
-sdCoupledModelMsg$verifyModel7 <- function(pCoupledModelId, modelId, 
-                                           namex, x, valuex)
-  warning("sdsim::verifyModel - Coupled Model '", pCoupledModelId, 
-          "' component '", modelId, "' verification: variable $", namex, 
-          " from the '", x, "' list in the $componentsEquations may be ",
-          "incorrect. It has '", valuex,"' value.", call. = F)
+sdCoupledModelMsg$verifyModel7 <- paste0(
+    "sdsim::verifyModel - Coupled Model '%s'",
+          " component '%s' verification: variable $%s", 
+          " from the '%s' list in the $componentsEquations may be",
+          " incorrect. It has '%s' value.")
 
-sdCoupledModelMsg$verifyModel8 <- function(pCoupledModelId, modelId, x, valuex)
-  warning("sdsim::verifyModel - Coupled Model '", pCoupledModelId, 
-          "' component '", modelId, "' verification: variable $", x, 
-          " in the $componentsEquations may be incorrect. It has '", valuex,
-          "' value.", call. = F)  
+sdCoupledModelMsg$verifyModel8 <- paste0(
+  "sdsim::verifyModel - Coupled Model '%s'",
+          " component '%s' verification: variable $%s", 
+          " in the $componentsEquations may be incorrect. It has '%s'",
+          " value.")
 
-sdCoupledModelMsg$verifyModel9 <- function(pCoupledModelId, typeofdres)
-  warning("sdsim::verifyModel - Coupled Model '", pCoupledModelId, 
-          "' verification: the first element of the coupled model ",
-          "definition return value should be a numeric vector ",
-          "containg the state variables derivatives. ",
-          "Wrong derivative return type: '", typeofdres, "'.", call. = F)
+sdCoupledModelMsg$verifyModel9 <- paste0(
+  "sdsim::verifyModel - Coupled Model '%s'",
+          " verification: the first element of the coupled model",
+          " definition return value should be a numeric vector",
+          " containg the state variables derivatives.",
+          " Wrong derivative return type: '%s'.")
 
 sdCoupledModelMsg$verifyModel10 <- function(pCoupledModelId, dRes, lenst)
   warning("sdsim::verifyModel - Coupled Model '", pCoupledModelId, 
@@ -382,10 +379,10 @@ sdCoupledModelMsg$verifyModel10 <- function(pCoupledModelId, dRes, lenst)
           ") must equal the length of the initial conditions vector (", 
           lenst, ").", call. = F)
 
-sdCoupledModelMsg$verifyModel11 <- function(pCoupledModelId, typeofdres)
-  warning("sdsim::verifyModel - Coupled Model '", pCoupledModelId, 
-          "' verification: the coupled model definition function should ",
-          "return a list. Wrong return type: '", typeofdres,"'.", call. = F)
+sdCoupledModelMsg$verifyModel11 <- paste0(
+    "sdsim::verifyModel - Coupled Model '%s'", 
+          " verification: the coupled model definition function should",
+          " return a list. Wrong return type: '%s'.")
 
 sdCoupledModelMsg$verifyModel12 <- function(pCoupledModelId)
   message("sdsim::verifyModel - Coupled Model '", pCoupledModelId, 
