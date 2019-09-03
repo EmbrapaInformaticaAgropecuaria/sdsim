@@ -285,7 +285,7 @@ sdOdeModelClass <- R6::R6Class(
         #     all(funDefaultArgs %in% names(formals(ode))))
         #   private$pOde <- ode
         # else
-        #   sdOdeModelMsg$initialize1(id)
+        #   warning(sprintf(sdOdeModelMsg$initialize1,id))
         
         if(is.function(ode)) {
           private$pOde <- 
@@ -309,7 +309,7 @@ sdOdeModelClass <- R6::R6Class(
             all(funDefaultArgs[-1] %in% names(formals(initVars))))
           private$pInitVars <- initVars
         else
-          sdOdeModelMsg$initialize2(id)
+          warning(sprintf(sdOdeModelMsg$initialize2,id))
       }
       
       if (!missing(postProcess) && !is.null(postProcess)) { 
@@ -318,7 +318,7 @@ sdOdeModelClass <- R6::R6Class(
                 %in% names(formals(postProcess))))
           private$pPostProcessVars <- postProcess
         else
-          sdOdeModelMsg$initialize3(id)
+          warning(sprintf(sdOdeModelMsg$initialize3,id))
       }
       
       if (!missing(trigger) && !is.null(trigger)) { 
@@ -346,7 +346,7 @@ sdOdeModelClass <- R6::R6Class(
             is.null(trigger))
           private$pTrigger <- trigger
         else
-          sdOdeModelMsg$initialize4(id)
+          warning(sprintf(sdOdeModelMsg$initialize4,id))
       }
       
       if (!missing(event) && !is.null(event)) { 
@@ -354,7 +354,7 @@ sdOdeModelClass <- R6::R6Class(
             all(funDefaultArgs %in% names(formals(event))))
           private$pEvent <- event
         else
-          sdOdeModelMsg$initialize5(id)
+          warning(sprintf(sdOdeModelMsg$initialize5,id))
       }
       
       # suppressWarnings(sdInitEquations(aux))
@@ -363,7 +363,7 @@ sdOdeModelClass <- R6::R6Class(
         if (is.list(aux)) { 
           aux <- tryCatch(sdInitEquations(aux, eqName = "aux"),
                           error = function(e) { 
-                            sdOdeModelMsg$initialize6(id, e)
+                            warning(sprintf(sdOdeModelMsg$initialize6,id, e))
                             return(list())
                           })
         } else if (is.character(aux) && nchar(aux) <= 255 && file.exists(aux)) { 

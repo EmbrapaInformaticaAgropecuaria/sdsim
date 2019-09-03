@@ -483,37 +483,37 @@ sdModelMsg$description <- paste("sdsim::description - Model '%s' set",
 ## 
 sdOdeModelMsg <- new.env()
 
-sdOdeModelMsg$initialize1 <- function(modelId)
-  warning("sdsim::initialize - Model '", modelId, "' initialization: ", 
-          "The ode structure does not match the ", 
-          "help('sdOdeModel') specification. Replacement aborted.", call. = F)
+sdOdeModelMsg$initialize1 <- paste0(
+      "sdsim::initialize - Model '%s' initialization:", 
+      " The ode structure does not match the", 
+      " help('sdOdeModel') specification. Replacement aborted.")
 
-sdOdeModelMsg$initialize2 <- function(modelId)
-  warning("sdsim::initialize - Model '", modelId, "' initialization: ", 
-          "The initVars structure does not match the ", 
-          "help('sdOdeModel') specification. Replacement aborted.", call. = F)
+sdOdeModelMsg$initialize2 <- paste0(
+      "sdsim::initialize - Model '%s' initialization:", 
+      " The initVars structure does not match the", 
+      " help('sdOdeModel') specification. Replacement aborted.")
 
-sdOdeModelMsg$initialize3 <- function(modelId)
-  warning("sdsim::initialize - Model '", modelId, "' initialization: ",
-          "The postProcess structure does not match the ", 
-          "help('sdOdeModel') specification. Replacement aborted.", call. = F)
+sdOdeModelMsg$initialize3 <- paste0(
+      "sdsim::initialize - Model '%s' initialization: ",
+      " The postProcess structure does not match the", 
+      " help('sdOdeModel') specification. Replacement aborted.")
 
-sdOdeModelMsg$initialize4 <- function(modelId)
-  warning("sdsim::initialize - Model '", modelId, "' initialization: ",
-          "The trigger structure does not match specification. It ", 
-          "must be a data.frame, a numeric vector or a function, ", 
-          "see help('sdOdeModel'). If it is a character or list of ",
-          "characters all the elements will be evaluated or ",
-          "converted. Replacement aborted.", call. = F)
+sdOdeModelMsg$initialize4 <- paste0(
+  "sdsim::initialize - Model '%s' initialization: ",
+  " The trigger structure does not match specification. It", 
+  " must be a data.frame, a numeric vector or a function,", 
+  " see help('sdOdeModel'). If it is a character or list of",
+  " characters all the elements will be evaluated or",
+  " converted. Replacement aborted.")
 
-sdOdeModelMsg$initialize5 <- function(modelId)
-  warning("sdsim::initialize - Model '", modelId, "' initialization: ",
-          "The event structure does not match the ", 
-          "help('sdOdeModel') specification. Replacement aborted.", call. = F)
+sdOdeModelMsg$initialize5 <- paste0(
+  "sdsim::initialize - Model '%s' initialization: ",
+  "The event structure does not match the ", 
+  "help('sdOdeModel') specification. Replacement aborted.")
 
-sdOdeModelMsg$initialize6 <- function(modelId, e)
-  warning("sdsim::initialize - Model '", modelId, "' Initialization warning: ", 
-          "No auxiliary equations were added. ", e, call. = F)
+sdOdeModelMsg$initialize6 <- paste0(
+  "sdsim::initialize - Model '%s' Initialization warning: ", 
+          "No auxiliary equations were added. %s")
 
 sdOdeModelMsg$initialize7 <- function(modelId)
   warning("sdsim::initialize - Model '", modelId, "' Initialization: ",
