@@ -397,30 +397,27 @@ sdCoupledModelMsg$buildCoupledModel1 <- paste0(
   "sdsim::buildCoupledModel - Coupled Model '%s' build error: no component was", 
   " added. Add a component before building the coupled model.")
 
-sdCoupledModelMsg$buildCoupledModel2 <- function(pCoupledModelId, m, id)
-  warning("sdsim::buildCoupledModel - Coupled Model '", pCoupledModelId, 
-          "' Error building the connection vectors: The model '", 
-          m, "' is not present in the coupled components. Refactor the ",
-          "connection to make it valid. Connection '", id, "' skipped.", 
-          call. = F)
+sdCoupledModelMsg$buildCoupledModel2 <- paste0(
+      "sdsim::buildCoupledModel - Coupled Model '%s' ", 
+      " Error building the connection vectors: The model '%s' ", 
+      " is not present in the coupled components. Refactor the",
+      " connection to make it valid. Connection '%s' skipped.")
 
-sdCoupledModelMsg$buildCoupledModel3 <- function(pCoupledModelId, vartype,
-                                                 var, m, id)
-  warning("sdsim::buildCoupledModel - Coupled Model '", pCoupledModelId, 
-          "' Error Building the connection vectors: The ", vartype, " ", 
-          var, " from the model '", m, "' do not exist. Refactor ",
-          "the connection to make it valid. Connection '", id, 
-          "' skipped.", call. = F)
+sdCoupledModelMsg$buildCoupledModel3 <- paste0(
+      "sdsim::buildCoupledModel - Coupled Model '%s'", 
+      " Error Building the connection vectors: The %s %s", 
+      " from the model '%s' do not exist. Refactor",
+      " the connection to make it valid. Connection '%s' skipped.")
 
-sdCoupledModelMsg$buildCoupledModel4 <- function(pCoupledModelId, m, id)
-  warning("sdsim::buildCoupledModel - Coupled Model '", pCoupledModelId, 
-          "' Error Building the connection vectors: The ",
-          "connected output can only come from the auxiliary ", 
-          " equations list (aux$<varName>), from the state ",
-          "variables list (st$<varName>) or from the algebric ",
-          "equations list (eq$<varName> for static models) of the model '", m, 
-          "'. Refactor the connection to make it valid. Connection '", id, 
-          "' skipped.", call. = F)
+sdCoupledModelMsg$buildCoupledModel4 <- paste0(
+      "sdsim::buildCoupledModel - Coupled Model '%s'", 
+      " Error Building the connection vectors: The",
+      " connected output can only come from the auxiliary", 
+      " equations list (aux$<varName>), from the state",
+      " variables list (st$<varName>) or from the algebric",
+      " equations list (eq$<varName> for static models) of the model '%s'.", 
+      " Refactor the connection to make it valid. Connection '%s'", 
+      " skipped.")
 
 sdCoupledModelMsg$buildCoupledModel5 <- function(pCoupledModelId, in1, u1, m1,
                                                  out2, u2, m2, id)
@@ -432,38 +429,34 @@ sdCoupledModelMsg$buildCoupledModel5 <- function(pCoupledModelId, in1, u1, m1,
           "' from the model '", m2,"'. Refactor the connection '", id, 
           "' if this is not wanted.", call. = F)
 
-sdCoupledModelMsg$buildCoupledModel6 <- function(pCoupledModelId, m1, in1,
-                                                 vartype)
-  warning("sdsim::buildCoupledModel - Coupled Model '", pCoupledModelId, 
-          "' build error: The input '", paste0(m1, ".", in1), 
-          "' is connected to more then one ", vartype, 
-          ". This input will only receive the last connection. Refactor the ",
-          "connections if this is not wanted. ", 
-          call. = F)
+sdCoupledModelMsg$buildCoupledModel6 <- paste0(
+      "sdsim::buildCoupledModel - Coupled Model '%s'", 
+      " build error: The input '%s'", 
+      " is connected to more then one %s.", 
+      " This input will only receive the last connection. Refactor the",
+      " connections if this is not wanted. ")
 
 #sdCoupledModel("test")$defaultScenario
-sdCoupledModelMsg$defaultScenario <- function(pCoupledModelId)
-  warning("sdsim::defaultScenario - Coupled Model '", pCoupledModelId, 
-          "' get default scenario: The default coupled scenario must be built ",
-          "to retrieve it. Build it first with the method $buildCoupledModel ",
-          "(see help('sdCoupledModelClass')).", call. = F)
+sdCoupledModelMsg$defaultScenario <- paste0(
+      "sdsim::defaultScenario - Coupled Model '%s'", 
+      " get default scenario: The default coupled scenario must be built",
+      " to retrieve it. Build it first with the method $buildCoupledModel",
+      " (see help('sdCoupledModelClass')).")
 
 # sdCoupledModel("test")$stConnections
 # sdCoupledModel("test")$eqConnections
-sdCoupledModelMsg$connectionsList <- function(pCoupledModelId, vartype)
-  warning("sdsim::connectionsList - Coupled Model '", pCoupledModelId, "' ", 
-          vartype, " connection list: The default coupled scenario must be ", 
-          "built to retrieve the connections. Build it first with the ", 
-          "method $buildCoupledModel(see help('sdCoupledModelClass')).", 
-          call. = F)
+sdCoupledModelMsg$connectionsList <- paste0(
+      "sdsim::connectionsList - Coupled Model '%s' %s", 
+      " connection list: The default coupled scenario must be", 
+      " built to retrieve the connections. Build it first with the", 
+      " method $buildCoupledModel(see help('sdCoupledModelClass')).")
 
 # sdCoupledModel("test")$indexComponents
-sdCoupledModelMsg$indexComponents <- function(pCoupledModelId)
-  warning("sdsim::indexComponents - Coupled Model '", pCoupledModelId,
-          "' components index list: The default coupled scenario must be ", 
-          "built to retrieve the index list. Build it first with the ", 
-          "method $buildCoupledModel (see help('sdCoupledModelClass')).", 
-          call. = F)
+sdCoupledModelMsg$indexComponents <- paste0(
+      "sdsim::indexComponents - Coupled Model '%s'",
+      " components index list: The default coupled scenario must be", 
+      " built to retrieve the index list. Build it first with the", 
+      " method $buildCoupledModel (see help('sdCoupledModelClass')).")
 
 
 ## FILE sdModel.R
