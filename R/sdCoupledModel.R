@@ -110,7 +110,7 @@ sdBuildCoupledScenario = function(id = NULL,
   componentsId <- names(scenarios)
   
   if (is.null(componentsId) || any(componentsId == ""))
-    sdCoupledModelMsg$sdBuildCoupledScenario1()
+    stop(sprintf(sdCoupledModelMsg$sdBuildCoupledScenario1))
   
   # build default scenario concatanating the components default scenario
   stComponents <- list()
@@ -134,7 +134,7 @@ sdBuildCoupledScenario = function(id = NULL,
                                       timeSeriesDirectory = timeSeriesDirectory)
     
     if (!inherits(scenComponent, sdScenarioClass$classname)) { 
-      sdCoupledModelMsg$sdBuildCoupledScenario2(scenComponent, modelId)
+      warning(sprintf(sdCoupledModelMsg$sdBuildCoupledScenario2,typeof(scenComponent),modelId))
       next
     }
     
@@ -733,7 +733,7 @@ sdCoupledModelClass <- R6::R6Class(
                           paste(con, collapse = ",")), call. = FALSE)
         } else if (!grepl(pattern = "^(aux\\$|st\\$|eq\\$)", x = con[[5]], 
                         perl = TRUE)) {
-          sdCoupledModelMsg$addConnection2(private$pId, con)
+          warning(sprintf(sdCoupledModelMsg$addConnection2,private$pId,paste(con, collapse = ",")))
         } else { 
           # add connection
           if (con[[1]] %in% names(private$pConnections))
@@ -794,7 +794,7 @@ sdCoupledModelClass <- R6::R6Class(
     verifyModel = function(scenario = NULL, verbose = FALSE,
                            timeSeriesDirectory = "") { 
       if (!self$isBuilt)
-        sdCoupledModelMsg$verifyModel1(private$pId)
+        stop(sprintf(sdCoupledModelMsg$verifyModel1, private$pId))
       
       # simulate the coupled model first time step
       # Get components functions

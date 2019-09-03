@@ -60,33 +60,33 @@ auxiliaryMsg$sdTemporalFunction1  <- paste0(
 # sdTemporalFunction(x = "DESCRIPTION")
 
 auxiliaryMsg$sdTemporalFunction2  <- paste0( 
-  warning("sdsim::sdTemporalFunction - Error opening the time series file '%s'.", 
+  "sdsim::sdTemporalFunction - Error opening the time series file '%s'.", 
           " The default separator is ',' and the default decimal point is '.'.",
           " Temporal function transformation aborted, returned NULL. %s"
-          )
+          
 )
 
 # case use:
 # sdTemporalFunction(x = TRUE)
 auxiliaryMsg$sdTemporalFunction3  <- paste0( 
-  warning("sdsim::sdTemporalFunction - Wrong time series variable 'x' type '%s':",
+  "sdsim::sdTemporalFunction - Wrong time series variable 'x' type '%s':",
           " Please use one of the following types: fixed numeric",
           " value, matrix, data.frame or character (text file name).",
-          " Transformation aborted, returned NULL.")
+          " Transformation aborted, returned NULL."
  )
 
 # case use:
 # sdTemporalFunction(x = 2, method = T)
 
 auxiliaryMsg$sdTemporalFunction4  <- paste0(
-  warning("sdsim::sdTemporalFunction - The given interpolation method is not", 
+  "sdsim::sdTemporalFunction - The given interpolation method is not", 
           " supported: See help('sdTemporalFunction') for the supported", 
-          " methods. Transformation aborted, returned NULL.")
+          " methods. Transformation aborted, returned NULL."
 )
 
 auxiliaryMsg$sdTemporalFunction5  <- paste0(
-  warning("sdsim::sdTemporalFunction - Error interpolating the time series ", 
-          "data points: Transformation aborted, returned NULL. %s")
+  "sdsim::sdTemporalFunction - Error interpolating the time series ", 
+          "data points: Transformation aborted, returned NULL. %s"
 )
 
 auxiliaryMsg$sdTemporalFunction6 <- paste0(
@@ -161,39 +161,39 @@ constructorsMsg$sdLoadModel2 <- function(file)
 
 # case use:
 # sdLoadModel("la")
-constructorsMsg$sdLoadModel3 <- function(file)
-  stop("sdsim::sdLoadModel - Load Model aborted: The given file '", file, 
-       "' do not exists.", call. = F)
+constructorsMsg$sdLoadModel3 <- paste0(
+  "sdsim::sdLoadModel - Load Model aborted: The given file '%s'", 
+       " do not exists.")
 
 # case use:
 # sdLoadModel("DESCRIPTION")
-constructorsMsg$sdLoadModel4 <- function(file, e)
-  stop("sdsim::sdLoadModel - Load Model '", file, 
-       "': The given file is not a valid XML. Use the package functions to ", 
+constructorsMsg$sdLoadModel4 <- paste0(
+  "sdsim::sdLoadModel - Load Model '%s':", 
+       " The given file is not a valid XML. Use the package functions to ", 
        "generate it. See help('sdLoadModel') and in the desired model ", 
-       "help pages look for the method '$saveXml'. ", e, call. = F)
+       "help pages look for the method '$saveXml'. %s")
 
 # warning when reading file
-constructorsMsg$sdLoadModel5 <- function(file, w)
-  warning("sdsim::sdLoadModel - Load Model from file '", file, "': ", w, call. = F)
+constructorsMsg$sdLoadModel5 <- paste0(
+  "sdsim::sdLoadModel - Load Model from file '%s': %s")
 
 # prefix not valid
-constructorsMsg$sdLoadModel6 <- function()
-  stop("sdsim::sdLoadModel - Load Model aborted: The given file is not a ", 
+constructorsMsg$sdLoadModel6 <- paste0(
+    "sdsim::sdLoadModel - Load Model aborted: The given file is not a ", 
        "valid XML file. Generate your XML files using the sdsim package ", 
        "functions. See help('sdLoadModel') and in the desired type of model ", 
-       "help pages look for the method '$saveXml'.", call. = F)
+       "help pages look for the method '$saveXml'.")
 
 # valid xml without a model
-constructorsMsg$sdLoadModel7 <- function()
-  stop("sdsim::sdLoadModel - Load Model aborted: The given XML file do not ",
-       "contain a model.", call. = F)
+constructorsMsg$sdLoadModel7 <- paste0(
+  "sdsim::sdLoadModel - Load Model aborted: The given XML file do not ",
+       "contain a model.")
 
 # case use:
 # sdLoadScenario(file = "")
-constructorsMsg$sdLoadScenario1 <- function(file)
-  stop("sdsim::sdLoadScenario - Load Scenario aborted: The given file '", file, 
-       "' do not exist.", call. = F)
+constructorsMsg$sdLoadScenario1 <- paste0(
+  "sdsim::sdLoadScenario - Load Scenario aborted: The given file '%s'", 
+       " do not exist.")
 
 constructorsMsg$sdLoadScenario2 <- function(file, e = NULL)
   stop("sdsim::sdLoadScenario - Load Scenario '", file, "' aborted: ",
@@ -202,41 +202,41 @@ constructorsMsg$sdLoadScenario2 <- function(file, e = NULL)
        "method '$saveXml' present in the help('sdScenarioClass') to generate",
        " a valid XML.", e, call. = F)
 
-constructorsMsg$sdLoadScenario3 <- function(file, w)
-  warning("sdsim::sdLoadScenario - Load Scenario '", file, "': ", w, call. = F)
+constructorsMsg$sdLoadScenario3 <- paste0(
+  "sdsim::sdLoadScenario - Load Scenario '%s': %s")
 
 # CASE USE
 # sdLoadScenario(file = "DESCRIPTION")
-constructorsMsg$sdLoadScenario4 <- function(file)
-  stop("sdsim::sdLoadScenario - Load Scenario '", file, 
-       "' aborted: Wrong file extension. It should be a Extensible ", 
+constructorsMsg$sdLoadScenario4 <- paste0(
+  "sdsim::sdLoadScenario - Load Scenario '%s'", 
+       " aborted: Wrong file extension. It should be a Extensible ", 
        "Markup Language (XML) or an EXCEL file. See help('sdLoadScenario') for",
-       " the set of rules to encode a sdScenario.", call. = F)
+       " the set of rules to encode a sdScenario.")
 
 ## FILE: readInputData.R
 ##
 readInputDataMsg <- new.env()
 
 readInputDataMsg$ConvertDataFrameToList <- paste0(
-  warning("sdsim::sdLoadScenario - Load Scenario from EXCEL: an invalid ",
+  "sdsim::sdLoadScenario - Load Scenario from EXCEL: an invalid ",
           "data.frame was skipped, probably with empty values. Refactor your ",
-          "file if it is not wanted.")
+          "file if it is not wanted."
 )
 
 readInputDataMsg$ReadDataExcel1 <- paste0(
-  warning("sdsim::sdLoadScenario - Load Scenario from EXCEL: Error opening ", 
-          "the file '%s'. %s")
+  "sdsim::sdLoadScenario - Load Scenario from EXCEL: Error opening ", 
+          "the file '%s'. %s"
 )
 
 readInputDataMsg$ReadDataExcel2 <- paste0(
-  warning("sdsim::sdLoadScenario - Load Scenario from EXCEL: Warning opening ", 
-          "the file '%s'. %s")
+  "sdsim::sdLoadScenario - Load Scenario from EXCEL: Warning opening ", 
+          "the file '%s'. %s"
 )
 
 readInputDataMsg$LoadModelScenario1 <- paste0(
-  warning("sdsim::sdLoadScenario - Loading scenario '%s'",
+  "sdsim::sdLoadScenario - Loading scenario '%s'",
           " from EXCEL aborted: The scenario file path do not exist. ",
-          "No variable will be loaded.")
+          "No variable will be loaded."
 )
 
 ## FILE sdCoupledModel.R
@@ -244,20 +244,20 @@ readInputDataMsg$LoadModelScenario1 <- paste0(
 sdCoupledModelMsg <- new.env()
 
 # sdBuildCoupledScenario(scenarios = list(2,3))
-sdCoupledModelMsg$sdBuildCoupledScenario1 <- function()
-  stop("sdsim::sdBuildCoupledScenario - Error building the coupled scenario: ",
+sdCoupledModelMsg$sdBuildCoupledScenario1 <- paste0(
+  "sdsim::sdBuildCoupledScenario - Error building the coupled scenario: ",
        "The 'scenarios' argument must be a list named with the component ID ",
        "that will use each scenario in the coupled model. ", 
-       "At least one name was missing.", call. = F)
+       "At least one name was missing.")
 
 # use case
 # sdBuildCoupledScenario(scenarios = list(a = 2))
-sdCoupledModelMsg$sdBuildCoupledScenario2 <- function(scenComponent, modelId)
-  warning("sdsim::sdBuildCoupledScenario - Building Coupled Scenario: The ", 
+sdCoupledModelMsg$sdBuildCoupledScenario2 <- paste0(
+  "sdsim::sdBuildCoupledScenario - Building Coupled Scenario: The ", 
           "argument 'scenarios' must be a named list of not empty ", 
-          "sdScenario's objects or character file names. Scenario of type '", 
-          typeof(scenComponent), "' of the component '", modelId, 
-          "' could not be added.", call. = F)
+          "sdScenario's objects or character file names. Scenario of type '%s'", 
+          " of the component '%s'",
+          " could not be added.")
 
 # sdCoupledModel("test", components = sdOdeModel("test"))
 sdCoupledModelMsg$addComponent0 <- function(pCoupledModelId, id)
@@ -294,13 +294,13 @@ sdCoupledModelMsg$addConnection1 <- paste0(
   "will be skipped.")
 
 # sdCoupledModel("test", connections = list(c(1,2,3,4,5)))
-sdCoupledModelMsg$addConnection2 <- function(pCoupledModelId, con)
-  warning("sdsim::addConnection - Coupled Model '", pCoupledModelId, 
-          "' adding connection: The 5th element of the connection vector must ",
+sdCoupledModelMsg$addConnection2 <- paste0(
+    "sdsim::addConnection - Coupled Model '%s'",
+          " adding connection: The 5th element of the connection vector must ",
           "include the prefix st$, aux$ or eq$, indicating a state variable, ",
           "an auxiliary or an algebraic equation connection, respectively. ",
-          "The connection: c(", paste(con, collapse = ","), 
-          ") will be skipped.", call. = F)
+          "The connection: c(%s", 
+          ") will be skipped.")
 
 # sdCoupledModel("test", connections = list(c(1,2,3,4,"aux$5"), 
 #c(1,2,3,4,"aux$5")))
@@ -317,10 +317,10 @@ sdCoupledModelMsg$removeConnection <- paste0(
   "thus can not be removed.")
 
 # sdCoupledModel("test")$verifyModel()
-sdCoupledModelMsg$verifyModel1 <- function(pCoupledModelId)
-  stop("sdsim::verifyModel - Coupled Model '", pCoupledModelId, 
-       "' verification error: Build the coupled model first using the method ",
-       "'$buildCoupledModel'. Coupled model verification aborted.", call. = F)
+sdCoupledModelMsg$verifyModel1 <- paste0(
+    "sdsim::verifyModel - Coupled Model '%s'", 
+       " verification error: Build the coupled model first using the method ",
+       "'$buildCoupledModel'. Coupled model verification aborted.")
 
 sdCoupledModelMsg$verifyModel2 <- paste0(
   "sdsim::verifyModel - Coupled Model '%s'",
