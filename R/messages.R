@@ -484,19 +484,19 @@ sdModelMsg$description <- paste("sdsim::description - Model '%s' set",
 sdOdeModelMsg <- new.env()
 
 sdOdeModelMsg$initialize1 <- paste0(
-      "sdsim::initialize - Model '%s' initialization:", 
-      " The ode structure does not match the", 
-      " help('sdOdeModel') specification. Replacement aborted.")
+  "sdsim::initialize - Model '%s' initialization:", 
+  " The ode structure does not match the", 
+  " help('sdOdeModel') specification. Replacement aborted.")
 
 sdOdeModelMsg$initialize2 <- paste0(
-      "sdsim::initialize - Model '%s' initialization:", 
-      " The initVars structure does not match the", 
-      " help('sdOdeModel') specification. Replacement aborted.")
+  "sdsim::initialize - Model '%s' initialization:", 
+  " The initVars structure does not match the", 
+  " help('sdOdeModel') specification. Replacement aborted.")
 
 sdOdeModelMsg$initialize3 <- paste0(
-      "sdsim::initialize - Model '%s' initialization: ",
-      " The postProcess structure does not match the", 
-      " help('sdOdeModel') specification. Replacement aborted.")
+  "sdsim::initialize - Model '%s' initialization: ",
+  " The postProcess structure does not match the", 
+  " help('sdOdeModel') specification. Replacement aborted.")
 
 sdOdeModelMsg$initialize4 <- paste0(
   "sdsim::initialize - Model '%s' initialization: ",
@@ -513,22 +513,22 @@ sdOdeModelMsg$initialize5 <- paste0(
 
 sdOdeModelMsg$initialize6 <- paste0(
   "sdsim::initialize - Model '%s' Initialization warning: ", 
-          "No auxiliary equations were added. %s")
+  "No auxiliary equations were added. %s")
 
-sdOdeModelMsg$initialize7 <- function(modelId)
-  warning("sdsim::initialize - Model '", modelId, "' Initialization: ",
-          "Invalid auxiliary equations. See help('sdOdeModel') to ", 
-          "learn the accepted types. Replacement aborted.", call. = F)
+sdOdeModelMsg$initialize7 <- paste0(
+  "sdsim::initialize - Model '%s' Initialization: ",
+  "Invalid auxiliary equations. See help('sdOdeModel') to ", 
+  "learn the accepted types. Replacement aborted.")
 
-sdOdeModelMsg$initialize8 <- function(modelId, nameGlobalFuni)
-  warning("sdsim::initialize - Model '", modelId, "' Initialization: ",
-          "Invalid global function '", nameGlobalFuni, "' skipped. ",
-          "All the globalFunctions elements must be functions.", call. = F)
+sdOdeModelMsg$initialize8 <- paste0(
+  "sdsim::initialize - Model '%s' Initialization: ",
+  "Invalid global function '%s' skipped. ",
+  "All the globalFunctions elements must be functions.")
 
-sdOdeModelMsg$initialize9 <- function(modelId)
-  warning("sdsim::initialize - Model '", modelId, 
-          "' Initialization: The globalFunctions argument must be a named ",
-          "list containing only functions.", call. = F)
+sdOdeModelMsg$initialize9 <- paste0(
+  "sdsim::initialize - Model '%s'", 
+  " Initialization: The globalFunctions argument must be a named ",
+  "list containing only functions.")
 
 sdOdeModelMsg$initialize10 <- paste0(
   "sdsim::initialize - Ode Model '%s' initialization: The following sdsim ",
@@ -536,8 +536,9 @@ sdOdeModelMsg$initialize10 <- paste0(
   "respective auxiliary equations were skipped: %s.")
 
 # sdOdeModel("id")$verifyModel()
-sdOdeModelMsg$verifyModel0 <- paste0("sdsim::verifyModel - Model '%s' ODE ",
-       "verification aborted: No differential equations function was set.")
+sdOdeModelMsg$verifyModel0 <- paste0(
+  "sdsim::verifyModel - Model '%s' ODE ",
+  "verification aborted: No differential equations function was set.")
 
 sdOdeModelMsg$verifyModel1 <- function(pModelId)
   stop("sdsim::verifyModel - Model '", pModelId, 

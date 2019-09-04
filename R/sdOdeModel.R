@@ -377,7 +377,7 @@ sdOdeModelClass <- R6::R6Class(
                           })
         } else { 
           aux <- list()
-          sdOdeModelMsg$initialize7(id)
+          warning(sprintf(sdOdeModelMsg$initialize7,id))
         }
         
         # remove equations with reserved names
@@ -411,7 +411,7 @@ sdOdeModelClass <- R6::R6Class(
           for (i in 1:length(globalFunctions)) { 
             if (!is.function(globalFunctions[[i]])) { 
               remGlobalFun <- c(remGlobalFun, i)
-              sdOdeModelMsg$initialize8(id, names(globalFunctions)[[i]])
+              warning(sprintf(sdOdeModelMsg$initialize8, id, names(globalFunctions)[[i]]))
             } else { 
               environment(globalFunctions[[i]]) <- modelEnvironment
               assign(names(globalFunctions)[[i]], globalFunctions[[i]], 
@@ -424,7 +424,7 @@ sdOdeModelClass <- R6::R6Class(
           
           private$pGlobalFunctions <- globalFunctions
         } else {
-          sdOdeModelMsg$initialize9(id)
+          warning(sprintf(sdOdeModelMsg$initialize9,id))
         }
           
       }
