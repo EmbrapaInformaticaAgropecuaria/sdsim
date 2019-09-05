@@ -981,43 +981,38 @@ sdSimulatorMsg$sdSimulateStatic2 <- function(staticModelId)
        "Define a valid time sequence in the default scenario or via the ", 
        "arguments to run a simulation.", call. = F)
 
-sdSimulatorMsg$sdSimulateCoupled0 <- function(coupledModelId)
-  stop("sdsim::sdSimulate - Simulation of the coupled model '", coupledModelId,
-       "' aborted: No component differential equations function or ",
-       "algebraic equation was set.", 
-       call. = F)
+sdSimulatorMsg$sdSimulateCoupled0 <- paste0(
+  "sdsim::sdSimulate - Simulation of the coupled model '%s",
+  "' aborted: No component differential equations function or ",
+  "algebraic equation was set.")
 
-sdSimulatorMsg$sdSimulateCoupled1 <- function(coupledModelId)
-  stop("sdsim::sdSimulate - Simulation of the coupled model '", coupledModelId,
-       "' aborted: Could not build the default coupled model. ",
-       "Use the $buildCoupledModel method to build it.", call. = F)
+sdSimulatorMsg$sdSimulateCoupled1 <- paste0(
+  "sdsim::sdSimulate - Simulation of the coupled model '%s",
+  "' aborted: Could not build the default coupled model. ",
+  "Use the $buildCoupledModel method to build it.")
 
-sdSimulatorMsg$sdSimulateCoupled2 <- function(coupledModelId, typeofscenario)
-  warning("sdsim::sdSimulate - Simulation of the coupled model '", 
-          coupledModelId,
-          "': The given scenario must be of type list containing multiple",
-          " sdScenario objects named with the respective model ID, ", 
-          "or of type sdScenarioClass containing a single coupled ",
-          "scenario object (see help('sdBuildCoupledScenario')). ",
-          "The given scenario of type '", typeofscenario, "' will not be used.", 
-          call. = F)
+# sdSimulatorMsg$sdSimulateCoupled2 <- paste0(
+#   "sdsim::sdSimulate - Simulation of the coupled model '%s",
+#   "': The given scenario must be of type list containing multiple",
+#   " sdScenario objects named with the respective model ID, ", 
+#   "or of type sdScenarioClass containing a single coupled ",
+#   "scenario object (see help('sdBuildCoupledScenario')). ",
+#   "The given scenario of type '%s',will not be used.")
 
-sdSimulatorMsg$sdSimulateCoupled3 <- function(coupledModelId)
-  stop("sdsim::sdSimulate - Simulation of the coupled model '", coupledModelId,
-       "' aborted: No time sequence informed. Define the time sequence ",
-       "in the default scenario or via the arguments.", call. = F)
+sdSimulatorMsg$sdSimulateCoupled3 <- paste0(
+  "sdsim::sdSimulate - Simulation of the coupled model '%s",
+  "' aborted: No time sequence informed. Define the time sequence ",
+  "in the default scenario or via the arguments.")
 
-sdSimulatorMsg$sdSimulateCoupled4 <- function(coupledModelId)
-  stop("sdsim::sdSimulate - Simulation of the coupled model '", coupledModelId,
-       "' aborted: no state variables informed. Define the state variables in ", 
-       "the default scenario or via the 'scenario' argument.", call. = F)
+sdSimulatorMsg$sdSimulateCoupled4 <- paste0(
+  "sdsim::sdSimulate - Simulation of the coupled model '%s",
+  "' aborted: no state variables informed. Define the state variables in ", 
+  "the default scenario or via the 'scenario' argument.")
 
-sdSimulatorMsg$sdSimulateCoupled5 <- function(coupledModelId)
-  warning("sdsim::sdSimulate - Simulation of the coupled model '", 
-          coupledModelId,
-          "': The given method do not have root-finding capability. ",
-          "The simulator will run with the default method: 'lsoda'.",
-          call. = F)
+sdSimulatorMsg$sdSimulateCoupled5 <- paste0(
+  "sdsim::sdSimulate - Simulation of the coupled model '%s",
+  "': The given method do not have root-finding capability. ",
+  "The simulator will run with the default method: 'lsoda'.")
 
 sdSimulatorMsg$sdSimulateCoupled6 <- function(coupledModelId, modelId)
   warning("sdsim::sdSimulate - Simulation of the coupled model '", 
@@ -1025,10 +1020,11 @@ sdSimulatorMsg$sdSimulateCoupled6 <- function(coupledModelId, modelId)
           "': The component '", modelId, "' postProcess function ",
           "returned the following error. ", e, call. = F)
 
-sdSimulatorMsg$sdSimulateCoupled7 <- function(coupledModelId)
-  stop("sdsim::sdSimulate - Simulation of the coupled model '", coupledModelId,
-       "' aborted: The increment of the time sequence must be inside the ", 
-       "starting and end values of the sequence and have the right sign ", 
-       "(positive for crescent sequences and negative for descreasing ones). ",
-       "Define a valid time sequence in the default scenario or via the ", 
-       "arguments to run a simulation.", call. = F)
+
+sdSimulatorMsg$sdSimulateCoupled7 <- paste0(
+  "sdsim::sdSimulate - Simulation of the coupled model '%s",
+  "' aborted: The increment of the time sequence must be inside the ", 
+  "starting and end values of the sequence and have the right sign ", 
+  "(positive for crescent sequences and negative for descreasing ones). ",
+  "Define a valid time sequence in the default scenario or via the ", 
+  "arguments to run a simulation.")

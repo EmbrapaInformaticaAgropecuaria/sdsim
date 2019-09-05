@@ -835,12 +835,12 @@ runCoupledSimulation <- function(model,
                             method = method)
     
     if (!model$isBuilt)
-      sdSimulatorMsg$sdSimulateCoupled1(model$id)
+      stop(sprintf(sdSimulatorMsg$sdSimulateCoupled1,model$id))
   }
   
   if (length(model$componentsEquations) == 0 && 
       length(model$componentsAux) == 0)
-    sdSimulatorMsg$sdSimulateCoupled0(model$id)
+    stop(sprintf(sdSimulatorMsg$sdSimulateCoupled0,model$id))
   
   # convert list of scenarios to coupled scenario
   if (is.list(scenario))
@@ -910,10 +910,10 @@ runCoupledSimulation <- function(model,
   
   # verify time sequence
   if (is.null(times) || !all(c("from", "to", "by") %in% names(times)))
-    sdSimulatorMsg$sdSimulateCoupled3(model$id)
+    stop(sprintf(sdSimulatorMsg$sdSimulateCoupled3,model$id))
   else if (!(abs(times$to - times$from) >= abs(times$by) && 
              (times$to - times$from)*times$by > 0)) # invalid time sequence
-    sdSimulatorMsg$sdSimulateCoupled7(model$id)
+    stop(sprintf(sdSimulatorMsg$sdSimulateCoupled7, model$id))
   
   # Run the model Init Vars
   modelInit <- list()
@@ -1011,7 +1011,7 @@ runCoupledSimulation <- function(model,
       method <- "lsoda"
     }
     if (is.null(st) || length(st) == 0)
-      sdSimulatorMsg$sdSimulateCoupled4(model$id)
+      stop(sprintf(sdSimulatorMsg$sdSimulateCoupled4,model$id))
     
     createCoupledFuncEval <- CreateCoupledFuncEval
     
@@ -1064,7 +1064,8 @@ runCoupledSimulation <- function(model,
           !identical(method, deSolve::lsode) &&
           (!is.vector(method) ||
            !method %in% c("lsoda", "lsode", "radau"))) { 
-        sdSimulatorMsg$sdSimulateCoupled5(model$id)
+        warning(sprintf(sdSimulatorMsg$sdSimulateCoupled5,model$id))
+        
         method <- "lsoda"
       }
       
@@ -1163,7 +1164,7 @@ runCoupledSimulation <- function(model,
                                                inp,
                                                sw),
           error = function(e) { 
-            sdSimulatorMsg$sdSimulateCoupled6(model$id, modelId)
+             sdSimulatorMsg$sdSimulateCoupled6(model$id, modelId)
             return(NULL)
           })
     } else {
