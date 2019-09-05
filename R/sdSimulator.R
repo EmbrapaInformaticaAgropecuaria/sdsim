@@ -688,7 +688,7 @@ runStaticSimulation <- function(model,
   
   # stop if model is empty
   if (length(equations) == 0)
-    sdSimulatorMsg$sdSimulateStatic0(model$id)
+    stop(sprintf(sdSimulatorMsg$sdSimulateStatic0,model$id))
   
   if (!model$isVerified)
     model$verifyModel(scenario, verbose = verbose)
@@ -740,10 +740,11 @@ runStaticSimulation <- function(model,
   
   # verify data
   if (is.null(times) || !all(c("from", "to", "by") %in% names(times)))
-    sdSimulatorMsg$sdSimulateStatic1(model$id)
+    stop(sprintf(sdSimulatorMsg$sdSimulateStatic1,model$id))
+
   else if (!(abs(times$to - times$from) >= abs(times$by) && 
              (times$to - times$from)*times$by > 0)) # invalid time sequence
-    sdSimulatorMsg$sdSimulateStatic2(model$id)
+    stop(sprintf(sdSimulatorMsg$sdSimulateStatic2,model$id))
   
   if (!is.null(initVars)) { 
     modelInit <-

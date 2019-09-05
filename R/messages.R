@@ -964,22 +964,22 @@ sdSimulatorMsg$sdSimulateAtomic6 <- function(modelId, typeofscen)
 sdSimulatorMsg$sdSimulateAtomic7 <- paste0("sdsim::sdSimulate - Simulation of ",
   "the model '%s' aborted: No differential equations function, model is empty.")
 
-sdSimulatorMsg$sdSimulateStatic0 <- function(staticModelId)
-  stop("sdsim::sdSimulate - Simulation of the static model '", staticModelId,
-       "' aborted: No algebraic equations, model is empty.", call. = F)
+sdSimulatorMsg$sdSimulateStatic0 <- paste0(
+  "sdsim::sdSimulate - Simulation of the static model '%s",
+  "' aborted: No algebraic equations, model is empty.")
 
-sdSimulatorMsg$sdSimulateStatic1 <- function(staticModelId)
-  stop("sdsim::sdSimulate - Simulation of the static model '", staticModelId,
-       "' aborted: No time sequence informed. Define the time sequence ",
-       "in the default scenario or via the arguments.", call. = F)
+sdSimulatorMsg$sdSimulateStatic1 <- paste0(
+  "sdsim::sdSimulate - Simulation of the static model '%s",
+  "' aborted: No time sequence informed. Define the time sequence ",
+  "in the default scenario or via the arguments.")
 
-sdSimulatorMsg$sdSimulateStatic2 <- function(staticModelId)
-  stop("sdsim::sdSimulate - Simulation of the static model '", staticModelId,
-       "' aborted: The increment of the time sequence must be inside the ", 
-       "starting and end values of the sequence and have the right sign ", 
-       "(positive for crescent sequences and negative for descreasing ones). ",
-       "Define a valid time sequence in the default scenario or via the ", 
-       "arguments to run a simulation.", call. = F)
+sdSimulatorMsg$sdSimulateStatic2 <- paste0(
+  "sdsim::sdSimulate - Simulation of the static model '%s",
+  "' aborted: The increment of the time sequence must be inside the ", 
+  "starting and end values of the sequence and have the right sign ", 
+  "(positive for crescent sequences and negative for descreasing ones). ",
+  "Define a valid time sequence in the default scenario or via the ", 
+  "arguments to run a simulation.")
 
 sdSimulatorMsg$sdSimulateCoupled0 <- paste0(
   "sdsim::sdSimulate - Simulation of the coupled model '%s",
