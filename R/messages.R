@@ -540,79 +540,72 @@ sdOdeModelMsg$verifyModel0 <- paste0(
   "sdsim::verifyModel - Model '%s' ODE ",
   "verification aborted: No differential equations function was set.")
 
-sdOdeModelMsg$verifyModel1 <- function(pModelId)
-  stop("sdsim::verifyModel - Model '", pModelId, 
-       "' ODE verification aborted: No valid scenario was set.", call. = F)
+sdOdeModelMsg$verifyModel1 <- paste0(
+  "sdsim::verifyModel - Model '%s'",  
+  " ODE verification aborted: No valid scenario was set.")
 
-sdOdeModelMsg$verifyModel2 <- function(pModelId)
-  warning("sdsim::verifyModel - Model '", pModelId, 
-          "' verification: No time sequence informed. Define the time ",
-          "sequence in the default scenario. ",
-          "Initial time equals 0 will be used.", call. = F)
+sdOdeModelMsg$verifyModel2 <- paste0(
+  "sdsim::verifyModel - Model '%s'", 
+  " verification: No time sequence informed. Define the time ",
+  "sequence in the default scenario. ",
+  "Initial time equals 0 will be used.")
 
-sdOdeModelMsg$verifyModel3 <- function(pModelId, auxVar, e)
-  warning("sdsim::verifyModel - Model '", pModelId, 
-          "' verification: error evaluating the auxiliary equation '", 
-          auxVar, "'. ", e, call. = F)
+sdOdeModelMsg$verifyModel3 <- paste0(
+  "sdsim::verifyModel - Model '%s'", 
+  " verification: error evaluating the auxiliary equation '%s'. %s")
 
-sdOdeModelMsg$verifyModel4 <- function(pModelId, auxVar, auxValue)
-  warning("sdsim::verifyModel - Model '", pModelId, 
-          "' verification: Evaluation of the auxiliary variable '", auxVar, 
-          "' may be incorrect. Value: ", auxValue, ".", call. = F)
+sdOdeModelMsg$verifyModel4 <- paste0(
+  "sdsim::verifyModel - Model '%s", 
+  "' verification: Evaluation of the auxiliary variable '%s", 
+  "' may be incorrect. Value: %s.")
 
-sdOdeModelMsg$verifyModel5 <- function(pModelId, e)
-  warning("sdsim::verifyModel - Model '", pModelId, 
-          "' verification: error running the ode. ", e, 
-          call. = F)
+sdOdeModelMsg$verifyModel5 <- paste0(
+  "sdsim::verifyModel - Model '%s", 
+  "' verification: error running the ode. %s")
 
-sdOdeModelMsg$verifyModel6 <- function(pModelId, xname, x, xvalue)
-  warning("sdsim::verifyModel - Model '", pModelId, 
-          "' verification: variable $", xname, " from the '", x,
-          "' list in the $ode may be incorrect. ",
-          "It has ", xvalue, " value.", call. = F)
+sdOdeModelMsg$verifyModel6 <- paste0(
+  "sdsim::verifyModel - Model '%s",
+  "' verification: variable $%s from the '%s",
+  "' list in the $ode may be incorrect. ",
+  "It has %s value.")
 
-sdOdeModelMsg$verifyModel7 <- function(pModelId, x, xvalue)
-  warning("sdsim::verifyModel - Model '", pModelId, 
-          "' verification: variable $", x, 
-          " in the $ode may be incorrect. It has ", xvalue, 
-          " value.", call. = F) 
+sdOdeModelMsg$verifyModel7 <- paste0(
+  "sdsim::verifyModel - Model '%s",
+  "' verification: variable $%s", 
+  " in the $ode may be incorrect. It has %s", 
+  " value.") 
 
-sdOdeModelMsg$verifyModel8 <- function(pModelId, typeofres) 
-  warning("sdsim::verifyModel - Model '", pModelId, 
-          "' verification: the first element of the $ode ",
-          "return value should be a numeric vector containg the ",
-          "state derivatives. Wrong derivative return type: ", typeofres, ".", 
-          call. = F)
+sdOdeModelMsg$verifyModel8 <- paste0(
+  "sdsim::verifyModel - Model '%s", 
+  "' verification: the first element of the $ode ",
+  "return value should be a numeric vector containg the ",
+  "state derivatives. Wrong derivative return type: %s.")
 
-sdOdeModelMsg$verifyModel9 <- function(pModelId, dRes, lenst) 
-  warning("sdsim::verifyModel - Model '", pModelId, 
-          "' verification: the number of derivatives returned by the ", 
-          "$ode (", length(dRes), " - ", 
-          paste0(names(dRes), collapse = ', '), 
-          ") must equal the length of the initial conditions vector (", 
-          lenst, ").", call. = F)
+sdOdeModelMsg$verifyModel9 <- paste0( 
+  "sdsim::verifyModel - Model '%s", 
+  "' verification: the number of derivatives returned by the ", 
+  "$ode (%s - %s) must equal the length of the initial",
+  "conditions vector (%s).")
 
-sdOdeModelMsg$verifyModel10 <- function(pModelId, typeofres) 
-  warning("sdsim::verifyModel - Model '", pModelId, 
-          "' verification: the $ode function should return ",
-          "a list. Wrong return type: ", typeofres,".", call. = F)
+sdOdeModelMsg$verifyModel10 <- paste0( 
+  "sdsim::verifyModel - Model '%s", 
+  "' verification: the $ode function should return ",
+  "a list. Wrong return type: %s.")
 
 sdOdeModelMsg$verifyModel11 <- function(pModelId) 
   message("sdsim::verifyModel - Model '", pModelId, 
           "' Ordinary Differential Equations verified.")
 
-sdOdeModelMsg$verifyModel12 <- function(pModelId, typeofscen) 
-  warning("sdsim::verifyModel - Model '", pModelId, 
-          "' verification: Scenario argument of type '", typeofscen, 
-          "' discarted. It must be a valid sdScenarioClass object or ", 
-          "a character string with a scenario XML or EXCEL file name.", 
-          call. = F)
+sdOdeModelMsg$verifyModel12 <- paste0(
+  "sdsim::verifyModel - Model '%s", 
+  "' verification: Scenario argument of type '%s", 
+  "' discarted. It must be a valid sdScenarioClass object or ", 
+  "a character string with a scenario XML or EXCEL file name.")
 
-sdOdeModelMsg$verifyModel13 <- function(modelId)
-  stop("sdsim::verifyModel - Model '", modelId,
-       "' verification aborted: no state variables informed. Define the ", 
-       "state variables in the default scenario or via the scenario argument.", 
-       call. = F)
+sdOdeModelMsg$verifyModel13 <- paste0(
+  "sdsim::verifyModel - Model '%s",
+  "' verification aborted: no state variables informed. Define the ", 
+  "state variables in the default scenario or via the scenario argument.")
 
 # sdOdeModelMsg$modelId1 <- function(modelId)
 #   warning("sdsim::modelId - Missing model ID: It was set to '", modelId, "'.", 
@@ -622,13 +615,12 @@ sdOdeModelMsg$verifyModel13 <- function(modelId)
 #   warning("sdsim::modelId - Invalid model ID type: The model ID must be a ",
 #           "string. It was set to '", modelId, "'.", call. = F)
 
-sdOdeModelMsg$defaultScenario <- function(pModelId)
-  warning("sdsim::defaultScenario - Model '", pModelId, 
-          "' set default scenario: The default scenario ",
-          "must be a sdScenario object or a character string with the name of ", 
-          "a scenario XML or Excel file. Create one using the ",
-          "help('sdScenario') constructor. No default scenario was set.", 
-          call. = F)
+sdOdeModelMsg$defaultScenario <- paste0(
+  "sdsim::defaultScenario - Model '%s", 
+  "' set default scenario: The default scenario ",
+  "must be a sdScenario object or a character string with the name of ", 
+  "a scenario XML or Excel file. Create one using the ",
+  "help('sdScenario') constructor. No default scenario was set.")
 
 ## FILE sdOutput.R
 ## 
@@ -1019,7 +1011,6 @@ sdSimulatorMsg$sdSimulateCoupled6 <- function(coupledModelId, modelId)
           coupledModelId,
           "': The component '", modelId, "' postProcess function ",
           "returned the following error. ", e, call. = F)
-
 
 sdSimulatorMsg$sdSimulateCoupled7 <- paste0(
   "sdsim::sdSimulate - Simulation of the coupled model '%s",

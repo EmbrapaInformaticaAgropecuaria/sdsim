@@ -507,7 +507,8 @@ sdOdeModelClass <- R6::R6Class(
           if (inherits(scenario, sdScenarioClass$classname))
             defaultScenario <- mergeScenarios(defaultScenario, scenario)
           else
-            sdOdeModelMsg$verifyModel12(private$pId, typeof(scenario))
+            warning(sprintf(sdOdeModelMsg$verifyModel12,
+                            private$pId, typeof(scenario)))
         }
       } else if (!is.null(scenario)) { 
         if (is.character(scenario))
@@ -517,10 +518,10 @@ sdOdeModelClass <- R6::R6Class(
           defaultScenario <- scenario
         } else { 
           sdOdeModelMsg$verifyModel12(private$pId, typeof(scenario))
-          sdOdeModelMsg$verifyModel1(private$pId)
+          stop(sprintf(sdOdeModelMsg$verifyModel1,private$pId))
         }
       } else {
-        sdOdeModelMsg$verifyModel1(private$pId)
+        stop(sprintf(sdOdeModelMsg$verifyModel1,private$pId))
       }
         
       # Get variables from default scenario
@@ -536,7 +537,7 @@ sdOdeModelClass <- R6::R6Class(
       if (!is.null(times) && length(unlist(times)) > 0) {
         t <- times[[1]]
       } else { 
-        sdOdeModelMsg$verifyModel2(private$pId)
+        warning(sprintf(sdOdeModelMsg$verifyModel2,private$pId))
         t <- 0
       }
       
@@ -553,7 +554,7 @@ sdOdeModelClass <- R6::R6Class(
       
       # check if there is state variables
       if (length(st) == 0)
-        sdOdeModelMsg$verifyModel13(private$pId)
+        stop(sprintf(sdOdeModelMsg$verifyModel13,private$pId))
       
       # compute the input time Series values for the initial time
       for (var in names(inp$fun_)) { 
@@ -573,14 +574,14 @@ sdOdeModelClass <- R6::R6Class(
                envir = auxEnv)
         },
         error = function(e) { 
-          sdOdeModelMsg$verifyModel3(private$pId, auxVar, e)
+          warning(sprintf(sdOdeModelMsg$verifyModel3,private$pId, auxVar, e))
           invisible(numeric(0))
         })
         
         if (is.null(aux[[auxVar]]) || is.na(aux[[auxVar]]) ||
             length(aux[[auxVar]]) == 0 || is.infinite(aux[[auxVar]]))
-          sdOdeModelMsg$verifyModel4(private$pId, auxVar, 
-                                     capture.output(aux[[auxVar]]))
+          warning(sprintf(sdOdeModelMsg$verifyModel4,private$pId, auxVar, 
+                          capture.output(aux[[auxVar]])))
       }
       
       #### Model Definition Validation
@@ -597,7 +598,7 @@ sdOdeModelClass <- R6::R6Class(
                               sw = sw, aux = aux)
       },
       error = function(e) { 
-        sdOdeModelMsg$verifyModel5(private$pId, e)
+        warning(sprintf(sdOdeModelMsg$verifyModel5,private$pId, e))
         invisible(NULL)
       })
       
@@ -617,28 +618,28 @@ sdOdeModelClass <- R6::R6Class(
               next
               # do nothing
             else if (is.null(xUnlist[[i]]))
-              sdOdeModelMsg$verifyModel6(private$pId, names(xUnlist)[[i]], x,
-                                         "NULL")
+              warning(sprintf(sdOdeModelMsg$verifyModel6,private$pId,
+                              names(xUnlist)[[i]], x,"NULL"))
             else if (length(var) == 0 && is.numeric(var))
-              sdOdeModelMsg$verifyModel6(private$pId, names(xUnlist)[[i]], x,
-                                         "numeric(0)")
+              warning(sprintf(sdOdeModelMsg$verifyModel6,private$pId,
+                              names(xUnlist)[[i]], x,"numeric(0)"))
             else if (is.na(xUnlist[[i]]))
-              sdOdeModelMsg$verifyModel6(private$pId, names(xUnlist)[[i]], x,
-                                         "NA")
+              warning(sprintf(sdOdeModelMsg$verifyModel6,private$pId,
+                              names(xUnlist)[[i]], x,"NA"))
             else if (is.infinite(xUnlist[[i]]))
-              sdOdeModelMsg$verifyModel6(private$pId, names(xUnlist)[[i]], x,
-                                         "Inf")
+              warning(sprintf(sdOdeModelMsg$verifyModel6,private$pId,
+                              names(xUnlist)[[i]], x,"Inf"))
           }
         } else if (x %in% c('st', 'ct', 'par', 'inp', 'sw', 'aux')) {
           # do nothing if an arg is empty
         } else if (is.null(unlist(var))) {
-          sdOdeModelMsg$verifyModel7(private$pId, x, "NULL")
+          warning(sprintf(sdOdeModelMsg$verifyModel7,private$pId, x, "NULL"))
         } else if (length(var) == 0 && is.numeric(var)) {
-          sdOdeModelMsg$verifyModel7(private$pId, x, "numeric(0)")
+          warning(sprintf(sdOdeModelMsg$verifyModel7,private$pId, x, "numeric(0)"))
         } else if (is.na(unlist(var))) {
-          sdOdeModelMsg$verifyModel7(private$pId, x, "NA")
+          warning(sprintf(sdOdeModelMsg$verifyModel7,private$pId, x, "NA"))
         } else if (is.infinite(unlist(var))) {
-          sdOdeModelMsg$verifyModel7(private$pId, x, "Inf")
+          warning(sprintf(sdOdeModelMsg$verifyModel7,private$pId, x, "Inf"))
         }
       })
       
@@ -647,12 +648,13 @@ sdOdeModelClass <- R6::R6Class(
         dRes <- res[[1]]
         
         if (!is.numeric(dRes))
-          sdOdeModelMsg$verifyModel8(private$pId, typeof(dRes)) 
+          warning(sprintf(sdOdeModelMsg$verifyModel8,private$pId, typeof(dRes)))
         
         if (length(dRes) != length(st))
-          sdOdeModelMsg$verifyModel9(private$pId, dRes, length(st))
+          warning(sprintf(sdOdeModelMsg$verifyModel9,private$pId, length(dRes),
+                          paste0(names(dRes), collapse = ', '), length(st)))
       } else {
-        sdOdeModelMsg$verifyModel10(private$pId, typeof(res)) 
+        warning(sprintf(sdOdeModelMsg$verifyModel10,private$pId, typeof(res)))
       }
       
       if (verbose)

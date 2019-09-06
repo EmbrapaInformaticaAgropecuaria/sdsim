@@ -58,7 +58,7 @@ sdModelClass <- R6::R6Class(
           private$pDefaultScenario$id <- "Default"
           private$flagVerify <- FALSE
         } else {
-          sdOdeModelMsg$defaultScenario(private$pId)
+          warning(sprintf(sdOdeModelMsg$defaultScenario,private$pId))
         } 
       }
     },
