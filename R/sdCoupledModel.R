@@ -591,7 +591,7 @@ sdCoupledModelClass <- R6::R6Class(
         if (any(grepl(pattern = paste0("^",id,"."), 
                       x = private$pComponentsId, perl = TRUE)) ||
             id %in% private$pComponentsId) { 
-          sdCoupledModelMsg$addComponent1(private$pId, id)
+          warning(sprintf(sdCoupledModelMsg$addComponent1,private$pId, id))
           
           self$removeComponent(c(private$pComponentsId[
             grepl(pattern = paste0("^",id,"."), 
@@ -599,7 +599,7 @@ sdCoupledModelClass <- R6::R6Class(
         } else if (id == private$pId) {  
           # check if id is equal the coupled model id
           
-          sdCoupledModelMsg$addComponent0(private$pId, id)
+          warning(sprintf(sdCoupledModelMsg$addComponent0,private$pId, id))
           next()
         }
         
@@ -737,7 +737,7 @@ sdCoupledModelClass <- R6::R6Class(
         } else { 
           # add connection
           if (con[[1]] %in% names(private$pConnections))
-            sdCoupledModelMsg$addConnection3(private$pId, con[[1]])
+            warning(sprintf(sdCoupledModelMsg$addConnection3, private$pId, con[[1]]))
           
           private$pConnections[[con[[1]]]] <- con
           

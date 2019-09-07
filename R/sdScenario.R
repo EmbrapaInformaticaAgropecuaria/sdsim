@@ -440,7 +440,7 @@ sdScenarioClass <- R6::R6Class(
         if ((is.list(state) || is.numeric(state)) && !is.null(names(state)))
           self$addState(state, verbose = verbose)
         else
-          sdScenarioMsg$initialize1(id, "state")
+          warning(sprintf(sdScenarioMsg$initialize1,id, "state", "state"))
       }
       
       # Initialize constant
@@ -449,7 +449,7 @@ sdScenarioClass <- R6::R6Class(
             !is.null(names(constant)))
           self$addConstant(constant, verbose = verbose)
         else
-          sdScenarioMsg$initialize1(id, "constant")
+          warning(sprintf(sdScenarioMsg$initialize1,id, "constant", "constant"))
       }
       
       # Initialize input and time series
@@ -458,7 +458,7 @@ sdScenarioClass <- R6::R6Class(
           self$addInput(input, verbose = verbose, interpolation = interpolation,
                         timeSeriesDirectory = timeSeriesDirectory)
         else
-          sdScenarioMsg$initialize2(id, "input")
+          warning(sprintf(sdScenarioMsg$initialize2,id, "input","input"))
       }
       
       # Initialize parameter
@@ -467,7 +467,7 @@ sdScenarioClass <- R6::R6Class(
             !is.null(names(parameter)))
           self$addParameter(parameter, verbose = verbose)
         else
-          sdScenarioMsg$initialize1(id, "parameter")
+          warning(sprintf(sdScenarioMsg$initialize1,id, "parameter", "parameter"))
       }
       
       # Initialize switch
@@ -475,7 +475,7 @@ sdScenarioClass <- R6::R6Class(
         if ((is.list(switch) || is.vector(input)) && !is.null(names(switch)))
           self$addSwitch(switch, verbose = verbose)
         else
-          sdScenarioMsg$initialize2(id, "switch")
+          warning(sprintf(sdScenarioMsg$initialize2,id, "switch","switch"))
       }
       
       # set units list
@@ -483,7 +483,7 @@ sdScenarioClass <- R6::R6Class(
         if ((is.list(unit) || is.character(unit)) && !is.null(names(unit)))
           self$addUnit(unit, verbose = verbose)
         else
-          sdScenarioMsg$initialize2(id, "unit")
+          warning(sprintf(sdScenarioMsg$initialize2,id, "unit","unit"))
       }
       
       # set descriptions list
@@ -493,7 +493,7 @@ sdScenarioClass <- R6::R6Class(
             !is.null(names(description)))
           self$addDescription(description, verbose = verbose)
         else
-          sdScenarioMsg$initialize2(id, "description")
+          warning(sprintf(sdScenarioMsg$initialize2,id, "description","description"))
       }
       
       # set simulation time sequence
@@ -602,7 +602,7 @@ sdScenarioClass <- R6::R6Class(
             is.null(private[["pTimes"]]$by)) { 
           if (!is.null(private[["pTimes"]]$to) && 
               private[["pTimes"]]$to == from)
-            sdScenarioMsg$setTimeSequence1(private$pId, "from")
+            warning(sprintf(sdScenarioMsg$setTimeSequence1,private$pId, "from"))
           else
             private[["pTimes"]]$from <- from
         } else if (abs(private[["pTimes"]]$to - from) >= 
@@ -610,9 +610,9 @@ sdScenarioClass <- R6::R6Class(
                  (private[["pTimes"]]$to - from)*private[["pTimes"]]$by > 0)
           private[["pTimes"]]$from <- from
         else
-          sdScenarioMsg$setTimeSequence2(private$pId, "from")
+          warning(sprintf(sdScenarioMsg$setTimeSequence2,private$pId, "from"))
       } else if (!missing(from) && !is.null(from))
-        sdScenarioMsg$setTimeSequence(private$pId, "from")
+        warning(sprintf(sdScenarioMsg$setTimeSequence,private$pId, "from"))
       
       if (!missing(to) && is.numeric(to) && 
           length(to) == 1 && !is.na(to)) { 
@@ -620,7 +620,7 @@ sdScenarioClass <- R6::R6Class(
             is.null(private[["pTimes"]]$by)) { 
           if (!is.null(private[["pTimes"]]$from) && 
               private[["pTimes"]]$from == to) {
-            sdScenarioMsg$setTimeSequence1(private$pId, "to")
+            warning(sprintf(sdScenarioMsg$setTimeSequence1,private$pId, "to"))
           } else {
             private[["pTimes"]]$to <- to
           }
@@ -629,10 +629,10 @@ sdScenarioClass <- R6::R6Class(
                  (to - private[["pTimes"]]$from)*private[["pTimes"]]$by > 0) {
           private[["pTimes"]]$to <- to
         } else {
-          sdScenarioMsg$setTimeSequence2(private$pId, "to")
+          warning(sprintf(sdScenarioMsg$setTimeSequence2,private$pId, "to"))
         }
       } else if (!missing(to) && !is.null(to)) {
-        sdScenarioMsg$setTimeSequence(private$pId, "to")
+        warning(sprintf(sdScenarioMsg$setTimeSequence,private$pId, "to"))
       }
       
       
@@ -646,10 +646,10 @@ sdScenarioClass <- R6::R6Class(
                    (private[["pTimes"]]$to - private[["pTimes"]]$from)*by > 0) {
           private[["pTimes"]]$by <- by
         } else{ # invalid by
-          sdScenarioMsg$setTimeSequence2(private$pId, "by")
+          warning(sprintf(sdScenarioMsg$setTimeSequence2,private$pId, "by"))
         }
       } else if (!missing(by) && !is.null(by)) {
-        sdScenarioMsg$setTimeSequence(private$pId, "by")
+        warning(sprintf(sdScenarioMsg$setTimeSequence,private$pId, "by"))
       }
     },
     # Add variables to the scenario

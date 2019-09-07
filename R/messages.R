@@ -209,9 +209,9 @@ constructorsMsg$sdLoadScenario3 <- paste0(
 # sdLoadScenario(file = "DESCRIPTION")
 constructorsMsg$sdLoadScenario4 <- paste0(
   "sdsim::sdLoadScenario - Load Scenario '%s'", 
-       " aborted: Wrong file extension. It should be a Extensible ", 
-       "Markup Language (XML) or an EXCEL file. See help('sdLoadScenario') for",
-       " the set of rules to encode a sdScenario.")
+  " aborted: Wrong file extension. It should be a Extensible ", 
+  "Markup Language (XML) or an EXCEL file. See help('sdLoadScenario') for",
+  " the set of rules to encode a sdScenario.")
 
 ## FILE: readInputData.R
 ##
@@ -219,25 +219,21 @@ readInputDataMsg <- new.env()
 
 readInputDataMsg$ConvertDataFrameToList <- paste0(
   "sdsim::sdLoadScenario - Load Scenario from EXCEL: an invalid ",
-          "data.frame was skipped, probably with empty values. Refactor your ",
-          "file if it is not wanted."
-)
+  "data.frame was skipped, probably with empty values. Refactor your ",
+  "file if it is not wanted.")
 
 readInputDataMsg$ReadDataExcel1 <- paste0(
   "sdsim::sdLoadScenario - Load Scenario from EXCEL: Error opening ", 
-          "the file '%s'. %s"
-)
+  "the file '%s'. %s")
 
 readInputDataMsg$ReadDataExcel2 <- paste0(
   "sdsim::sdLoadScenario - Load Scenario from EXCEL: Warning opening ", 
-          "the file '%s'. %s"
-)
+  "the file '%s'. %s")
 
 readInputDataMsg$LoadModelScenario1 <- paste0(
   "sdsim::sdLoadScenario - Loading scenario '%s'",
-          " from EXCEL aborted: The scenario file path do not exist. ",
-          "No variable will be loaded."
-)
+  " from EXCEL aborted: The scenario file path do not exist. ",
+  "No variable will be loaded.")
 
 ## FILE sdCoupledModel.R
 ## 
@@ -246,34 +242,33 @@ sdCoupledModelMsg <- new.env()
 # sdBuildCoupledScenario(scenarios = list(2,3))
 sdCoupledModelMsg$sdBuildCoupledScenario1 <- paste0(
   "sdsim::sdBuildCoupledScenario - Error building the coupled scenario: ",
-       "The 'scenarios' argument must be a list named with the component ID ",
-       "that will use each scenario in the coupled model. ", 
-       "At least one name was missing.")
+  "The 'scenarios' argument must be a list named with the component ID ",
+  "that will use each scenario in the coupled model. ", 
+  "At least one name was missing.")
 
 # use case
 # sdBuildCoupledScenario(scenarios = list(a = 2))
 sdCoupledModelMsg$sdBuildCoupledScenario2 <- paste0(
   "sdsim::sdBuildCoupledScenario - Building Coupled Scenario: The ", 
-          "argument 'scenarios' must be a named list of not empty ", 
-          "sdScenario's objects or character file names. Scenario of type '%s'", 
-          " of the component '%s'",
-          " could not be added.")
+  "argument 'scenarios' must be a named list of not empty ", 
+  "sdScenario's objects or character file names. Scenario of type '%s'", 
+  " of the component '%s'",
+  " could not be added.")
 
 # sdCoupledModel("test", components = sdOdeModel("test"))
-sdCoupledModelMsg$addComponent0 <- function(pCoupledModelId, id)
-  warning("sdsim::addComponent - Coupled Model '", pCoupledModelId, 
-          "' adding component: The component '", (id), 
-          "' identification is equal to the coupled model ID. ",
-          "Component skipped, refactor its ID and try to add it again.", 
-          call. = F)
+sdCoupledModelMsg$addComponent0 <- paste0(
+  "sdsim::addComponent - Coupled Model '%s",
+  "' adding component: The component '%s",
+  "' identification is equal to the coupled model ID. ",
+  "Component skipped, refactor its ID and try to add it again.")
 
 # sdCoupledModel("teste", components = c(sdOdeModel("test"), 
 # sdStaticModel("test")))
-sdCoupledModelMsg$addComponent1 <- function(pCoupledModelId, id)
-  warning("sdsim::addComponent - Coupled Model '", pCoupledModelId, 
-          "' adding component: The component '", (id), 
-          "' already exists in the coupled model. ",
-          "It will be removed and overwritten.", call. = F)
+sdCoupledModelMsg$addComponent1 <- paste0(
+  "sdsim::addComponent - Coupled Model '%s",
+  "' adding component: The component '%s",
+  "' already exists in the coupled model. ",
+  "It will be removed and overwritten.")
 
 # sdCoupledModel("test", components = c(2))
 sdCoupledModelMsg$addComponent2 <- paste0(
@@ -295,20 +290,19 @@ sdCoupledModelMsg$addConnection1 <- paste0(
 
 # sdCoupledModel("test", connections = list(c(1,2,3,4,5)))
 sdCoupledModelMsg$addConnection2 <- paste0(
-    "sdsim::addConnection - Coupled Model '%s'",
-          " adding connection: The 5th element of the connection vector must ",
-          "include the prefix st$, aux$ or eq$, indicating a state variable, ",
-          "an auxiliary or an algebraic equation connection, respectively. ",
-          "The connection: c(%s", 
-          ") will be skipped.")
+  "sdsim::addConnection - Coupled Model '%s'",
+  " adding connection: The 5th element of the connection vector must ",
+  "include the prefix st$, aux$ or eq$, indicating a state variable, ",
+  "an auxiliary or an algebraic equation connection, respectively. ",
+  "The connection: c(%s", 
+  ") will be skipped.")
 
 # sdCoupledModel("test", connections = list(c(1,2,3,4,"aux$5"), 
 #c(1,2,3,4,"aux$5")))
-sdCoupledModelMsg$addConnection3 <- function(pCoupledModelId, conid)
-  warning("sdsim::addConnection - Coupled Model '", pCoupledModelId, 
-          "' adding connection: The connection '", (conid), 
-          "' already exists in the coupled model. It will be overwritten.", 
-          call. = F)
+sdCoupledModelMsg$addConnection3 <- paste(
+  "sdsim::addConnection - Coupled Model '%s'",
+  " adding connection: The connection '%s'", 
+  " already exists in the coupled model. It will be overwritten.")
 
 # sdCoupledModel("test", connections = c(1,2,3,4,"aux$5"))$removeConnection(2)
 sdCoupledModelMsg$removeConnection <- paste0(
@@ -660,34 +654,34 @@ sdOutputMsg$summary3 <- paste0(
 ## 
 sdScenarioMsg <- new.env()
 
-sdScenarioMsg$initialize1 <- function(scenarioId, varType)
-  warning("sdsim::initialize - Scenario '", scenarioId, 
-          "' initialization: The ", varType, " variables ", 
-          "must be in a named numeric vector or list. ",
-          "Scenario initialized without ", varType, " variables.", call. = F)
+sdScenarioMsg$initialize1 <- paste0(
+  "sdsim::initialize - Scenario '%s",
+  "' initialization: The %s variables ", 
+  "must be in a named numeric vector or list. ",
+  "Scenario initialized without %s variables.")
 
-sdScenarioMsg$initialize2 <- function(scenarioId, varType)
-  warning("sdsim::initialize - Scenario '", scenarioId, 
-          "' initialization: The ", varType,
-          " variables must be in a named list. Scenario initialized without ", 
-          varType, " variables.", call. = F)
+sdScenarioMsg$initialize2 <- paste0(
+  "sdsim::initialize - Scenario '%s",
+  "' initialization: The %s",
+  " variables must be in a named list. Scenario initialized without %s", 
+  " variables.")
 
-sdScenarioMsg$setTimeSequence <- function(pScenarioId, varType)
-  warning("sdsim::setTimeSequence - Scenario '", pScenarioId, 
-          "': Sequence element '", varType, "' not set. ",
-          "It must be a numeric value.", call. = F)
+sdScenarioMsg$setTimeSequence <- paste0(
+  "sdsim::setTimeSequence - Scenario '%s",
+  "': Sequence element '%s' not set. ",
+  "It must be a numeric value.")
 
-sdScenarioMsg$setTimeSequence1 <- function(pScenarioId, varType)
-  warning("sdsim::setTimeSequence - Scenario '", pScenarioId, 
-          "': The end value of the time sequence must be different from the ", 
-          "starting value. Argument '", varType, "' not set.", call. = F)
+sdScenarioMsg$setTimeSequence1 <- paste0(
+  "sdsim::setTimeSequence - Scenario '%s",
+  "': The end value of the time sequence must be different from the ", 
+  "starting value. Argument '%s' not set.")
 
-sdScenarioMsg$setTimeSequence2 <- function(pScenarioId, varType)
-  warning("sdsim::setTimeSequence - Scenario '", pScenarioId, 
-          "': The increment of the time sequence must be inside the starting ", 
-          "and end values of the sequence and have the right sign (positive ", 
-          "for crescent sequences and negative for descreasing ones). ", 
-          "Argument '", varType, "' not set.", call. = F)
+sdScenarioMsg$setTimeSequence2 <- paste0(
+  "sdsim::setTimeSequence - Scenario '%s",
+  "': The increment of the time sequence must be inside the starting ", 
+  "and end values of the sequence and have the right sign (positive ", 
+  "for crescent sequences and negative for descreasing ones). ", 
+  "Argument '%s' not set.")
 
 sdScenarioMsg$addInput <- function(pScenarioId, namesInterpol, namesInput)
   warning("sdsim::addInput - Scenario '", pScenarioId, 
