@@ -251,17 +251,17 @@ sdOutputClass <- R6::R6Class(
     },
     summary = function() { 
       if (!is.null(private[["pOutTrajectory"]])) { 
-        sdOutputMsg$summary1()
+        message(sdOutputMsg$summary1)
         print(summary(private[["pOutTrajectory"]]))
       }
       
       if (!is.null(private[["pAuxTrajectory"]])) { 
-        sdOutputMsg$summary2()
+        message(sdOutputMsg$summary2)
         print(summary(private[["pAuxTrajectory"]]))
       }
       
       if (!is.null(private[["pTimeSeriesTrajectory"]])) { 
-        sdOutputMsg$summary3()
+        message(sdOutputMsg$summary3)
         print(summary(private[["pTimeSeriesTrajectory"]]))
       }
     },
@@ -285,19 +285,19 @@ sdOutputClass <- R6::R6Class(
       
       # all the labels must be provided, or any will be used
       if (!is.null(xlab) && length(which) != length(xlab)) { 
-        sdOutputMsg$plot1(private$pOutputId, "xlab")
+        warning(sprintf(sdOutputMsg$plot1,private$pOutputId, "xlab","xlab"))
         xlab <- NULL
       }
       if (!is.null(ylab) && length(which) != length(ylab)) { 
-        sdOutputMsg$plot1(private$pOutputId, "ylab")
+        warning(sprintf(sdOutputMsg$plot1,private$pOutputId, "ylab","ylab"))
         ylab <- NULL
       }
       if (!is.null(main) && length(which) != length(main)) { 
-        sdOutputMsg$plot1(private$pOutputId, "main")
+        warning(sprintf(sdOutputMsg$plot1,private$pOutputId, "main","main"))
         main <- NULL
       }
       if (!is.null(sub) && length(which) != length(sub)) { 
-        sdOutputMsg$plot1(private$pOutputId, "sub")
+        warning(sprintf(sdOutputMsg$plot1,private$pOutputId, "sub","sub"))
         sub <- NULL
       }
       
@@ -306,7 +306,7 @@ sdOutputClass <- R6::R6Class(
       } else { 
         if (!is.character(unlist(which, recursive = T))) { 
           which <- "all"
-          sdOutputMsg$plot2(private$pOutputId)
+          warning(sprintf(sdOutputMsg$plot2,private$pOutputId))
         } else { 
           if (!is.null(private[["pAuxTrajectory"]]))
             data <- merge(data, private[["pAuxTrajectory"]],
@@ -390,7 +390,7 @@ sdOutputClass <- R6::R6Class(
           }
           
           if (!(xaxis %in% names(data))) { 
-            sdOutputMsg$plot4(private$pOutputId, xaxis)
+            warning(sprintf(sdOutputMsg$plot4,private$pOutputId, xaxis))
             xaxis <- "time"
           }
           
@@ -421,7 +421,7 @@ sdOutputClass <- R6::R6Class(
           # check the ylabel size when plotting more than one YAxis
           if (!is.null(ylab) && ylabel != "" && multipleYAxis && 
               length(ylabel) < nYAxis)
-            sdOutputMsg$plot1(private$pOutputId, "ylab")
+            warning(sprintf(sdOutputMsg$plot1,private$pOutputId, "ylab","ylab"))
           
           # plot each y variable
           for (j in 1:nYAxis) { 

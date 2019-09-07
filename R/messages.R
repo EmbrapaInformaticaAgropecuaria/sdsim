@@ -339,8 +339,7 @@ sdCoupledModelMsg$verifyModel3 <- paste0(
 
 sdCoupledModelMsg$verifyModel4 <- paste0(
   "sdsim::verifyModel - Coupled Model '%s'",
-          " verification: Error evaluating the auxiliary equation %s. %s" 
-          )
+  " verification: Error evaluating the auxiliary equation %s. %s")
 
 sdCoupledModelMsg$verifyModel5 <- function(pCoupledModelId, aux, auxVar)
   warning("sdsim::verifyModel - Coupled Model '", pCoupledModelId,
@@ -350,26 +349,26 @@ sdCoupledModelMsg$verifyModel5 <- function(pCoupledModelId, aux, auxVar)
 
 sdCoupledModelMsg$verifyModel6 <- paste0(
   "sdsim::verifyModel - Coupled Model '%s' component '%s'",
-          " verification: Error running the ode. %s")
+  " verification: Error running the ode. %s")
 
 sdCoupledModelMsg$verifyModel7 <- paste0(
-    "sdsim::verifyModel - Coupled Model '%s'",
-          " component '%s' verification: variable $%s", 
-          " from the '%s' list in the $componentsEquations may be",
-          " incorrect. It has '%s' value.")
+  "sdsim::verifyModel - Coupled Model '%s'",
+  " component '%s' verification: variable $%s", 
+  " from the '%s' list in the $componentsEquations may be",
+  " incorrect. It has '%s' value.")
 
 sdCoupledModelMsg$verifyModel8 <- paste0(
   "sdsim::verifyModel - Coupled Model '%s'",
-          " component '%s' verification: variable $%s", 
-          " in the $componentsEquations may be incorrect. It has '%s'",
-          " value.")
+  " component '%s' verification: variable $%s", 
+  " in the $componentsEquations may be incorrect. It has '%s'",
+  " value.")
 
 sdCoupledModelMsg$verifyModel9 <- paste0(
   "sdsim::verifyModel - Coupled Model '%s'",
-          " verification: the first element of the coupled model",
-          " definition return value should be a numeric vector",
-          " containg the state variables derivatives.",
-          " Wrong derivative return type: '%s'.")
+  " verification: the first element of the coupled model",
+  " definition return value should be a numeric vector",
+  " containg the state variables derivatives.",
+  " Wrong derivative return type: '%s'.")
 
 sdCoupledModelMsg$verifyModel10 <- function(pCoupledModelId, dRes, lenst)
   warning("sdsim::verifyModel - Coupled Model '", pCoupledModelId, 
@@ -380,9 +379,9 @@ sdCoupledModelMsg$verifyModel10 <- function(pCoupledModelId, dRes, lenst)
           lenst, ").", call. = F)
 
 sdCoupledModelMsg$verifyModel11 <- paste0(
-    "sdsim::verifyModel - Coupled Model '%s'", 
-          " verification: the coupled model definition function should",
-          " return a list. Wrong return type: '%s'.")
+  "sdsim::verifyModel - Coupled Model '%s'", 
+  " verification: the coupled model definition function should",
+  " return a list. Wrong return type: '%s'.")
 
 sdCoupledModelMsg$verifyModel12 <- function(pCoupledModelId)
   message("sdsim::verifyModel - Coupled Model '", pCoupledModelId, 
@@ -398,26 +397,26 @@ sdCoupledModelMsg$buildCoupledModel1 <- paste0(
   " added. Add a component before building the coupled model.")
 
 sdCoupledModelMsg$buildCoupledModel2 <- paste0(
-      "sdsim::buildCoupledModel - Coupled Model '%s' ", 
-      " Error building the connection vectors: The model '%s' ", 
-      " is not present in the coupled components. Refactor the",
-      " connection to make it valid. Connection '%s' skipped.")
+  "sdsim::buildCoupledModel - Coupled Model '%s' ", 
+  " Error building the connection vectors: The model '%s' ", 
+  " is not present in the coupled components. Refactor the",
+  " connection to make it valid. Connection '%s' skipped.")
 
 sdCoupledModelMsg$buildCoupledModel3 <- paste0(
-      "sdsim::buildCoupledModel - Coupled Model '%s'", 
-      " Error Building the connection vectors: The %s %s", 
-      " from the model '%s' do not exist. Refactor",
-      " the connection to make it valid. Connection '%s' skipped.")
+  "sdsim::buildCoupledModel - Coupled Model '%s'", 
+  " Error Building the connection vectors: The %s %s", 
+  " from the model '%s' do not exist. Refactor",
+  " the connection to make it valid. Connection '%s' skipped.")
 
 sdCoupledModelMsg$buildCoupledModel4 <- paste0(
-      "sdsim::buildCoupledModel - Coupled Model '%s'", 
-      " Error Building the connection vectors: The",
-      " connected output can only come from the auxiliary", 
-      " equations list (aux$<varName>), from the state",
-      " variables list (st$<varName>) or from the algebric",
-      " equations list (eq$<varName> for static models) of the model '%s'.", 
-      " Refactor the connection to make it valid. Connection '%s'", 
-      " skipped.")
+  "sdsim::buildCoupledModel - Coupled Model '%s'", 
+  " Error Building the connection vectors: The",
+  " connected output can only come from the auxiliary", 
+  " equations list (aux$<varName>), from the state",
+  " variables list (st$<varName>) or from the algebric",
+  " equations list (eq$<varName> for static models) of the model '%s'.", 
+  " Refactor the connection to make it valid. Connection '%s'", 
+  " skipped.")
 
 sdCoupledModelMsg$buildCoupledModel5 <- function(pCoupledModelId, in1, u1, m1,
                                                  out2, u2, m2, id)
@@ -430,33 +429,33 @@ sdCoupledModelMsg$buildCoupledModel5 <- function(pCoupledModelId, in1, u1, m1,
           "' if this is not wanted.", call. = F)
 
 sdCoupledModelMsg$buildCoupledModel6 <- paste0(
-      "sdsim::buildCoupledModel - Coupled Model '%s'", 
-      " build error: The input '%s'", 
-      " is connected to more then one %s.", 
-      " This input will only receive the last connection. Refactor the",
-      " connections if this is not wanted. ")
+  "sdsim::buildCoupledModel - Coupled Model '%s'", 
+  " build error: The input '%s'", 
+  " is connected to more then one %s.", 
+  " This input will only receive the last connection. Refactor the",
+  " connections if this is not wanted. ")
 
 #sdCoupledModel("test")$defaultScenario
 sdCoupledModelMsg$defaultScenario <- paste0(
-      "sdsim::defaultScenario - Coupled Model '%s'", 
-      " get default scenario: The default coupled scenario must be built",
-      " to retrieve it. Build it first with the method $buildCoupledModel",
-      " (see help('sdCoupledModelClass')).")
+  "sdsim::defaultScenario - Coupled Model '%s'", 
+  " get default scenario: The default coupled scenario must be built",
+  " to retrieve it. Build it first with the method $buildCoupledModel",
+  " (see help('sdCoupledModelClass')).")
 
 # sdCoupledModel("test")$stConnections
 # sdCoupledModel("test")$eqConnections
 sdCoupledModelMsg$connectionsList <- paste0(
-      "sdsim::connectionsList - Coupled Model '%s' %s", 
-      " connection list: The default coupled scenario must be", 
-      " built to retrieve the connections. Build it first with the", 
-      " method $buildCoupledModel(see help('sdCoupledModelClass')).")
+  "sdsim::connectionsList - Coupled Model '%s' %s", 
+  " connection list: The default coupled scenario must be", 
+  " built to retrieve the connections. Build it first with the", 
+  " method $buildCoupledModel(see help('sdCoupledModelClass')).")
 
 # sdCoupledModel("test")$indexComponents
 sdCoupledModelMsg$indexComponents <- paste0(
-      "sdsim::indexComponents - Coupled Model '%s'",
-      " components index list: The default coupled scenario must be", 
-      " built to retrieve the index list. Build it first with the", 
-      " method $buildCoupledModel (see help('sdCoupledModelClass')).")
+  "sdsim::indexComponents - Coupled Model '%s'",
+  " components index list: The default coupled scenario must be", 
+  " built to retrieve the index list. Build it first with the", 
+  " method $buildCoupledModel (see help('sdCoupledModelClass')).")
 
 
 ## FILE sdModel.R
@@ -626,17 +625,16 @@ sdOdeModelMsg$defaultScenario <- paste0(
 ## 
 sdOutputMsg <- new.env()
 
-sdOutputMsg$plot1 <- function(pOutputId, plotarg)
-  warning("sdsim::plot - Plot output '", pOutputId, "': The '...' and the '", 
-          plotarg, "' arguments must have the same length. The '", plotarg, 
-          "' will not be used.", call. = F)
+sdOutputMsg$plot1 <- paste0(
+  "sdsim::plot - Plot output '%s': The '...' and the '%s", 
+  "' arguments must have the same length. The '%s", 
+  "' will not be used.")
 
-sdOutputMsg$plot2 <- function(pOutputId)
-  warning("sdsim::plot - Plot output '", pOutputId, "': the argument '...' ",
-          "must be a list of character vectors containing ",
-          "the formulas with the name of the variables to be plotted. See ",
-          "help('sdOutput'). All the output variables will be ploted instead.",
-          call. = F)
+sdOutputMsg$plot2 <- paste0(
+  "sdsim::plot - Plot output '%s': the argument '...' ",
+  "must be a list of character vectors containing ",
+  "the formulas with the name of the variables to be plotted. See ",
+  "help('sdOutput'). All the output variables will be ploted instead.")
 
 sdOutputMsg$plot3 <- function(pOutputId, yaxisArray, namesData)
   warning("sdsim::plot - Plot output '", pOutputId, 
@@ -645,20 +643,18 @@ sdOutputMsg$plot3 <- function(pOutputId, yaxisArray, namesData)
           paste(yaxisArray[!(yaxisArray %in% namesData)], 
                 collapse = ", "), call. = F)
 
-sdOutputMsg$plot4 <- function(pOutputId, xaxis)
-  warning("sdsim::plot - Plot output '", pOutputId, "': The x-axis variable '", 
-          xaxis, 
-          "' is not valid, the simulation time sequence will be used instead.",
-          call. = F)
+sdOutputMsg$plot4 <- paste0(
+  "sdsim::plot - Plot output '%s': The x-axis variable '%s",
+  "' is not valid, the simulation time sequence will be used instead.")
 
-sdOutputMsg$summary1 <- function()
-  message("sdsim::summary - Output Trajectory Summary", sep = "\n")
+sdOutputMsg$summary1 <- paste0(
+  "sdsim::summary - Output Trajectory Summary", sep = "\n")
 
-sdOutputMsg$summary2 <- function()
-  message("\n\nsdsim::summary - Auxiliary Trajectory Summary", sep = "\n")
+sdOutputMsg$summary2 <- paste0(
+  "\n\nsdsim::summary - Auxiliary Trajectory Summary", sep = "\n")
 
-sdOutputMsg$summary3 <- function()
-  message("\n\nsdsim::summary - Time Series Trajectory Summary", sep = "\n")
+sdOutputMsg$summary3 <- paste0(
+  "\n\nsdsim::summary - Time Series Trajectory Summary", sep = "\n")
 
 ## FILE sdScenario.R
 ## 
