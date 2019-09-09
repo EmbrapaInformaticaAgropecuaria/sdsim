@@ -448,13 +448,13 @@ runOdeSimulation <- function(model,
   
   # verify data
   if (is.null(times) || !all(c("from", "to", "by") %in% names(times)))
-    sdSimulatorMsg$sdSimulateAtomic2(model$id)
+    stop(sprintf(sdSimulatorMsg$sdSimulateAtomic2,model$id))
   else if (!(abs(times$to - times$from) >= abs(times$by) && 
              (times$to - times$from)*times$by > 0)) # invalid time sequence
-    sdSimulatorMsg$sdSimulateAtomic0(model$id)
+    stop(sprintf(sdSimulatorMsg$sdSimulateAtomic0,model$id))
   
   if (is.null(method)) { 
-    sdSimulatorMsg$sdSimulateAtomic5(model$id)
+    warning(sprintf(sdSimulatorMsg$sdSimulateAtomic5,model$id))
     method <- "lsoda"
   }
   
@@ -475,7 +475,7 @@ runOdeSimulation <- function(model,
   
   # verify state variables
   if (is.null(state) || length(state) == 0)
-    sdSimulatorMsg$sdSimulateAtomic1(model$id)
+    stop(sprintf(sdSimulatorMsg$sdSimulateAtomic1,model$id))
   
   environment(CreateFuncEval) <- model$modelEnvironment
   
@@ -510,7 +510,7 @@ runOdeSimulation <- function(model,
           !identical(method, deSolve::lsode) &&
           (!is.vector(method) ||
            !method %in% c("lsoda", "lsode", "radau"))) { 
-        sdSimulatorMsg$sdSimulateAtomic3(model$id)
+        warning(sprintf(sdSimulatorMsg$sdSimulateAtomic3,model$id))
         method <- "lsoda"
       }
       
@@ -565,7 +565,7 @@ runOdeSimulation <- function(model,
           !identical(method, deSolve::lsode) &&
           (!is.vector(method) ||
            !method %in% c("lsoda", "lsode", "radau"))) { 
-        sdSimulatorMsg$sdSimulateAtomic3(model$id)
+        warning(sprintf(sdSimulatorMsg$sdSimulateAtomic3,model$id))
         method <- "lsoda"
       }
       # events in a function with the triggers times in trigger
@@ -594,7 +594,7 @@ runOdeSimulation <- function(model,
           !identical(method, deSolve::lsode) &&
           (!is.vector(method) ||
            !method %in% c("lsoda", "lsode", "radau"))) { 
-        sdSimulatorMsg$sdSimulateAtomic3(model$id)
+        warning(sprintf(sdSimulatorMsg$sdSimulateAtomic3,model$id))
         method <- "lsoda"
       }
       outTrajectory <- deSolve::ode(
@@ -652,7 +652,7 @@ runOdeSimulation <- function(model,
                       auxTrajectory, tsTrajectory,
                       ct, par, inp, sw),
       error = function(e) { 
-        sdSimulatorMsg$sdSimulateAtomic4(model$id, e)
+        warning(sprintf(sdSimulatorMsg$sdSimulateAtomic4, model$id, e))
         return(NULL)
       })
   
@@ -1008,7 +1008,7 @@ runCoupledSimulation <- function(model,
       postProcessOut = NULL)
   } else { # at least one atomic component
     if (is.null(method)) { 
-      sdSimulatorMsg$sdSimulateAtomic5(model$id)
+      warning(sprintf(sdSimulatorMsg$sdSimulateAtomic5,model$id))
       method <- "lsoda"
     }
     if (is.null(st) || length(st) == 0)

@@ -903,38 +903,37 @@ sdSimulatorMsg$sdSimulateModel <- paste0(
   "A valid model default scenario or the scenario argument must ",
   "be informed to run the simulation.")
 
-sdSimulatorMsg$sdSimulateAtomic0 <- function(modelId)
-  stop("sdsim::sdSimulate - Simulation of the model '", modelId,
-       "' aborted: The increment of the time sequence must be inside the ", 
-       "starting and end values of the sequence and have the right sign ", 
-       "(positive for crescent sequences and negative for descreasing ones). ",
-       "Define a valid time sequence in the default scenario or via the ", 
-       "arguments to run a simulation.", call. = F)
+sdSimulatorMsg$sdSimulateAtomic0 <- paste0(
+  "sdsim::sdSimulate - Simulation of the model '%s",
+  "' aborted: The increment of the time sequence must be inside the ", 
+  "starting and end values of the sequence and have the right sign ", 
+  "(positive for crescent sequences and negative for descreasing ones). ",
+  "Define a valid time sequence in the default scenario or via the ", 
+  "arguments to run a simulation.")
 
-sdSimulatorMsg$sdSimulateAtomic1 <- function(modelId)
-  stop("sdsim::sdSimulate - Simulation of the model '", modelId,
-       "' aborted: no state variables informed. Define the state variables in ", 
-       "the default scenario or via the scenario argument.", call. = F)
+sdSimulatorMsg$sdSimulateAtomic1 <- paste0(
+  "sdsim::sdSimulate - Simulation of the model '%s",
+  "' aborted: no state variables informed. Define the state variables in ", 
+  "the default scenario or via the scenario argument.")
 
-sdSimulatorMsg$sdSimulateAtomic2 <- function(modelId)
-  stop("sdsim::sdSimulate - Simulation of the model '", modelId,
-       "' aborted: No time sequence informed. Define the time sequence ",
-       "in the default scenario or via the arguments.", call. = F)
+sdSimulatorMsg$sdSimulateAtomic2 <- paste0(
+  "sdsim::sdSimulate - Simulation of the model '%s",
+  "' aborted: No time sequence informed. Define the time sequence ",
+  "in the default scenario or via the arguments.")
 
-sdSimulatorMsg$sdSimulateAtomic3 <- function(modelId)
-  warning("sdsim::sdSimulate - Simulation of the model '", modelId,
-          "': The given method do not have root-finding capability. ",
-          "The simulator will run with the default method: 'lsoda'.", call. = F)
+sdSimulatorMsg$sdSimulateAtomic3 <- paste0(
+  "sdsim::sdSimulate - Simulation of the model '%s",
+  "': The given method do not have root-finding capability. ",
+  "The simulator will run with the default method: 'lsoda'.")
 
-sdSimulatorMsg$sdSimulateAtomic4 <- function(modelId, e)
-  warning("sdsim::sdSimulate - Simulation of the model '", modelId,
-          "': The postProcess function returned the following error. ", 
-          e, call. = F)
+sdSimulatorMsg$sdSimulateAtomic4 <- paste0(
+  "sdsim::sdSimulate - Simulation of the model '%s",
+  "': The postProcess function returned the following error.",'%s')
 
-sdSimulatorMsg$sdSimulateAtomic5 <- function(modelId)
-  warning("sdsim::sdSimulate - Simulation of the model '", modelId,
-       "': No method informed. ", 
-       "The simulator will run with the default method: 'lsoda'.", call. = F)
+sdSimulatorMsg$sdSimulateAtomic5 <- paste0(
+  "sdsim::sdSimulate - Simulation of the model '%s",
+  "': No method informed. ", 
+  "The simulator will run with the default method: 'lsoda'.")
 
 sdSimulatorMsg$sdSimulateAtomic6 <- function(modelId, typeofscen)
   warning("sdsim::sdSimulate - Simulation of the model '", modelId,
