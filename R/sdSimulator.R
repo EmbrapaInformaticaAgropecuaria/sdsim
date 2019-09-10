@@ -1167,8 +1167,9 @@ runCoupledSimulation <- function(model,
                                                par,
                                                inp,
                                                sw),
-          error = function(e) { 
-             sdSimulatorMsg$sdSimulateCoupled6(model$id, modelId)
+          error = function(e) {
+             warning(sprintf(sdSimulatorMsg$sdSimulateCoupled6,
+                             model$id, modelId, e))
             return(NULL)
           })
     } else {

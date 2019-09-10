@@ -983,11 +983,10 @@ sdSimulatorMsg$sdSimulateCoupled5 <- paste0(
   "': The given method do not have root-finding capability. ",
   "The simulator will run with the default method: 'lsoda'.")
 
-sdSimulatorMsg$sdSimulateCoupled6 <- function(coupledModelId, modelId)
-  warning("sdsim::sdSimulate - Simulation of the coupled model '", 
-          coupledModelId,
-          "': The component '", modelId, "' postProcess function ",
-          "returned the following error. ", e, call. = F)
+sdSimulatorMsg$sdSimulateCoupled6 <- paste0(
+  "sdsim::sdSimulate - Simulation of the coupled model '%s",
+  "': The component '%s' postProcess function ",
+  "returned the following error. %s")
 
 sdSimulatorMsg$sdSimulateCoupled7 <- paste0(
   "sdsim::sdSimulate - Simulation of the coupled model '%s",
