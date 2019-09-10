@@ -30,7 +30,6 @@ Imports:
   deSolve,
   R6,
   openxlsx,
-  readxl,
   XML,
   shiny,
   shinyAce,
