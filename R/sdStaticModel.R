@@ -162,7 +162,7 @@ sdStaticModelClass <- R6::R6Class(
             all(funDefaultArgs %in% names(formals(initVars))))
           private$pInitVars <- initVars
         else
-          sdStaticModelMsg$initialize1(id)
+          warning(sprintf(sdStaticModelMsg$initialize1,id))
       }
       
       if (!missing(algebraicEquations) && !is.null(algebraicEquations)) { # set algebraicEquations
@@ -170,7 +170,7 @@ sdStaticModelClass <- R6::R6Class(
         if (is.list(algebraicEquations)) { 
           algebraicEquations <- tryCatch(sdInitEquations(algebraicEquations, eqName = "eq"),
                                          error = function(e) { 
-                                           sdStaticModelMsg$initialize2(id, e)
+                                           warning(sprintf(sdStaticModelMsg$initialize2,id, e))
                                            return(list())
                                          })
         } else if (is.character(algebraicEquations) && nchar(algebraicEquations) <= 255 && 
@@ -180,12 +180,12 @@ sdStaticModelClass <- R6::R6Class(
           algebraicEquations <- paste(readLines(algebraicEquations), collapse = "\n")
           algebraicEquations <- tryCatch(sdInitEquations(algebraicEquations, eqName = "eq"),
                                          error = function(e) { 
-                                           sdStaticModelMsg$initialize2(id, e)
+                                           warning(sprintf(sdStaticModelMsg$initialize2,id, e))
                                            return(list())
                                          })
         } else { 
           algebraicEquations <- list()
-          sdStaticModelMsg$initialize3(id)
+          warning(sprintf(sdStaticModelMsg$initialize3,id))
         }
         # remove equations with reserved names
         if (any(names(algebraicEquations) %in% sdsimReserved)) { 
@@ -230,7 +230,7 @@ sdStaticModelClass <- R6::R6Class(
           
           private$pGlobalFunctions <- globalFunctions
         } else {
-          sdStaticModelMsg$initialize5(id)
+          warning(sprintf(sdStaticModelMsg$initialize5,id))
         }
       }
       
@@ -277,8 +277,8 @@ sdStaticModelClass <- R6::R6Class(
     verifyModel = function(scenario = NULL, verbose = F) { 
       # run the equations and model definition validation
       if (is.null(private$pDefaultScenario))
-        sdStaticModelMsg$validate0(private$pId)
-      
+        stop(sprintf(sdStaticModelMsg$validate0,private$pId))
+
       # get the model scenario 
       defaultScenario <- private$pDefaultScenario$clone(deep = TRUE)
       
@@ -290,8 +290,8 @@ sdStaticModelClass <- R6::R6Class(
         if (inherits(scenario, sdScenarioClass$classname))
           defaultScenario <- mergeScenarios(defaultScenario, scenario)
         else
-          sdStaticModelMsg$validate5(private$pId, 
-                                     typeof(scenario))
+          warning(sprintf(sdStaticModelMsg$validate5,private$pId, 
+                                   typeof(scenario)))
       }
       
       # Get variables from default scenario
@@ -306,7 +306,7 @@ sdStaticModelClass <- R6::R6Class(
       if (!is.null(times) && length(unlist(times)) > 0) {
         t <- times[[1]]
       } else { 
-        sdStaticModelMsg$validate1(private$pId)
+        warning(sprintf(sdStaticModelMsg$validate1,private$pId))
         t <- 0
       }
       
@@ -338,7 +338,7 @@ sdStaticModelClass <- R6::R6Class(
                envir = equationsEnv)
         },
         error = function(e) { 
-          sdStaticModelMsg$validate2(private$pId, equationsVar, e)
+          warning(sprintf(sdStaticModelMsg$validate2,private$pId, equationsVar, e))
           invisible(numeric(0))
         })
         
@@ -408,7 +408,7 @@ sdStaticModelClass <- R6::R6Class(
           private$pDefaultScenario$id <- "Default"
           private$flagVerify <- FALSE
         } else {
-          sdStaticModelMsg$defaultscenario2(private$pId)
+          warning(sprintf(sdStaticModelMsg$defaultscenario2,private$pId))
         } 
       }      
     },

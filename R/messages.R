@@ -797,23 +797,23 @@ sdScenarioMsg$removeVar3 <- function(pScenarioId, varType, var)
 ##
 sdStaticModelMsg <- new.env()
 
-sdStaticModelMsg$initialize1 <- function(staticModelId)
-  warning("sdsim::initialize - Static Model '", staticModelId, 
-          "' initialization: ", 
-          "The initVars structure does not match specification. It ", 
-          "must be a function, see help('sdStaticModel'). ",
-          "Replacement aborted.", call. = F)
+sdStaticModelMsg$initialize1 <- paste0(
+  "sdsim::initialize - Static Model '%s", 
+  "' initialization: ", 
+  "The initVars structure does not match specification. It ", 
+  "must be a function, see help('sdStaticModel'). ",
+  "Replacement aborted.")
 
-sdStaticModelMsg$initialize2 <- function(staticModelId, e)
-  warning("sdsim::initialize - Static Model '", staticModelId, 
-          "' initialization error: ", 
-          "No algebraic equations were added. ", e, call. = F)
+sdStaticModelMsg$initialize2 <- paste0(
+  "sdsim::initialize - Static Model '%s", 
+  "' initialization error: ", 
+  "No algebraic equations were added. %s")
 
-sdStaticModelMsg$initialize3 <- function(staticModelId)
-  warning("sdsim::initialize - Static Model '", staticModelId, 
-          "' initialization: Invalid algebraic equations. See ", 
-          "help('sdStaticModel') to learn the accepted types. ",
-          "Replacement aborted.", call. = F)
+sdStaticModelMsg$initialize3 <- paste0(
+  "sdsim::initialize - Static Model '%s", 
+  "' initialization: Invalid algebraic equations. See ", 
+  "help('sdStaticModel') to learn the accepted types. ",
+  "Replacement aborted.")
 
 sdStaticModelMsg$initialize4 <- function(staticModelId, nameglobalfuni)
   warning("sdsim::initialize - Static Model '", staticModelId, 
@@ -822,10 +822,10 @@ sdStaticModelMsg$initialize4 <- function(staticModelId, nameglobalfuni)
           "All the globalFunctions elements must be objects of type function.", 
           call. = F)
 
-sdStaticModelMsg$initialize5 <- function(staticModelId)
-  warning("sdsim::initialize - Static Model '", staticModelId, 
-          "' initialization: The globalFunctions argument must be a named list",
-          " containing only objects of type function.", call. = F)
+sdStaticModelMsg$initialize5 <- paste0(
+  "sdsim::initialize - Static Model '%s", 
+  "' initialization: The globalFunctions argument must be a named list",
+  " containing only objects of type function.")
 
 sdStaticModelMsg$initialize6 <- paste0(
   "sdsim::initialize - Static Model '%s' initialization: The following sdsim ",
@@ -833,21 +833,18 @@ sdStaticModelMsg$initialize6 <- paste0(
   "respective algebraic equations were skipped: %s."
 )
 
-sdStaticModelMsg$validate0 <- function(pstaticModelId)
-  stop("sdsim::validateAlgebraicEquations Static Model '", pstaticModelId, 
-       "' algebraic equations validation aborted: No default scenario was set.", 
-       call. = F)
+sdStaticModelMsg$validate0 <- paste0(
+  "sdsim::validateAlgebraicEquations Static Model '%s", 
+  "' algebraic equations validation aborted: No default scenario was set.")
 
-sdStaticModelMsg$validate1 <- function(pstaticModelId)
-  warning("sdsim::validateAlgebraicEquations Static Model '", pstaticModelId, 
-          "' validation: No time sequence informed. Define the time sequence ",
-          "in the default scenario. Initial time equals 0 will be used.", 
-          call. = F)
+sdStaticModelMsg$validate1 <- paste0(
+  "sdsim::validateAlgebraicEquations Static Model '%s", 
+  "' validation: No time sequence informed. Define the time sequence ",
+  "in the default scenario. Initial time equals 0 will be used.")
 
-sdStaticModelMsg$validate2 <- function(pstaticModelId, equationsVar, e)
-  warning("sdsim::validateAlgebraicEquations Static Model '", pstaticModelId, 
-          "' validation: error evaluating the algebraic equation '", 
-          equationsVar, "'. ", e,  call. = F)
+sdStaticModelMsg$validate2 <- paste0(
+  "sdsim::validateAlgebraicEquations Static Model '%s", 
+  "' validation: error evaluating the algebraic equation '%s'. %s")
 
 sdStaticModelMsg$validate3 <- function(pstaticModelId, equationsVar, eqValue)
   warning("sdsim::validateAlgebraicEquations Model '", pstaticModelId, 
@@ -858,34 +855,33 @@ sdStaticModelMsg$validate4 <- function(pstaticModelId)
   message("sdsim::validateAlgebraicEquations Static Model '", pstaticModelId, 
           "' Algebraic Equations Validated.")
 
-sdStaticModelMsg$validate5 <- function(pstaticModelId, typeofscen) 
-  warning("sdsim::validateAlgebraicEquations Model '", pstaticModelId, 
-          "' validation: Scenario argument of type '", typeofscen, 
-          "' discarted. It must be a valid sdScenarioClass object or ", 
-          "a character string with a scenario XML or EXCEL file name.", 
-          call. = F)
+sdStaticModelMsg$validate5 <- paste0( 
+  "sdsim::validateAlgebraicEquations Model '%s", 
+  "' validation: Scenario argument of type '%s", 
+  "' discarted. It must be a valid sdScenarioClass object or ", 
+  "a character string with a scenario XML or EXCEL file name.")
 
-sdStaticModelMsg$description <- function(pstaticModelId)
-  warning("sdsim::description - Static Model '", pstaticModelId, 
-          "' get descriptions: No default scenario was set. ",
-          "Could not get the desriptions list.", call. = F)
+# sdStaticModelMsg$description <- paste0(
+#   "sdsim::description - Static Model '%s", 
+#   "' get descriptions: No default scenario was set. ",
+#   "Could not get the desriptions list.")
 
-sdStaticModelMsg$unit <- function(pstaticModelId)
-  warning("sdsim::unit - Static Model '", pstaticModelId, "' get units: ",
-          "No default scenario was set. Could not get the units list.",
-          call. = F)
+# sdStaticModelMsg$unit <- paste0(
+#   "sdsim::unit - Static Model '%s","' get units: ",
+#   "No default scenario was set. Could not get the units list.")
 
 sdStaticModelMsg$defaultscenario1 <- paste0(
   "sdsim::defaultScenario - Static Model '%s' set default scenario: ",
   "static models do not have state variables. All the state ", 
   "variables were removed before setting the default scenario.")
 
-sdStaticModelMsg$defaultscenario2 <- function(pstaticModelId)
-  warning("sdsim::defaultScenario - Static Model '", pstaticModelId, 
-          "' set default scenario: ",
-          "The default scenario must be a sdScenario object. ", 
-          "Create one using the help('sdScenario') or help('sdLoadScenario')",
-          "constructors. No default scenario was set.", call. = F)
+sdStaticModelMsg$defaultscenario2 <- paste0(
+  "sdsim::defaultScenario - Static Model '%s", 
+  "' set default scenario: ",
+  "The default scenario must be a sdScenario object. ", 
+  "Create one using the help('sdScenario') or help('sdLoadScenario')",
+  "constructors. No default scenario was set.")
+
 
 ## FILE sdSimulator.R
 ##
@@ -928,7 +924,7 @@ sdSimulatorMsg$sdSimulateAtomic3 <- paste0(
 
 sdSimulatorMsg$sdSimulateAtomic4 <- paste0(
   "sdsim::sdSimulate - Simulation of the model '%s",
-  "': The postProcess function returned the following error.",'%s')
+  "': The postProcess function returned the following error. %s")
 
 sdSimulatorMsg$sdSimulateAtomic5 <- paste0(
   "sdsim::sdSimulate - Simulation of the model '%s",
