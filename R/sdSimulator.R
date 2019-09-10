@@ -346,7 +346,7 @@ sdSimulate <- function(model,
                        storeTimeSeriesTrajectory = F,
                        verbose = F) { 
   if (missing(model))
-    sdSimulatorMsg$sdSimulate()
+    stop(sprintf(sdSimulatorMsg$sdSimulate))
   
   # If the model is atomic
   if (inherits(model, sdOdeModelClass$classname)) {
@@ -362,7 +362,7 @@ sdSimulate <- function(model,
     runCoupledSimulation(model, scenario, from, to, by, method, events, maxroots,
                          storeAuxTrajectory, storeTimeSeriesTrajectory, verbose)
   } else {
-    stop(sdSimulatorMsg$sdSimulate, call. = F)
+    stop(sprintf(sdSimulatorMsg$sdSimulate2))
   }
 }
 
@@ -411,7 +411,8 @@ runOdeSimulation <- function(model,
       if (inherits(scenario, sdScenarioClass$classname))
         defaultScenario <- mergeScenarios(defaultScenario, scenario)
       else
-        sdSimulatorMsg$sdSimulateAtomic6(model$id, typeof(scenario))
+        warning(sprintf(sdSimulatorMsg$sdSimulateAtomic6,
+                        model$id, typeof(scenario)))
     }
   } else if (!is.null(scenario)) { 
     if (is.character(scenario))
@@ -707,7 +708,8 @@ runStaticSimulation <- function(model,
       if (inherits(scenario, sdScenarioClass$classname))
         defaultScenario <- mergeScenarios(defaultScenario, scenario)
       else
-        sdSimulatorMsg$sdSimulateAtomic6(model$id, typeof(scenario))
+        warning(sprintf(sdSimulatorMsg$sdSimulateAtomic6,
+                        model$id, typeof(scenario)))
     }
   } else if (!is.null(scenario)) { 
     if (is.character(scenario))
@@ -874,7 +876,8 @@ runCoupledSimulation <- function(model,
       if (inherits(scenario, sdScenarioClass$classname))
         defaultScenario <- mergeScenarios(defaultScenario, scenario)
       else
-        sdSimulatorMsg$sdSimulateAtomic6(model$id, typeof(scenario))
+        warning(sprintf(sdSimulatorMsg$sdSimulateAtomic6,
+                        model$id, typeof(scenario)))
     }
   } else if (!is.null(scenario)) { 
     if (is.character(scenario))

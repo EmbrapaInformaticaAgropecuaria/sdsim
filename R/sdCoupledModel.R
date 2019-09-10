@@ -1046,8 +1046,8 @@ sdCoupledModelClass <- R6::R6Class(
                             typeof(dRes)))
           
           if (length(dRes) != length(st))
-            sdCoupledModelMsg$verifyModel10(private$pId, dRes,
-                                            length(st))
+            warning(sprintf(sdCoupledModelMsg$verifyModel10,length(dRes),
+                            paste0(names(dRes), collapse = ', '), length(st)))
         } else {
           warning(sprintf(sdCoupledModelMsg$verifyModel11, private$pId,
                           typeof(res)))
@@ -1055,7 +1055,7 @@ sdCoupledModelClass <- R6::R6Class(
       }
       
       if (verbose)
-        sdCoupledModelMsg$verifyModel12(private$pId)
+        message(sprintf(sdCoupledModelMsg$verifyModel12,private$pId))
       
       private$flagVerify <- TRUE
     },

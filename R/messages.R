@@ -141,23 +141,22 @@ constructorsMsg <- new.env()
 
 # case use:
 # sdLoadModel()
-constructorsMsg$sdLoadModel1 <- function()
-  stop("sdsim::sdLoadModel - Load Model aborted:",
-       "\n  The Models Repository list: ",
-       "\n  - ", paste(sdRepository(), collapse = "\n  - "),
-       "\n\n  Use 'file = any of the above names' and 'repository = TRUE' to ",
-       "load a model from the sdsim package repository.", call. = F)
+constructorsMsg$sdLoadModel1 <- paste0(
+  "sdsim::sdLoadModel - Load Model aborted:",
+  "\n  The Models Repository list: ",
+  "\n  - %s",
+  "\n\n  Use 'file = any of the above names' and 'repository = TRUE' to ",
+  "load a model from the sdsim package repository.")
 
 # case use:
 # sdLoadModel("la", repository = T)
-constructorsMsg$sdLoadModel2 <- function(file)
-  stop("sdsim::sdLoadModel - Load Model aborted: The given model name '", file, 
-       "' is not present in the repository.",
-       "\n  The Models Repository list: ",
-       "\n  - ", paste(sdRepository(), collapse = "\n  - "),
-       "\n\n  Use 'file = any of the above names' and 'repository = T' to ",
-       "load a model from the sdsim package repository.",
-       call. = F)
+constructorsMsg$sdLoadModel2 <- paste0(
+  "sdsim::sdLoadModel - Load Model aborted: The given model name '%s", 
+  "' is not present in the repository.",
+  "\n  The Models Repository list: ",
+  "\n  - %s",
+  "\n\n  Use 'file = any of the above names' and 'repository = T' to ",
+  "load a model from the sdsim package repository.")
 
 # case use:
 # sdLoadModel("la")
@@ -364,21 +363,19 @@ sdCoupledModelMsg$verifyModel9 <- paste0(
   " containg the state variables derivatives.",
   " Wrong derivative return type: '%s'.")
 
-sdCoupledModelMsg$verifyModel10 <- function(pCoupledModelId, dRes, lenst)
-  warning("sdsim::verifyModel - Coupled Model '", pCoupledModelId, 
-          "' verification: the number of derivatives returned by ", 
-          " $componentsEquations (", length(dRes), " - ", 
-          paste0(names(dRes), collapse = ', '), 
-          ") must equal the length of the initial conditions vector (", 
-          lenst, ").", call. = F)
+sdCoupledModelMsg$verifyModel10 <- paste0(
+  "sdsim::verifyModel - Coupled Model '%s", 
+  "' verification: the number of derivatives returned by ", 
+  " $componentsEquations (%s - %s",
+  ") must equal the length of the initial conditions vector (%s).")
 
 sdCoupledModelMsg$verifyModel11 <- paste0(
   "sdsim::verifyModel - Coupled Model '%s'", 
   " verification: the coupled model definition function should",
   " return a list. Wrong return type: '%s'.")
 
-sdCoupledModelMsg$verifyModel12 <- function(pCoupledModelId)
-  message("sdsim::verifyModel - Coupled Model '", pCoupledModelId, 
+sdCoupledModelMsg$verifyModel12 <- paste0(
+  "sdsim::verifyModel - Coupled Model '%s", 
           "' Ordinary Differential Equations verified.")
 
 sdCoupledModelMsg$buildCoupledModel0 <- paste0(
@@ -585,9 +582,9 @@ sdOdeModelMsg$verifyModel10 <- paste0(
   "' verification: the $ode function should return ",
   "a list. Wrong return type: %s.")
 
-sdOdeModelMsg$verifyModel11 <- function(pModelId) 
-  message("sdsim::verifyModel - Model '", pModelId, 
-          "' Ordinary Differential Equations verified.")
+sdOdeModelMsg$verifyModel11 <- paste0(
+  "sdsim::verifyModel - Model '%s", 
+  "' Ordinary Differential Equations verified.")
 
 sdOdeModelMsg$verifyModel12 <- paste0(
   "sdsim::verifyModel - Model '%s", 
@@ -777,11 +774,10 @@ sdScenarioMsg$addVar8 <- paste0(
   "respective %s variables were skipped: %s."
 )
 
-sdScenarioMsg$removeVar1 <- function(pScenarioId, varType, typeofx)
-  warning("sdsim::removeVar - Scenario '", pScenarioId, 
-          "' remove ", varType,
-          ": the variable name must be a string, wrong type: ", typeofx, 
-          call. = F)
+sdScenarioMsg$removeVar1 <- paste0(
+  "sdsim::removeVar - Scenario '%s", 
+  "' remove %s",
+  ": the variable name must be a string, wrong type: %s")
 
 sdScenarioMsg$removeVar2 <- function(pScenarioId, varType, var)
   message("sdsim::removeVar - Scenario '", pScenarioId, 
@@ -815,12 +811,10 @@ sdStaticModelMsg$initialize3 <- paste0(
   "help('sdStaticModel') to learn the accepted types. ",
   "Replacement aborted.")
 
-sdStaticModelMsg$initialize4 <- function(staticModelId, nameglobalfuni)
-  warning("sdsim::initialize - Static Model '", staticModelId, 
-          "' initialization: Invalid global function '", 
-          nameglobalfuni, "' skipped. ",
-          "All the globalFunctions elements must be objects of type function.", 
-          call. = F)
+sdStaticModelMsg$initialize4 <- paste0(
+  "sdsim::initialize - Static Model '%s", 
+  "' initialization: Invalid global function '%s' skipped. ",
+  "All the globalFunctions elements must be objects of type function.")
 
 sdStaticModelMsg$initialize5 <- paste0(
   "sdsim::initialize - Static Model '%s", 
@@ -851,9 +845,9 @@ sdStaticModelMsg$validate3 <- function(pstaticModelId, equationsVar, eqValue)
           "' validation: Evaluation of the algebraic equation '", equationsVar, 
           "' may be incorrect. Value: ", capture.output(eqValue), ".",call. = F)
 
-sdStaticModelMsg$validate4 <- function(pstaticModelId)
-  message("sdsim::validateAlgebraicEquations Static Model '", pstaticModelId, 
-          "' Algebraic Equations Validated.")
+sdStaticModelMsg$validate4 <- paste0(
+  "sdsim::validateAlgebraicEquations Static Model '%s", 
+  "' Algebraic Equations Validated.")
 
 sdStaticModelMsg$validate5 <- paste0( 
   "sdsim::validateAlgebraicEquations Model '%s", 
@@ -887,12 +881,13 @@ sdStaticModelMsg$defaultscenario2 <- paste0(
 ##
 sdSimulatorMsg <- new.env()
 
-sdSimulatorMsg$sdSimulate <- paste("sdsim::sdSimulate - Simulation aborted:",
-       "Invalid model class. See help('sdLoadModel') for available classes.")
+sdSimulatorMsg$sdSimulate <- paste0(
+  "sdsim::sdSimulate - Simulation aborted: ",
+       "A model must be informed to run the simulation.")
 
-sdSimulatorMsg$sdSimulate <- function()
-  stop("sdsim::sdSimulate - Simulation aborted: ",
-       "A model must be informed to run the simulation.", call. = F)
+sdSimulatorMsg$sdSimulate2 <- paste0(
+  "sdsim::sdSimulate - Simulation aborted:",
+  "Invalid model class. See help('sdLoadModel') for available classes.")
 
 sdSimulatorMsg$sdSimulateModel <- paste0(
   "sdsim::sdSimulate - Simulation of the %s model '%s' aborted: ",
@@ -931,12 +926,11 @@ sdSimulatorMsg$sdSimulateAtomic5 <- paste0(
   "': No method informed. ", 
   "The simulator will run with the default method: 'lsoda'.")
 
-sdSimulatorMsg$sdSimulateAtomic6 <- function(modelId, typeofscen)
-  warning("sdsim::sdSimulate - Simulation of the model '", modelId,
-          "': Scenario argument of type '", typeofscen, "' discarted. ",
-          "It must be a valid sdScenarioClass object or ", 
-          "a character string with a scenario XML or EXCEL file name.", 
-          call. = F)
+sdSimulatorMsg$sdSimulateAtomic6 <- paste0(
+  "sdsim::sdSimulate - Simulation of the model '%s",
+  "': Scenario argument of type '%s' discarted. ",
+  "It must be a valid sdScenarioClass object or ", 
+  "a character string with a scenario XML or EXCEL file name.")
 
 sdSimulatorMsg$sdSimulateAtomic7 <- paste0("sdsim::sdSimulate - Simulation of ",
   "the model '%s' aborted: No differential equations function, model is empty.")

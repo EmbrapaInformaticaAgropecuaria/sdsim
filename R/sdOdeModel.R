@@ -658,7 +658,7 @@ sdOdeModelClass <- R6::R6Class(
       }
       
       if (verbose)
-        sdOdeModelMsg$verifyModel11(private$pId) 
+        message(sprintf(sdOdeModelMsg$verifyModel11,private$pId))
       
       private$flagVerify <- TRUE
     },

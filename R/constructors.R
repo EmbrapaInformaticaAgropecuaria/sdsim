@@ -254,13 +254,15 @@ sdOdeModel <- function(id = NULL,
 sdLoadModel <- function(file, repository = F,
                         timeSeriesDirectory = "") { 
   if (missing(file))
-    constructorsMsg$sdLoadModel1()
+    stop(sprintf(constructorsMsg$sdLoadModel1,
+                 paste(sdRepository(), collapse = "\n  - ")))
   
   if (repository) { 
     filepath <- system.file(appDir = paste0("repository/", file, ".xml"), 
                             package = "sdsim")
     if (filepath == "")
-      constructorsMsg$sdLoadModel2(file)
+      stop(sprintf(constructorsMsg$sdLoadModel2,file,
+                   paste(sdRepository(), collapse = "\n  - ")))
     else
       file <- filepath
   }

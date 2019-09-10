@@ -1156,7 +1156,7 @@ sdScenarioClass <- R6::R6Class(
       # Check if there are only characters in the parameters
       varList <- lapply(varList, function(x) { 
         if (!is.character(x))
-          sdScenarioMsg$removeVar1(private$pId, varType, typeof(x))
+          warning(sprintf(sdScenarioMsg$removeVar1,private$pId, varType, typeof(x)))
         else
           x
       })

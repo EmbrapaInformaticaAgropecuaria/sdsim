@@ -216,8 +216,8 @@ sdStaticModelClass <- R6::R6Class(
           for (i in 1:length(globalFunctions)) { 
             if (!is.function(globalFunctions[[i]])) { 
               remGlobalFun <- c(remGlobalFun, i)
-              sdStaticModelMsg$initialize4(id, 
-                                           names(globalFunctions)[[i]])
+              warning(sprintf(sdStaticModelMsg$initialize4,id, 
+                              names(globalFunctions)[[i]]))
             } else { 
               environment(globalFunctions[[i]]) <- modelEnvironment
               assign(names(globalFunctions)[[i]], globalFunctions[[i]], 
@@ -349,7 +349,7 @@ sdStaticModelClass <- R6::R6Class(
       }
       
       if (verbose)
-        sdStaticModelMsg$validate4(private$pId)
+        message(sprintf(sdStaticModelMsg$validate4,private$pId))
       
       private$flagVerify <- TRUE
     },

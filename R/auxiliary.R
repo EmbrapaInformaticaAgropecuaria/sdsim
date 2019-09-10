@@ -391,7 +391,7 @@ sdTemporalFunction <- function(x, colTimes = 1, colValue = 2,
   } else if (is.matrix(x) || is.data.frame(x)) { ## its a matrix or data frame   
     # check if the indexes are valid
     if (!all(c(colTimes, colValue) <= ncol(x))) { 
-      warning(auxiliaryMsg$sdTemporalFunction6, call. = FALSE)
+      warning(auxiliaryMsg$sdTemporalFunction6)
       return(NULL)
     }
     
@@ -400,7 +400,7 @@ sdTemporalFunction <- function(x, colTimes = 1, colValue = 2,
   } else if (is.list(x)) { 
     # check if the indexes are valid
     if (!all(c(colTimes, colValue) <= length(x))) { 
-      warning(auxiliaryMsg$sdTemporalFunction6, call. = FALSE)
+      warning(auxiliaryMsg$sdTemporalFunction6)
       return(NULL)
     }
     
@@ -429,7 +429,7 @@ sdTemporalFunction <- function(x, colTimes = 1, colValue = 2,
       return(NULL)
     
     if (!all(c(colTimes, colValue) <= ncol(x))) { 
-      warning(auxiliaryMsg$sdTemporalFunction6, call. = FALSE)
+      warning(auxiliaryMsg$sdTemporalFunction6)
       return(NULL)
     }
     
