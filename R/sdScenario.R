@@ -1127,8 +1127,9 @@ sdScenarioClass <- R6::R6Class(
             } else { 
               if (verbose) { 
                 if (varType %in% c("description", "unit"))
-                  sdScenarioMsg$addVar4(private$pId, varType, var, 
-                                        varList[[var]])
+                  message(sprintf(sdScenarioMsg$addVar4, private$pId,
+                                  gsub("(^.)", "\\U\\1", varType, perl = T),
+                                  var, capture.output(varList[[var]])))
                 else
                   sdScenarioMsg$addVar5(private$pId, varType, var, 
                                         varList[[var]])

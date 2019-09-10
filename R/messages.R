@@ -452,6 +452,7 @@ sdCoupledModelMsg$indexComponents <- paste0(
 ## FILE sdModel.R
 ## 
 sdModelMsg <- new.env()
+
 # sdOdeModel()
 sdModelMsg$id1 <- "sdsim::id - Missing model ID: It was set to '%s'"
 
@@ -745,11 +746,8 @@ sdScenarioMsg$addVar3 <- function(pScenarioId, varType, var)
                 "values should be numeric. Variable "), var, 
           " will be skipped.", call. = F)
 
-sdScenarioMsg$addVar4 <- function(pScenarioId, varType, var, varValue)
-  message("sdsim::addVar - Scenario '", pScenarioId, 
-          "' add variable: ",
-          gsub("(^.)", "\\U\\1", varType, perl = T), " of ", var, " set to ", 
-          capture.output(varValue))
+sdScenarioMsg$addVar4 <- 
+  "sdsim::addVar - Scenario '%s' add variable: %s of %s set to %s"
 
 sdScenarioMsg$addVar5 <- function(pScenarioId, varType, var, varValue)
   message("sdsim::addVar - Scenario '", pScenarioId, 

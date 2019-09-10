@@ -13,21 +13,21 @@ sdModelClass <- R6::R6Class(
       } else if (is.null(id)) { 
         
         id <- gsub("\\s", "", paste(class(self)[[1]], Sys.Date()), perl = TRUE)
-        warning(sprintf(fmt = sdModelMsg$id1, id), call. = FALSE)
+        warning(sprintf(sdModelMsg$id1, id))
         
       } else if (!is.character(id)) { 
         
         id <- gsub("\\s", "", paste(class(self)[[1]], Sys.Date()), perl = TRUE)
-        warning(sprintf(fmt = sdModelMsg$id2, id), call. = FALSE)
+        warning(sprintf(sdModelMsg$id2, id))
         
       } else if (make.names(gsub("\\s", "", id, perl = TRUE)) %in% 
                  sdsimReserved) { 
         
         # reserved name
-        warning(sprintf(fmt = sdModelMsg$id3, 
+        warning(sprintf(sdModelMsg$id3, 
                         make.names(gsub("\\s", "", id, perl = TRUE)),
                         gsub("\\s", "", paste(class(self)[[1]], Sys.Date()), 
-                             perl = TRUE)), call. = FALSE)
+                             perl = TRUE)))
         id <- gsub("\\s", "", paste(class(self)[[1]], Sys.Date()), perl = TRUE)
       }
       
@@ -42,7 +42,7 @@ sdModelClass <- R6::R6Class(
         if (is.character(description))
           private$pDescription <- description
         else
-          warning(sprintf(fmt = sdModelMsg$description, private$pId), call. = F)
+          warning(sprintf(sdModelMsg$description, private$pId))
       }
     },
     defaultScenario = function(defaultScenario) { 
