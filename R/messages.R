@@ -690,57 +690,57 @@ sdScenarioMsg$addInput <- function(pScenarioId, namesInterpol, namesInput)
           capture.output(namesInterpol[!(namesInterpol %in% namesInput)]),
           call. = F)
 
-sdScenarioMsg$id <- function(scenarioId)
-  warning("sdsim::id - Invalid scenario ID type: The scenario ID must ",
-          "be a string. It was set to '", scenarioId, "'.", call. = F)
+sdScenarioMsg$id <- paste0(
+  "sdsim::id - Invalid scenario ID type: The scenario ID must ",
+  "be a string. It was set to '%s", "'.")
 
-sdScenarioMsg$method1 <- function(pScenarioId)
-  warning("sdsim::method - Scenario '", pScenarioId,"' set integration method ", 
-          "aborted: The 'method' argument must be a string with a valid ",
-          "deSolve solver name. Available solver methods: ",
-          "'lsoda', 'lsode', 'lsodes', 'lsodar', 'vode', 'daspk', ",
-          "'euler', 'rk4', 'ode23', 'ode45', 'radau', 'bdf', 'bdf_d', ",
-          "'adams', 'impAdams', 'impAdams_d'. The default method ",
-          "'lsoda' was set.", call. = F)
+sdScenarioMsg$method1 <- paste0(
+  "sdsim::method - Scenario '%s", "' set integration method ", 
+  "aborted: The 'method' argument must be a string with a valid ",
+  "deSolve solver name. Available solver methods: ",
+  "'lsoda', 'lsode', 'lsodes', 'lsodar', 'vode', 'daspk', ",
+  "'euler', 'rk4', 'ode23', 'ode45', 'radau', 'bdf', 'bdf_d', ",
+  "'adams', 'impAdams', 'impAdams_d'. The default method ",
+  "'lsoda' was set.")
 
-sdScenarioMsg$method2 <- function(pScenarioId)
-  warning("sdsim::method - Scenario '",pScenarioId,"' set integration method: ", 
-          "The given method is not valid. Available solver methods: ",
-          "'lsoda', 'lsode', 'lsodes', 'lsodar', 'vode', 'daspk', ",
-          "'euler', 'rk4', 'ode23', 'ode45', 'radau', 'bdf', 'bdf_d', ",
-          "'adams', 'impAdams', 'impAdams_d'. The default method ",
-          "'lsoda' was set.", call. = F)
+sdScenarioMsg$method2 <- paste0(
+  "sdsim::method - Scenario '%s", "' set integration method: ", 
+  "The given method is not valid. Available solver methods: ",
+  "'lsoda', 'lsode', 'lsodes', 'lsodar', 'vode', 'daspk', ",
+  "'euler', 'rk4', 'ode23', 'ode45', 'radau', 'bdf', 'bdf_d', ",
+  "'adams', 'impAdams', 'impAdams_d'. The default method ",
+  "'lsoda' was set.")
 
 
-sdScenarioMsg$times <- function(pScenarioId)
-  warning("sdsim::times - Scenario '", pScenarioId, "' set time sequence: ",
-          "The simulation time sequence must be a numeric named list ",
-          "with at least one of the following three elements: 'from', ",
-          "'to' and 'by', representing the initial time, the final ",
-          "time and the simulation time step. ",
-          "Scenario initialized without time sequence.", call. = F)
+sdScenarioMsg$times <- paste0(
+  "sdsim::times - Scenario '%s", "' set time sequence: ",
+  "The simulation time sequence must be a numeric named list ",
+  "with at least one of the following three elements: 'from', ",
+  "'to' and 'by', representing the initial time, the final ",
+  "time and the simulation time step. ",
+  "Scenario initialized without time sequence.")
 
-sdScenarioMsg$description <- function(pScenarioId, typeofdescription)
-  warning("sdsim::description - Scenario '", pScenarioId, 
-          "' set description aborted: ",
-          "Description type (", typeofdescription,
-          ") not supported. It should be a named list.", call. = F)
+sdScenarioMsg$description <- paste0(
+  "sdsim::description - Scenario '%s", 
+  "' set description aborted: ",
+  "Description type (", '%s',
+  ") not supported. It should be a named list.")
 
-sdScenarioMsg$unit <- function(pScenarioId, typeofunit)
-  warning("sdsim::unit - Scenario '", pScenarioId, 
-          "' set unit aborted: ",
-          "Unit type (", typeofunit,
-          ") not supported. It should be a named list. ", call. = F)
+sdScenarioMsg$unit <- paste0(
+  "sdsim::unit - Scenario '%s", 
+  "' set unit aborted: ",
+  "Unit type (", '%s',
+  ") not supported. It should be a named list. ")
 
-sdScenarioMsg$addVar1 <- function(pScenarioId, varType)
-  warning("sdsim::addVar - Scenario '", pScenarioId, "' add ", 
-          varType, " aborted: All the scenario variables must be named.",
-          call. = F)
+sdScenarioMsg$addVar1 <- paste0(
+  "sdsim::addVar - Scenario '%s'" , 
+  " add %s", 
+  " aborted: All the scenario variables must be named.")
 
-sdScenarioMsg$addVar2 <- function(pScenarioId, varType)
-  warning("sdsim::addVar - Scenario '", pScenarioId, "' add ", 
-          varType, ": Unnamed variable skipped. ",
-          "All the scenario variables must be named.", call. = F)
+sdScenarioMsg$addVar2 <- paste0(
+  "sdsim::addVar - Scenario '%s'", "add %s", 
+  ": Unnamed variable skipped. ",
+  "All the scenario variables must be named.")
 
 sdScenarioMsg$addVar3 <- function(pScenarioId, varType, var)
   warning("sdsim::addVar - Scenario '", pScenarioId, "' add variable: ",

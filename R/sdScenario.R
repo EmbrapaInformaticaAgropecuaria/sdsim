@@ -907,8 +907,8 @@ sdScenarioClass <- R6::R6Class(
           private[["pId"]] <- id
         } else { 
           id <- paste("scenario", Sys.Date())
-          sdScenarioMsg$id(id)
-          
+          warning(sprintf(sdScenarioMsg$id, id))
+
           private[["pId"]] <- id
         }
       } 
@@ -959,7 +959,7 @@ sdScenarioClass <- R6::R6Class(
       else {  
         # SET method
         if (!is.character(method)) { 
-          sdScenarioMsg$method1(private$pId)
+          warning(sprintf(sdScenarioMsg$method1, private$pId))
           private[["pMethod"]] <- "lsoda"
         }
         
@@ -971,7 +971,7 @@ sdScenarioClass <- R6::R6Class(
           private[["pMethod"]] <- method
         } else { 
           # Invalid method argument
-          sdScenarioMsg$method2(private$pId)
+          warning(sprintf(sdScenarioMsg$method2, private$pId))
           private[["pMethod"]] <- "lsoda"
         }
       }
@@ -985,7 +985,7 @@ sdScenarioClass <- R6::R6Class(
                                     times[["to"]], 
                                     times[["by"]])
         else
-          sdScenarioMsg$times(private$pId)
+          warning(sprintf(sdScenarioMsg$times,private$pId))
       }
     },
     description = function(descriptions) { 
@@ -995,7 +995,7 @@ sdScenarioClass <- R6::R6Class(
         if (is.list(descriptions))
           private[["pDescription"]] <- descriptions
         else
-          sdScenarioMsg$description(private$pId, typeof(descriptions))
+          warning(sprintf(sdScenarioMsg$description, private$pId, typeof(descriptions)))
       }
     },
     unit = function(units) { 
@@ -1005,7 +1005,7 @@ sdScenarioClass <- R6::R6Class(
         if (is.list(units))
           private[["pUnit"]] <- units
         else
-          sdScenarioMsg$unit(private$pId, typeof(units))
+          warning(sprintf(sdScenarioMsg$unit, private$pId, typeof(units)))
       }
     }
   ),
@@ -1074,7 +1074,7 @@ sdScenarioClass <- R6::R6Class(
       })
       
       if (is.null(names(varList)) || all(names(varList) %in% "")) { 
-        sdScenarioMsg$addVar1(private$pId, varType)
+        warning(sprintf(sdScenarioMsg$addVar1, private$pId, varType))
         return(invisible(NULL))
       }
       
@@ -1097,7 +1097,7 @@ sdScenarioClass <- R6::R6Class(
         
       for (var in names(varList)) { 
         if (var == "") { # skip unnamed vars
-          sdScenarioMsg$addVar2(private$pId, varType)
+          warning(sprintf(sdScenarioMsg$addVar2, private$pId, varType))
           next()
         } else # make valid names
           var <- make.names(var)
