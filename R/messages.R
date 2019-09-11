@@ -317,18 +317,17 @@ sdCoupledModelMsg$verifyModel1 <- paste0(
 
 sdCoupledModelMsg$verifyModel2 <- paste0(
   "sdsim::verifyModel - Coupled Model '%s'",
-          " verification: The given scenario must be of type list containing ",
-          "multiple sdScenario objects named with the respective component ID,",
-          " or of type sdScenarioClass containing a single coupled",
-          " scenario object (see help('sdBuildCoupledScenario')).",
-          " The given scenario of type '%s' will not be used."
-          )
+  " verification: The given scenario must be of type list containing ",
+  "multiple sdScenario objects named with the respective component ID,",
+  " or of type sdScenarioClass containing a single coupled",
+  " scenario object (see help('sdBuildCoupledScenario')).",
+  " The given scenario of type '%s' will not be used.")
 
 sdCoupledModelMsg$verifyModel3 <- paste0(
   "sdsim::verifyModel - Coupled Model '%s'",
-          " verification: No time sequence informed. Define the time",
-          " sequence in the default scenario and reset it.",
-          " Initial time equal 0 will be used instead.")
+  " verification: No time sequence informed. Define the time",
+  " sequence in the default scenario and reset it.",
+  " Initial time equal 0 will be used instead.")
 
 sdCoupledModelMsg$verifyModel4 <- paste0(
   "sdsim::verifyModel - Coupled Model '%s'",
@@ -681,12 +680,10 @@ sdScenarioMsg$setTimeSequence2 <- paste0(
   "for crescent sequences and negative for descreasing ones). ", 
   "Argument '%s' not set.")
 
-sdScenarioMsg$addInput <- function(pScenarioId, namesInterpol, namesInput)
-  warning("sdsim::addInput - Scenario '", pScenarioId, 
-          "' invalid interpolations: The following time series interpolation ",
-          "variables are not present in the input list and will be skipped: ",
-          capture.output(namesInterpol[!(namesInterpol %in% namesInput)]),
-          call. = F)
+sdScenarioMsg$addInput <- paste0(
+  "sdsim::addInput - Scenario '%s", 
+  "' invalid interpolations: The following time series interpolation ",
+  "variables are not present in the input list and will be skipped: %s")
 
 sdScenarioMsg$id <- paste0(
   "sdsim::id - Invalid scenario ID type: The scenario ID must ",
@@ -740,31 +737,26 @@ sdScenarioMsg$addVar2 <- paste0(
   ": Unnamed variable skipped. ",
   "All the scenario variables must be named.")
 
-sdScenarioMsg$addVar3 <- function(pScenarioId, varType, var)
-  warning("sdsim::addVar - Scenario '", pScenarioId, "' add variable: ",
-          paste(gsub("(^.)", "\\U\\1", varType, perl = T), 
-                "values should be numeric. Variable "), var, 
-          " will be skipped.", call. = F)
+sdScenarioMsg$addVar3 <- paste0(
+  "sdsim::addVar - Scenario '%s' add variable: %s ",
+  "values should be numeric. Variable %s",
+  " will be skipped.")
 
 sdScenarioMsg$addVar4 <- 
   "sdsim::addVar - Scenario '%s' add variable: %s of %s set to %s"
 
-sdScenarioMsg$addVar5 <- function(pScenarioId, varType, var, varValue)
-  message("sdsim::addVar - Scenario '", pScenarioId, 
-          "' add variable: ", "Value of ", varType, " '", var, "' set to ", 
-          capture.output(varValue))
+sdScenarioMsg$addVar5 <- paste0(
+  "sdsim::addVar - Scenario '%s",
+  "' add variable: ", "Value of %s '%s' set to %s")
 
-sdScenarioMsg$addVar6 <- function(pScenarioId, varType, var, varValue)
-  warning("sdsim::addVar - Scenario '", pScenarioId, 
-          "' add variable: The ", varType, " '", var, 
-          "' already exists in this scenario. It will be reset to ", 
-          capture.output(varValue), ".", call. = F)
+sdScenarioMsg$addVar6 <- paste0(
+  "sdsim::addVar - Scenario '%s", 
+  "' add variable: The %s '%s", 
+  "' already exists in this scenario. It will be reset to %s.")
 
-sdScenarioMsg$addVar7 <- function(pScenarioId, varType, var)
-  warning("sdsim::addVar - Scenario '", pScenarioId, 
-          "' add variable: ", paste(gsub("(^.)", "\\U\\1", varType, perl = T), 
-                                    "values should not be null. Variable "), 
-          var, " will be skipped.", call. = F)
+sdScenarioMsg$addVar7 <- paste0(
+  "sdsim::addVar - Scenario '%s' add variable: %s%s", 
+  " will be skipped.")
 
 sdScenarioMsg$addVar8 <- paste0(
   "sdsim::addVar - Scenario '%s' add variable: The following sdsim ",

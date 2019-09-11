@@ -673,8 +673,9 @@ sdScenarioClass <- R6::R6Class(
       if (length(interpolation) > 0 && 
           (is.null(names(interpolation)) || 
            !all(names(interpolation) %in% names(private[["pInput"]])))) { 
-        sdScenarioMsg$addInput(private$pId, names(interpolation), 
-                               names(private[["pInput"]]))
+        warning(sprintf(sdScenarioMsg$addInput, private$pId, 
+                        capture.output(names(interpolation)[!(names(interpolation) %in%
+                                                                names(private[["pInput"]]))])))
         
         interpolation <- interpolation[
           names(interpolation) %in% names(private[["pInput"]])]
@@ -1103,7 +1104,8 @@ sdScenarioClass <- R6::R6Class(
           var <- make.names(var)
         
         if (checkNumeric && !is.numeric(unlist(varList[[var]]))) { 
-          sdScenarioMsg$addVar3(private$pId, varType, var)
+          warning(sprintf(sdScenarioMsg$addVar3,private$pId, 
+                          paste(gsub("(^.)", "\\U\\1", varType, perl = T)), var))
         } else { 
           # if (length(varList[[var]]) > 1 || is.function(varList[[var]]) 
           #     || is.language(varList[[var]]) || !is.na(varList[[var]]))
@@ -1111,8 +1113,8 @@ sdScenarioClass <- R6::R6Class(
             # check for duplicates
             if (var %in% names(private[[paste0("p", varType)]])) { 
               if (verbose)
-                sdScenarioMsg$addVar6(private$pId, varType, var, 
-                                      varList[[var]])
+                warning(sprintf(sdScenarioMsg$addVar6,private$pId,varType,var,
+                                capture.output(varList[[var]])))
               
               # if it was a ts also remove the previous interpolation and fun
               if (varType == "input") { 
@@ -1131,14 +1133,17 @@ sdScenarioClass <- R6::R6Class(
                                   gsub("(^.)", "\\U\\1", varType, perl = T),
                                   var, capture.output(varList[[var]])))
                 else
-                  sdScenarioMsg$addVar5(private$pId, varType, var, 
-                                        varList[[var]])
+                  message(sprintf(sdScenarioMsg$addVar5,private$pId, varType,
+                                  var, capture.output(varList[[var]])))
               }
             }
             
             private[[paste0("p", varType)]][[var]] <- varList[[var]]
           } else {
-            sdScenarioMsg$addVar7(private$pId, varType, var)
+            warning(sprintf(sdScenarioMsg$addVar7,private$pId,
+                            paste(gsub("(^.)", "\\U\\1", varType, perl = T), 
+                                                                    "values should not be null. Variable "),
+                            var))
           }
         }
       }
