@@ -344,8 +344,8 @@ sdStaticModelClass <- R6::R6Class(
         
         if (is.null(eq[[equationsVar]]) || is.na(eq[[equationsVar]]) ||
             length(eq[[equationsVar]]) == 0 || is.infinite(eq[[equationsVar]]))
-          sdStaticModelMsg$validate3(private$pId, equationsVar, 
-                                     eq[[equationsVar]])
+          warning(sprintf(sdStaticModelMsg$validate3,private$pId,equationsVar,
+                          capture.output(eq[[equationsVar]])))
       }
       
       if (verbose)

@@ -1302,8 +1302,8 @@ sdCoupledModelClass <- R6::R6Class(
             # warning if units do not match
             if (!is.null(u1) &&
                 !is.null(u2) && toupper(u1) != toupper(u2))
-              sdCoupledModelMsg$buildCoupledModel5(private$pId, in1, 
-                                                   u1, m1, out2, u2, m2, id)
+              warning(sprintf(sdCoupledModelMsg$buildCoupledModel5,private$pId,in1,u1,m1,
+                              out2[[1]],out[[2]],u2,m2,id))
             # make connection
             if (out2[[1]] == "st") { 
               if (!is.null(stConnections[[paste0(m1, ".", in1)]]))

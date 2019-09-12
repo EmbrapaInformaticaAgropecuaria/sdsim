@@ -1170,7 +1170,8 @@ sdScenarioClass <- R6::R6Class(
       for (var in varList) {  
         if (!is.null(private[[paste0("p", varType)]][[var]])) { 
           if (verbose)
-            sdScenarioMsg$removeVar2(private$pId, varType, var)
+            message(sprintf(sdScenarioMsg$removeVar2,private$pId,
+                            gsub("(^.)", "\\U\\1", varType, perl = T),var))
           
           private[[paste0("p", varType)]][[var]] <- NULL
           
@@ -1191,7 +1192,8 @@ sdScenarioClass <- R6::R6Class(
             }
           }
         } else {
-          sdScenarioMsg$removeVar3(private$pId, varType, var)    
+          warning(sprintf(sdScenarioMsg$removeVar3,private$pId,
+                          gsub("(^.)", "\\U\\1", varType, perl = T), var))
         }
       }
     }

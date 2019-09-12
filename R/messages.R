@@ -408,15 +408,14 @@ sdCoupledModelMsg$buildCoupledModel4 <- paste0(
   " Refactor the connection to make it valid. Connection '%s'", 
   " skipped.")
 
-sdCoupledModelMsg$buildCoupledModel5 <- function(pCoupledModelId, in1, u1, m1,
-                                                 out2, u2, m2, id)
-  warning("sdsim::buildCoupledModel - Coupled Model '", pCoupledModelId, 
-          "' warning building the connection vectors - The input '",
-          in1, "' unit '",  u1, "' from the model '", m1,
-          "' is different from the output '", out2[[1]], "' '", 
-          out2[[2]], "' unit '",  u2,
-          "' from the model '", m2,"'. Refactor the connection '", id, 
-          "' if this is not wanted.", call. = F)
+sdCoupledModelMsg$buildCoupledModel5 <- paste0(
+  "sdsim::buildCoupledModel - Coupled Model '%s",
+  "' warning building the connection vectors - The input '%s",
+  "' unit '%s' from the model '%s",
+  "' is different from the output '%s' '%s", 
+  "' unit '%s",
+  "' from the model '%s'. Refactor the connection '%s",
+  "' if this is not wanted.")
 
 sdCoupledModelMsg$buildCoupledModel6 <- paste0(
   "sdsim::buildCoupledModel - Coupled Model '%s'", 
@@ -769,15 +768,15 @@ sdScenarioMsg$removeVar1 <- paste0(
   "' remove %s",
   ": the variable name must be a string, wrong type: %s")
 
-sdScenarioMsg$removeVar2 <- function(pScenarioId, varType, var)
-  message("sdsim::removeVar - Scenario '", pScenarioId, 
-          "' remove variable: ", gsub("(^.)", "\\U\\1", varType, perl = T), 
-          " variable ", var, " removed")
+sdScenarioMsg$removeVar2 <- paste0(
+  "sdsim::removeVar - Scenario '%s", 
+  "' remove variable: %s",
+  " variable %s removed")
 
-sdScenarioMsg$removeVar3 <- function(pScenarioId, varType, var)
-  warning("sdsim::removeVar - Scenario '", pScenarioId, 
-          "' remove variable: ", gsub("(^.)", "\\U\\1", varType, perl = T), 
-          " variable ", var, " not found.", call. = F) 
+sdScenarioMsg$removeVar3 <- paste0(
+  "sdsim::removeVar - Scenario '%s",
+  "' remove variable: %s",
+  " variable %s not found.") 
 
 ## FILE sdStaticModel.R
 ##
@@ -814,8 +813,7 @@ sdStaticModelMsg$initialize5 <- paste0(
 sdStaticModelMsg$initialize6 <- paste0(
   "sdsim::initialize - Static Model '%s' initialization: The following sdsim ",
   "reserved words can not be used to name an equation and thus the ", 
-  "respective algebraic equations were skipped: %s."
-)
+  "respective algebraic equations were skipped: %s.")
 
 sdStaticModelMsg$validate0 <- paste0(
   "sdsim::validateAlgebraicEquations Static Model '%s", 
@@ -830,10 +828,10 @@ sdStaticModelMsg$validate2 <- paste0(
   "sdsim::validateAlgebraicEquations Static Model '%s", 
   "' validation: error evaluating the algebraic equation '%s'. %s")
 
-sdStaticModelMsg$validate3 <- function(pstaticModelId, equationsVar, eqValue)
-  warning("sdsim::validateAlgebraicEquations Model '", pstaticModelId, 
-          "' validation: Evaluation of the algebraic equation '", equationsVar, 
-          "' may be incorrect. Value: ", capture.output(eqValue), ".",call. = F)
+sdStaticModelMsg$validate3 <- paste0(
+  "sdsim::validateAlgebraicEquations Model '%s",
+  "' validation: Evaluation of the algebraic equation '%s",
+  "' may be incorrect. Value: %s.")
 
 sdStaticModelMsg$validate4 <- paste0(
   "sdsim::validateAlgebraicEquations Static Model '%s", 
