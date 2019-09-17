@@ -41,6 +41,13 @@ auxiliaryMsg$topologicalSortEq <- function(eqName, equations, eqorder,
               names(dependents)]), 
             collapse = "\n"), call. = F)
 
+auxiliaryMsg$topologicalSortEq <- paste0(
+  "sdsim::sdInitEquations - Sorting Equations: Could not sort the %s",
+  " equations. Refactor your model to remove the circular ",
+  "dependencies. An empty list was returned because the following ",
+  "equations could not be ordered: %s\nEquations dependents:\n%s"
+)
+
 auxiliaryMsg$sdTemporalFunctionList <- paste0(
   "sdsim::sdTemporalFunctionList - Error Transforming the time series ",
   "variables: The size of the list 'x' must match the size of the list ",
@@ -194,12 +201,14 @@ constructorsMsg$sdLoadScenario1 <- paste0(
   "sdsim::sdLoadScenario - Load Scenario aborted: The given file '%s'", 
        " do not exist.")
 
-constructorsMsg$sdLoadScenario2 <- function(file, e = NULL)
-  stop("sdsim::sdLoadScenario - Load Scenario '", file, "' aborted: ",
-       "The given file is not a valid XML. See help('sdLoadScenario') for ", 
-       "the set of rules to encode a sdScenario in EXCEL file or use the ",
-       "method '$saveXml' present in the help('sdScenarioClass') to generate",
-       " a valid XML.", e, call. = F)
+# constructorsMsg$sdLoadScenario2 <- function(file, e = NULL)
+constructorsMsg$sdLoadScenario2 <- paste0(
+  "sdsim::sdLoadScenario - Load Scenario '%s' aborted: ",
+  "The given file is not a valid XML. See help('sdLoadScenario') for ", 
+  "the set of rules to encode a sdScenario in EXCEL file or use the ",
+  "method '$saveXml' present in the help('sdScenarioClass') to generate",
+  " a valid XML. %s"
+)
 
 constructorsMsg$sdLoadScenario3 <- paste0(
   "sdsim::sdLoadScenario - Load Scenario '%s': %s")
@@ -333,11 +342,11 @@ sdCoupledModelMsg$verifyModel4 <- paste0(
   "sdsim::verifyModel - Coupled Model '%s'",
   " verification: Error evaluating the auxiliary equation %s. %s")
 
-sdCoupledModelMsg$verifyModel5 <- function(pCoupledModelId, aux, auxVar)
-  warning("sdsim::verifyModel - Coupled Model '", pCoupledModelId,
-          "' verification: Evaluation of the auxiliary variable ", auxVar, 
-          " may be incorrect. Value: ", utils::capture.output(aux[[auxVar]]),
-          ".", call. = F)
+sdCoupledModelMsg$verifyModel5 <- paste0(
+  "sdsim::verifyModel - Coupled Model '%s'",
+  "verification: Evaluation of the auxiliary variable %s ",
+  "may be incorrect. Value: %s."
+)
 
 sdCoupledModelMsg$verifyModel6 <- paste0(
   "sdsim::verifyModel - Coupled Model '%s' component '%s'",
@@ -626,12 +635,12 @@ sdOutputMsg$plot2 <- paste0(
   "the formulas with the name of the variables to be plotted. See ",
   "help('sdOutput'). All the output variables will be ploted instead.")
 
-sdOutputMsg$plot3 <- function(pOutputId, yaxisArray, namesData)
-  warning("sdsim::plot - Plot output '", pOutputId, 
-          "': Not all the formula variables are valid column names. ",
-          "The following variables will be skipped: ", 
-          paste(yaxisArray[!(yaxisArray %in% namesData)], 
-                collapse = ", "), call. = F)
+
+sdOutputMsg$plot3 <- paste0(
+  "sdsim::plot - Plot output '%s': ", 
+  "Not all the formula variables are valid column names. ",
+  "The following variables will be skipped: %s"
+)
 
 sdOutputMsg$plot4 <- paste0(
   "sdsim::plot - Plot output '%s': The x-axis variable '%s",

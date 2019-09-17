@@ -917,7 +917,8 @@ sdCoupledModelClass <- R6::R6Class(
         
         if (is.null(aux[[auxVar]]) || is.na(aux[[auxVar]]) ||
             length(aux[[auxVar]]) == 0 || is.infinite(aux[[auxVar]]))
-          sdCoupledModelMsg$verifyModel5(private$pId, aux, auxVar)
+          warning(sprintf(sdCoupledModelMsg$verifyModel5, private$pId, aux,
+                          utils::capture.output(aux[[auxVar]])))
       }
       # make the aux connection
       inp[conAuxInps] <- aux[conAux]

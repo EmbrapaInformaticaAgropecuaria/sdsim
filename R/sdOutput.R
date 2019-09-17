@@ -378,7 +378,9 @@ sdOutputClass <- R6::R6Class(
           
           # check if all the variables names are valid columns names
           if (!all(yaxisArray %in% names(data))) { 
-            sdOutputMsg$plot3(private$pOutputId, yaxisArray, names(data))
+            warning(sprintf(sdOutputMsg$plot3, private$pOutputId, 
+                            paste(yaxisArray[!(yaxisArray %in% names(data))], 
+                                  collapse = ", ")))
             
             # remove the not valid columns
             yaxisArray <- yaxisArray[

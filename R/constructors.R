@@ -1235,7 +1235,7 @@ sdLoadScenario <- function(file,
     loadedScen <- tryCatch(
       XML::xmlParse(file),
       error = function(e) { 
-        constructorsMsg$sdLoadScenario2(file, e)
+        stop(sprintf(constructorsMsg$sdLoadScenario2, file, e))
       },
       warning = function(w) { 
         warning(sprintf(constructorsMsg$sdLoadScenario3,file,w))
@@ -1246,7 +1246,7 @@ sdLoadScenario <- function(file,
     if (!grepl(pattern = "<\\?sdsim.*version.*\\?>", sdsimprefix, 
                ignore.case = TRUE) ||
         !(sdScenarioClass$classname %in% names(XML::xmlChildren(loadedScen))))
-      constructorsMsg$sdLoadScenario2(file)
+      stop(sprintf(constructorsMsg$sdLoadScenario2, file, ""))
     # else
     # {
     #   # valid prefix, now check version

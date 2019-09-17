@@ -210,7 +210,16 @@ topologicalSortEquations <- function(equations, eqName = c("aux","eq")) {
   
   # check for circular dependency
   if (length(eqorder) != length(equations)) { 
-    auxiliaryMsg$topologicalSortEq(eqName, equations, eqorder, dependents)
+    warning(
+      sprintf(auxiliaryMsg$topologicalSortEq, eqName, 
+              paste(names(equations)[!(names(equations) %in% eqorder)], 
+                    collapse = ", "),
+              paste0(utils::capture.output(dependents[
+                names(equations)[!(names(equations) %in% eqorder)] %in% 
+                  names(dependents)]), 
+                collapse = "\n")
+      )
+    )
     return(list())
   }
   
