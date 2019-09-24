@@ -63,25 +63,37 @@ ConvertDataFrameToList <- function(dataFrame, variableCol = "Variable",
 # 
 # First get all the available sheets and then read them all
 # 
-# @param fileName Excel file name
+# @param path Excel file name
 # @return A list with the sheets as data.frames
-ReadDataExcel <- function(fileName  = "DGM Inputs/dgmParameterInput.xlsx") { 
+ReadDataExcel <- function(path) { 
   # read data from excel file with one or more sheets
-  sheets <- readxl::excel_sheets(fileName)
+  sheets <- openxlsx::getSheetNames(path)
   
   modelParms <- lapply(sheets, function(x) { 
-    tryCatch( { 
-      df <- readxl::read_excel(path = fileName, sheet = x, 
-                               trim_ws = T, col_types = "text")
+    tryCatch( {
+      # Read sheet to dataframe
+      df <- openxlsx::read.xlsx(xlsxFile = path, sheet = x)
+      
+      
+      df[] <- lapply(df, function(y) {
+        # Convert column types to character
+        y <- as.character(y)
+        # Trim whitespaces
+        y <- gsub('^[ \t]+|[ \t]+$', '', y)
+        return(y)
+      })
+      
+      # Remove row names
       row.names(df) <- NULL
+      
       return(df)
     },
     error=function(e) {
-      warning(sprintf(readInputDataMsg$ReadDataExcel1, fileName, e))
+      warning(sprintf(readInputDataMsg$ReadDataExcel1, path, e))
       return(data.frame())
     },
-    warning=function(w) { 
-      warning(sprintf(readInputDataMsg$ReadDataExcel2,fileName,w))
+    warning=function(w) {
+      warning(sprintf(readInputDataMsg$ReadDataExcel2,path,w))
       return(data.frame())
     })
   })
