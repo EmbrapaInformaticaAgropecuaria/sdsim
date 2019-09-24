@@ -664,22 +664,22 @@ sdOdeModelClass <- R6::R6Class(
     },
     saveXml = function(file = "sdOdeModel.xml") { 
       # save model to XML
-      doc = XML::newXMLDoc()
+      doc <- XML::newXMLDoc()
       rootsdModel <- XML::newXMLNode(class(self)[[1]], doc = doc)
       
       if (is.function(private$pTrigger))
         trigger <- FunToString(private$pTrigger)
       else if (is.data.frame(private$pTrigger))
-        trigger <- 
-        paste0("data.frame(var = ", 
-               VectorToCharDef(private$pTrigger$var, quote = TRUE), 
-               ", time = ", 
-               VectorToCharDef(private$pTrigger$time), 
-               ", value = ", 
-               VectorToCharDef(private$pTrigger$value), 
-               ", method = ", 
-               VectorToCharDef(private$pTrigger$method, quote = TRUE), 
-               ")")
+        trigger <- paste0(
+          "data.frame(var = ", 
+          VectorToCharDef(private$pTrigger$var, quote = TRUE), 
+          ", time = ", 
+          VectorToCharDef(private$pTrigger$time), 
+          ", value = ", 
+          VectorToCharDef(private$pTrigger$value), 
+          ", method = ", 
+          VectorToCharDef(private$pTrigger$method, quote = TRUE), 
+          ")")
       else if (is.numeric(private$pTrigger))
         trigger <- VectorToCharDef(private$pTrigger)
       else
