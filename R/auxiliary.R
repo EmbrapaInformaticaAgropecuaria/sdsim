@@ -852,3 +852,36 @@ mergeScenarios <- function(defaultScenario, alternateScenario, verbose) {
   
   return(defaultScenario)
 }
+
+xlsxScenarioTemplate <- function(file) {
+  # create the workbook
+  wb <- openxlsx::createWorkbook() 
+  
+  # Sheet names
+  sheetNames <- list("st", "ct", "par", "inp", "sw", "sim")
+  
+  for(x in sheetNames) {
+    openxlsx::addWorksheet(wb, sheetName = x, gridLines = TRUE)
+  }
+  
+  # TODO: change to dataframe
+  # Dataframe columns
+  colNames <- list("Variable", "Value", "Unit", "Description")
+  colNamesInp <- list("Variable", "Value", "Unit", "Description", "Interpolation")
+  
+  # Write data in sheets
+  for(i in 1:length(sheetNames)) {
+    if(sheetNames[i] != "inp") {
+      openxlsx::writeData(wb, i, x = colNames,
+                          startCol = 1, startRow = 1, 
+                          colNames = TRUE)
+    } else {
+      openxlsx::writeData(wb, i, x = colNamesInp,
+                          startCol = 1, startRow = 1, 
+                          colNames = TRUE)
+    }
+  }
+  
+  # Save the workbook
+  openxlsx::saveWorkbook(wb, file, overwrite = TRUE)
+}
