@@ -2,7 +2,7 @@
 
 ## FILE: auxiliary.R
 ## 
-auxiliaryMsg <- new.env()
+auxiliaryMsg <- list()
 
 # use case:
 # sdInitEquations(list(2,3))
@@ -144,7 +144,7 @@ auxiliaryMsg$sdOde2 <- paste0(
 
 ## FILE: constructors.R
 ##
-constructorsMsg <- new.env()
+constructorsMsg <- list()
 
 # case use:
 # sdLoadModel()
@@ -223,7 +223,7 @@ constructorsMsg$sdLoadScenario4 <- paste0(
 
 ## FILE: readInputData.R
 ##
-readInputDataMsg <- new.env()
+readInputDataMsg <- list()
 
 readInputDataMsg$ConvertDataFrameToList <- paste0(
   "sdsim::sdLoadScenario - Load Scenario from EXCEL: an invalid ",
@@ -245,7 +245,7 @@ readInputDataMsg$LoadModelScenario1 <- paste0(
 
 ## FILE sdCoupledModel.R
 ## 
-sdCoupledModelMsg <- new.env()
+sdCoupledModelMsg <- list()
 
 # sdBuildCoupledScenario(scenarios = list(2,3))
 sdCoupledModelMsg$sdBuildCoupledScenario1 <- paste0(
@@ -458,7 +458,7 @@ sdCoupledModelMsg$indexComponents <- paste0(
 
 ## FILE sdModel.R
 ## 
-sdModelMsg <- new.env()
+sdModelMsg <- list()
 
 # sdOdeModel()
 sdModelMsg$id1 <- "sdsim::id - Missing model ID: It was set to '%s'"
@@ -479,7 +479,7 @@ sdModelMsg$description <- paste("sdsim::description - Model '%s' set",
 
 ## FILE sdOdeModel.R
 ## 
-sdOdeModelMsg <- new.env()
+sdOdeModelMsg <- list()
 
 sdOdeModelMsg$initialize1 <- paste0(
   "sdsim::initialize - Model '%s' initialization:", 
@@ -622,7 +622,7 @@ sdOdeModelMsg$defaultScenario <- paste0(
 
 ## FILE sdOutput.R
 ## 
-sdOutputMsg <- new.env()
+sdOutputMsg <- list()
 
 sdOutputMsg$plot1 <- paste0(
   "sdsim::plot - Plot output '%s': The '...' and the '%s", 
@@ -657,7 +657,7 @@ sdOutputMsg$summary3 <- paste0(
 
 ## FILE sdScenario.R
 ## 
-sdScenarioMsg <- new.env()
+sdScenarioMsg <- list()
 
 sdScenarioMsg$initialize1 <- paste0(
   "sdsim::initialize - Scenario '%s",
@@ -789,7 +789,7 @@ sdScenarioMsg$removeVar3 <- paste0(
 
 ## FILE sdStaticModel.R
 ##
-sdStaticModelMsg <- new.env()
+sdStaticModelMsg <- list()
 
 sdStaticModelMsg$initialize1 <- paste0(
   "sdsim::initialize - Static Model '%s", 
@@ -876,7 +876,7 @@ sdStaticModelMsg$defaultscenario2 <- paste0(
 
 ## FILE sdSimulator.R
 ##
-sdSimulatorMsg <- new.env()
+sdSimulatorMsg <- list()
 
 sdSimulatorMsg$sdSimulate <- paste0(
   "sdsim::sdSimulate - Simulation aborted: ",

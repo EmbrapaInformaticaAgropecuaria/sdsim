@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Messages>
+  <auxiliaryMsg>
+    <sdInitEq>sdsim::sdInitEquations - Initializing equations: The %s equations argument must be a named list of R-expressions and/or strings with equations in R-format. The element of type %s will be skipped.</sdInitEq>
+    <sdInitEq1>sdsim::sdInitEquations - Initializing equations: The '%s' equations argument must be a named list of R-expressions and/or strings with equations in R-format. The unnamed element with value '%s' will be skipped.</sdInitEq1>
+    <topologicalSortEq>sdsim::sdInitEquations - Sorting Equations: Could not sort the %s equations. Refactor your model to remove the circular dependencies. An empty list was returned because the following equations could not be ordered: %s
+Equations dependents:
+%s</topologicalSortEq>
+    <sdTemporalFunctionList>sdsim::sdTemporalFunctionList - Error Transforming the time series variables: The size of the list 'x' must match the size of the list 'methods'. Transformation aborted, returned NULL.</sdTemporalFunctionList>
+    <sdTemporalFunction1>sdsim::sdTemporalFunction - Error: The time series file '%s'  does not exist. Use the argument 'timeSeriesDirectory' to set the right path to the time series files. Temporal function transformation aborted, returned NULL.</sdTemporalFunction1>
+    <sdTemporalFunction2>sdsim::sdTemporalFunction - Error opening the time series file '%s'. The default separator is ',' and the default decimal point is '.'. Temporal function transformation aborted, returned NULL. %s</sdTemporalFunction2>
+    <sdTemporalFunction3>sdsim::sdTemporalFunction - Wrong time series variable 'x' type '%s': Please use one of the following types: fixed numeric value, matrix, data.frame or character (text file name). Transformation aborted, returned NULL.</sdTemporalFunction3>
+    <sdTemporalFunction4>sdsim::sdTemporalFunction - The given interpolation method is not supported: See help('sdTemporalFunction') for the supported methods. Transformation aborted, returned NULL.</sdTemporalFunction4>
+    <sdTemporalFunction5>sdsim::sdTemporalFunction - Error interpolating the time series data points: Transformation aborted, returned NULL. %s</sdTemporalFunction5>
+    <sdTemporalFunction6>sdsim::sdTemporalFunction - Error in the time serie data points: Missing the times or the value column. Transformation aborted, returned NULL. </sdTemporalFunction6>
+    <sdMakeFlows1>sdsim::sdMakeFlows - Error initializing flow: Argument 'flows' has value 'NULL'. Must be an Array or List.</sdMakeFlows1>
+    <sdMakeFlows2>sdsim::sdMakeFlows - Error initializing flow:Argument 'flow_rate' has value 'NULL'. Must be an Array or List.</sdMakeFlows2>
+    <sdMakeFlows3>sdsim::sdMakeFlows - Error initializing flow: No elements identified in argument 'flows'. Must be a non-empty Array or List. </sdMakeFlows3>
+    <sdMakeFlows4>sdsim::sdMakeFlows - Error initializing flow: No elements identified in argument 'flow_rate'. Must be a non-empty Array or List. </sdMakeFlows4>
+    <sdMakeFlows5>sdsim::sdMakeFlows - Error initializing flow: The length of the argument 'flows' does not match the lenght of the argument 'flow_rate'.</sdMakeFlows5>
+    <sdMakeFlows6>sdsim::MakeFlows - The variable '%s' in argument 'flows' does not match a boundary or st variable.</sdMakeFlows6>
+    <sdOdeClass1>sdsim::OdeClass - Error initializing differential equations: No elements identified in argument 'ode'. Must be a non-empty List.</sdOdeClass1>
+    <sdOde2>sdsim::odeClass - Error initializing differential equations: Argument 'ode' has value 'NULL'. Must be an Array or List.</sdOde2>
+  </auxiliaryMsg>
+  <constructorsMsg>
+    <sdLoadModel1>sdsim::sdLoadModel - Load Model aborted:
+  The Models Repository list: 
+  - %s
+
+  Use 'file = any of the above names' and 'repository = TRUE' to load a model from the sdsim package repository.</sdLoadModel1>
+    <sdLoadModel2>sdsim::sdLoadModel - Load Model aborted: The given model name '%s' is not present in the repository.
+  The Models Repository list: 
+  - %s
+
+  Use 'file = any of the above names' and 'repository = T' to load a model from the sdsim package repository.</sdLoadModel2>
+    <sdLoadModel3>sdsim::sdLoadModel - Load Model aborted: The given file '%s' do not exists.</sdLoadModel3>
+    <sdLoadModel4>sdsim::sdLoadModel - Load Model '%s': The given file is not a valid XML. Use the package functions to generate it. See help('sdLoadModel') and in the desired model help pages look for the method '$saveXml'. %s</sdLoadModel4>
+    <sdLoadModel5>sdsim::sdLoadModel - Load Model from file '%s': %s</sdLoadModel5>
+    <sdLoadModel6>sdsim::sdLoadModel - Load Model aborted: The given file is not a valid XML file. Generate your XML files using the sdsim package functions. See help('sdLoadModel') and in the desired type of model help pages look for the method '$saveXml'.</sdLoadModel6>
+    <sdLoadModel7>sdsim::sdLoadModel - Load Model aborted: The given XML file do not contain a model.</sdLoadModel7>
+    <sdLoadScenario1>sdsim::sdLoadScenario - Load Scenario aborted: The given file '%s' do not exist.</sdLoadScenario1>
+    <sdLoadScenario2>sdsim::sdLoadScenario - Load Scenario '%s' aborted: The given file is not a valid XML. See help('sdLoadScenario') for the set of rules to encode a sdScenario in EXCEL file or use the method '$saveXml' present in the help('sdScenarioClass') to generate a valid XML. %s</sdLoadScenario2>
+    <sdLoadScenario3>sdsim::sdLoadScenario - Load Scenario '%s': %s</sdLoadScenario3>
+    <sdLoadScenario4>sdsim::sdLoadScenario - Load Scenario '%s' aborted: Wrong file extension. It should be a Extensible Markup Language (XML) or an EXCEL file. See help('sdLoadScenario') for the set of rules to encode a sdScenario.</sdLoadScenario4>
+  </constructorsMsg>
+  <readInputDataMsg>
+    <ConvertDataFrameToList>sdsim::sdLoadScenario - Load Scenario from EXCEL: an invalid data.frame was skipped, probably with empty values. Refactor your file if it is not wanted.</ConvertDataFrameToList>
+    <ReadDataExcel1>sdsim::sdLoadScenario - Load Scenario from EXCEL: Error opening the file '%s'. %s</ReadDataExcel1>
+    <ReadDataExcel2>sdsim::sdLoadScenario - Load Scenario from EXCEL: Warning opening the file '%s'. %s</ReadDataExcel2>
+    <LoadModelScenario1>sdsim::sdLoadScenario - Loading scenario '%s' from EXCEL aborted: The scenario file path do not exist. No variable will be loaded.</LoadModelScenario1>
+  </readInputDataMsg>
+  <sdCoupledModelMsg>
+    <sdBuildCoupledScenario1>sdsim::sdBuildCoupledScenario - Error building the coupled scenario: The 'scenarios' argument must be a list named with the component ID that will use each scenario in the coupled model. At least one name was missing.</sdBuildCoupledScenario1>
+    <sdBuildCoupledScenario2>sdsim::sdBuildCoupledScenario - Building Coupled Scenario: The argument 'scenarios' must be a named list of not empty sdScenario's objects or character file names. Scenario of type '%s' of the component '%s' could not be added.</sdBuildCoupledScenario2>
+    <addComponent0>sdsim::addComponent - Coupled Model '%s' adding component: The component '%s' identification is equal to the coupled model ID. Component skipped, refactor its ID and try to add it again.</addComponent0>
+    <addComponent1>sdsim::addComponent - Coupled Model '%s' adding component: The component '%s' already exists in the coupled model. It will be removed and overwritten.</addComponent1>
+    <addComponent2>sdsim::addComponent - Coupled Model '%s' adding component: the argument '...' must be a list of not empty sdModel's or character XML file names. Component of type '%s' could not be added.</addComponent2>
+    <removeComponent>sdsim::removeComponent - Coupled Model '%s' removing component: The components '%s' do not exist in the coupled model and thus can not be removed.</removeComponent>
+    <addConnection1>sdsim::addConnection - Coupled Model '%s' adding connection: Each connection must be a vector with 5 elements. The connection: c(%s) will be skipped.</addConnection1>
+    <addConnection2>sdsim::addConnection - Coupled Model '%s' adding connection: The 5th element of the connection vector must include the prefix st$, aux$ or eq$, indicating a state variable, an auxiliary or an algebraic equation connection, respectively. The connection: c(%s) will be skipped.</addConnection2>
+    <addConnection3>sdsim::addConnection - Coupled Model '%s'  adding connection: The connection '%s'  already exists in the coupled model. It will be overwritten.</addConnection3>
+    <removeConnection>sdsim::removeConnection - Coupled Model '%s' removing connection: The connection ID '%s' do not exist in the coupled model and thus can not be removed.</removeConnection>
+    <verifyModel1>sdsim::verifyModel - Coupled Model '%s' verification error: Build the coupled model first using the method '$buildCoupledModel'. Coupled model verification aborted.</verifyModel1>
+    <verifyModel2>sdsim::verifyModel - Coupled Model '%s' verification: The given scenario must be of type list containing multiple sdScenario objects named with the respective component ID, or of type sdScenarioClass containing a single coupled scenario object (see help('sdBuildCoupledScenario')). The given scenario of type '%s' will not be used.</verifyModel2>
+    <verifyModel3>sdsim::verifyModel - Coupled Model '%s' verification: No time sequence informed. Define the time sequence in the default scenario and reset it. Initial time equal 0 will be used instead.</verifyModel3>
+    <verifyModel4>sdsim::verifyModel - Coupled Model '%s' verification: Error evaluating the auxiliary equation %s. %s</verifyModel4>
+    <verifyModel5>sdsim::verifyModel - Coupled Model '%s'verification: Evaluation of the auxiliary variable %s may be incorrect. Value: %s.</verifyModel5>
+    <verifyModel6>sdsim::verifyModel - Coupled Model '%s' component '%s' verification: Error running the ode. %s</verifyModel6>
+    <verifyModel7>sdsim::verifyModel - Coupled Model '%s' component '%s' verification: variable $%s from the '%s' list in the $componentsEquations may be incorrect. It has '%s' value.</verifyModel7>
+    <verifyModel8>sdsim::verifyModel - Coupled Model '%s' component '%s' verification: variable $%s in the $componentsEquations may be incorrect. It has '%s' value.</verifyModel8>
+    <verifyModel9>sdsim::verifyModel - Coupled Model '%s' verification: the first element of the coupled model definition return value should be a numeric vector containg the state variables derivatives. Wrong derivative return type: '%s'.</verifyModel9>
+    <verifyModel10>sdsim::verifyModel - Coupled Model '%s' verification: the number of derivatives returned by  $componentsEquations (%s - %s) must equal the length of the initial conditions vector (%s).</verifyModel10>
+    <verifyModel11>sdsim::verifyModel - Coupled Model '%s' verification: the coupled model definition function should return a list. Wrong return type: '%s'.</verifyModel11>
+    <verifyModel12>sdsim::verifyModel - Coupled Model '%s' Ordinary Differential Equations verified.</verifyModel12>
+    <buildCoupledModel0>sdsim::buildCoupledModel - Coupled model '%s' build error: the components are empty.</buildCoupledModel0>
+    <buildCoupledModel1>sdsim::buildCoupledModel - Coupled Model '%s' build error: no component was added. Add a component before building the coupled model.</buildCoupledModel1>
+    <buildCoupledModel2>sdsim::buildCoupledModel - Coupled Model '%s'  Error building the connection vectors: The model '%s'  is not present in the coupled components. Refactor the connection to make it valid. Connection '%s' skipped.</buildCoupledModel2>
+    <buildCoupledModel3>sdsim::buildCoupledModel - Coupled Model '%s' Error Building the connection vectors: The %s %s from the model '%s' do not exist. Refactor the connection to make it valid. Connection '%s' skipped.</buildCoupledModel3>
+    <buildCoupledModel4>sdsim::buildCoupledModel - Coupled Model '%s' Error Building the connection vectors: The connected output can only come from the auxiliary equations list (aux$&lt;varName&gt;), from the state variables list (st$&lt;varName&gt;) or from the algebric equations list (eq$&lt;varName&gt; for static models) of the model '%s'. Refactor the connection to make it valid. Connection '%s' skipped.</buildCoupledModel4>
+    <buildCoupledModel5>sdsim::buildCoupledModel - Coupled Model '%s' warning building the connection vectors - The input '%s' unit '%s' from the model '%s' is different from the output '%s' '%s' unit '%s' from the model '%s'. Refactor the connection '%s' if this is not wanted.</buildCoupledModel5>
+    <buildCoupledModel6>sdsim::buildCoupledModel - Coupled Model '%s' build error: The input '%s' is connected to more then one %s. This input will only receive the last connection. Refactor the connections if this is not wanted. </buildCoupledModel6>
+    <defaultScenario>sdsim::defaultScenario - Coupled Model '%s' get default scenario: The default coupled scenario must be built to retrieve it. Build it first with the method $buildCoupledModel (see help('sdCoupledModelClass')).</defaultScenario>
+    <connectionsList>sdsim::connectionsList - Coupled Model '%s' %s connection list: The default coupled scenario must be built to retrieve the connections. Build it first with the method $buildCoupledModel(see help('sdCoupledModelClass')).</connectionsList>
+    <indexComponents>sdsim::indexComponents - Coupled Model '%s' components index list: The default coupled scenario must be built to retrieve the index list. Build it first with the method $buildCoupledModel (see help('sdCoupledModelClass')).</indexComponents>
+  </sdCoupledModelMsg>
+  <sdModelMsg>
+    <id1>sdsim::id - Missing model ID: It was set to '%s'</id1>
+    <id2>sdsim::id - Invalid model ID type: The model ID must be a string. It was set to '%s'.</id2>
+    <id3>sdsim::id - Invalid model ID: The sdsim reserved word '%s' can not be used to identify a model. The model identification was set to '%s'.</id3>
+    <description>sdsim::description - Model '%s' set description aborted: The model description must be a string.</description>
+  </sdModelMsg>
+  <sdOdeModelMsg>
+    <initialize1>sdsim::initialize - Model '%s' initialization: The ode structure does not match the help('sdOdeModel') specification. Replacement aborted.</initialize1>
+    <initialize2>sdsim::initialize - Model '%s' initialization: The initVars structure does not match the help('sdOdeModel') specification. Replacement aborted.</initialize2>
+    <initialize3>sdsim::initialize - Model '%s' initialization:  The postProcess structure does not match the help('sdOdeModel') specification. Replacement aborted.</initialize3>
+    <initialize4>sdsim::initialize - Model '%s' initialization:  The trigger structure does not match specification. It must be a data.frame, a numeric vector or a function, see help('sdOdeModel'). If it is a character or list of characters all the elements will be evaluated or converted. Replacement aborted.</initialize4>
+    <initialize5>sdsim::initialize - Model '%s' initialization: The event structure does not match the help('sdOdeModel') specification. Replacement aborted.</initialize5>
+    <initialize6>sdsim::initialize - Model '%s' Initialization warning: No auxiliary equations were added. %s</initialize6>
+    <initialize7>sdsim::initialize - Model '%s' Initialization: Invalid auxiliary equations. See help('sdOdeModel') to learn the accepted types. Replacement aborted.</initialize7>
+    <initialize8>sdsim::initialize - Model '%s' Initialization: Invalid global function '%s' skipped. All the globalFunctions elements must be functions.</initialize8>
+    <initialize9>sdsim::initialize - Model '%s' Initialization: The globalFunctions argument must be a named list containing only functions.</initialize9>
+    <initialize10>sdsim::initialize - Ode Model '%s' initialization: The following sdsim reserved words can not be used to name an equation and thus the respective auxiliary equations were skipped: %s.</initialize10>
+    <verifyModel0>sdsim::verifyModel - Model '%s' ODE verification aborted: No differential equations function was set.</verifyModel0>
+    <verifyModel1>sdsim::verifyModel - Model '%s' ODE verification aborted: No valid scenario was set.</verifyModel1>
+    <verifyModel2>sdsim::verifyModel - Model '%s' verification: No time sequence informed. Define the time sequence in the default scenario. Initial time equals 0 will be used.</verifyModel2>
+    <verifyModel3>sdsim::verifyModel - Model '%s' verification: error evaluating the auxiliary equation '%s'. %s</verifyModel3>
+    <verifyModel4>sdsim::verifyModel - Model '%s' verification: Evaluation of the auxiliary variable '%s' may be incorrect. Value: %s.</verifyModel4>
+    <verifyModel5>sdsim::verifyModel - Model '%s' verification: error running the ode. %s</verifyModel5>
+    <verifyModel6>sdsim::verifyModel - Model '%s' verification: variable $%s from the '%s' list in the $ode may be incorrect. It has %s value.</verifyModel6>
+    <verifyModel7>sdsim::verifyModel - Model '%s' verification: variable $%s in the $ode may be incorrect. It has %s value.</verifyModel7>
+    <verifyModel8>sdsim::verifyModel - Model '%s' verification: the first element of the $ode return value should be a numeric vector containg the state derivatives. Wrong derivative return type: %s.</verifyModel8>
+    <verifyModel9>sdsim::verifyModel - Model '%s' verification: the number of derivatives returned by the $ode (%s - %s) must equal the length of the initialconditions vector (%s).</verifyModel9>
+    <verifyModel10>sdsim::verifyModel - Model '%s' verification: the $ode function should return a list. Wrong return type: %s.</verifyModel10>
+    <verifyModel11>sdsim::verifyModel - Model '%s' Ordinary Differential Equations verified.</verifyModel11>
+    <verifyModel12>sdsim::verifyModel - Model '%s' verification: Scenario argument of type '%s' discarted. It must be a valid sdScenarioClass object or a character string with a scenario XML or EXCEL file name.</verifyModel12>
+    <verifyModel13>sdsim::verifyModel - Model '%s' verification aborted: no state variables informed. Define the state variables in the default scenario or via the scenario argument.</verifyModel13>
+    <defaultScenario>sdsim::defaultScenario - Model '%s' set default scenario: The default scenario must be a sdScenario object or a character string with the name of a scenario XML or Excel file. Create one using the help('sdScenario') constructor. No default scenario was set.</defaultScenario>
+  </sdOdeModelMsg>
+  <sdOutputMsg>
+    <plot1>sdsim::plot - Plot output '%s': The '...' and the '%s' arguments must have the same length. The '%s' will not be used.</plot1>
+    <plot2>sdsim::plot - Plot output '%s': the argument '...' must be a list of character vectors containing the formulas with the name of the variables to be plotted. See help('sdOutput'). All the output variables will be ploted instead.</plot2>
+    <plot3>sdsim::plot - Plot output '%s': Not all the formula variables are valid column names. The following variables will be skipped: %s</plot3>
+    <plot4>sdsim::plot - Plot output '%s': The x-axis variable '%s' is not valid, the simulation time sequence will be used instead.</plot4>
+    <summary1>sdsim::summary - Output Trajectory Summary
+</summary1>
+    <summary2>
+
+sdsim::summary - Auxiliary Trajectory Summary
+</summary2>
+    <summary3>
+
+sdsim::summary - Time Series Trajectory Summary
+</summary3>
+  </sdOutputMsg>
+  <sdScenarioMsg>
+    <initialize1>sdsim::initialize - Scenario '%s' initialization: The %s variables must be in a named numeric vector or list. Scenario initialized without %s variables.</initialize1>
+    <initialize2>sdsim::initialize - Scenario '%s' initialization: The %s variables must be in a named list. Scenario initialized without %s variables.</initialize2>
+    <setTimeSequence>sdsim::setTimeSequence - Scenario '%s': Sequence element '%s' not set. It must be a numeric value.</setTimeSequence>
+    <setTimeSequence1>sdsim::setTimeSequence - Scenario '%s': The end value of the time sequence must be different from the starting value. Argument '%s' not set.</setTimeSequence1>
+    <setTimeSequence2>sdsim::setTimeSequence - Scenario '%s': The increment of the time sequence must be inside the starting and end values of the sequence and have the right sign (positive for crescent sequences and negative for descreasing ones). Argument '%s' not set.</setTimeSequence2>
+    <addInput>sdsim::addInput - Scenario '%s' invalid interpolations: The following time series interpolation variables are not present in the input list and will be skipped: %s</addInput>
+    <id>sdsim::id - Invalid scenario ID type: The scenario ID must be a string. It was set to '%s'.</id>
+    <method1>sdsim::method - Scenario '%s' set integration method aborted: The 'method' argument must be a string with a valid deSolve solver name. Available solver methods: 'lsoda', 'lsode', 'lsodes', 'lsodar', 'vode', 'daspk', 'euler', 'rk4', 'ode23', 'ode45', 'radau', 'bdf', 'bdf_d', 'adams', 'impAdams', 'impAdams_d'. The default method 'lsoda' was set.</method1>
+    <method2>sdsim::method - Scenario '%s' set integration method: The given method is not valid. Available solver methods: 'lsoda', 'lsode', 'lsodes', 'lsodar', 'vode', 'daspk', 'euler', 'rk4', 'ode23', 'ode45', 'radau', 'bdf', 'bdf_d', 'adams', 'impAdams', 'impAdams_d'. The default method 'lsoda' was set.</method2>
+    <times>sdsim::times - Scenario '%s' set time sequence: The simulation time sequence must be a numeric named list with at least one of the following three elements: 'from', 'to' and 'by', representing the initial time, the final time and the simulation time step. Scenario initialized without time sequence.</times>
+    <description>sdsim::description - Scenario '%s' set description aborted: Description type (%s) not supported. It should be a named list.</description>
+    <unit>sdsim::unit - Scenario '%s' set unit aborted: Unit type (%s) not supported. It should be a named list. </unit>
+    <addVar1>sdsim::addVar - Scenario '%s' add %s aborted: All the scenario variables must be named.</addVar1>
+    <addVar2>sdsim::addVar - Scenario '%s'add %s: Unnamed variable skipped. All the scenario variables must be named.</addVar2>
+    <addVar3>sdsim::addVar - Scenario '%s' add variable: %s values should be numeric. Variable %s will be skipped.</addVar3>
+    <addVar4>sdsim::addVar - Scenario '%s' add variable: %s of %s set to %s</addVar4>
+    <addVar5>sdsim::addVar - Scenario '%s' add variable: Value of %s '%s' set to %s</addVar5>
+    <addVar6>sdsim::addVar - Scenario '%s' add variable: The %s '%s' already exists in this scenario. It will be reset to %s.</addVar6>
+    <addVar7>sdsim::addVar - Scenario '%s' add variable: %s%s will be skipped.</addVar7>
+    <addVar8>sdsim::addVar - Scenario '%s' add variable: The following sdsim reserved words can not be used to name a variable and thus the respective %s variables were skipped: %s.</addVar8>
+    <removeVar1>sdsim::removeVar - Scenario '%s' remove %s: the variable name must be a string, wrong type: %s</removeVar1>
+    <removeVar2>sdsim::removeVar - Scenario '%s' remove variable: %s variable %s removed</removeVar2>
+    <removeVar3>sdsim::removeVar - Scenario '%s' remove variable: %s variable %s not found.</removeVar3>
+  </sdScenarioMsg>
+  <sdStaticModelMsg>
+    <initialize1>sdsim::initialize - Static Model '%s' initialization: The initVars structure does not match specification. It must be a function, see help('sdStaticModel'). Replacement aborted.</initialize1>
+    <initialize2>sdsim::initialize - Static Model '%s' initialization error: No algebraic equations were added. %s</initialize2>
+    <initialize3>sdsim::initialize - Static Model '%s' initialization: Invalid algebraic equations. See help('sdStaticModel') to learn the accepted types. Replacement aborted.</initialize3>
+    <initialize4>sdsim::initialize - Static Model '%s' initialization: Invalid global function '%s' skipped. All the globalFunctions elements must be objects of type function.</initialize4>
+    <initialize5>sdsim::initialize - Static Model '%s' initialization: The globalFunctions argument must be a named list containing only objects of type function.</initialize5>
+    <initialize6>sdsim::initialize - Static Model '%s' initialization: The following sdsim reserved words can not be used to name an equation and thus the respective algebraic equations were skipped: %s.</initialize6>
+    <validate0>sdsim::validateAlgebraicEquations Static Model '%s' algebraic equations validation aborted: No default scenario was set.</validate0>
+    <validate1>sdsim::validateAlgebraicEquations Static Model '%s' validation: No time sequence informed. Define the time sequence in the default scenario. Initial time equals 0 will be used.</validate1>
+    <validate2>sdsim::validateAlgebraicEquations Static Model '%s' validation: error evaluating the algebraic equation '%s'. %s</validate2>
+    <validate3>sdsim::validateAlgebraicEquations Model '%s' validation: Evaluation of the algebraic equation '%s' may be incorrect. Value: %s.</validate3>
+    <validate4>sdsim::validateAlgebraicEquations Static Model '%s' Algebraic Equations Validated.</validate4>
+    <validate5>sdsim::validateAlgebraicEquations Model '%s' validation: Scenario argument of type '%s' discarted. It must be a valid sdScenarioClass object or a character string with a scenario XML or EXCEL file name.</validate5>
+    <defaultscenario1>sdsim::defaultScenario - Static Model '%s' set default scenario: static models do not have state variables. All the state variables were removed before setting the default scenario.</defaultscenario1>
+    <defaultscenario2>sdsim::defaultScenario - Static Model '%s' set default scenario: The default scenario must be a sdScenario object. Create one using the help('sdScenario') or help('sdLoadScenario')constructors. No default scenario was set.</defaultscenario2>
+  </sdStaticModelMsg>
+  <sdSimulatorMsg>
+    <sdSimulate>sdsim::sdSimulate - Simulation aborted: A model must be informed to run the simulation.</sdSimulate>
+    <sdSimulate2>sdsim::sdSimulate - Simulation aborted:Invalid model class. See help('sdLoadModel') for available classes.</sdSimulate2>
+    <sdSimulateModel>sdsim::sdSimulate - Simulation of the %s model '%s' aborted: A valid model default scenario or the scenario argument must be informed to run the simulation.</sdSimulateModel>
+    <sdSimulateAtomic0>sdsim::sdSimulate - Simulation of the model '%s' aborted: The increment of the time sequence must be inside the starting and end values of the sequence and have the right sign (positive for crescent sequences and negative for descreasing ones). Define a valid time sequence in the default scenario or via the arguments to run a simulation.</sdSimulateAtomic0>
+    <sdSimulateAtomic1>sdsim::sdSimulate - Simulation of the model '%s' aborted: no state variables informed. Define the state variables in the default scenario or via the scenario argument.</sdSimulateAtomic1>
+    <sdSimulateAtomic2>sdsim::sdSimulate - Simulation of the model '%s' aborted: No time sequence informed. Define the time sequence in the default scenario or via the arguments.</sdSimulateAtomic2>
+    <sdSimulateAtomic3>sdsim::sdSimulate - Simulation of the model '%s': The given method do not have root-finding capability. The simulator will run with the default method: 'lsoda'.</sdSimulateAtomic3>
+    <sdSimulateAtomic4>sdsim::sdSimulate - Simulation of the model '%s': The postProcess function returned the following error. %s</sdSimulateAtomic4>
+    <sdSimulateAtomic5>sdsim::sdSimulate - Simulation of the model '%s': No method informed. The simulator will run with the default method: 'lsoda'.</sdSimulateAtomic5>
+    <sdSimulateAtomic6>sdsim::sdSimulate - Simulation of the model '%s': Scenario argument of type '%s' discarted. It must be a valid sdScenarioClass object or a character string with a scenario XML or EXCEL file name.</sdSimulateAtomic6>
+    <sdSimulateAtomic7>sdsim::sdSimulate - Simulation of the model '%s' aborted: No differential equations function, model is empty.</sdSimulateAtomic7>
+    <sdSimulateStatic0>sdsim::sdSimulate - Simulation of the static model '%s' aborted: No algebraic equations, model is empty.</sdSimulateStatic0>
+    <sdSimulateStatic1>sdsim::sdSimulate - Simulation of the static model '%s' aborted: No time sequence informed. Define the time sequence in the default scenario or via the arguments.</sdSimulateStatic1>
+    <sdSimulateStatic2>sdsim::sdSimulate - Simulation of the static model '%s' aborted: The increment of the time sequence must be inside the starting and end values of the sequence and have the right sign (positive for crescent sequences and negative for descreasing ones). Define a valid time sequence in the default scenario or via the arguments to run a simulation.</sdSimulateStatic2>
+    <sdSimulateCoupled0>sdsim::sdSimulate - Simulation of the coupled model '%s' aborted: No component differential equations function or algebraic equation was set.</sdSimulateCoupled0>
+    <sdSimulateCoupled1>sdsim::sdSimulate - Simulation of the coupled model '%s' aborted: Could not build the default coupled model. Use the $buildCoupledModel method to build it.</sdSimulateCoupled1>
+    <sdSimulateCoupled3>sdsim::sdSimulate - Simulation of the coupled model '%s' aborted: No time sequence informed. Define the time sequence in the default scenario or via the arguments.</sdSimulateCoupled3>
+    <sdSimulateCoupled4>sdsim::sdSimulate - Simulation of the coupled model '%s' aborted: no state variables informed. Define the state variables in the default scenario or via the 'scenario' argument.</sdSimulateCoupled4>
+    <sdSimulateCoupled5>sdsim::sdSimulate - Simulation of the coupled model '%s': The given method do not have root-finding capability. The simulator will run with the default method: 'lsoda'.</sdSimulateCoupled5>
+    <sdSimulateCoupled6>sdsim::sdSimulate - Simulation of the coupled model '%s': The component '%s' postProcess function returned the following error. %s</sdSimulateCoupled6>
+    <sdSimulateCoupled7>sdsim::sdSimulate - Simulation of the coupled model '%s' aborted: The increment of the time sequence must be inside the starting and end values of the sequence and have the right sign (positive for crescent sequences and negative for descreasing ones). Define a valid time sequence in the default scenario or via the arguments to run a simulation.</sdSimulateCoupled7>
+  </sdSimulatorMsg>
+</Messages>
