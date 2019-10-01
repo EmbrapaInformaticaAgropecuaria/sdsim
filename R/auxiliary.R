@@ -885,3 +885,10 @@ xlsxScenarioTemplate <- function(file) {
   # Save the workbook
   openxlsx::saveWorkbook(wb, file, overwrite = TRUE)
 }
+
+# Load messages from xml file
+loadMessages <- function(fl) {
+  loadedMsg <- XML::xmlParse(fl)
+  parsedMsg <- XML::xmlToList(loadedMsg)
+  return(parsedMsg)
+}
