@@ -77,7 +77,15 @@ sdFlowOdeClass <- R6::R6Class(
       }
     },
     saveXml = function() { 
-      # TODO
+      doc = XML::newXMLDoc()
+      rootOde <- XML::newXMLNode(class(self)[[1]], doc = doc)
+      lOde <- list(source = VectorToCharDef(private$pSource), 
+                   sink = VectorToCharDef(private$pSink),
+                   flowRate = VectorToCharDef(private$pFlowRate),
+                   stocks = VectorToCharDef(private$pStocks),
+                   boundaries = VectorToCharDef(private$pBoundaries))
+      ListToXML(rootOde, lOde)
+      invisible(rootOde)
     }
   ),
   

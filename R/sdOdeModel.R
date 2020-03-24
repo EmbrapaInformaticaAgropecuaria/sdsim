@@ -694,7 +694,6 @@ sdOdeModelClass <- R6::R6Class(
       
       lModel <- list(id = private$pId     ,
                      description = private$pDescription,
-                     ode = FunToString(private$pOde),
                      initVars = FunToString(private$pInitVars),
                      postProcess = FunToString(private$pPostProcessVars),
                      trigger = trigger,
@@ -709,6 +708,13 @@ sdOdeModelClass <- R6::R6Class(
           "defaultScenario", 
           .children = list(private$pDefaultScenario$saveXml()))
         XML::addChildren(rootsdModel, kids = list(defaultScenarioXML))
+      }
+      
+      if (!is.null(private$pOde)) { 
+        odeXML <- XML::newXMLNode(
+          "ode", 
+          .children = list(private$pOde$saveXml()))
+        XML::addChildren(rootsdModel, kids = list(odeXML))
       }
       
       if (!missing(file))

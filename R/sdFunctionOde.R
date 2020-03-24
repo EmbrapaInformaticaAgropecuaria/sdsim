@@ -33,7 +33,11 @@ sdFunctionOdeClass <- R6::R6Class(
     },
     
     saveXml = function() {
-      # TODO
+      doc = XML::newXMLDoc()
+      rootOde <- XML::newXMLNode(class(self)[[1]], doc = doc)
+      lOde <- list(ode = FunToString(private$pOde))
+      ListToXML(rootOde, lOde)
+      invisible(rootOde)
     }
     
   ),
