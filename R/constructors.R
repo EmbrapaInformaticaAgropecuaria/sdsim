@@ -266,7 +266,6 @@ sdLoadModel <- function(file, repository = F,
     else
       file <- filepath
   }
-  
   # check if file exists
   if (!file.exists(file)) 
     stop(sprintf(constructorsMsg$sdLoadModel3,file))
@@ -297,7 +296,6 @@ sdLoadModel <- function(file, repository = F,
   #     warning("Load Model: The sdsim XML version is deprecated. The current ",
   #             "sdsim version is: ", packageVersion("sdsim"))
   # }
-  
   modelTags <- names(XML::xmlChildren(model))
   # convert the xml to list
   model <- XML::xmlToList(model)
@@ -308,6 +306,8 @@ sdLoadModel <- function(file, repository = F,
     # convert the types of the xml vars
     if (is.list(model$defaultScenario)) { 
       loadedScen <- model$defaultScenario$sdScenario
+      
+      print(loadedScen)
       
       model$defaultScenario <- sdScenario(
         id = "Default",
@@ -323,8 +323,26 @@ sdLoadModel <- function(file, repository = F,
         description = loadedScen$description,
         timeSeriesDirectory = timeSeriesDirectory)
     }
+    # flowOde or functionOde
+    if (is.list(model$ode$sdFlowOde)) {
+      loadedOde <- model$ode$sdFlowOde
+
+      model$ode <- sdFlow(
+        flows = loadedOde$flows,
+        flowRate = loadedOde$flowRate,
+        stocks = loadedOde$stocks,
+        boundaries = loadedOde$boundaries)
+      
+    } else if (is.list(model$ode$sdFunctionOde)) {
+      loadedOde <- model$ode$sdFunctionOde
+      
+      model$ode <- sdFunction(
+        func = StringToFun(loadedOde$ode))
+    }
+    print("after!")
     
-    # creat a new model
+    
+    # create a new model
     model <- sdOdeModelClass$new(
       id = model$id,
       ode = StringToFun(model$ode),
@@ -452,6 +470,7 @@ sdLoadModel <- function(file, repository = F,
     stop(sprintf(constructorsMsg$sdLoadModel7))
     
   }
+  print("end!")
 }
 
 #' Creates a Coupled System Dynamics Model
@@ -1353,4 +1372,8 @@ sdFlow <- function(flows = NULL, flowRate = NULL,
                      flowRate = flowRate,
                      stocks = stocks,
                      boundaries = boundaries)
+}
+
+sdFunction <- function(func = NULL) {
+  sdFunctionOdeClass$new(func = func)
 }

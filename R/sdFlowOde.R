@@ -7,6 +7,8 @@ sdFlowOdeClass <- R6::R6Class(
   public = list(
     initialize = function(flows, flowRate, stocks, boundaries) { 
       
+      private$pFlows <- flows
+      
       # TODO: change message variables names
       if(is.null(flows))
         stop(sprintf(auxiliaryMsg$sdMakeFlows1))
@@ -38,6 +40,7 @@ sdFlowOdeClass <- R6::R6Class(
       split_flow <- strsplit(flows, split = "\\h*->\\h*", perl = T)
       source <- unlist(lapply(split_flow, `[[`, 1))
       sink <- unlist(lapply(split_flow, `[[`, 2))
+      
       
       private$pSource <- source
       private$pSink <- sink
@@ -79,8 +82,10 @@ sdFlowOdeClass <- R6::R6Class(
     saveXml = function() { 
       doc = XML::newXMLDoc()
       rootOde <- XML::newXMLNode(class(self)[[1]], doc = doc)
-      lOde <- list(source = VectorToCharDef(private$pSource), 
-                   sink = VectorToCharDef(private$pSink),
+      lOde <- list(
+        # source = VectorToCharDef(private$pSource), 
+        #            sink = VectorToCharDef(private$pSink),
+                  flows = VectorToCharDef(private$pFlows),
                    flowRate = VectorToCharDef(private$pFlowRate),
                    stocks = VectorToCharDef(private$pStocks),
                    boundaries = VectorToCharDef(private$pBoundaries))
@@ -166,6 +171,7 @@ sdFlowOdeClass <- R6::R6Class(
       return(ode)
     },
     
+    pFlows = NULL,
     pSource = NULL,
     pSink = NULL,
     pFlowRate = NULL,
