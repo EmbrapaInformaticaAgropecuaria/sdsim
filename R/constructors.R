@@ -307,8 +307,6 @@ sdLoadModel <- function(file, repository = F,
     if (is.list(model$defaultScenario)) { 
       loadedScen <- model$defaultScenario$sdScenario
       
-      print(loadedScen)
-      
       model$defaultScenario <- sdScenario(
         id = "Default",
         times = loadedScen$times,
@@ -323,6 +321,7 @@ sdLoadModel <- function(file, repository = F,
         description = loadedScen$description,
         timeSeriesDirectory = timeSeriesDirectory)
     }
+    
     # flowOde or functionOde
     if (is.list(model$ode$sdFlowOde)) {
       loadedOde <- model$ode$sdFlowOde
@@ -339,13 +338,11 @@ sdLoadModel <- function(file, repository = F,
       model$ode <- sdFunction(
         func = StringToFun(loadedOde$ode))
     }
-    print("after!")
-    
-    
+
     # create a new model
     model <- sdOdeModelClass$new(
       id = model$id,
-      ode = StringToFun(model$ode),
+      ode = model$ode,
       defaultScenario = model$defaultScenario,
       initVars = StringToFun(model$initVars),
       postProcess = StringToFun(model$postProcess),
@@ -355,7 +352,6 @@ sdLoadModel <- function(file, repository = F,
       description = model$description,
       globalFunctions = lapply(model$globalFunctions, 
                                StringToFun))
-    
     return(model)
   } else if (sdCoupledModelClass$classname %in% modelTags) { # load coupled model
     if (!is.null(model$components)) { 
@@ -470,7 +466,6 @@ sdLoadModel <- function(file, repository = F,
     stop(sprintf(constructorsMsg$sdLoadModel7))
     
   }
-  print("end!")
 }
 
 #' Creates a Coupled System Dynamics Model
