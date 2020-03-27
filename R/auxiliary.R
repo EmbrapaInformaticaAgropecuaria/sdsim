@@ -542,6 +542,37 @@ StringToFun <- function(str) {
     return(NULL)
 }
 
+StringToVector <- function(str) { 
+  if (is.character(str) && length(str) == 1) { 
+    # if function, expression, vector, list, data.frame, matrix
+    if (grepl(pattern = paste0("^(function|expression|c|vector|list|",
+                               "data\\.frame|matrix)\\s?\\((.*\\s*)*\\)"),
+              x = str,
+              perl = TRUE)) { 
+      tryCatch( { 
+        ex <- eval(parse(text = str))
+        if (((is.function(ex)) && 
+             !(varType %in% c("input", "switch"))) || 
+            is.null(ex)) {
+          type.convert(str, dec = ".", numerals = "allow.loss", 
+                       as.is = TRUE)
+        } else {
+          ex
+        }
+      },
+      error = function(e) {
+        type.convert(str, dec = ".", numerals = "allow.loss",
+                     as.is = TRUE)
+      }
+      )
+    } else {
+      type.convert(str, dec = ".", numerals = "allow.loss", as.is = TRUE)
+    }
+  } else {
+    str
+  }
+}
+
 # source: https://stackoverflow.com/questions/9519543/merge-two-lists-in-r
 appendList <- function (x, val) { 
   stopifnot(is.list(x), is.list(val))

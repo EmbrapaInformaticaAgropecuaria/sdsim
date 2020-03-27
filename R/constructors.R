@@ -327,10 +327,10 @@ sdLoadModel <- function(file, repository = F,
       loadedOde <- model$ode$sdFlowOde
 
       model$ode <- sdFlow(
-        flows = loadedOde$flows,
-        flowRate = loadedOde$flowRate,
-        stocks = loadedOde$stocks,
-        boundaries = loadedOde$boundaries)
+        flows = StringToVector(loadedOde$flows),
+        flowRate = StringToVector(loadedOde$flowRate),
+        stocks = StringToVector(loadedOde$stocks),
+        boundaries = StringToVector(loadedOde$boundaries))
       
     } else if (is.list(model$ode$sdFunctionOde)) {
       loadedOde <- model$ode$sdFunctionOde

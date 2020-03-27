@@ -5,7 +5,7 @@ sdFlowOdeClass <- R6::R6Class(
   inherit = sdOdeClass,
   
   public = list(
-    initialize = function(flows, flowRate, stocks, boundaries) { 
+    initialize = function(flows, flowRate, stocks, boundaries) {
       private$pFlows <- flows
       
       # TODO: change message variables names
@@ -39,7 +39,7 @@ sdFlowOdeClass <- R6::R6Class(
       split_flow <- strsplit(flows, split = "\\h*->\\h*", perl = T)
       source <- unlist(lapply(split_flow, `[[`, 1))
       sink <- unlist(lapply(split_flow, `[[`, 2))
-      
+
       
       private$pSource <- source
       private$pSink <- sink
@@ -60,11 +60,6 @@ sdFlowOdeClass <- R6::R6Class(
       return(ode)
     },
     print = function() {
-      cat("Flows:\n")
-      for(flows in private$pFlows) {
-        cat(flows)
-        cat("\n")
-      }
       mapply(function(source, sink, flowRate) {
         cat(paste0(source, " -> ", sink))
         cat(paste0("\t| Flow rate: ", as.character(flowRate)))
@@ -83,14 +78,14 @@ sdFlowOdeClass <- R6::R6Class(
         cat("\n")
       }
     },
-    saveXml = function() { 
+    saveXml = function() {
       doc = XML::newXMLDoc()
       rootOde <- XML::newXMLNode(class(self)[[1]], doc = doc)
       lOde <- list(
                    flows = VectorToCharDef(private$pFlows, TRUE),
-                   flowRate = VectorToCharDef(private$pFlowRate),
+                   flowRate = VectorToCharDef(unlist(private$pFlowRate), TRUE),
                    stocks = VectorToCharDef(private$pStocks, TRUE),
-                   boundaries = VectorToCharDef(private$pBoundaries))
+                   boundaries = VectorToCharDef(private$pBoundaries, TRUE))
       ListToXML(rootOde, lOde)
       invisible(rootOde)
     }
