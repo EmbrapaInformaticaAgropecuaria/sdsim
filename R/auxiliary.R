@@ -521,6 +521,10 @@ ListToXML <- function(node, sublist) {
   return(node)
 }
 
+ListToString <- function(l) {
+  return(paste0("list(", paste0(names(l)," = ", global, collapse = ", "), ")"))
+}
+
 VectorToCharDef <- function(x, quote = F) { 
   if (quote)
     return(paste0("c(", paste0("'", x, "'", collapse = ","), ")"))

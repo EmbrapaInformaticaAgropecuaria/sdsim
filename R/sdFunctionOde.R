@@ -50,6 +50,6 @@ sdFunctionOdeClass <- R6::R6Class(
   
   private = list(
     pOde = NULL,
-    pFunDefaultArgs = c("t", "st", "ct", "par", "inp", "sw", "aux")
+    pFunDefaultArgs = c("t", "st", "ct", "par", "inp", "sw", "aux", "global")
   )
 )

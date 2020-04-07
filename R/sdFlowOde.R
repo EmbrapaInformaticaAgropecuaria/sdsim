@@ -5,8 +5,9 @@ sdFlowOdeClass <- R6::R6Class(
   inherit = sdOdeClass,
   
   public = list(
-    initialize = function(flows, flowRate, stocks, boundaries) {
+    initialize = function(flows, flowRate, stocks, boundaries, globalFunctions) {
       private$pFlows <- flows
+      private$pGlobalFunctions <- globalFunctions
       
       # TODO: change message variables names
       if(is.null(flows))
@@ -56,7 +57,8 @@ sdFlowOdeClass <- R6::R6Class(
     getOdeFunction = function() {
       ode <- private$makeFlowOdeFunction(private$pSource,
                                          private$pSink,
-                                         private$pFlowRate)
+                                         private$pFlowRate,
+                                         private$pGlobalFunctions)
       return(ode)
     },
     print = function() {
@@ -85,7 +87,9 @@ sdFlowOdeClass <- R6::R6Class(
                    flows = VectorToCharDef(private$pFlows, TRUE),
                    flowRate = VectorToCharDef(unlist(private$pFlowRate), TRUE),
                    stocks = VectorToCharDef(private$pStocks, TRUE),
-                   boundaries = VectorToCharDef(private$pBoundaries, TRUE))
+                   boundaries = VectorToCharDef(private$pBoundaries, TRUE),
+                   globalFunctions = ListToString(private$pGlobalFunctions)
+                   )
       ListToXML(rootOde, lOde)
       invisible(rootOde)
     }
@@ -145,10 +149,10 @@ sdFlowOdeClass <- R6::R6Class(
       return(list(inflow = inflow, outflow = outflow))
     },
     
-    makeFlowOdeFunction = function(source, sink, flowRate) {
+    makeFlowOdeFunction = function(source, sink, flowRate, globalFunctions) {
       flows <- private$generateFlows(source, sink, private$pStocks)
       
-      ode <- function(t, st, ct, par, inp, sw, aux) {
+      ode <- function(t, st, ct, par, inp, sw, aux, global) {
         # Calc flow quantity
         flowQty <- sapply(flowRate, eval, envir = environment())
         
@@ -173,6 +177,7 @@ sdFlowOdeClass <- R6::R6Class(
     pSink = NULL,
     pFlowRate = NULL,
     pStocks = NULL,
-    pBoundaries = NULL
+    pBoundaries = NULL,
+    pGlobalFunctions = NULL
   )
 )
