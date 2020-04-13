@@ -158,7 +158,7 @@ sdFlowOdeClass <- R6::R6Class(
       assign("flowRate", flowRate, odeEnv)
       environment(ode) <- odeEnv
       
-      ode <- function(t, st, ct, par, inp, sw, aux, global) {
+      ode <- function(t, st, ct, par, inp, sw, aux) {
         # Calc flow quantity
         flowQty <- sapply(flowRate, eval, envir = environment())
         

@@ -337,6 +337,8 @@ sdLoadModel <- function(file, repository = F,
       
       model$ode <- sdFunction(
         func = StringToFun(loadedOde$ode))
+    } else {
+      #TODO print erro
     }
 
     # create a new model
