@@ -330,8 +330,7 @@ sdLoadModel <- function(file, repository = F,
         flows = StringToVector(loadedOde$flows),
         flowRate = StringToVector(loadedOde$flowRate),
         stocks = StringToVector(loadedOde$stocks),
-        boundaries = StringToVector(loadedOde$boundaries),
-        globalFunctions = StringToVector(loadedOde$globalFunctions))
+        boundaries = StringToVector(loadedOde$boundaries))
       
     } else if (is.list(model$ode$sdFunctionOde)) {
       loadedOde <- model$ode$sdFunctionOde
@@ -1363,13 +1362,11 @@ sdLoadScenario <- function(file,
 #' out <- sdSimulate(model)
 #' plot(out)
 sdFlow <- function(flows = NULL, flowRate = NULL, 
-                   stocks = NULL, boundaries = c("boundary"),
-                   globalFunctions = NULL) {
+                   stocks = NULL, boundaries = c("boundary")) {
   sdFlowOdeClass$new(flows,
                      flowRate = flowRate,
                      stocks = stocks,
-                     boundaries = boundaries,
-                     globalFunctions = globalFunctions)
+                     boundaries = boundaries)
 }
 
 sdFunction <- function(func = NULL) {

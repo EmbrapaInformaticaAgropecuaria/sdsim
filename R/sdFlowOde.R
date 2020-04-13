@@ -5,9 +5,8 @@ sdFlowOdeClass <- R6::R6Class(
   inherit = sdOdeClass,
   
   public = list(
-    initialize = function(flows, flowRate, stocks, boundaries, globalFunctions) {
+    initialize = function(flows, flowRate, stocks, boundaries) {
       private$pFlows <- flows
-      private$pGlobalFunctions <- globalFunctions
       
       # TODO: change message variables names
       if(is.null(flows))
@@ -57,8 +56,7 @@ sdFlowOdeClass <- R6::R6Class(
     getOdeFunction = function() {
       ode <- private$makeFlowOdeFunction(private$pSource,
                                          private$pSink,
-                                         private$pFlowRate,
-                                         private$pGlobalFunctions)
+                                         private$pFlowRate)
       return(ode)
     },
     print = function() {
@@ -87,8 +85,7 @@ sdFlowOdeClass <- R6::R6Class(
                    flows = VectorToCharDef(private$pFlows, TRUE),
                    flowRate = VectorToCharDef(unlist(private$pFlowRate), TRUE),
                    stocks = VectorToCharDef(private$pStocks, TRUE),
-                   boundaries = VectorToCharDef(private$pBoundaries, TRUE),
-                   globalFunctions = ListToString(private$pGlobalFunctions)
+                   boundaries = VectorToCharDef(private$pBoundaries, TRUE)
                    )
       ListToXML(rootOde, lOde)
       invisible(rootOde)
@@ -149,8 +146,13 @@ sdFlowOdeClass <- R6::R6Class(
       return(list(inflow = inflow, outflow = outflow))
     },
     
-    makeFlowOdeFunction = function(source, sink, flowRate, globalFunctions) {
+    makeFlowOdeFunction = function(source, sink, flowRate) {
       flows <- private$generateFlows(source, sink, private$pStocks)
+      
+      # criar um novo environment (odeEnv), adicionar flows e flowRate nesse environment
+      # e atribuir odeEnv como parent de ode
+      
+      # environment(ode) <- odeEnv
       
       ode <- function(t, st, ct, par, inp, sw, aux, global) {
         # Calc flow quantity
@@ -177,7 +179,6 @@ sdFlowOdeClass <- R6::R6Class(
     pSink = NULL,
     pFlowRate = NULL,
     pStocks = NULL,
-    pBoundaries = NULL,
-    pGlobalFunctions = NULL
+    pBoundaries = NULL
   )
 )
