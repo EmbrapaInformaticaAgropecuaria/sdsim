@@ -151,8 +151,12 @@ sdFlowOdeClass <- R6::R6Class(
       
       # criar um novo environment (odeEnv), adicionar flows e flowRate nesse environment
       # e atribuir odeEnv como parent de ode
-      
       # environment(ode) <- odeEnv
+      
+      odeEnv <- new.env(parent = parent.env(globalenv()))
+      assign("flows", flows, odeEnv)
+      assign("flowRate", flowRate, odeEnv)
+      environment(ode) <- odeEnv
       
       ode <- function(t, st, ct, par, inp, sw, aux, global) {
         # Calc flow quantity

@@ -4,6 +4,7 @@ CreateFuncEval <-
            par,
            inp,
            sw,
+           global,
            auxiliary,
            lastEvalTime,
            unlistReturn = F,
@@ -30,7 +31,7 @@ CreateFuncEval <-
         aux[[var]] <- eval(auxiliary[[var]])
       
       output <- func(t = t, st = st, ct = ct, par = par, 
-                     inp = inp, sw = sw, aux = aux)
+                     inp = inp, sw = sw, aux = aux, global = global)
       
       # Save aux trajectory
       if (storeAuxTrajectory)

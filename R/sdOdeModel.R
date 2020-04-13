@@ -265,7 +265,7 @@ sdOdeModelClass <- R6::R6Class(
                           event,
                           globalFunctions) { 
       funDefaultArgs <- c("t", "st", "ct", "par", "inp", "sw", "aux")
-      
+
       # Create new environment for model functions
       # modelEnvironment <- new.env(parent = baseenv())
       modelEnvironment <- new.env(parent = parent.env(globalenv()))
@@ -391,6 +391,7 @@ sdOdeModelClass <- R6::R6Class(
         private$pAux <- aux
       }
       
+      # parent.env(modelEnvironment) <- environment(private$pOde$getOdeFunction())
       # if (is.function(private[["pOde"]]))
       #   environment(private[["pOde"]]) <- modelEnvironment
       if (is.function(private[["pInitVars"]]))
@@ -727,8 +728,11 @@ sdOdeModelClass <- R6::R6Class(
   ),
   active = list(
     ode = function() { 
-      if(!is.null(private$pOde))
+      if(!is.null(private$pOde)) {
+        ode <- private$pOde$getOdeFunction()
+        parent.env(environment(ode)) <- private$pModelEnvironment
         return(private$pOde$getOdeFunction())
+      }
       else
         return(NULL)
     },
@@ -766,5 +770,4 @@ sdOdeModelClass <- R6::R6Class(
     pModelEnvironment = NULL
   )
 )
-
 
