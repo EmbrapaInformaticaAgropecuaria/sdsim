@@ -125,17 +125,18 @@ AssembleOdeModel <- function(model, timeSeriesDirectory, progressFunction = NULL
   
   modelObj <- sdsim::sdOdeModel(
     id = model$id,
-    ode = DifferentialEquations,
+    modelDynamics = DifferentialEquations,
     defaultScenario = defaultScenarioObj,
-    initVars = InitVars,
-    event = EventFunction,
+    InitVars = InitVars,
+    RootSpecification = RootFunction,
+    EventFunction = EventFunction,
     description = model$description,
     aux = auxList,
     globalFunctions = globalFunctions)
   
   if(!is.null(progressFunction))
     assign("UpdateSimulationProgress", progressFunction, 
-           envir = environment(modelObj$ode))
+           envir = environment(modelObj$DifferentialEquations))
   
   return(modelObj)
 }
