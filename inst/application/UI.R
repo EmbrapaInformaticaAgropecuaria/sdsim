@@ -59,7 +59,7 @@ sidebar <- shinydashboard::dashboardSidebar(
     
     shinydashboard::menuItem(
       "Edit Model", 
-      tabName = "DifferentialEquationsPage", icon = icon("cogs")),
+      tabName = "odePage", icon = icon("cogs")),
     shinydashboard::menuItem(
       "Description", 
       tabName = "descriptionPage", icon = icon("commenting")),
@@ -271,7 +271,7 @@ simulationPage <- shinydashboard::tabItem(
 
 # Note: Every input id for rhandsontables and ace editor scripts must have the 
 # name of the corresponding data variable followed by 'Input'. 
-# Example: 'DifferentialEquationsInput' corresponds to 'DifferentialEquations' reactive variable
+# Example: 'odeInput' corresponds to 'ode' reactive variable
 scenarioPage <- shinydashboard::tabItem(
   tabName = "scenarioPage",
   fluidPage(
@@ -478,9 +478,9 @@ scenarioPage <- shinydashboard::tabItem(
 
 # Note: Every input id for rhandsontables and ace editor scripts must have the 
 # name of the corresponding data variable followed by 'Input'. 
-# Example: 'DifferentialEquationsInput' corresponds to 'DifferentialEquations' reactive variable
-DifferentialEquationsPage <- shinydashboard::tabItem(
-  tabName = "DifferentialEquationsPage",
+# Example: 'odeInput' corresponds to 'ode' reactive variable
+odePage <- shinydashboard::tabItem(
+  tabName = "odePage",
   fluidPage(
     shinydashboard::box(
       title = "Edit Model",
@@ -503,7 +503,7 @@ DifferentialEquationsPage <- shinydashboard::tabItem(
             id = "modelBox", title = "Ode Model", width = "100%",
             tabPanel(
               "Differential Equations",
-              AceEditorCustom("DifferentialEquations", height = scriptHeight),
+              AceEditorCustom("ode", height = scriptHeight),
               shinydashboard::box(
                 title = ("Usage"),
                 solidHeader = T, 
@@ -537,14 +537,14 @@ DifferentialEquationsPage <- shinydashboard::tabItem(
                    variables."),
                 br(),
                 h5("Example from Arenstorf Model:"),
-                AceEditorCustom("DifferentialEquationsExample",
+                AceEditorCustom("odeExample",
                                 theme = "idle_fingers",
                                 showLineNumbers = F,
                                 showPrintMargin = F,
                                 readOnly = T, 
                                 height = "180px",
                                 highlightActiveLine = F, 
-                                value = DifferentialEquationsExampleStr)
+                                value = odeExampleStr)
               )
               
             ),
@@ -1376,7 +1376,7 @@ aboutPage <- shinydashboard::tabItem(
 
 # Dashboard layout
 body <- shinydashboard::dashboardBody(
-  shinydashboard::tabItems(managePage, simulationPage, scenarioPage, DifferentialEquationsPage, 
+  shinydashboard::tabItems(managePage, simulationPage, scenarioPage, odePage, 
                            descriptionPage, helpPage, aboutPage),
   
   # Add javascript functions to sidebar

@@ -50,7 +50,7 @@ scen <- sdScenario(
 )
 
 model <- sdOdeModel("test",
-                    DifferentialEquations = flows,
+                    ode = flows,
                     defaultScenario = scen)
 out <- sdSimulate(model)
 plot(out)

@@ -876,7 +876,7 @@ server <- shinyServer(function(input, output, session) {
 # Send custom message to a script depending on which tab is selected
 SendCustomModelBoxMessage <- function(modelBox, session) {
   if(modelBox == "Differential Equations")
-    session$sendCustomMessage("shinyAceForceRefresh", "DifferentialEquations")
+    session$sendCustomMessage("shinyAceForceRefresh", "ode")
   if(modelBox == "Parameter Initialization")
     session$sendCustomMessage("shinyAceForceRefresh", "initVars")
   if(modelBox == "Events")

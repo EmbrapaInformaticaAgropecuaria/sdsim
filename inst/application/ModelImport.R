@@ -419,8 +419,8 @@ UpdateLoadedModel <- function(simData, session, input,
     # Update scripts
     CustomAceUpdate(session, "description", 
                     value = currentModel$description)
-    CustomAceUpdate(session, "DifferentialEquations", 
-                    value = currentModel$DifferentialEquations)
+    CustomAceUpdate(session, "ode", 
+                    value = currentModel$ode)
     CustomAceUpdate(session, "initVars", 
                     value = currentModel$initVars)
     CustomAceUpdate(session, "root", 
@@ -530,7 +530,7 @@ ClearSimulationResults <- function(simData, session, input, output) {
 
 ClearOdeModelUI <- function(simData, session, input, output) {
   # Clear ode model script fields
-  CustomAceUpdate(session, "DifferentialEquations", value = "")
+  CustomAceUpdate(session, "ode", value = "")
   CustomAceUpdate(session, "initVars", value = "")
   CustomAceUpdate(session, "root", value = "")
   CustomAceUpdate(session, "event", value = "")
@@ -660,7 +660,7 @@ LoadOdeModelData <- function(modelXml, simData) {
   modelData <- CreateOdeModelObject(
     id = modelXml$id, 
     description = modelXml$description, 
-    DifferentialEquations = FunToString(modelXml$ode$sdFunctionOde$ode), 
+    ode = FunToString(modelXml$ode$sdFunctionOde$ode), 
     initVars = FunToString(modelXml$InitVars), 
     root = FunToString(modelXml$RootSpecification), 
     event = FunToString(modelXml$EventFunction),
@@ -744,7 +744,7 @@ LoadScenarioData <- function(scenario, simData, parentModelId = NULL) {
 # Returns a list with the model's components
 CreateOdeModelObject <- function(id,
                               description = NULL,
-                              DifferentialEquations = NULL,
+                              ode = NULL,
                               initVars = NULL,
                               root = NULL,
                               event = NULL,
@@ -755,14 +755,14 @@ CreateOdeModelObject <- function(id,
                               scenarios = list()) {
   model <- list()
   
-  if(!is.null(DifferentialEquations))
+  if(!is.null(ode))
     model$type <- "sdOdeModel"
   else
     model$type <- "sdStaticModel"
   
   model$id <- id
   model$description <- description
-  model$DifferentialEquations <- DifferentialEquations
+  model$ode <- ode
   model$initVars <- initVars
   model$root <- root
   model$event <- event

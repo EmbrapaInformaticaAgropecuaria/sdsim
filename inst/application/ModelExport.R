@@ -198,7 +198,7 @@ OdeModelToXml <- function(model) {
   
   lModel <- list(id = model$id,
                  description = model$description,
-                 DifferentialEquations = model$DifferentialEquations,
+                 ode = model$ode,
                  InitVars = model$initVars,
                  PostProcessVars = "NULL",
                  RootSpecification = model$root,

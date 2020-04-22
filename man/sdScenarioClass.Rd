@@ -59,7 +59,7 @@ details section for more information.}
 \item{\code{state}}{A numeric list with the default initial state values for an ODE 
 system. The state variables are used to describe the mathematical "state" of 
 a system dynamics. The continuous rate of change of these variables 
-is determined by the model \code{DifferentialEquations} function. All the 
+is determined by the model \code{ode} function. All the 
 elements in this list must be named.}
 
 \item{\code{constant}}{A numeric list with the model constant variables. 

@@ -73,8 +73,8 @@ The sdsim atomic system dynamics model class named *sdOdeModelClass* have the fo
 - *id*: a string with a valid name for the model identification, uses the function *make.names* [@RCoreTeam] to make syntactically valid names.
 - *description*: a string with a breath description of the model.
 - *defaultScenario*: The model default scenario object. It should contain all the model variables initialized with default values that ensures the model simulation and exemplifies its behaviour.
-- *aux*: A list with the model auxiliary equations in strings or R-expressions written in R-format to assist in the *DifferentialEquations* computation.
-- *DifferentialEquations*: An R-function that computes the values of the state variables derivatives in the ODE system (the model definition) at each time step of the simulation.
+- *aux*: A list with the model auxiliary equations in strings or R-expressions written in R-format to assist in the *ode* computation.
+- *ode*: An R-function that computes the values of the state variables derivatives in the ODE system (the model definition) at each time step of the simulation.
 - *InitVars*: An R-function that initialize or change the initial state values and/or other model variables before the solver call when running a simulation. It can be used, for example, to compute some dependent parameter variables or the initial state values.
 - *PostProcessVars*: An R-function that receives the simulation output trajectories inside the simulator function and process it to derive further conclusions.
 - *RootSpecification*: A numeric vector containing the times to trigger an event, or a *data.frame* specifying the events, or an R-function that becomes zero when an event occur.
@@ -159,7 +159,7 @@ LVode <- function(t, st, ct, par, inp, sw, aux)
 
 lv <- sdOdeModel(id = "LotkaVolterra",
               defaultScenario = lvScenario,
-              DifferentialEquations = LVode,
+              ode = LVode,
               aux = aux)
 print(lv)
 ```
@@ -262,7 +262,7 @@ The sdsim models have a default scenario to store all the system variables that 
 
 The sdsim package defines a scenario through the following type of variables:
 
-- state: The default initial state values for the ODE system. The state variables are used to describe the mathematical "state" of a dynamic system. The continuous rate of change of these variables is determined by the model *DifferentialEquations* function. Not present in static models.
+- state: The default initial state values for the ODE system. The state variables are used to describe the mathematical "state" of a dynamic system. The continuous rate of change of these variables is determined by the model *ode* function. Not present in static models.
 - constant: The model constant values that are immutable between simulations and inaccessible for statistical calibration.
 - parameter: The model parameters that are only constant during one simulation.
 - input: The model inputs that are exogenous variables, such as coupled or time series variables.
@@ -530,7 +530,7 @@ prey <- sdOdeModel(id = "Prey",
                                              parameter = parsPrey,
                                              input = inpPrey),
                 aux = auxPrey,
-                DifferentialEquations = LVodePrey)
+                ode = LVodePrey)
 
 # Consumer model variables and ODE function
 stConsumer <- list(C = 2)
@@ -556,7 +556,7 @@ consumer <- sdOdeModel(id = "Consumer",
                                                  parameter = parsConsumer,
                                                  input = inpConsumer),
                     aux = auxConsumer,
-                    DifferentialEquations = LVodeConsumer)
+                    ode = LVodeConsumer)
 
 # create the coupled model connections list
 lvConnections <- list(c("conP", "Consumer", "P", "Prey", "st$P"),
@@ -743,9 +743,9 @@ The *RootSpecification* can be defined in three ways:
     1. **method**: which event is to take place; should be one of ("replace", "add", "multiply"); also allowed is to specify the number (1 = replace, 2 = add, 3 = multiply);
 1. An R-function that becomes zero when a root occur. When a root is found, the simulation triggers an event by calling the *EventFunction* or, if no *EventFunction* is defined, the simulation stops.
 
-    - This function must be defined as $function(t, st, ct, par, inp, sw, aux)$, with the same arguments as the *DifferentialEquations* and it should return a numeric vector. If any element of this vector is zero an event is triggered.
+    - This function must be defined as $function(t, st, ct, par, inp, sw, aux)$, with the same arguments as the *ode* and it should return a numeric vector. If any element of this vector is zero an event is triggered.
 
-The *EventFunction* must be defined as $function(t, st, ct, par, inp, sw, aux)$ with the same arguments as the *DifferentialEquations* and it should return the state-values (some of which modified), as a vector with the variables in the right order. If no *EventFunction* is defined, when a root is found the simulation stops.
+The *EventFunction* must be defined as $function(t, st, ct, par, inp, sw, aux)$ with the same arguments as the *ode* and it should return the state-values (some of which modified), as a vector with the variables in the right order. If no *EventFunction* is defined, when a root is found the simulation stops.
 
 Let's load an example from the sdsim repository to better understand how to specify an event using functions. The example we are going to use is called Bouncing Ball and it describes a ball been thrown from a certain height above the ground and losing energy when kicking on the ground until it reaches rest.
 

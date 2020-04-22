@@ -90,7 +90,7 @@ prey <- sdOdeModel(
                                parameter = parsPrey,
                                input = inpPrey),
   aux = auxPrey,
-  DifferentialEquations = LVodePrey)
+  ode = LVodePrey)
 
 # Consumer model variables and ode function
 stConsumer <- list(C = 2)
@@ -118,7 +118,7 @@ consumer <- sdOdeModel(
     parameter = parsConsumer,
     input = inpConsumer),
   aux = auxConsumer,
-  DifferentialEquations = LVodeConsumer)
+  ode = LVodeConsumer)
 
 # create the coupled model connections list 
 # conP: inform the consumer model about the amount of preys and 

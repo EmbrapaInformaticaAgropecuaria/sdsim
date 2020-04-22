@@ -5,7 +5,7 @@
 \title{Creates an Atomic System Dynamics Model Object}
 \usage{
 sdOdeModel(id = NULL, description = NULL, defaultScenario = NULL,
-  aux = NULL, DifferentialEquations = NULL, InitVars = NULL,
+  aux = NULL, ode = NULL, InitVars = NULL,
   PostProcessVars = NULL, RootSpecification = NULL,
   EventFunction = NULL, globalFunctions = NULL)
 }
@@ -21,7 +21,7 @@ variables initialized with default values that ensures the model simulation.}
 
 \item{aux}{(Optional) A list with the model auxiliary equations in strings or 
 R-expressions written in R-format to assist in the 
-\code{DifferentialEquations} computation.
+\code{ode} computation.
 
 They have access to the following variables: (t, st, ct, par, inp, sw, aux). 
 Where \code{t} is 
@@ -40,7 +40,7 @@ and passed via the argument \code{aux} to any model function call.
 See the function \code{\link{sdInitEquations}} to learn how this list is 
 generated.}
 
-\item{DifferentialEquations}{An R-function that computes the values of the 
+\item{ode}{An R-function that computes the values of the 
 state variables derivatives in the ODE system (the model definition) at time 
 t. 
 
@@ -54,7 +54,7 @@ for each time step during the simulation), \code{sw} is list with the model
 switch variables and \code{aux} is a list with the model auxiliary equations 
 (which will be evaluated for each time step during the simulations).
 
-The return value of the \code{DifferentialEquations} must be a list, whose 
+The return value of the \code{ode} must be a list, whose 
 first element is a vector containing the derivatives of the state variables 
 with respect to time, and whose next elements are extra values that are 
 computed at each time step and need to be included in the simulation output. 
@@ -205,7 +205,7 @@ lvscen <- sdScenario(id = "LVscen", times = times, method = "lsoda",
 # create the model object
 lv <- sdOdeModel(id = "Lotka-Volterra",
                    defaultScenario = lvscen,
-                   DifferentialEquations = LVode,
+                   ode = LVode,
                    aux = aux)
               
 # validate the model ode

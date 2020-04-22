@@ -35,7 +35,7 @@ CreateComponentsDataFrame <- function(nRows) {
 
 # Initalize reactive script data
 # InitScriptData <- function(session) {
-#   DifferentialEquationsTxt <- "function(t, st, ct, par, inp, sw, aux) {
+#   odeTxt <- "function(t, st, ct, par, inp, sw, aux) {
 #   # Calculate the differentials
 #   
 #   # Return the differentials to the integrator
@@ -71,7 +71,7 @@ CreateComponentsDataFrame <- function(nRows) {
 #   
 #   # Update script fields
 #   CustomAceUpdate(session, "description", value = descriptionTxt)
-#   CustomAceUpdate(session, "DifferentialEquations", value = DifferentialEquationsTxt)
+#   CustomAceUpdate(session, "ode", value = odeTxt)
 #   CustomAceUpdate(session, "initVars", value = initVarsTxt)
 #   CustomAceUpdate(session, "root", value = rootTxt)
 #   CustomAceUpdate(session, "event", value = eventTxt)

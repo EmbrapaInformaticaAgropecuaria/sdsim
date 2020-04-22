@@ -249,7 +249,7 @@ prey <- sdOdeModel(
     input = inpPrey,
     description = descriptionsPrey),
   aux = auxPrey,
-  DifferentialEquations = LVodePrey)
+  ode = LVodePrey)
 
 # Consumer model variables and ode function
 stConsumer <- list(C = 2)
@@ -283,7 +283,7 @@ consumer <- sdOdeModel(
     input = inpConsumer,
     description = descriptionsConsumer),
   aux = auxConsumer,
-  DifferentialEquations = LVodeConsumer)
+  ode = LVodeConsumer)
 
 # Environment model variables and algebraic equations
 parEnv <- data.frame(Variable = c("K"),

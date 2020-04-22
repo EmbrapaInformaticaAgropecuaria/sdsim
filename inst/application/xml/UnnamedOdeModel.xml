@@ -2,12 +2,17 @@
 <sdOdeModel>
   <id>Unnamed Ode Model</id>
   <description/>
-  <DifferentialEquations>function(t, st, ct, par, inp, sw, aux) {
+  <ode>
+    <sdFunctionOde>
+      <ode>function (t, st, ct, par, inp, sw, aux) 
+{
   # Calculate the differentials
-  
+
   # Return the differentials to the integrator
   return(list(c()))
-}</DifferentialEquations>
+}</ode>
+    </sdFunctionOde>
+  </ode>
   <InitVars># # Uncomment to use initialization function
 # function(st, ct, par, inp, sw, aux) 
 # {

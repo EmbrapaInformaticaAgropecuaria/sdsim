@@ -50,17 +50,17 @@ AssembleCoupledModel <- function(model, simData, timeSeriesDirectory) {
 AssembleOdeModel <- function(model, timeSeriesDirectory, progressFunction = NULL) {
   defaultScenario <- model$scenarios[[model$defaultScenarioId]]
   
-  DifferentialEquationsStr <- model$DifferentialEquations
+  odeStr <- model$ode
   
   # Insert function to update progress into the function code using regex
   if(!is.null(progressFunction)) {
-    DifferentialEquationsStr <- sub("^(.*function.*\\(.*\\)(.|\n)*\\{)((.|\n|\t)*)$",
+    odeStr <- sub("^(.*function.*\\(.*\\)(.|\n)*\\{)((.|\n|\t)*)$",
                                     "\\1\n  UpdateSimulationProgress(t)\\3",
-                                    DifferentialEquationsStr)
+                                    odeStr)
   }
   
   # Assemble ode function
-  DifferentialEquations <- eval(parse(text = DifferentialEquationsStr))
+  ode <- eval(parse(text = odeStr))
 
   # If there is an initialization function parse it
   if(!is.null(model$initVars) &&
@@ -89,8 +89,8 @@ AssembleOdeModel <- function(model, timeSeriesDirectory, progressFunction = NULL
   
   # Set function environments to global to reduce object size and
   # remove server variables from the object
-  if(!is.null(DifferentialEquations))
-    environment(DifferentialEquations) <- globalenv()
+  if(!is.null(ode))
+    environment(ode) <- globalenv()
   if(!is.null(InitVars))
     environment(InitVars) <- globalenv()
   if(!is.null(RootFunction))
@@ -125,7 +125,7 @@ AssembleOdeModel <- function(model, timeSeriesDirectory, progressFunction = NULL
   
   modelObj <- sdsim::sdOdeModel(
     id = model$id,
-    ode = DifferentialEquations,
+    ode = ode,
     defaultScenario = defaultScenarioObj,
     initVars = InitVars,
     event = EventFunction,
@@ -240,7 +240,7 @@ UpdateModelData <- function(simData, input) {
   if(currentModel$type == "sdOdeModel") {
     # Update Ode Model
     currentModel$description <- input$description
-    currentModel$DifferentialEquations <- input$DifferentialEquations
+    currentModel$ode <- input$ode
     currentModel$initVars <- input$initVars
     currentModel$root <- input$root
     currentModel$event <- input$event

@@ -64,7 +64,7 @@ AceEditorCustom <- function(varName, tabSize = 2, mode = "r",
 }
 
 # Example functions
-DifferentialEquationsExampleStr <- "# Source: Soetaert_K.,_Cash_J.,_Mazzia_F.-Solving_Differential_ Equations_in_R-Springer(2012)
+odeExampleStr <- "# Source: Soetaert_K.,_Cash_J.,_Mazzia_F.-Solving_Differential_ Equations_in_R-Springer(2012)
 function (t, st, ct, par, inp, sw, aux) {
   # Calculate the differentials
   dy3 = st$y1 + 2 * st$dy2 - ct$mu2 * (st$y1 + ct$mu1)/aux$D1 - ct$mu1 * (st$y1 - ct$mu2)/aux$D2

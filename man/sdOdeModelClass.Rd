@@ -37,7 +37,7 @@ variables initialized with default values that ensures the model simulation.}
 
 \item{\code{aux}}{(Optional) A list with the model auxiliary equations in strings or 
 R-expressions written in R-format to assist in the 
-\code{DifferentialEquations} computation.
+\code{ode} computation.
 
 They have access to the following variables: (t, st, ct, par, inp, sw, aux). 
 Where \code{t} is 
@@ -56,11 +56,11 @@ and passed via the argument \code{aux} to any model function call.
 See the function \code{\link{sdInitEquations}} to learn how this list is 
 generated.}
 
-\item{\code{DifferentialEquations}}{An R-function that computes the values of the 
+\item{\code{ode}}{An R-function that computes the values of the 
 state variables derivatives in the ODE system (the model definition) at time 
 t.
 
-It must be defined as: DifferentialEquations <- function(t, st, ct, par, inp, 
+It must be defined as: ode <- function(t, st, ct, par, inp, 
 sw, aux). 
 Where \code{t} is the current time point in the integration, \code{st} is 
 a list with the current estimate of the state variables in the ODE system, 
@@ -72,7 +72,7 @@ current time step, \code{sw} is  list with the model switch variables and
 current time step.
 
 
-The return value of \code{DifferentialEquations} must be a list, whose first 
+The return value of \code{ode} must be a list, whose first 
 element is a vector containing the derivatives of the state variables with 
 respect to time, and whose next elements are extra values that are 
 computed at each time step and will be included in the simulation output. The 
@@ -170,7 +170,7 @@ model. They can be called using the list names.}
 \section{Public Methods Definition}{
   
 \describe{
-\item{\code{$initialize(id, description, DifferentialEquations, 
+\item{\code{$initialize(id, description, ode, 
 InitVars, PostProcessVars, RootSpecification, EventFunction, aux, 
 defaultScenario, globalFunctions)}}{
 Class constructor. Sets the model definition fields.
@@ -258,7 +258,7 @@ lvscen <- sdScenario(id = "LVscen", times = times, method = "lsoda",
 
 # create the model object
 lv <- sdOdeModel(id = "Lotka-Volterra", defaultScenario = lvscen, 
-              DifferentialEquations = LVode,
+              ode = LVode,
               aux = aux)
               
 # validate the model ode
