@@ -1,0 +1,48 @@
+<?sdsim about='R package for modeling and simulation of system dynamics' version='0.1' date='2020-04-22'?>
+<sdOdeModel>
+  <id>LotkaVoterra</id>
+  <description/>
+  <initVars/>
+  <postProcess/>
+  <trigger/>
+  <event/>
+  <aux/>
+  <globalFunctions/>
+  <defaultScenario>
+    <sdScenario>
+      <id>Default</id>
+      <times>
+        <from>0</from>
+        <to>15</to>
+        <by>0.1</by>
+      </times>
+      <method>lsoda</method>
+      <state>
+        <Y>1</Y>
+        <R>0.7</R>
+      </state>
+      <constant/>
+      <input/>
+      <interpolation/>
+      <parameter>
+        <alpha>2</alpha>
+        <beta>1.1</beta>
+        <delta>1</delta>
+        <gamma>0.8</gamma>
+      </parameter>
+      <switch/>
+      <unit/>
+      <description/>
+    </sdScenario>
+  </defaultScenario>
+  <ode>
+    <sdFunctionOde>
+      <ode>function (t, st, ct, par, inp, sw, aux) 
+{
+    dPrey &lt;- par$alpha * st$Y - par$beta * st$Y * st$R
+    dPredator &lt;- par$delta * st$Y * st$R - par$gamma * st$R
+    return(list(c(dPrey, dPredator)))
+}</ode>
+    </sdFunctionOde>
+  </ode>
+</sdOdeModel>

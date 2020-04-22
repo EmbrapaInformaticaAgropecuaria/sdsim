@@ -401,7 +401,7 @@ UpdateLoadedModel <- function(simData, session, input,
   
   # Get current model
   currentModel <- simData$models[[simData$currentModelId]]
-  
+
   if(currentModel$type == "sdOdeModel") {
     # Unhide ode model panel
     session$sendCustomMessage("unhideElement", "odeModelPage")
@@ -642,25 +642,11 @@ LoadOdeModelData <- function(modelXml, simData) {
     paste0(x, " <- ", FunToString(globalFunctions[[x]]))
   })
   
-  # ode <- list()
-  # if (is.list(modelXml$ode$sdFlowOde)) {
-  #   ode$flows <- modelXml$ode$sdFlowOde$flows
-  #   ode$flowRate <- modelXml$ode$sdFlowOde$flowRate
-  #   ode$stocks <- modelXml$ode$sdFlowOde$stocks
-  #   ode$boundaries <- modelXml$ode$sdFlowOde$boundaries
-  # } 
-  # else if (is.list(modelXml$ode$sdFunctionOde)) {
-  #   ode$func <- modelXml$ode$sdFunctionOde$ode
-  # } 
-  # else {
-  #   #TODO print erro
-  # }
-  
   # Create model
   modelData <- CreateOdeModelObject(
     id = modelXml$id, 
     description = modelXml$description, 
-    ode = FunToString(modelXml$ode$sdFunctionOde$ode), 
+    ode = modelXml$ode, 
     initVars = FunToString(modelXml$InitVars), 
     root = FunToString(modelXml$RootSpecification), 
     event = FunToString(modelXml$EventFunction),
@@ -760,9 +746,19 @@ CreateOdeModelObject <- function(id,
   else
     model$type <- "sdStaticModel"
   
+  # if (is.list(ode$sdFlowOde)) {
+  # 
+  # }
+  # else if (is.list(ode$sdFunctionOde)) {
+  # 
+  # }
+  # else {
+  #   #TODO print erro
+  # }
+  
   model$id <- id
   model$description <- description
-  model$ode <- ode
+  model$ode <- ode$sdFunctionOde$ode
   model$initVars <- initVars
   model$root <- root
   model$event <- event

@@ -198,7 +198,7 @@ OdeModelToXml <- function(model) {
   
   lModel <- list(id = model$id,
                  description = model$description,
-                 ode = model$ode,
+                 # ode = model$ode,
                  InitVars = model$initVars,
                  PostProcessVars = "NULL",
                  RootSpecification = model$root,
@@ -215,10 +215,20 @@ OdeModelToXml <- function(model) {
   XML::xmlName(sdScenarioXML) <- "sdScenario"
   defaultScenarioXML <- XML::newXMLNode("defaultScenario")
   
+  odeXML <- XML::newXMLNode("ode",.children = list(odeToXML(model$ode)))
+
   XML::addChildren(defaultScenarioXML, kids = list(sdScenarioXML))
   XML::addChildren(rootsdModel, kids = list(defaultScenarioXML))
+  XML::addChildren(rootsdModel, kids = list(odeXML))
   
   return(doc)
+}
+
+odeToXML <- function(ode) {
+  rootOde <- XML::newXMLNode("sdFunctionOde")
+  lOde <- list(ode = FunToString(ode))
+  ListToXML(rootOde, lOde)
+  invisible(rootOde)
 }
 
 # Save static model to XML
