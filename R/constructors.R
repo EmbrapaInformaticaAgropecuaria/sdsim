@@ -382,12 +382,31 @@ sdLoadModel <- function(file, repository = F,
                      timeSeriesDirectory = timeSeriesDirectory)
         
         if (names(model$components)[[i]] == sdOdeModelClass$classname) {
-          # create a sd atomic model
           
+          # flowOde or functionOde
+          if (is.list(x$ode$sdFlowOde)) {
+            loadedOde <- x$ode$sdFlowOde
+            
+            x$ode <- sdFlow(
+              flows = StringToVector(loadedOde$flows),
+              flowRate = StringToVector(loadedOde$flowRate),
+              stocks = StringToVector(loadedOde$stocks),
+              boundaries = StringToVector(loadedOde$boundaries))
+            
+          } else if (is.list(x$ode$sdFunctionOde)) {
+            loadedOde <- x$ode$sdFunctionOde
+            
+            x$ode <- sdFunction(
+              func = StringToFun(loadedOde$ode))
+          } else {
+            #TODO print erro
+          }
+          
+          # create a sd atomic model
           component <- sdOdeModelClass$new(
             id = x$id,
             description = x$description,
-            ode = StringToFun(x$ode),
+            ode = x$ode,
             defaultScenario = x$defaultScenario,
             initVars = StringToFun(x$initVars),
             postProcess = StringToFun(x$postProcess),
