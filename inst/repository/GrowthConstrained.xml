@@ -4,12 +4,16 @@
   <description>The model captures the growth and decline dynamics of a company discovering a 
   new oil field, where the stock of oil could potentially last for up to 
   200 years. Source: System Dynamics Modeling with R, Jim Duggan, 2016</description>
-  <ode>function (t, st, ct, par, inp, sw, aux) 
-{
-    dS &lt;- aux$investment - aux$depreciation
-    dR &lt;- -aux$extraction
-    return(list(c(dS, dR)))
-}</ode>
+  <ode>
+    <sdFunctionOde>
+      <ode>function (t, st, ct, par, inp, sw, aux) 
+    {
+        dS &lt;- aux$investment - aux$depreciation
+        dR &lt;- -aux$extraction
+        return(list(c(dS, dR)))
+    }</ode>
+    </sdFunctionOde>
+  </ode>
   <initVars/>
   <postProcess/>
   <trigger/>

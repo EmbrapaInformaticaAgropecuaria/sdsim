@@ -6,14 +6,18 @@ The Arenstorf problem, from Astronomy, describes the movement of a small body or
 The two large bodies have mass m1 and m2 and move in a circular rotation (coordinates y1 and y2) in a plane, while the third body has negligible mass and is moving in the same plane.
 It was necessary to solve this problem in order to determine the path that the Apollo spacecraft had to take in its journey between the Earth and the Moon. The problem was solved by Arenstorf and now it is an often used test problem for non-stiff solvers.
 </description>
-  <ode>function (t, st, ct, par, inp, sw, aux) 
-{
-    dy3 &lt;- st$y1 + 2 * st$dy2 - inp$mu2 * (st$y1 + inp$mu1)/aux$D1 - 
-        inp$mu1 * (st$y1 - inp$mu2)/aux$D2
-    dy4 &lt;- st$y2 - 2 * st$dy1 - inp$mu2 * st$y2/aux$D1 - inp$mu1 * 
-        st$y2/aux$D2
-    return(list(c(y1 = st$dy1, y2 = st$dy2, dy1 = dy3, dy2 = dy4)))
-}</ode>
+  <ode>
+    <sdFunctionOde>
+      <ode>function (t, st, ct, par, inp, sw, aux) 
+    {
+        dy3 &lt;- st$y1 + 2 * st$dy2 - inp$mu2 * (st$y1 + inp$mu1)/aux$D1 - 
+            inp$mu1 * (st$y1 - inp$mu2)/aux$D2
+        dy4 &lt;- st$y2 - 2 * st$dy1 - inp$mu2 * st$y2/aux$D1 - inp$mu1 * 
+            st$y2/aux$D2
+        return(list(c(y1 = st$dy1, y2 = st$dy2, dy1 = dy3, dy2 = dy4)))
+    }</ode>
+    </sdFunctionOde>
+  </ode>
   <initVars>function (st, ct, par, inp, sw, aux) 
 {
     inp$mu2 &lt;- 1 - inp$mu1
