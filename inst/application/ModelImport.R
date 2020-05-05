@@ -647,7 +647,7 @@ LoadOdeModelData <- function(modelXml, simData) {
     id = modelXml$id, 
     description = modelXml$description, 
     ode = modelXml$ode, 
-    initVars = FunToString(modelXml$InitVars), 
+    initVars = FunToString(modelXml$initVars), 
     root = FunToString(modelXml$RootSpecification), 
     event = FunToString(modelXml$EventFunction),
     aux = aux,
@@ -673,7 +673,7 @@ LoadStaticModelData <- function(modelXml, simData) {
   modelData <- CreateStaticModelObject(
     id = modelXml$id, 
     description = modelXml$description,
-    initVars = FunToString(modelXml$InitVars),
+    initVars = FunToString(modelXml$initVars),
     aux = algebraicEquations,
     globalFunctions = globalFunctions,
     defaultScenarioId = modelXml$defaultScenario$sdScenario$id,
