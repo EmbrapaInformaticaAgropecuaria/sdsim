@@ -81,9 +81,9 @@ AssembleOdeModel <- function(model, timeSeriesDirectory, progressFunction = NULL
   # If there is an event function script parse it
   if(!is.null(model$event) &&
      !grepl(EMPTY_PERL_REGEX, model$event, perl = T))
-    EventFunction <- eval(parse(text = paste(model$event))) 
+    event <- eval(parse(text = paste(model$event))) 
   else 
-    EventFunction <- NULL
+    event <- NULL
   
   # Parse global functions into a list
   if(!is.null(model$globalFunctions))
@@ -97,8 +97,8 @@ AssembleOdeModel <- function(model, timeSeriesDirectory, progressFunction = NULL
     environment(initVars) <- globalenv()
   if(!is.null(trigger))
     environment(trigger) <- globalenv()
-  if(!is.null(EventFunction))
-    environment(EventFunction) <- globalenv()
+  if(!is.null(event))
+    environment(event) <- globalenv()
   
   auxList <- DataFrameToList(model$aux, convertType = F)
   if(length(auxList) == 0)
@@ -130,7 +130,7 @@ AssembleOdeModel <- function(model, timeSeriesDirectory, progressFunction = NULL
     ode = ode,
     defaultScenario = defaultScenarioObj,
     initVars = initVars,
-    event = EventFunction,
+    event = event,
     description = model$description,
     aux = auxList,
     globalFunctions = globalFunctions,

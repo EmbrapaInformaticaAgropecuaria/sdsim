@@ -202,7 +202,7 @@ OdeModelToXml <- function(model) {
                  initVars = model$initVars,
                  PostProcessVars = "NULL",
                  trigger = model$trigger,
-                 EventFunction = model$event,
+                 event = model$event,
                  aux = DataFrameToList(model$aux),
                  globalFunctions = globalFunctions)
   

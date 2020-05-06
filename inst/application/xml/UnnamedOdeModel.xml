@@ -28,12 +28,12 @@
 #   # return triggers
 #   return(c())
 # }</trigger>
-  <EventFunction># # Uncomment to use events (Trigger function must be defined)
+  <event># # Uncomment to use events (Trigger function must be defined)
 # function (t, st, ct, par, inp, sw, aux) 
 # {
 #   # Return the altered state
 #   return(st)
-# }</EventFunction>
+# }</event>
   <aux/>
   <defaultScenario>
     <sdScenario>
