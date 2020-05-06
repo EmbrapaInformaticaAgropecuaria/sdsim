@@ -67,9 +67,9 @@ AssembleOdeModel <- function(model, timeSeriesDirectory, progressFunction = NULL
   # If there is an initialization function parse it
   if(!is.null(model$initVars) &&
      !grepl(EMPTY_PERL_REGEX, model$initVars, perl = T))
-    InitVars <- eval(parse(text = model$initVars)) 
+    initVars <- eval(parse(text = model$initVars)) 
   else 
-    InitVars <- NULL
+    initVars <- NULL
   
   # If There is a root function script parse it
   if(!is.null(model$trigger) &&
@@ -93,8 +93,8 @@ AssembleOdeModel <- function(model, timeSeriesDirectory, progressFunction = NULL
   # remove server variables from the object
   if(!is.null(ode))
     environment(ode) <- globalenv()
-  if(!is.null(InitVars))
-    environment(InitVars) <- globalenv()
+  if(!is.null(initVars))
+    environment(initVars) <- globalenv()
   if(!is.null(trigger))
     environment(trigger) <- globalenv()
   if(!is.null(EventFunction))
@@ -129,7 +129,7 @@ AssembleOdeModel <- function(model, timeSeriesDirectory, progressFunction = NULL
     id = model$id,
     ode = ode,
     defaultScenario = defaultScenarioObj,
-    initVars = InitVars,
+    initVars = initVars,
     event = EventFunction,
     description = model$description,
     aux = auxList,
@@ -149,9 +149,9 @@ AssembleStaticModel <- function(model, timeSeriesDirectory) {
   # If there is an initialization function parse it
   if(!is.null(model$initVars) &&
      !grepl(EMPTY_PERL_REGEX, model$initVars, perl = T))
-    InitVars <- eval(parse(text = model$initVars)) 
+    initVars <- eval(parse(text = model$initVars)) 
   else 
-    InitVars <- NULL
+    initVars <- NULL
   
   # Parse global functions into a list
   if(!is.null(model$globalFunctions))
@@ -159,8 +159,8 @@ AssembleStaticModel <- function(model, timeSeriesDirectory) {
   
   # Set function environments to global to reduce object size and
   # remove server variables from the object
-  if(!is.null(InitVars))
-    environment(InitVars) <- globalenv()
+  if(!is.null(initVars))
+    environment(initVars) <- globalenv()
   
   auxList <- DataFrameToList(model$aux, convertType = F)
   if(length(auxList) == 0)
@@ -192,7 +192,7 @@ AssembleStaticModel <- function(model, timeSeriesDirectory) {
     description = model$description,
     defaultScenario = defaultScenarioObj,
     algebraicEquations = auxList, 
-    InitVars = InitVars,
+    initVars = initVars,
     globalFunctions = globalFunctions)
   
   return(modelObj)

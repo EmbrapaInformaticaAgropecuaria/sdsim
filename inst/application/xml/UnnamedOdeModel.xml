@@ -13,14 +13,14 @@
 }</ode>
     </sdFunctionOde>
   </ode>
-  <InitVars># # Uncomment to use initialization function
+  <initVars># # Uncomment to use initialization function
 # function(st, ct, par, inp, sw, aux) 
 # {
 #   # Initialize variables
 #    
 #   # Return the differentials to the integrator
 #   return(list(st = st, ct = ct, inp = inp, par = par, sw = sw))
-# }</InitVars>
+# }</initVars>
   <PostProcessVars>NULL</PostProcessVars>
   <trigger># # Uncomment to use root function
 # function(t, st, ct, par, inp, sw, aux) 

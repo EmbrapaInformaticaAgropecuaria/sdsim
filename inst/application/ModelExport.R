@@ -199,7 +199,7 @@ OdeModelToXml <- function(model) {
   lModel <- list(id = model$id,
                  description = model$description,
                  # ode = model$ode,
-                 InitVars = model$initVars,
+                 initVars = model$initVars,
                  PostProcessVars = "NULL",
                  trigger = model$trigger,
                  EventFunction = model$event,
@@ -241,7 +241,7 @@ StaticModelToXml <- function(model) {
   
   lModel <- list(id = model$id,
                  description = model$description,
-                 InitVars = model$initVars,
+                 initVars = model$initVars,
                  algebraicEquations = DataFrameToList(model$aux),
                  globalFunctions = globalFunctions)
   

@@ -2,7 +2,7 @@
 <sdStaticModel>
   <id>Unnamed Static Model</id>
   <description/>
-  <InitVars/>
+  <initVars/>
   <equations/>
   <globalFunctions/>
   <defaultScenario>

@@ -571,7 +571,7 @@ odePage <- shinydashboard::tabItem(
                   tags$li("sw: a list of switches;"),
                   tags$li("aux: a list of auxiliary variables.")
                 ),
-                h5("The return value of InitVars is a list 
+                h5("The return value of initVars is a list 
                    containing the modified variable lists.
                    e.g. return(list(st = st, ct = ct, inp = inp, par = par
                    , sw = sw, aux = aux))."),
@@ -818,7 +818,7 @@ odePage <- shinydashboard::tabItem(
                   tags$li("sw: a list of switches;"),
                   tags$li("aux: a list of auxiliary variables.")
                 ),
-                h5("The return value of InitVars is a list 
+                h5("The return value of initVars is a list 
                    containing the modified variable lists.
                    e.g. return(list(ct = ct, inp = inp, par = par, 
                    sw = sw, aux = aux))."),
