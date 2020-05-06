@@ -22,13 +22,13 @@
 #   return(list(st = st, ct = ct, inp = inp, par = par, sw = sw))
 # }</InitVars>
   <PostProcessVars>NULL</PostProcessVars>
-  <RootSpecification># # Uncomment to use root function
+  <trigger># # Uncomment to use root function
 # function(t, st, ct, par, inp, sw, aux) 
 # {
-#   # return roots
+#   # return triggers
 #   return(c())
-# }</RootSpecification>
-  <EventFunction># # Uncomment to use events (Root function must be defined)
+# }</trigger>
+  <EventFunction># # Uncomment to use events (Trigger function must be defined)
 # function (t, st, ct, par, inp, sw, aux) 
 # {
 #   # Return the altered state

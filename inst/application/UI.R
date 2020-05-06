@@ -588,7 +588,7 @@ odePage <- shinydashboard::tabItem(
               )
             ),
             tabPanel(
-              "Trigger", AceEditorCustom("root", height = scriptHeight),
+              "Trigger", AceEditorCustom("trigger", height = scriptHeight),
               shinydashboard::box(
                 title = ("Usage"),
                 solidHeader = T, 

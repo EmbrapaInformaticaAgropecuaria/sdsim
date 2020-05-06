@@ -423,8 +423,8 @@ UpdateLoadedModel <- function(simData, session, input,
                     value = currentModel$ode)
     CustomAceUpdate(session, "initVars", 
                     value = currentModel$initVars)
-    CustomAceUpdate(session, "root", 
-                    value = currentModel$root)
+    CustomAceUpdate(session, "trigger", 
+                    value = currentModel$trigger)
     CustomAceUpdate(session, "event", 
                     value = currentModel$event)
     CustomAceUpdate(session, "globalFunctions", 
@@ -532,7 +532,7 @@ ClearOdeModelUI <- function(simData, session, input, output) {
   # Clear ode model script fields
   CustomAceUpdate(session, "ode", value = "")
   CustomAceUpdate(session, "initVars", value = "")
-  CustomAceUpdate(session, "root", value = "")
+  CustomAceUpdate(session, "trigger", value = "")
   CustomAceUpdate(session, "event", value = "")
   CustomAceUpdate(session, "globalFunctions", value = "")
   
@@ -648,14 +648,14 @@ LoadOdeModelData <- function(modelXml, simData) {
     description = modelXml$description, 
     ode = modelXml$ode, 
     initVars = FunToString(modelXml$initVars), 
-    root = FunToString(modelXml$RootSpecification), 
-    event = FunToString(modelXml$EventFunction),
+    trigger = FunToString(modelXml$trigger), 
+    event = FunToString(modelXml$event),
     aux = aux,
     globalFunctions = globalFunctions,
     defaultScenarioId = modelXml$defaultScenario$sdScenario$id,
     currentScenarioId = modelXml$defaultScenario$sdScenario$id
   )
-  
+
   return(modelData)
 }
 
@@ -732,7 +732,7 @@ CreateOdeModelObject <- function(id,
                               description = NULL,
                               ode = NULL,
                               initVars = NULL,
-                              root = NULL,
+                              trigger = NULL,
                               event = NULL,
                               aux = NULL,
                               globalFunctions = NULL,
@@ -760,7 +760,7 @@ CreateOdeModelObject <- function(id,
   model$description <- description
   model$ode <- ode$sdFunctionOde$ode
   model$initVars <- initVars
-  model$root <- root
+  model$trigger <- trigger
   model$event <- event
   model$aux <- aux
   model$globalFunctions <- globalFunctions
@@ -768,6 +768,7 @@ CreateOdeModelObject <- function(id,
   model$currentScenarioId <- currentScenarioId
   model$scenarios <- scenarios
   
+
   return(model)
 }
 

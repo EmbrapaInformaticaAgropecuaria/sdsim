@@ -518,8 +518,8 @@ server <- shinyServer(function(input, output, session) {
     }
   })
   
-  # Update method select input based on whether a root function is available ####
-  ObserveRootMethod(input, session)
+  # Update method select input based on whether a trigger function is available ####
+  ObserveTriggerMethod(input, session)
   
   # Check if any changes were made to variables since the last model upload ####
   ObserveRhandsonChanges(simData, input)
@@ -882,20 +882,20 @@ SendCustomModelBoxMessage <- function(modelBox, session) {
   if(modelBox == "Events")
     session$sendCustomMessage("shinyAceForceRefresh", "event")
   if(modelBox == "Trigger")
-    session$sendCustomMessage("shinyAceForceRefresh", "root")
+    session$sendCustomMessage("shinyAceForceRefresh", "trigger")
   if(modelBox == "Global Functions")
     session$sendCustomMessage("shinyAceForceRefresh", "globalFunctions")
 }
 
-# Update method select input based on whether a root function is available
-ObserveRootMethod <- function(input, session) {
-  observeEvent(input$root, {
-    # If root function script is not empty
-    if(!grepl(EMPTY_PERL_REGEX, input$root, perl = T)) { 
+# Update method select input based on whether a trigger function is available
+ObserveTriggerMethod <- function(input, session) {
+  observeEvent(input$trigger, {
+    # If trigger function script is not empty
+    if(!grepl(EMPTY_PERL_REGEX, input$trigger, perl = T)) { 
       # Get method from loaded simulation
       selectedMethod <- input$method
       
-      # Check if method is root capable
+      # Check if method is trigger capable
       if(!grepl("^lsoda$|^lsodar$|^lsode$|^lsodes$|^radau$", selectedMethod)) {
         selectedMethod <- "lsoda"
       }
@@ -905,7 +905,7 @@ ObserveRootMethod <- function(input, session) {
                                     "lsode", "lsodes", 
                                     "radau"),
                         selected = selectedMethod)
-    } else { # If root function script is empty
+    } else { # If trigger function script is empty
       # Get method from loaded simulation
       selectedMethod <- input$method
       

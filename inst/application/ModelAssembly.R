@@ -59,6 +59,8 @@ AssembleOdeModel <- function(model, timeSeriesDirectory, progressFunction = NULL
                                     odeStr)
   }
   
+  # print(model)
+  
   # Assemble ode function
   ode <- eval(parse(text = odeStr))
 
@@ -70,11 +72,11 @@ AssembleOdeModel <- function(model, timeSeriesDirectory, progressFunction = NULL
     InitVars <- NULL
   
   # If There is a root function script parse it
-  if(!is.null(model$root) &&
-     !grepl(EMPTY_PERL_REGEX, model$root, perl = T))
-    RootFunction <- eval(parse(text = model$root)) 
+  if(!is.null(model$trigger) &&
+     !grepl(EMPTY_PERL_REGEX, model$trigger, perl = T))
+    trigger <- eval(parse(text = model$trigger)) 
   else 
-    RootFunction <- NULL
+    trigger <- NULL
   
   # If there is an event function script parse it
   if(!is.null(model$event) &&
@@ -93,8 +95,8 @@ AssembleOdeModel <- function(model, timeSeriesDirectory, progressFunction = NULL
     environment(ode) <- globalenv()
   if(!is.null(InitVars))
     environment(InitVars) <- globalenv()
-  if(!is.null(RootFunction))
-    environment(RootFunction) <- globalenv()
+  if(!is.null(trigger))
+    environment(trigger) <- globalenv()
   if(!is.null(EventFunction))
     environment(EventFunction) <- globalenv()
   
@@ -131,7 +133,8 @@ AssembleOdeModel <- function(model, timeSeriesDirectory, progressFunction = NULL
     event = EventFunction,
     description = model$description,
     aux = auxList,
-    globalFunctions = globalFunctions)
+    globalFunctions = globalFunctions,
+    trigger = trigger)
   
   if(!is.null(progressFunction))
     assign("UpdateSimulationProgress", progressFunction, 
@@ -242,7 +245,7 @@ UpdateModelData <- function(simData, input) {
     currentModel$description <- input$description
     currentModel$ode <- input$ode
     currentModel$initVars <- input$initVars
-    currentModel$root <- input$root
+    currentModel$trigger <- input$trigger
     currentModel$event <- input$event
     currentModel$globalFunctions <- input$globalFunctions
     
