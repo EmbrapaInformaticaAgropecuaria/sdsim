@@ -503,7 +503,14 @@ odePage <- shinydashboard::tabItem(
             id = "modelBox", title = "Ode Model", width = "100%",
             tabPanel(
               "Differential Equations",
+              radioButtons("OdeType", NULL, 
+                           choices = c("Function", "Flow Map"),
+                           selected = "Function",
+                           inline = T),
               AceEditorCustom("ode", height = scriptHeight),
+              rhandsontable::rHandsontableOutput("ode",
+                                                 height = tableHeight,
+                                                 width = tableWidth),
               shinydashboard::box(
                 title = ("Usage"),
                 solidHeader = T, 
@@ -673,8 +680,8 @@ odePage <- shinydashboard::tabItem(
             ),
             tabPanel(
               "Auxiliaries", 
-              rhandsontable::rHandsontableOutput("aux", 
-                                                 height = tableHeight, 
+              rhandsontable::rHandsontableOutput("aux",
+                                                 height = tableHeight,
                                                  width = tableWidth),
               br(),
               shinydashboard::box(

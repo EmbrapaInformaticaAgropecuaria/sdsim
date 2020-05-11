@@ -50,20 +50,30 @@ AssembleCoupledModel <- function(model, simData, timeSeriesDirectory) {
 AssembleOdeModel <- function(model, timeSeriesDirectory, progressFunction = NULL) {
   defaultScenario <- model$scenarios[[model$defaultScenarioId]]
   
-  odeStr <- model$ode
-  
-  # Insert function to update progress into the function code using regex
-  if(!is.null(progressFunction)) {
-    odeStr <- sub("^(.*function.*\\(.*\\)(.|\n)*\\{)((.|\n|\t)*)$",
-                                    "\\1\n  UpdateSimulationProgress(t)\\3",
-                                    odeStr)
-  }
-  
-  # print(model)
-  
-  # Assemble ode function
-  ode <- eval(parse(text = odeStr))
+  if(is.data.frame(model$ode)) {
+    flows <- DataFrameColumnToVector(model$ode$Flows)
+    flowRate <- DataFrameColumnToVector(model$ode$FlowRate)
+    stocks <- DataFrameColumnToVector(model$ode$Stocks)
+    boundaries <- DataFrameColumnToVector(model$ode$Boundaries)
 
+    ode <- sdsim::sdFlow(flows = flows, flowRate = flowRate, stocks = stocks, boundaries = boundaries)
+
+  } else if (is.function(eval(parse(text = model$ode)))) {
+    odeStr <- model$ode
+    
+    # Insert function to update progress into the function code using regex
+    if(!is.null(progressFunction)) {
+      odeStr <- sub("^(.*function.*\\(.*\\)(.|\n)*\\{)((.|\n|\t)*)$",
+                    "\\1\n  UpdateSimulationProgress(t)\\3",
+                    odeStr)
+    }
+    
+    # Assemble ode function
+    ode <- eval(parse(text = odeStr))
+  } else {
+    # TODO print erro
+  }
+ 
   # If there is an initialization function parse it
   if(!is.null(model$initVars) &&
      !grepl(EMPTY_PERL_REGEX, model$initVars, perl = T))
@@ -243,15 +253,25 @@ UpdateModelData <- function(simData, input) {
   if(currentModel$type == "sdOdeModel") {
     # Update Ode Model
     currentModel$description <- input$description
-    currentModel$ode <- input$ode
+    
     currentModel$initVars <- input$initVars
     currentModel$trigger <- input$trigger
     currentModel$event <- input$event
     currentModel$globalFunctions <- input$globalFunctions
     
+    if (is.function(eval(parse(text = input$ode)))) {
+      currentModel$ode <- input$ode
+      
+    } else if (is.list(input$ode)) {
+      if(!is.null(simData$changed$ode) && simData$changed$ode) {
+        currentModel$ode <- RhandsonToDF(input$ode, variableCol = "Flows")
+      }
+    }
+    
     if(!is.null(simData$changed$aux) && simData$changed$aux) {
       currentModel$aux <- RhandsonToDF(input$aux, trimWhites = NULL)
     }
+
   } else if (currentModel$type == "sdStaticModel") {
     # Update Static Model
     currentModel$description <- input$description
@@ -326,7 +346,7 @@ RhandsonToDF <- function(hot, trimWhites = NULL, variableCol = "Variable") {
   for(col in trimWhites) {
     df[col] <- as.data.frame(apply(df[col], c(1, 2), function(x) gsub('\\s+', '',x)), stringsAsFactors = F)
   }
-  
+
   df <- df[-which(grepl(EMPTY_PERL_REGEX, df[[variableCol]], perl = T)), , drop = FALSE]
   row.names(df) <- NULL
   
@@ -358,6 +378,12 @@ DataFrameToList <- function(dataFrame, variableCol = "Variable",
   return(dataList)
 }
 
+DataFrameColumnToVector <- function(col) {
+  vec <- as.vector(col)
+  vec <- vec[!is.na(vec)]
+  return(vec)
+}
+
 # Convert a string countaining the source code of global functions into
 # a list containing the global functions
 StrGlobalFunctionsToList <- function(strFuns, asCharacter = F) {
@@ -375,6 +401,13 @@ StrGlobalFunctionsToList <- function(strFuns, asCharacter = F) {
   })
   names(l) <- funNames
   return(l)
+}
+
+FunToString <- function(fun) { 
+  if (!is.null(fun))
+    return(paste(format(fun), collapse = "\n"))
+  else
+    return(NULL)
 }
 
 # Returns NULL if a data frame is empty

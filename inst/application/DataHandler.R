@@ -7,6 +7,14 @@ CreateVarDataFrame <- function(nRows) {
              stringsAsFactors = FALSE, row.names = NULL)
 }
 
+CreateFlowDataFrame <- function(nRows) {
+  data.frame(Flows = character(nRows), 
+             FlowRate = character(nRows), 
+             Stocks = character(nRows), 
+             Boundaries = character(nRows), 
+             stringsAsFactors = FALSE, row.names = NULL)
+}
+
 # Create an empty data frame for inputs
 CreateInputDataFrame <- function(nRows) {
   data.frame(Variable = character(nRows), 

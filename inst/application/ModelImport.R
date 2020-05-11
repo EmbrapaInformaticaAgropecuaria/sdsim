@@ -419,8 +419,6 @@ UpdateLoadedModel <- function(simData, session, input,
     # Update scripts
     CustomAceUpdate(session, "description", 
                     value = currentModel$description)
-    CustomAceUpdate(session, "ode", 
-                    value = currentModel$ode)
     CustomAceUpdate(session, "initVars", 
                     value = currentModel$initVars)
     CustomAceUpdate(session, "trigger", 
@@ -435,6 +433,16 @@ UpdateLoadedModel <- function(simData, session, input,
     nRows <- nTableRows - NROW(currentModel$aux)
     aux <- rbind(currentModel$aux, CreateVarDataFrame(nRows = nRows),
                  stringsAsFactors = FALSE, row.names = NULL)
+    
+    if(is.data.frame(currentModel$ode)) {
+      nRows <- nTableRows - NROW(currentModel$ode)
+      ode <- rbind(currentModel$ode, CreateFlowDataFrame(nRows = nRows),
+                   stringsAsFactors = FALSE, row.names = NULL)
+      UpdateRHandsontable(ode, "ode", output)
+    } else {
+      CustomAceUpdate(session, "ode", 
+                      value = currentModel$ode)
+    }
     
     UpdateRHandsontable(aux, "aux", output)
     
@@ -746,19 +754,22 @@ CreateOdeModelObject <- function(id,
   else
     model$type <- "sdStaticModel"
   
-  # if (is.list(ode$sdFlowOde)) {
-  # 
-  # }
-  # else if (is.list(ode$sdFunctionOde)) {
-  # 
-  # }
-  # else {
-  #   #TODO print erro
-  # }
-  
+  if (is.list(ode$sdFlowOde)) {
+    cols <- list(Flows = StringToVector(ode$sdFlowOde$flows), 
+                 FlowRate = StringToVector(ode$sdFlowOde$flowRate), 
+                 Stocks = StringToVector(ode$sdFlowOde$stocks), 
+                 Boundaries = StringToVector(ode$sdFlowOde$boundaries))
+    model$ode <- as.data.frame(lapply(cols, `length<-`, max(sapply(cols, length))))
+  }
+  else if (is.list(ode$sdFunctionOde)) {
+    model$ode <- ode$sdFunctionOde$ode
+  }
+  else {
+    #TODO print erro
+  }
+
   model$id <- id
   model$description <- description
-  model$ode <- ode$sdFunctionOde$ode
   model$initVars <- initVars
   model$trigger <- trigger
   model$event <- event
@@ -951,6 +962,37 @@ FunToString <- function(fun) {
   if(funStr == "NULL")
     return("")
   return(funStr)
+}
+
+StringToVector <- function(str) { 
+  if (is.character(str) && length(str) == 1) { 
+    # if function, expression, vector, list, data.frame, matrix
+    if (grepl(pattern = paste0("^(function|expression|c|vector|list|",
+                               "data\\.frame|matrix)\\s?\\((.*\\s*)*\\)"),
+              x = str,
+              perl = TRUE)) { 
+      tryCatch( { 
+        ex <- eval(parse(text = str))
+        if (((is.function(ex)) && 
+             !(varType %in% c("input", "switch"))) || 
+            is.null(ex)) {
+          type.convert(str, dec = ".", numerals = "allow.loss", 
+                       as.is = TRUE)
+        } else {
+          ex
+        }
+      },
+      error = function(e) {
+        type.convert(str, dec = ".", numerals = "allow.loss",
+                     as.is = TRUE)
+      }
+      )
+    } else {
+      type.convert(str, dec = ".", numerals = "allow.loss", as.is = TRUE)
+    }
+  } else {
+    str
+  }
 }
 
 # Read input as excel file
