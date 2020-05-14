@@ -5,7 +5,7 @@ AssembleModel <- function(simData, input, timeSeriesDirectory,
   UpdateModelData(simData, input)
   
   model <- simData$models[[simData$currentModelId]]
-  
+
   if(model$type == "sdOdeModel") {
     modelObj <- AssembleOdeModel(model, timeSeriesDirectory, progressFunction)
     return(modelObj)
@@ -50,16 +50,16 @@ AssembleCoupledModel <- function(model, simData, timeSeriesDirectory) {
 AssembleOdeModel <- function(model, timeSeriesDirectory, progressFunction = NULL) {
   defaultScenario <- model$scenarios[[model$defaultScenarioId]]
   
-  if(is.data.frame(model$ode)) {
-    flows <- DataFrameColumnToVector(model$ode$Flows)
-    flowRate <- DataFrameColumnToVector(model$ode$FlowRate)
-    stocks <- DataFrameColumnToVector(model$ode$Stocks)
-    boundaries <- DataFrameColumnToVector(model$ode$Boundaries)
-
+  if(model$odeType == "flow" && !is.null(model$odeFlow)) {
+    flows <- DataFrameColumnToVector(model$odeFlow$Flows)
+    flowRate <- DataFrameColumnToVector(model$odeFlow$FlowRate)
+    stocks <- DataFrameColumnToVector(model$odeFlow$Stocks)
+    boundaries <- DataFrameColumnToVector(model$odeFlow$Boundaries)
+    
     ode <- sdsim::sdFlow(flows = flows, flowRate = flowRate, stocks = stocks, boundaries = boundaries)
-
-  } else if (is.function(eval(parse(text = model$ode)))) {
-    odeStr <- model$ode
+    
+  } else if(model$odeType == "function" && !is.null(model$odeFunction)) {
+    odeStr <- model$odeFunction
     
     # Insert function to update progress into the function code using regex
     if(!is.null(progressFunction)) {
@@ -70,10 +70,11 @@ AssembleOdeModel <- function(model, timeSeriesDirectory, progressFunction = NULL
     
     # Assemble ode function
     ode <- eval(parse(text = odeStr))
+    
   } else {
     # TODO print erro
   }
- 
+
   # If there is an initialization function parse it
   if(!is.null(model$initVars) &&
      !grepl(EMPTY_PERL_REGEX, model$initVars, perl = T))
@@ -259,14 +260,11 @@ UpdateModelData <- function(simData, input) {
     currentModel$event <- input$event
     currentModel$globalFunctions <- input$globalFunctions
     
-    if (is.function(eval(parse(text = input$ode)))) {
-      currentModel$ode <- input$ode
-      
-    } else if (is.list(input$ode)) {
-      if(!is.null(simData$changed$ode) && simData$changed$ode) {
-        currentModel$ode <- RhandsonToDF(input$ode, variableCol = "Flows")
-      }
+    currentModel$odeFunction <- input$odeFunction
+    if(!is.null(simData$changed$odeFlow) && simData$changed$odeFlow) {
+      currentModel$odeFlow <- RhandsonToDF(input$odeFlow, variableCol = "Flows")
     }
+
     
     if(!is.null(simData$changed$aux) && simData$changed$aux) {
       currentModel$aux <- RhandsonToDF(input$aux, trimWhites = NULL)

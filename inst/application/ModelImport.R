@@ -434,19 +434,37 @@ UpdateLoadedModel <- function(simData, session, input,
     aux <- rbind(currentModel$aux, CreateVarDataFrame(nRows = nRows),
                  stringsAsFactors = FALSE, row.names = NULL)
     
-    if(is.data.frame(currentModel$ode)) {
-      nRows <- nTableRows - NROW(currentModel$ode)
-      ode <- rbind(currentModel$ode, CreateFlowDataFrame(nRows = nRows),
-                   stringsAsFactors = FALSE, row.names = NULL)
-      UpdateRHandsontable(ode, "ode", output)
-    } else {
-      CustomAceUpdate(session, "ode", 
-                      value = currentModel$ode)
-    }
-    
     UpdateRHandsontable(aux, "aux", output)
-    
     simData$changed$aux <- F
+    
+    # Update odeFlow table
+    if(is.null(currentModel$odeFlow)) {
+      session$sendCustomMessage("unhideElement", "odeFunction")
+      session$sendCustomMessage("hideElement", "odeFlow")
+      updateRadioButtons(session, "odeType", label = NULL, choices = c("Function", "Flow Map"),
+                         selected = "Function", inline = TRUE)
+      df <- CreateFlowDataFrame(nRows = nTableRows)
+    } else {
+      nRows <- nTableRows - NROW(currentModel$odeFlow)
+      df <- rbind(currentModel$odeFlow, CreateFlowDataFrame(nRows = nRows),
+                   stringsAsFactors = FALSE, row.names = NULL)
+    }
+    UpdateRHandsontable(df, "odeFlow", output)
+    simData$changed$odeFlow <- F
+    
+    # Update odeFunction script
+    if(is.null(currentModel$odeFunction)) {
+      session$sendCustomMessage("unhideElement", "odeFlow")
+      session$sendCustomMessage("hideElement", "odeFunction")
+      updateRadioButtons(session, "odeType", label = NULL, choices = c("Function", "Flow Map"),
+                         selected = "Flow Map", inline = TRUE)
+      value <- ""
+    } else {
+      value <- currentModel$odeFunction
+    }
+    CustomAceUpdate(session, "odeFunction", value = value)
+    
+    
   } else if(currentModel$type == "sdStaticModel") {
     # Hide ode model panel
     session$sendCustomMessage("hideElement", "odeModelPage")
@@ -538,7 +556,7 @@ ClearSimulationResults <- function(simData, session, input, output) {
 
 ClearOdeModelUI <- function(simData, session, input, output) {
   # Clear ode model script fields
-  CustomAceUpdate(session, "ode", value = "")
+  CustomAceUpdate(session, "odeFunction", value = "")
   CustomAceUpdate(session, "initVars", value = "")
   CustomAceUpdate(session, "trigger", value = "")
   CustomAceUpdate(session, "event", value = "")
@@ -754,15 +772,20 @@ CreateOdeModelObject <- function(id,
   else
     model$type <- "sdStaticModel"
   
+  model$odeFlow <- NULL
+  model$odeFunction <- NULL
+  
   if (is.list(ode$sdFlowOde)) {
     cols <- list(Flows = StringToVector(ode$sdFlowOde$flows), 
                  FlowRate = StringToVector(ode$sdFlowOde$flowRate), 
                  Stocks = StringToVector(ode$sdFlowOde$stocks), 
                  Boundaries = StringToVector(ode$sdFlowOde$boundaries))
-    model$ode <- as.data.frame(lapply(cols, `length<-`, max(sapply(cols, length))))
+    model$odeFlow <- as.data.frame(lapply(cols, `length<-`, max(sapply(cols, length))), stringsAsFactors = FALSE)
+    model$odeType <- "flow"
   }
   else if (is.list(ode$sdFunctionOde)) {
-    model$ode <- ode$sdFunctionOde$ode
+    model$odeFunction <- ode$sdFunctionOde$ode
+    model$odeType <- "function" 
   }
   else {
     #TODO print erro

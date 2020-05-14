@@ -370,6 +370,23 @@ server <- shinyServer(function(input, output, session) {
     }
   })
   
+  observeEvent(input$odeType, {
+    switch (
+      input$odeType,
+      "Function" = {
+        session$sendCustomMessage("unhideElement", "odeFunction")
+        session$sendCustomMessage("hideElement", "odeFlow")
+        simData$models[[simData$currentModelId]]$odeType <- "function"
+        
+      },
+      "Flow Map" = {
+        session$sendCustomMessage("unhideElement", "odeFlow")
+        session$sendCustomMessage("hideElement", "odeFunction")
+        simData$models[[simData$currentModelId]]$odeType <- "flow"
+      }
+    )
+  })
+  
   # Create an empty model ####
   observeEvent(input$newEmptyModel, {
     # Update previous model data
@@ -534,7 +551,6 @@ server <- shinyServer(function(input, output, session) {
       if(grepl(".[xX][mM][lL]$", input$importModel$name)) {
         # Update previous model data
         UpdateModelData(simData, input)
-        
         msg <- LoadModel(input$importModel$datapath, simData, session, input, 
                          output, nTableRows = nTableRows)
         
@@ -833,7 +849,7 @@ server <- shinyServer(function(input, output, session) {
         # Execute simulation
         model <- AssembleModel(simData, input, timeSeriesDirectory, progressFunction)
         alternateScenario <- AssembleAlternateScenario(simData, timeSeriesDirectory)
-        
+
         out <- sdsim::sdSimulate(model = model,
                                  scenario = alternateScenario,
                                  method = input$method,
@@ -842,7 +858,7 @@ server <- shinyServer(function(input, output, session) {
                                  by = as.numeric(input$step),
                                  storeAuxTrajectory = T,
                                  storeTimeSeriesTrajectory = T)
-        
+
         simData$models[[simData$currentModelId]]$out <- out
         
         # Update custom plot configuration inputs        
@@ -876,7 +892,7 @@ server <- shinyServer(function(input, output, session) {
 # Send custom message to a script depending on which tab is selected
 SendCustomModelBoxMessage <- function(modelBox, session) {
   if(modelBox == "Differential Equations")
-    session$sendCustomMessage("shinyAceForceRefresh", "ode")
+    session$sendCustomMessage("shinyAceForceRefresh", "odeFunction")
   if(modelBox == "Parameter Initialization")
     session$sendCustomMessage("shinyAceForceRefresh", "initVars")
   if(modelBox == "Events")
@@ -938,6 +954,10 @@ ObserveScriptChanges <- function(input, session) {
 
 # Check if any changes were made to variables since the last model upload
 ObserveRhandsonChanges <- function(simData, input) {
+  observeEvent(input$odeFlow, {
+    simData$changed$odeFlow <- T
+  })
+  
   observeEvent(input$state, {
     simData$changed$state <- T
   })

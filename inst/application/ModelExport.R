@@ -198,15 +198,25 @@ OdeModelToXml <- function(model) {
   
   lModel <- list(id = model$id,
                  description = model$description,
-                 # ode = model$ode,
                  initVars = model$initVars,
                  PostProcessVars = "NULL",
                  trigger = model$trigger,
                  event = model$event,
                  aux = DataFrameToList(model$aux),
-                 globalFunctions = globalFunctions)
+                 globalFunctions = globalFunctions,
+                 odeType = model$odeType)
   
   ListToXML(rootsdModel, lModel)
+  
+  # add ode XML
+  if(model$odeType == "flow" && !is.null(model$odeFlow)) {
+    odeXML <- XML::newXMLNode("ode",.children = list(odeToXML(model$odeFlow, model$odeType)))
+  } else if (model$odeType == "function" && !is.null(model$odeFunction)) {
+    odeXML <- XML::newXMLNode("ode",.children = list(odeToXML(model$odeFunction, model$odeType)))
+  } else {
+    # TODO print erro
+  }
+  XML::addChildren(rootsdModel, kids = list(odeXML))
   
   # add the defaultScenario XML
   defaultScenarioId <- model$scenarios[[model$defaultScenarioId]]
@@ -215,18 +225,29 @@ OdeModelToXml <- function(model) {
   XML::xmlName(sdScenarioXML) <- "sdScenario"
   defaultScenarioXML <- XML::newXMLNode("defaultScenario")
   
-  odeXML <- XML::newXMLNode("ode",.children = list(odeToXML(model$ode)))
-
   XML::addChildren(defaultScenarioXML, kids = list(sdScenarioXML))
   XML::addChildren(rootsdModel, kids = list(defaultScenarioXML))
-  XML::addChildren(rootsdModel, kids = list(odeXML))
+
   
   return(doc)
 }
 
-odeToXML <- function(ode) {
-  rootOde <- XML::newXMLNode("sdFunctionOde")
-  lOde <- list(ode = FunToString(ode))
+# Save ode to XML
+odeToXML <- function(ode, type) {
+  if(type == "function") {
+    rootOde <- XML::newXMLNode("sdFunctionOde")
+    lOde <- list(ode = FunToString(ode))
+  } else if(type == "flow") {
+    rootOde <- XML::newXMLNode("sdFlowOde")
+    lOde <- list(
+      flows = VectorToCharDef(ode$Flows, TRUE),
+      flowRate = VectorToCharDef(unlist(ode$FlowRate), TRUE),
+      stocks = VectorToCharDef(ode$Stocks, TRUE),
+      boundaries = VectorToCharDef(ode$Boundaries, TRUE)
+    )
+  } else {
+    # TODO print erro
+  }
   ListToXML(rootOde, lOde)
   invisible(rootOde)
 }

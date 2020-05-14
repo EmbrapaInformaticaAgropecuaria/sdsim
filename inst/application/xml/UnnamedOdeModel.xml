@@ -2,7 +2,7 @@
 <sdOdeModel>
   <id>Unnamed Ode Model</id>
   <description/>
-  <ode>
+<ode>
     <sdFunctionOde>
       <ode>function (t, st, ct, par, inp, sw, aux) 
 {
