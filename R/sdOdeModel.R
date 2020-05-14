@@ -731,7 +731,9 @@ sdOdeModelClass <- R6::R6Class(
       if(!is.null(private$pOde)) {
         ode <- private$pOde$getOdeFunction()
         parent.env(environment(ode)) <- private$pModelEnvironment
-        return(private$pOde$getOdeFunction())
+        # return(private$pOde$getOdeFunction())
+        return(ode)
+        
       }
       else
         return(NULL)
