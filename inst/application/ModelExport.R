@@ -203,8 +203,7 @@ OdeModelToXml <- function(model) {
                  trigger = model$trigger,
                  event = model$event,
                  aux = DataFrameToList(model$aux),
-                 globalFunctions = globalFunctions,
-                 odeType = model$odeType)
+                 globalFunctions = globalFunctions)
   
   ListToXML(rootsdModel, lModel)
   
