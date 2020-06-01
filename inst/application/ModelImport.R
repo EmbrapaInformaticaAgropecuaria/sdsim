@@ -448,10 +448,11 @@ UpdateLoadedModel <- function(simData, session, input,
       nRows <- nTableRows - NROW(currentModel$odeFlow)
       df <- rbind(currentModel$odeFlow, CreateFlowDataFrame(nRows = nRows),
                    stringsAsFactors = FALSE, row.names = NULL)
+      UpdateGrViz(currentModel$odeFlow, "flowDiagram", output)
     }
     UpdateRHandsontable(df, "odeFlow", output)
     simData$changed$odeFlow <- F
-    
+
     # Update odeFunction script
     if(is.null(currentModel$odeFunction)) {
       session$sendCustomMessage("unhideElement", "odeFlow")
@@ -776,10 +777,10 @@ CreateOdeModelObject <- function(id,
   model$odeFunction <- NULL
   
   if (is.list(ode$sdFlowOde)) {
-    cols <- list(Flows = StringToVector(ode$sdFlowOde$flows), 
-                 FlowRate = StringToVector(ode$sdFlowOde$flowRate), 
-                 Stocks = StringToVector(ode$sdFlowOde$stocks), 
-                 Boundaries = StringToVector(ode$sdFlowOde$boundaries))
+    cols <- list(Stocks = StringToVector(ode$sdFlowOde$stocks), 
+                 Boundaries = StringToVector(ode$sdFlowOde$boundaries),
+                 Flows = StringToVector(ode$sdFlowOde$flows), 
+                 FlowRate = StringToVector(ode$sdFlowOde$flowRate))
     model$odeFlow <- as.data.frame(lapply(cols, `length<-`, max(sapply(cols, length))), stringsAsFactors = FALSE)
     model$odeType <- "flow"
   }

@@ -1,5 +1,6 @@
 # shinyUI
 source("AuxiliaryUI.R", local = TRUE)
+library(DiagrammeR)
 
 # Interface dimensions
 # Width of sidebar and page title
@@ -511,6 +512,7 @@ odePage <- shinydashboard::tabItem(
               rhandsontable::rHandsontableOutput("odeFlow",
                                                  height = tableHeight,
                                                  width = tableWidth),
+              grVizOutput("flowDiagram"),
               shinydashboard::box(
                 title = ("Usage"),
                 solidHeader = T, 

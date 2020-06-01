@@ -43,6 +43,7 @@ server <- shinyServer(function(input, output, session) {
     }
   })
   
+  
   # Render scenario dropdown selector ####
   output$selectScenarioOutput <- renderUI({
     currentModel <- NULL
@@ -376,12 +377,14 @@ server <- shinyServer(function(input, output, session) {
       "Function" = {
         session$sendCustomMessage("unhideElement", "odeFunction")
         session$sendCustomMessage("hideElement", "odeFlow")
+        session$sendCustomMessage("hideElement", "flowDiagram")
         simData$models[[simData$currentModelId]]$odeType <- "function"
         
       },
       "Flow Map" = {
         session$sendCustomMessage("unhideElement", "odeFlow")
         session$sendCustomMessage("hideElement", "odeFunction")
+        session$sendCustomMessage("unhideElement", "flowDiagram")
         simData$models[[simData$currentModelId]]$odeType <- "flow"
       }
     )
@@ -539,7 +542,7 @@ server <- shinyServer(function(input, output, session) {
   ObserveTriggerMethod(input, session)
   
   # Check if any changes were made to variables since the last model upload ####
-  ObserveRhandsonChanges(simData, input)
+  ObserveRhandsonChanges(simData, input, output)
   
   # Force refresh ace editor script areas if a file has been uploaded (ace editor bug) ####
   ObserveScriptChanges(input, session)
@@ -953,9 +956,11 @@ ObserveScriptChanges <- function(input, session) {
 }
 
 # Check if any changes were made to variables since the last model upload
-ObserveRhandsonChanges <- function(simData, input) {
+ObserveRhandsonChanges <- function(simData, input, output) {
   observeEvent(input$odeFlow, {
     simData$changed$odeFlow <- T
+    odeFlow <- rhandsontable::hot_to_r(input$odeFlow)
+    UpdateGrViz(odeFlow, "flowDiagram", output)
   })
   
   observeEvent(input$state, {

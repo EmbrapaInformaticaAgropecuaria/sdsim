@@ -8,10 +8,10 @@ CreateVarDataFrame <- function(nRows) {
 }
 
 CreateFlowDataFrame <- function(nRows) {
-  data.frame(Flows = character(nRows), 
-             FlowRate = character(nRows), 
-             Stocks = character(nRows), 
+  data.frame(Stocks = character(nRows), 
              Boundaries = character(nRows), 
+             Flows = character(nRows), 
+             FlowRate = character(nRows),
              stringsAsFactors = FALSE, row.names = NULL)
 }
 
@@ -112,4 +112,52 @@ UpdateRHandsontable <- function(data, tableName, output) {
       return(rhandsontable::rhandsontable(data, stretchH = "all"))
     }
   })
+}
+
+UpdateGrViz <- function(odeFlow, grName, output) {
+  nodesState <- ""
+  nodesBoundary <- ""
+  nodesFlowRate <- ""
+  edges <- ""
+
+  insertFlowRate <- function(flow, flowRate) {
+    paste0(flow[1], " -> ", flowRate, " [arrowhead = none]; ", flowRate, " ->", flow[2])
+  }
+
+  stocks <- odeFlow$Stocks[!is.element(odeFlow$Stocks, c(NA,""))]
+  if(length(stocks) != 0) {
+    nodesState <- paste("node [shape = box] ", stocks, " [label = ", stocks, "];", sep = "", collapse = " ")
+  }
+
+  boundaries <- odeFlow$Boundaries[!is.element(odeFlow$Boundaries, c(NA,""))]
+  if(length(boundaries)!=0) {
+    nodesBoundary <- paste("node [shape = tripleoctagon] ", boundaries, " [label = ' '];", sep = "", collapse = " ")
+  }
+  
+  flows <- odeFlow$Flows[!is.element(odeFlow$Flows, c(NA,""))]
+  if(length(flows)!=0) {
+    neq <- length(flows)
+    edges <- mapply(insertFlowRate, strsplit(flows, split = "\\h*->\\h*", perl = T), paste("eq", 1:neq, sep = ""))
+    edges <- paste(edges, collapse=" ")
+    
+    nodesFlowRate <- paste("node [shape = terminator, style = filled, fillcolor = black] ", paste("eq", 1:neq, sep = ""),
+                           " [label = ' '];", sep = "", collapse = " ")
+    
+    flowRate <- odeFlow$FlowRate[!is.element(odeFlow$FlowRate, c(NA,""))]
+    if(!is.null(flowRate))
+      nodesFlowRate <- paste("node [shape = terminator, style = filled, fillcolor = black] ", paste("eq", 1:neq, sep = ""),
+                             " [label = '\n\n", append(flowRate,rep("",neq-length(flowRate))),"'];", sep = "", collapse = " ")
+  }
+
+  output[[grName]] <- renderGrViz(grViz(
+    paste0(" digraph flowMap {
+    graph [rankdir=LR]
+
+    ", nodesState, "
+    ", nodesBoundary, "
+    ", nodesFlowRate, "
+    ", edges, "
+    }"
+    )
+  ))
 }
