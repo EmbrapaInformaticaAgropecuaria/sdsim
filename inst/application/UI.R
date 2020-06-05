@@ -515,7 +515,7 @@ odePage <- shinydashboard::tabItem(
               div(
                 checkboxInput("showFlowDiagram",
                               "Display Flow Diagram",
-                              value = TRUE),
+                              value = FALSE),
                 style = "display: inline-block;vertical-align:top; 
                 width: 250px; padding-top: 0px;"),
               AceEditorCustom("odeFunction", height = scriptHeight),
@@ -524,7 +524,10 @@ odePage <- shinydashboard::tabItem(
                                                  width = tableWidth),
               conditionalPanel(
                 "input.showFlowDiagram != false",
-                visNetworkOutput("flowDiagram")
+                visNetworkOutput("flowDiagram"),
+                checkboxInput("hierarchicalLayout",
+                              "Hierarchical Layout",
+                              value = TRUE)
               ),
               shinydashboard::box(
                 title = ("Usage"),

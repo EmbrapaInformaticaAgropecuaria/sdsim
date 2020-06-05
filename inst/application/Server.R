@@ -543,6 +543,13 @@ server <- shinyServer(function(input, output, session) {
   # Update method select input based on whether a trigger function is available ####
   ObserveTriggerMethod(input, session)
   
+  observeEvent(input$hierarchicalLayout, {
+    
+    x <- UpdateVisNetWork(input$odeFlow, "flowDiagram", output, input$hierarchicalLayout)
+    if(!is.null(x)) 
+      updateCheckboxInput(session, "showFlowDiagram", value = TRUE)
+  })
+  
   # Check if any changes were made to variables since the last model upload ####
   ObserveRhandsonChanges(simData, input, output, session)
   
@@ -961,8 +968,10 @@ ObserveScriptChanges <- function(input, session) {
 ObserveRhandsonChanges <- function(simData, input, output, session) {
   observeEvent(input$odeFlow, {
     simData$changed$odeFlow <- T
-    
-    x <- UpdateVisNetWork(input$odeFlow, "flowDiagram", output)
+
+    x <- UpdateVisNetWork(input$odeFlow, "flowDiagram", output, input$hierarchicalLayout)
+    if(!is.null(x)) 
+      updateCheckboxInput(session, "showFlowDiagram", value = TRUE)
   })
   
   observeEvent(input$state, {

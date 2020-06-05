@@ -113,14 +113,22 @@ UpdateRHandsontable <- function(data, tableName, output) {
   })
 }
 
-UpdateVisNetWork <- function(hot, grName, output) {
+UpdateVisNetWork <- function(hot, grName, output, layoutOpt) {
 
-  odeFlow <- rhandsontable::hot_to_r(hot)
+  if(!is.null(hot))
+    odeFlow <- rhandsontable::hot_to_r(hot)
+  else{
+    return(NULL)
+  }
   
   stocks <- odeFlow$Stocks[!is.element(odeFlow$Stocks, c(NA,""))]
   flows <- odeFlow$Flows[!is.element(odeFlow$Flows, c(NA,""))]
   flowRate <- odeFlow$FlowRate[!is.element(odeFlow$FlowRate, c(NA,""))]
-
+  
+  if(length(stocks) == 0 && length(flows) == 0 && length(flowRate) == 0) {
+    return(NULL)
+  }
+  
   id <- NULL
   label <- NULL
   group <- NULL
@@ -185,8 +193,7 @@ UpdateVisNetWork <- function(hot, grName, output) {
   edges <- data.frame(from = from, 
                       to = to, 
                       arrows = arrows)
-
-
+  
   output[[grName]] <- renderVisNetwork({
     visNetwork(nodes, edges, width = "100%")%>%
       visInteraction(navigationButtons = TRUE) %>%
@@ -207,6 +214,7 @@ UpdateVisNetWork <- function(hot, grName, output) {
                              border = "black"),
                 shape = "box") %>%
       addFontAwesome(name = "font-awesome-visNetwork") %>%
-      visHierarchicalLayout(sortMethod = "directed", direction = "LR")
+      visHierarchicalLayout(enabled = layoutOpt, sortMethod = "directed", direction = "LR")
+    
   })
 }
