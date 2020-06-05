@@ -505,17 +505,23 @@ odePage <- shinydashboard::tabItem(
             id = "modelBox", title = "Ode Model", width = "100%",
             tabPanel(
               "Differential Equations",
-              radioButtons("odeType", NULL, 
-                           choices = c("Function", "Flow Map"),
-                           selected = "Function",
-                           inline = T),
+              div(
+                radioButtons("odeType", NULL, 
+                             choices = c("Function", "Flow Map"),
+                             selected = "Function",
+                             inline = T),
+                style = "display: inline-block;vertical-align:top; 
+                width: 500px; padding-top: 8px;"),
+              div(
+                checkboxInput("showFlowDiagram",
+                              "Display Flow Diagram",
+                              value = TRUE),
+                style = "display: inline-block;vertical-align:top; 
+                width: 250px; padding-top: 0px;"),
               AceEditorCustom("odeFunction", height = scriptHeight),
               rhandsontable::rHandsontableOutput("odeFlow",
                                                  height = "260px",
                                                  width = tableWidth),
-              checkboxInput("showFlowDiagram",
-                            "Display Flow Diagram",
-                            value = FALSE),
               conditionalPanel(
                 "input.showFlowDiagram != false",
                 visNetworkOutput("flowDiagram")

@@ -378,6 +378,7 @@ server <- shinyServer(function(input, output, session) {
         session$sendCustomMessage("unhideElement", "odeFunction")
         session$sendCustomMessage("hideElement", "odeFlow")
         session$sendCustomMessage("hideElement", "flowDiagram")
+        session$sendCustomMessage("updateFlowDiagramDisplayButton", "false")
         simData$models[[simData$currentModelId]]$odeType <- "function"
         
       },
@@ -385,6 +386,7 @@ server <- shinyServer(function(input, output, session) {
         session$sendCustomMessage("unhideElement", "odeFlow")
         session$sendCustomMessage("hideElement", "odeFunction")
         session$sendCustomMessage("unhideElement", "flowDiagram")
+        session$sendCustomMessage("updateFlowDiagramDisplayButton", "true")
         simData$models[[simData$currentModelId]]$odeType <- "flow"
       }
     )
@@ -961,13 +963,6 @@ ObserveRhandsonChanges <- function(simData, input, output, session) {
     simData$changed$odeFlow <- T
     
     x <- UpdateVisNetWork(input$odeFlow, "flowDiagram", output)
-    if(is.null(x)) {
-      session$sendCustomMessage("hideElement", "showFlowDiagram")
-      updateCheckboxInput(session, "showFlowDiagram", label = "", value = FALSE)
-    } else {
-      session$sendCustomMessage("unhideElement", "showFlowDiagram")
-      updateCheckboxInput(session, "showFlowDiagram", label = "Display Flow Diagram", value = TRUE)
-    }
   })
   
   observeEvent(input$state, {

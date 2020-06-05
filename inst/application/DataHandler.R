@@ -120,11 +120,7 @@ UpdateVisNetWork <- function(hot, grName, output) {
   stocks <- odeFlow$Stocks[!is.element(odeFlow$Stocks, c(NA,""))]
   flows <- odeFlow$Flows[!is.element(odeFlow$Flows, c(NA,""))]
   flowRate <- odeFlow$FlowRate[!is.element(odeFlow$FlowRate, c(NA,""))]
-  
-  if(length(stocks) == 0 && length(flows) == 0 && length(flowRate) == 0) {
-    return(NULL)
-  }
-  
+
   id <- NULL
   label <- NULL
   group <- NULL

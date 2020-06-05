@@ -170,6 +170,15 @@ selVarPlot.onchange = function() {
   }
 }
 
+showFlowDiagram.disabled = true;
+Shiny.addCustomMessageHandler("updateFlowDiagramDisplayButton", function(show) {
+  if(show === "true") {
+    showFlowDiagram.disabled = false;
+  } else {
+    showFlowDiagram.disabled = true;
+  }
+});
+
 // Show tooltip when trying to change multiple axis settings with only one variable
 multipleAxisTooltipDiv.onclick = function() {
   if(multipleAxisToggle.disabled) {
