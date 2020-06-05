@@ -542,7 +542,7 @@ server <- shinyServer(function(input, output, session) {
   ObserveTriggerMethod(input, session)
   
   # Check if any changes were made to variables since the last model upload ####
-  ObserveRhandsonChanges(simData, input, output)
+  ObserveRhandsonChanges(simData, input, output, session)
   
   # Force refresh ace editor script areas if a file has been uploaded (ace editor bug) ####
   ObserveScriptChanges(input, session)
@@ -956,11 +956,18 @@ ObserveScriptChanges <- function(input, session) {
 }
 
 # Check if any changes were made to variables since the last model upload
-ObserveRhandsonChanges <- function(simData, input, output) {
+ObserveRhandsonChanges <- function(simData, input, output, session) {
   observeEvent(input$odeFlow, {
     simData$changed$odeFlow <- T
-    odeFlow <- rhandsontable::hot_to_r(input$odeFlow)
-    UpdateGrViz(odeFlow, "flowDiagram", output)
+    
+    x <- UpdateVisNetWork(input$odeFlow, "flowDiagram", output)
+    if(is.null(x)) {
+      session$sendCustomMessage("hideElement", "showFlowDiagram")
+      updateCheckboxInput(session, "showFlowDiagram", label = "", value = FALSE)
+    } else {
+      session$sendCustomMessage("unhideElement", "showFlowDiagram")
+      updateCheckboxInput(session, "showFlowDiagram", label = "Display Flow Diagram", value = TRUE)
+    }
   })
   
   observeEvent(input$state, {

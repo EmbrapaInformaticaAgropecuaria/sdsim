@@ -1,6 +1,7 @@
 # shinyUI
 source("AuxiliaryUI.R", local = TRUE)
-library(DiagrammeR)
+# library(DiagrammeR)
+require(visNetwork)
 
 # Interface dimensions
 # Width of sidebar and page title
@@ -510,9 +511,15 @@ odePage <- shinydashboard::tabItem(
                            inline = T),
               AceEditorCustom("odeFunction", height = scriptHeight),
               rhandsontable::rHandsontableOutput("odeFlow",
-                                                 height = tableHeight,
+                                                 height = "260px",
                                                  width = tableWidth),
-              grVizOutput("flowDiagram"),
+              checkboxInput("showFlowDiagram",
+                            "Display Flow Diagram",
+                            value = FALSE),
+              conditionalPanel(
+                "input.showFlowDiagram != false",
+                visNetworkOutput("flowDiagram")
+              ),
               shinydashboard::box(
                 title = ("Usage"),
                 solidHeader = T, 

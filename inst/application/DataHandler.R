@@ -114,50 +114,105 @@ UpdateRHandsontable <- function(data, tableName, output) {
   })
 }
 
-UpdateGrViz <- function(odeFlow, grName, output) {
-  nodesState <- ""
-  nodesBoundary <- ""
-  nodesFlowRate <- ""
-  edges <- ""
+UpdateVisNetWork <- function(hot, grName, output) {
 
-  insertFlowRate <- function(flow, flowRate) {
-    paste0(flow[1], " -> ", flowRate, " [arrowhead = none]; ", flowRate, " ->", flow[2])
-  }
-
+  odeFlow <- rhandsontable::hot_to_r(hot)
+  
   stocks <- odeFlow$Stocks[!is.element(odeFlow$Stocks, c(NA,""))]
-  if(length(stocks) != 0) {
-    nodesState <- paste("node [shape = box] ", stocks, " [label = ", stocks, "];", sep = "", collapse = " ")
-  }
-
   boundaries <- odeFlow$Boundaries[!is.element(odeFlow$Boundaries, c(NA,""))]
-  if(length(boundaries)!=0) {
-    nodesBoundary <- paste("node [shape = tripleoctagon] ", boundaries, " [label = ' '];", sep = "", collapse = " ")
+  flows <- odeFlow$Flows[!is.element(odeFlow$Flows, c(NA,""))]
+  flowRate <- odeFlow$FlowRate[!is.element(odeFlow$FlowRate, c(NA,""))]
+  
+  if(length(stocks) == 0 && length(boundaries) == 0 && length(flows) == 0 && length(flowRate) == 0) {
+    return(NULL)
   }
   
-  flows <- odeFlow$Flows[!is.element(odeFlow$Flows, c(NA,""))]
+  id <- NULL
+  label <- NULL
+  group <- NULL
+  
+  from <- NULL
+  to <- NULL
+  arrows <- NULL
+  
   if(length(flows)!=0) {
-    neq <- length(flows)
-    edges <- mapply(insertFlowRate, strsplit(flows, split = "\\h*->\\h*", perl = T), paste("eq", 1:neq, sep = ""))
-    edges <- paste(edges, collapse=" ")
+    # Insert a flowrate node between a flow edge
+    edgesAux <- unlist(lapply(flows, function(x) {
+      # get flow index and split flow
+      index <- match(x,flows)
+      edge <- unlist(strsplit(x, split = "\\h*->\\h*", perl = TRUE))
+      if(length(edge) == 1)
+        edge <- c(edge, "")
+      #if there is a flowrate for index, insert it between the flow edge
+      if(!is.na(flowRate[index]) && flowRate[index] != "") {
+        return(c(paste(edge[1], "->", flowRate[index]), paste(flowRate[index], "->", edge[2])))
+      } else {
+        return(x)
+      }
+    }))
     
-    nodesFlowRate <- paste("node [shape = terminator, style = filled, fillcolor = black] ", paste("eq", 1:neq, sep = ""),
-                           " [label = ' '];", sep = "", collapse = " ")
+    # separate edges
+    split_flow <- strsplit(edgesAux, split = "\\h*->\\h*", perl = TRUE)
+    for(i in 1:length(split_flow)) {
+      if(length(split_flow[[i]]) == 1)
+        split_flow[[i]] <- c(split_flow[[i]], "")
+    }
+    from <- unlist(lapply(split_flow, `[[`, 1))
+    to <- unlist(lapply(split_flow, `[[`, 2))
     
-    flowRate <- odeFlow$FlowRate[!is.element(odeFlow$FlowRate, c(NA,""))]
-    if(!is.null(flowRate))
-      nodesFlowRate <- paste("node [shape = terminator, style = filled, fillcolor = black] ", paste("eq", 1:neq, sep = ""),
-                             " [label = '\n\n", append(flowRate,rep("",neq-length(flowRate))),"'];", sep = "", collapse = " ")
+    # insert source and sink ids
+    for(i in 1:length(from)) {
+      if(from[i] == "")
+        from[i] <- paste0("source", i)
+      if(to[i] == "")
+        to[i] <- paste0("sink", i)
+    }
+    
+    # set edges arrows type
+    arrows <- unlist(lapply(to, function(x) {
+      if(!is.na(match(x,flowRate))) {
+        return("")
+      } else {
+        return("to")
+      }
+    }))
   }
+  
+  id <- unique(c(stocks, flowRate, from, to))
+  nboundary <- length(id) - length(stocks) - length(flowRate)
+  label <- c(stocks, flowRate, rep("", nboundary))
+  
+  nodes <- data.frame(id = id, 
+                      label = label,
+                      group = c(rep("stocks", length(stocks)), 
+                                rep("flowRate", length(flowRate)),
+                                rep("boundaries", nboundary)))
+  
+  edges <- data.frame(from = from, 
+                      to = to, 
+                      arrows = arrows)
 
-  output[[grName]] <- renderGrViz(grViz(
-    paste0(" digraph flowMap {
-    graph [rankdir=LR]
 
-    ", nodesState, "
-    ", nodesBoundary, "
-    ", nodesFlowRate, "
-    ", edges, "
-    }"
-    )
-  ))
+  output[[grName]] <- renderVisNetwork({
+    visNetwork(nodes, edges, width = "100%")%>%
+      visInteraction(navigationButtons = TRUE) %>%
+      visPhysics(enabled = FALSE, hierarchicalRepulsion = list(centralGravity = 0)) %>%
+      visGroups(groupname = "boundaries",
+                shape = "icon",
+                icon = list(code = "f0c2",
+                            color = "black",
+                            size = 30)) %>%
+      visGroups(groupname = "flowRate",
+                shape = "icon",
+                icon = list(code = "f0b0",
+                            color = "black",
+                            size = 30)) %>%
+      visGroups(groupname = "stocks",
+                size = 100,
+                color = list(background = "lightgray",
+                             border = "black"),
+                shape = "box") %>%
+      addFontAwesome(name = "font-awesome-visNetwork") %>%
+      visHierarchicalLayout(sortMethod = "directed", direction = "LR")
+  })
 }

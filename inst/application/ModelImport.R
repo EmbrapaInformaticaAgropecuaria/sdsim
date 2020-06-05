@@ -448,7 +448,6 @@ UpdateLoadedModel <- function(simData, session, input,
       nRows <- nTableRows - NROW(currentModel$odeFlow)
       df <- rbind(currentModel$odeFlow, CreateFlowDataFrame(nRows = nRows),
                    stringsAsFactors = FALSE, row.names = NULL)
-      UpdateGrViz(currentModel$odeFlow, "flowDiagram", output)
     }
     UpdateRHandsontable(df, "odeFlow", output)
     simData$changed$odeFlow <- F
