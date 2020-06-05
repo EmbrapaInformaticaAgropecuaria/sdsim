@@ -9,7 +9,6 @@ CreateVarDataFrame <- function(nRows) {
 
 CreateFlowDataFrame <- function(nRows) {
   data.frame(Stocks = character(nRows), 
-             Boundaries = character(nRows), 
              Flows = character(nRows), 
              FlowRate = character(nRows),
              stringsAsFactors = FALSE, row.names = NULL)
@@ -119,11 +118,10 @@ UpdateVisNetWork <- function(hot, grName, output) {
   odeFlow <- rhandsontable::hot_to_r(hot)
   
   stocks <- odeFlow$Stocks[!is.element(odeFlow$Stocks, c(NA,""))]
-  boundaries <- odeFlow$Boundaries[!is.element(odeFlow$Boundaries, c(NA,""))]
   flows <- odeFlow$Flows[!is.element(odeFlow$Flows, c(NA,""))]
   flowRate <- odeFlow$FlowRate[!is.element(odeFlow$FlowRate, c(NA,""))]
   
-  if(length(stocks) == 0 && length(boundaries) == 0 && length(flows) == 0 && length(flowRate) == 0) {
+  if(length(stocks) == 0 && length(flows) == 0 && length(flowRate) == 0) {
     return(NULL)
   }
   

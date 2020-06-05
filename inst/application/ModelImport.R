@@ -777,7 +777,7 @@ CreateOdeModelObject <- function(id,
   
   if (is.list(ode$sdFlowOde)) {
     cols <- list(Stocks = StringToVector(ode$sdFlowOde$stocks), 
-                 Boundaries = StringToVector(ode$sdFlowOde$boundaries),
+                 # Boundaries = StringToVector(ode$sdFlowOde$boundaries),
                  Flows = StringToVector(ode$sdFlowOde$flows), 
                  FlowRate = StringToVector(ode$sdFlowOde$flowRate))
     model$odeFlow <- as.data.frame(lapply(cols, `length<-`, max(sapply(cols, length))), stringsAsFactors = FALSE)

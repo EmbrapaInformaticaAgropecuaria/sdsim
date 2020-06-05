@@ -54,9 +54,9 @@ AssembleOdeModel <- function(model, timeSeriesDirectory, progressFunction = NULL
     flows <- DataFrameColumnToVector(model$odeFlow$Flows)
     flowRate <- DataFrameColumnToVector(model$odeFlow$FlowRate)
     stocks <- DataFrameColumnToVector(model$odeFlow$Stocks)
-    boundaries <- DataFrameColumnToVector(model$odeFlow$Boundaries)
+    # boundaries <- DataFrameColumnToVector(model$odeFlow$Boundaries)
     
-    ode <- sdsim::sdFlow(flows = flows, flowRate = flowRate, stocks = stocks, boundaries = boundaries)
+    ode <- sdsim::sdFlow(flows = flows, flowRate = flowRate, stocks = stocks)
     
   } else if(model$odeType == "function" && !is.null(model$odeFunction)) {
     odeStr <- model$odeFunction
