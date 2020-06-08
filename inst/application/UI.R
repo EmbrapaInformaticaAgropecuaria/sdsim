@@ -512,23 +512,23 @@ odePage <- shinydashboard::tabItem(
                              inline = T),
                 style = "display: inline-block;vertical-align:top; 
                 width: 500px; padding-top: 8px;"),
-              div(
-                checkboxInput("showFlowDiagram",
-                              "Display Flow Diagram",
-                              value = FALSE),
-                style = "display: inline-block;vertical-align:top; 
-                width: 250px; padding-top: 0px;"),
+              # div(
+              #   checkboxInput("showFlowDiagram",
+              #                 "Display Flow Diagram",
+              #                 value = FALSE),
+              #   style = "display: inline-block;vertical-align:top; 
+              #   width: 250px; padding-top: 0px;"),
               AceEditorCustom("odeFunction", height = scriptHeight),
               rhandsontable::rHandsontableOutput("odeFlow",
                                                  height = "260px",
                                                  width = tableWidth),
-              conditionalPanel(
-                "input.showFlowDiagram != false",
-                visNetworkOutput("flowDiagram"),
-                checkboxInput("hierarchicalLayout",
-                              "Hierarchical Layout",
-                              value = TRUE)
-              ),
+              # conditionalPanel(
+              #   "input.showFlowDiagram != false",
+              #   visNetworkOutput("flowDiagram"),
+              #   checkboxInput("hierarchicalLayout",
+              #                 "Hierarchical Layout",
+              #                 value = TRUE)
+              # ),
               shinydashboard::box(
                 title = ("Usage"),
                 solidHeader = T, 
