@@ -546,8 +546,11 @@ server <- shinyServer(function(input, output, session) {
   observeEvent(input$hierarchicalLayout, {
     
     x <- UpdateVisNetWork(input$odeFlow, "flowDiagram", output, input$hierarchicalLayout)
-    if(!is.null(x)) 
+    if(!is.null(x))  {
       updateCheckboxInput(session, "showFlowDiagram", value = TRUE)
+    } else {
+      updateCheckboxInput(session, "showFlowDiagram", value = FALSE)
+    }
   })
   
   # Check if any changes were made to variables since the last model upload ####
@@ -970,8 +973,12 @@ ObserveRhandsonChanges <- function(simData, input, output, session) {
     simData$changed$odeFlow <- T
 
     x <- UpdateVisNetWork(input$odeFlow, "flowDiagram", output, input$hierarchicalLayout)
-    if(!is.null(x)) 
+    if(!is.null(x))  {
       updateCheckboxInput(session, "showFlowDiagram", value = TRUE)
+    } else {
+      updateCheckboxInput(session, "showFlowDiagram", value = FALSE)
+    }
+      
   })
   
   observeEvent(input$state, {

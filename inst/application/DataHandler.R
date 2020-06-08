@@ -124,11 +124,7 @@ UpdateVisNetWork <- function(hot, grName, output, layoutOpt) {
   stocks <- odeFlow$Stocks[!is.element(odeFlow$Stocks, c(NA,""))]
   flows <- odeFlow$Flows[!is.element(odeFlow$Flows, c(NA,""))]
   flowRate <- odeFlow$FlowRate[!is.element(odeFlow$FlowRate, c(NA,""))]
-  
-  if(length(stocks) == 0 && length(flows) == 0 && length(flowRate) == 0) {
-    return(NULL)
-  }
-  
+
   id <- NULL
   label <- NULL
   group <- NULL
@@ -138,41 +134,34 @@ UpdateVisNetWork <- function(hot, grName, output, layoutOpt) {
   arrows <- NULL
   
   if(length(flows)!=0) {
-    # Insert a flowrate node between a flow edge
-    edgesAux <- unlist(lapply(flows, function(x) {
-      # get flow index and split flow
-      index <- match(x,flows)
-      edge <- unlist(strsplit(x, split = "\\h*->\\h*", perl = TRUE))
-      if(length(edge) == 1)
-        edge <- c(edge, "")
-      #if there is a flowrate for index, insert it between the flow edge
-      if(!is.na(flowRate[index]) && flowRate[index] != "") {
-        return(c(paste(edge[1], "->", flowRate[index]), paste(flowRate[index], "->", edge[2])))
+    numBoundaries <- strsplit(flows, split = "\\h*->\\h*", perl = TRUE)
+    for(i in 1:length(numBoundaries)) {
+      
+      # Append empty string if boundary is described as ""
+      if(length(numBoundaries[[i]]) == 1)
+        numBoundaries[[i]] <- c(numBoundaries[[i]], "")
+      
+      # Enumerate boundaries
+      numBoundaries[[i]] <- sub("boundary", paste0("boundary", i), numBoundaries[[i]])
+      numBoundaries[[i]][nchar(numBoundaries[[i]])==0] <- paste0("boundary", i)
+      
+      # Insert flowrate between a flow and split it OR just split flow 
+      if(!is.na(flowRate[i]) && flowRate[i] != "") {
+        from <- c(from, numBoundaries[[i]][1])
+        to <- c(to, flowRate[i])
+        
+        from <- c(from, flowRate[i])
+        to <- c(to, numBoundaries[[i]][2])
+        
       } else {
-        return(x)
+        from <- c(from, numBoundaries[[i]][1])
+        to <- c(to, numBoundaries[[i]][2])
       }
-    }))
-    
-    # separate edges
-    split_flow <- strsplit(edgesAux, split = "\\h*->\\h*", perl = TRUE)
-    for(i in 1:length(split_flow)) {
-      if(length(split_flow[[i]]) == 1)
-        split_flow[[i]] <- c(split_flow[[i]], "")
-    }
-    from <- unlist(lapply(split_flow, `[[`, 1))
-    to <- unlist(lapply(split_flow, `[[`, 2))
-    
-    # insert source and sink ids
-    for(i in 1:length(from)) {
-      if(from[i] == "")
-        from[i] <- paste0("source", i)
-      if(to[i] == "")
-        to[i] <- paste0("sink", i)
     }
     
-    # set edges arrows type
+    # Set edges arrows type
     arrows <- unlist(lapply(to, function(x) {
-      if(!is.na(match(x,flowRate))) {
+      if(!is.na(match(x, flowRate))) {
         return("")
       } else {
         return("to")
@@ -215,6 +204,5 @@ UpdateVisNetWork <- function(hot, grName, output, layoutOpt) {
                 shape = "box") %>%
       addFontAwesome(name = "font-awesome-visNetwork") %>%
       visHierarchicalLayout(enabled = layoutOpt, sortMethod = "directed", direction = "LR")
-    
   })
 }

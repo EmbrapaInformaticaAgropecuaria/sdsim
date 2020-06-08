@@ -30,6 +30,8 @@ sdFlowOdeClass <- R6::R6Class(
       if(length(flows) != length(flowRate))
         stop(sprintf(auxiliaryMsg$sdMakeFlows5))
       
+      boundaries <- c(boundaries, "")
+      
       # Verifies if there are flows with inverted arrow, and corrects it
       flows <- private$verifyInverseFlow(flows)
       
@@ -37,9 +39,12 @@ sdFlowOdeClass <- R6::R6Class(
       private$verifyBoundariesSt(boundaries, stocks, flows)
       
       split_flow <- strsplit(flows, split = "\\h*->\\h*", perl = T)
+      for(i in 1:length(split_flow)) {
+        if(length(split_flow[[i]]) == 1)
+          split_flow[[i]] <- c(split_flow[[i]], "")
+      }
       source <- unlist(lapply(split_flow, `[[`, 1))
       sink <- unlist(lapply(split_flow, `[[`, 2))
-
       
       private$pSource <- source
       private$pSink <- sink
@@ -112,12 +117,16 @@ sdFlowOdeClass <- R6::R6Class(
     # Gives a warning if there is no match.
     verifyBoundariesSt = function(boundaries, stocks, flows) { 
       strFlows <- strsplit(flows, "\\s+\\->\\s+")
+      for(i in 1:length(strFlows)) {
+        if(length(strFlows[[i]]) == 1)
+          strFlows[[i]] <- c(strFlows[[i]], "")
+      }
       missingFlows <- list()
       for(i in 1:length(flows)) { 
         if(!(strFlows[[i]][1] %in% boundaries) && 
            !(strFlows[[i]][1] %in% stocks))
           missingFlows <- c(missingFlows, strFlows[[i]][1])
-        if(!(strFlows[[i]][2] %in% boundaries) && 
+        if(!(strFlows[[i]][2] %in%  boundaries) && 
            !(strFlows[[i]][2] %in% stocks))
           missingFlows <- c(missingFlows, strFlows[[i]][2])
       }
