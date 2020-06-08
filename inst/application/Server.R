@@ -544,7 +544,7 @@ server <- shinyServer(function(input, output, session) {
   ObserveTriggerMethod(input, session)
   
   observeEvent(input$hierarchicalLayout, {
-    
+
     x <- UpdateVisNetWork(input$odeFlow, "flowDiagram", output, input$hierarchicalLayout)
     if(!is.null(x))  {
       updateCheckboxInput(session, "showFlowDiagram", value = TRUE)

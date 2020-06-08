@@ -667,7 +667,7 @@ LoadOdeModelData <- function(modelXml, simData) {
   globalFunctions <- lapply(names(globalFunctions), function(x) {
     paste0(x, " <- ", FunToString(globalFunctions[[x]]))
   })
-  
+
   # Create model
   modelData <- CreateOdeModelObject(
     id = modelXml$id, 
@@ -776,9 +776,18 @@ CreateOdeModelObject <- function(id,
   model$odeFunction <- NULL
   
   if (is.list(ode$sdFlowOde)) {
-    cols <- list(Stocks = StringToVector(ode$sdFlowOde$stocks), 
-                 # Boundaries = StringToVector(ode$sdFlowOde$boundaries),
-                 Flows = StringToVector(ode$sdFlowOde$flows), 
+    flows <- StringToVector(ode$sdFlowOde$flows)
+    split_flow <- strsplit(flows, split = "\\h*->\\h*", perl = T)
+    for(i in 1:length(split_flow)) {
+      if(length(split_flow[[i]]) == 1)
+        split_flow[[i]] <- c(split_flow[[i]], "")
+    }
+    source <- unlist(lapply(split_flow, `[[`, 1))
+    sink <- unlist(lapply(split_flow, `[[`, 2))
+
+    
+    cols <- list(Source = source,
+                 Sink = sink,
                  FlowRate = StringToVector(ode$sdFlowOde$flowRate))
     model$odeFlow <- as.data.frame(lapply(cols, `length<-`, max(sapply(cols, length))), stringsAsFactors = FALSE)
     model$odeType <- "flow"
@@ -801,7 +810,6 @@ CreateOdeModelObject <- function(id,
   model$defaultScenarioId <- defaultScenarioId
   model$currentScenarioId <- currentScenarioId
   model$scenarios <- scenarios
-  
 
   return(model)
 }

@@ -8,8 +8,10 @@ CreateVarDataFrame <- function(nRows) {
 }
 
 CreateFlowDataFrame <- function(nRows) {
-  data.frame(Stocks = character(nRows), 
-             Flows = character(nRows), 
+  data.frame(Source = character(nRows),
+             Sink = character(nRows),
+             # Stocks = character(nRows),
+             # Flows = character(nRows), 
              FlowRate = character(nRows),
              stringsAsFactors = FALSE, row.names = NULL)
 }
@@ -113,18 +115,34 @@ UpdateRHandsontable <- function(data, tableName, output) {
   })
 }
 
+RhandsonToDF <- function(hot, trimWhites = NULL, variableCol = "Variable") {
+  if(is.null(hot))
+    return(NULL)
+  
+  df <- rhandsontable::hot_to_r(hot)
+  
+  if(is.null(df))
+    return(NULL)
+  
+  for(col in trimWhites) {
+    df[col] <- as.data.frame(apply(df[col], c(1, 2), function(x) gsub('\\s+', '',x)), stringsAsFactors = F)
+  }
+  
+  df <- df[-which(grepl(EMPTY_PERL_REGEX, df[[variableCol]], perl = T)), , drop = FALSE]
+  row.names(df) <- NULL
+  
+  return(df)
+}
+
 UpdateVisNetWork <- function(hot, grName, output, layoutOpt) {
 
-  if(!is.null(hot))
-    odeFlow <- rhandsontable::hot_to_r(hot)
+  if(!is.null(hot)) {
+    df <- rhandsontable::hot_to_r(hot)
+  }
   else{
     return(NULL)
   }
   
-  stocks <- odeFlow$Stocks[!is.element(odeFlow$Stocks, c(NA,""))]
-  flows <- odeFlow$Flows[!is.element(odeFlow$Flows, c(NA,""))]
-  flowRate <- odeFlow$FlowRate[!is.element(odeFlow$FlowRate, c(NA,""))]
-
   id <- NULL
   label <- NULL
   group <- NULL
@@ -133,55 +151,55 @@ UpdateVisNetWork <- function(hot, grName, output, layoutOpt) {
   to <- NULL
   arrows <- NULL
   
-  if(length(flows)!=0) {
-    numBoundaries <- strsplit(flows, split = "\\h*->\\h*", perl = TRUE)
-    for(i in 1:length(numBoundaries)) {
-      
-      # Append empty string if boundary is described as ""
-      if(length(numBoundaries[[i]]) == 1)
-        numBoundaries[[i]] <- c(numBoundaries[[i]], "")
-      
-      # Enumerate boundaries
-      numBoundaries[[i]] <- sub("boundary", paste0("boundary", i), numBoundaries[[i]])
-      numBoundaries[[i]][nchar(numBoundaries[[i]])==0] <- paste0("boundary", i)
-      
-      # Insert flowrate between a flow and split it OR just split flow 
-      if(!is.na(flowRate[i]) && flowRate[i] != "") {
-        from <- c(from, numBoundaries[[i]][1])
-        to <- c(to, flowRate[i])
+  for(r in 1:nrow(df)) {
+    if(any(df[r,] != "")) {
+      if(!is.na(df$FlowRate[r]) && df$FlowRate[r] != "") {
+        from <- c(from, df$Source[r])
+        to <- c(to, df$FlowRate[r])
+        arrows <- c(arrows, "")
         
-        from <- c(from, flowRate[i])
-        to <- c(to, numBoundaries[[i]][2])
-        
+        from <- c(from, df$FlowRate[r])
+        to <- c(to, df$Sink[r])
+        arrows <- c(arrows, "to")
       } else {
-        from <- c(from, numBoundaries[[i]][1])
-        to <- c(to, numBoundaries[[i]][2])
+        from <- c(from, df$Source[r])
+        to <- c(to, df$Sink[r])
+        arrows <- c(arrows, "to")
       }
     }
-    
-    # Set edges arrows type
-    arrows <- unlist(lapply(to, function(x) {
-      if(!is.na(match(x, flowRate))) {
-        return("")
-      } else {
-        return("to")
-      }
-    }))
   }
   
-  id <- unique(c(stocks, flowRate, from, to))
-  nboundary <- length(id) - length(stocks) - length(flowRate)
-  label <- c(stocks, flowRate, rep("", nboundary))
+  if(!is.null(from))
+    for(i in 1:length(from)) {
+      if(any(from[i] == c("boundary", "")))
+        from[i] <- paste0("source", i)
+    }
+  
+  if(!is.null(to))
+    for(i in 1:length(to)) {
+      if(any(to[i] == c("boundary", "")))
+        to[i] <- paste0("sink", i)
+    }
+  
+  stocks <- setdiff(union(df$Source,df$Sink),c("boundary",""))
+  rate <- df$FlowRate[!is.element(df$FlowRate, c(NA,""))]
+  
+  id <- unique(c(stocks, rate, from, to))
+  nboundary <- length(id) - length(stocks) - length(rate)
+  label <- c(stocks, rate, rep("", nboundary))
+  
   
   nodes <- data.frame(id = id, 
                       label = label,
                       group = c(rep("stocks", length(stocks)), 
-                                rep("flowRate", length(flowRate)),
+                                rep("flowRate", length(rate)),
                                 rep("boundaries", nboundary)))
   
   edges <- data.frame(from = from, 
                       to = to, 
                       arrows = arrows)
+
+
   
   output[[grName]] <- renderVisNetwork({
     visNetwork(nodes, edges, width = "100%")%>%
@@ -190,17 +208,13 @@ UpdateVisNetWork <- function(hot, grName, output, layoutOpt) {
       visGroups(groupname = "boundaries",
                 shape = "icon",
                 icon = list(code = "f0c2",
-                            color = "black",
                             size = 30)) %>%
       visGroups(groupname = "flowRate",
                 shape = "icon",
                 icon = list(code = "f0b0",
-                            color = "black",
                             size = 30)) %>%
       visGroups(groupname = "stocks",
                 size = 100,
-                color = list(background = "lightgray",
-                             border = "black"),
                 shape = "box") %>%
       addFontAwesome(name = "font-awesome-visNetwork") %>%
       visHierarchicalLayout(enabled = layoutOpt, sortMethod = "directed", direction = "LR")

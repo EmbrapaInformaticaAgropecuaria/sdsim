@@ -5,6 +5,8 @@ AssembleModel <- function(simData, input, timeSeriesDirectory,
   UpdateModelData(simData, input)
   
   model <- simData$models[[simData$currentModelId]]
+  
+  # print(model)
 
   if(model$type == "sdOdeModel") {
     modelObj <- AssembleOdeModel(model, timeSeriesDirectory, progressFunction)
@@ -49,13 +51,16 @@ AssembleCoupledModel <- function(model, simData, timeSeriesDirectory) {
 
 AssembleOdeModel <- function(model, timeSeriesDirectory, progressFunction = NULL) {
   defaultScenario <- model$scenarios[[model$defaultScenarioId]]
-  
+
   if(model$odeType == "flow" && !is.null(model$odeFlow)) {
-    flows <- DataFrameColumnToVector(model$odeFlow$Flows)
+    source <- DataFrameColumnToVector(model$odeFlow$Source)
+    sink <- DataFrameColumnToVector(model$odeFlow$Sink)
     flowRate <- DataFrameColumnToVector(model$odeFlow$FlowRate)
-    stocks <- DataFrameColumnToVector(model$odeFlow$Stocks)
-    # boundaries <- DataFrameColumnToVector(model$odeFlow$Boundaries)
     
+    flows <- paste0(source, " -> ", sink)
+    stocks <- union(source, sink)
+    stocks <- setdiff(stocks, c("boundary", ""))
+
     ode <- sdsim::sdFlow(flows = flows, flowRate = flowRate, stocks = stocks)
     
   } else if(model$odeType == "function" && !is.null(model$odeFunction)) {
@@ -262,9 +267,8 @@ UpdateModelData <- function(simData, input) {
     
     currentModel$odeFunction <- input$odeFunction
     if(!is.null(simData$changed$odeFlow) && simData$changed$odeFlow) {
-      currentModel$odeFlow <- RhandsonToDF(input$odeFlow, variableCol = "Flows")
+      currentModel$odeFlow <- RhandsonToDF(input$odeFlow, variableCol = "FlowRate")
     }
-
     
     if(!is.null(simData$changed$aux) && simData$changed$aux) {
       currentModel$aux <- RhandsonToDF(input$aux, trimWhites = NULL)
@@ -337,7 +341,7 @@ RhandsonToDF <- function(hot, trimWhites = NULL, variableCol = "Variable") {
     return(NULL)
   
   df <- rhandsontable::hot_to_r(hot)
-  
+
   if(is.null(df))
     return(NULL)
 

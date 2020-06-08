@@ -238,11 +238,21 @@ odeToXML <- function(ode, type) {
     lOde <- list(ode = FunToString(ode))
   } else if(type == "flow") {
     rootOde <- XML::newXMLNode("sdFlowOde")
+    
+    source <- ode$Source
+    sink <- ode$Sink
+    flows <- paste0(source, " -> ", sink)
+    
+    allVar <- union(source, sink)
+    
+    stocks <- setdiff(allVar, c("boundary", ""))
+    boundaries <- setdiff(allVar, stocks)
+    
     lOde <- list(
-      flows = VectorToCharDef(ode$Flows, TRUE),
+      flows = VectorToCharDef(flows, TRUE),
       flowRate = VectorToCharDef(unlist(ode$FlowRate), TRUE),
-      stocks = VectorToCharDef(ode$Stocks, TRUE),
-      boundaries = VectorToCharDef(ode$Boundaries, TRUE)
+      stocks = VectorToCharDef(stocks, TRUE),
+      boundaries = VectorToCharDef(boundaries, TRUE)
     )
   } else {
     # TODO print erro
