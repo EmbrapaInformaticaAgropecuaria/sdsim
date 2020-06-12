@@ -1,0 +1,5 @@
+#!/bin/bash
+rpath=$(Rscript -e 'cat(paste0(gsub("src", "", getwd()), "/inst/lib"))') #'
+sed -e"s|@rpath@|"${rpath}"|" src/Makevars.in > src/Makevars
+
+exit 0

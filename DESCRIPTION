@@ -19,7 +19,9 @@ Description: R6 classes for prototyping system dynamics models and a solver to
   solver from the deSolve-package. 
   Also supports static models and coupling to represent more complex systems. 
 Depends:
-  R (>= 2.15.0)
+  R (>= 2.15.0),
+  Rcpp (>= 0.9.10)
+LinkingTo: Rcpp
 License: GPL
 LazyLoad: true
 Imports:
@@ -35,7 +37,7 @@ Imports:
   shinyAce,
   shinydashboard,
   rhandsontable
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.2
 Suggests: knitr,
     rmarkdown,
     testthat

@@ -6,6 +6,10 @@ sdFlowOdeClass <- R6::R6Class(
   
   public = list(
     initialize = function(flows, flowRate, stocks, boundaries) {
+      
+      a <- .Call("teste", as.double(58))
+      print(a)
+      
       private$pFlows <- flows
       
       # TODO: change message variables names
