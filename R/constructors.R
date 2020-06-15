@@ -1390,6 +1390,15 @@ sdFlow <- function(flows = NULL, flowRate = NULL,
                      boundaries = boundaries)
 }
 
+#' Create sunction object
+#'  
+#'
+#' This function stores the ode function which must have the following format:
+#' function(t, st, ct, par, inp, sw, aux)
+#' 
+#' @param func 
+#' 
+#' @return  
 sdFunction <- function(func = NULL) {
   sdFunctionOdeClass$new(func = func)
 }
