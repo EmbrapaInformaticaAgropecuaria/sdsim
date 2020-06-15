@@ -20,7 +20,6 @@ Description: R6 classes for prototyping system dynamics models and a solver to
   Also supports static models and coupling to represent more complex systems. 
 Depends:
   R (>= 2.15.0),
-  Rcpp (>= 0.9.10)
 LinkingTo: Rcpp
 License: GPL
 LazyLoad: true
