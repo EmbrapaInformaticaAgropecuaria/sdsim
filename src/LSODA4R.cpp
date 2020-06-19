@@ -13,25 +13,19 @@ Environment ENV;
 
 int NEQ;
 
-extern "C" {
-  SEXP teste(SEXP x) {
-    return x;
-  }
-}
-
-
 void sys(double t, double *y, double *dydt) {
   Function f = ENV["ode"];
 
   std::vector<double> yR(y,y + NEQ);
-  std::vector<double> result = as<std::vector<double>>(f(t, yR));
+  double parms = 0;
+  std::vector<double> result = as<std::vector<double>>(f(t, yR, parms));
   for(int i = 0; i < NEQ; i++) {
     dydt[i] = result[i];
   }
 }
 
 extern "C" {
-	SEXP Lsoda(SEXP t0_S, SEXP tf_S, SEXP y_S, SEXP rtol_S, SEXP atol_S, SEXP env) {
+  SEXP Lsoda(SEXP t0_S, SEXP tf_S, SEXP y_S, SEXP rtol_S, SEXP atol_S, SEXP env) {
 	  ENV = as<Environment>(env);
 	  NEQ = LENGTH(y_S);
 

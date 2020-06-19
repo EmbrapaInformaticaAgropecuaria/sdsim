@@ -7,7 +7,8 @@ CreateFuncEval <-
            auxiliary,
            lastEvalTime,
            unlistReturn = F,
-           storeAuxTrajectory = F) { 
+           storeAuxTrajectory = F,
+           stNames = NULL) { 
     aux <- vector("list", length = length(auxiliary))
     names(aux) <- names(auxiliary)
     auxseq <- seq_along(auxiliary)
@@ -15,10 +16,12 @@ CreateFuncEval <-
     
     FuncEval <- function(t, st, parms) { 
       st <- as.list(st)
-      
+      if(!is.null(stNames))
+        names(st) <- stNames
+
       # evaluate time series and auxiliary varibles if the last evaluation time
       # is different than the current time
-      if (lastEvalTime != t) { 
+      if (lastEvalTime != t) {
         # compute the time series contained in the input
         inp[timeSeries] <<- lapply(inp$fun_, function(x) x(t))
         
@@ -29,7 +32,7 @@ CreateFuncEval <-
       for (var in auxseq)
         aux[[var]] <- eval(auxiliary[[var]])
       
-      output <- func(t = t, st = st, ct = ct, par = par, 
+      output <- func(t = t, st = st, ct = ct, par = par,
                      inp = inp, sw = sw, aux = aux)
       
       # Save aux trajectory
@@ -477,6 +480,32 @@ runOdeSimulation <- function(model,
   # verify state variables
   if (is.null(state) || length(state) == 0)
     stop(sprintf(sdSimulatorMsg$sdSimulateAtomic1,model$id))
+  
+  lsoda <- F
+  if(lsoda) {
+    time <- seq(times$from, times$to, times$by)
+    outTrajectory <- data.frame(time = times$from, state)
+    
+    odeEval2 <-
+      CreateFuncEval(func = model$ode,
+                     ct = ct,
+                     par = par,
+                     inp = inp,
+                     sw = sw,
+                     auxiliary = auxiliary,
+                     lastEvalTime = (times$from - 1), # TODO: mudar para nulo?
+                     storeAuxTrajectory = storeAuxTrajectory, 
+                     unlistReturn = T,
+                     stNames = names(state))
+    
+    for (i in 1:(length(time)-1)) {
+      res <- sdsim::step_solver(odeEval2, time[i], time[i+1], state)
+      outTrajectory <- rbind(outTrajectory, c(time[i+1], res))
+      
+      state$Y <- res[1]
+      state$R <- res[2]
+    }
+  }
   
   environment(CreateFuncEval) <- model$modelEnvironment
   
