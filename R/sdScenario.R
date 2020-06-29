@@ -728,70 +728,70 @@ sdScenarioClass <- R6::R6Class(
       varList <- list(...)
       
       if (length(varList) == 0) # remove all variables
-        private[["premoveVar"]](names(private$pState), "state", 
+        private[["premoveVar"]](names(private$pState), "State", 
                                 verbose = verbose)
       else # remove the given variables
-        private[["premoveVar"]](varList, "state", verbose = verbose)
+        private[["premoveVar"]](varList, "State", verbose = verbose)
       invisible()
     },
     removeConstant = function(..., verbose = FALSE) { 
       varList <- list(...)
       
       if (length(varList) == 0) # remove all variables
-        private[["premoveVar"]](names(private$pConstant), "constant", 
+        private[["premoveVar"]](names(private$pConstant), "Constant", 
                                 verbose = verbose)
       else # remove the given variables
-        private[["premoveVar"]](varList, "constant", verbose = verbose)
+        private[["premoveVar"]](varList, "Constant", verbose = verbose)
       invisible()
     },
     removeInput = function(..., verbose = FALSE) { 
       varList <- list(...)
       
       if (length(varList) == 0) # remove all variables
-        private[["premoveVar"]](names(private$pInput), "input", 
+        private[["premoveVar"]](names(private$pInput), "Input", 
                                 verbose = verbose)
       else # remove the given variables
-        private[["premoveVar"]](varList, "input", verbose = verbose)
+        private[["premoveVar"]](varList, "Input", verbose = verbose)
       invisible()
     },
     removeParameter = function(..., verbose = FALSE) { 
       varList <- list(...)
       
       if (length(varList) == 0) # remove all variables
-        private[["premoveVar"]](names(private$pParameter), "parameter", 
+        private[["premoveVar"]](names(private$pParameter), "Parameter", 
                                 verbose = verbose)
       else # remove the given variables
-        private[["premoveVar"]](varList, "parameter", verbose = verbose)
+        private[["premoveVar"]](varList, "Parameter", verbose = verbose)
       invisible()
     },
     removeSwitch = function(..., verbose = FALSE) { 
       varList <- list(...)
       
       if (length(varList) == 0) # remove all variables
-        private[["premoveVar"]](names(private$pSwitch), "switch", 
+        private[["premoveVar"]](names(private$pSwitch), "Switch", 
                                 verbose = verbose)
       else # remove the given variables
-        private[["premoveVar"]](varList, "switch", verbose = verbose)
+        private[["premoveVar"]](varList, "Switch", verbose = verbose)
       invisible()
     },
     removeDescription = function(..., verbose = FALSE) { 
       varList <- list(...)
       
       if (length(varList) == 0) # remove all variables
-        private[["premoveVar"]](names(private$pDescription), "description", 
+        private[["premoveVar"]](names(private$pDescription), "Description", 
                                 verbose = verbose)
       else # remove the given variables
-        private[["premoveVar"]](varList, "description", verbose = verbose)
+        private[["premoveVar"]](varList, "Description", verbose = verbose)
       invisible()
     },
     removeUnit = function(..., verbose = FALSE) { 
       varList <- list(...)
       
       if (length(varList) == 0) # remove all variables
-        private[["premoveVar"]](names(private$pUnit), "unit", 
+        private[["premoveVar"]](names(private$pUnit), "Unit", 
                                 verbose = verbose)
       else # remove the given variables
-        private[["premoveVar"]](varList, "unit", verbose = verbose)
+        private[["premoveVar"]](varList, "Unit", verbose = verbose)
       invisible()
     },
     buildDataFrames = function(showId = TRUE) { 
