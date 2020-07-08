@@ -1402,3 +1402,12 @@ sdFlow <- function(flows = NULL, flowRate = NULL,
 sdFunction <- function(func = NULL) {
   sdFunctionOdeClass$new(func = func)
 }
+
+sdSimulator <- function(model,
+                        scenario = NULL,
+                        from = NULL,
+                        to = NULL,
+                        by = NULL,
+                        method = NULL) {
+  sdSimulatorClass$new(model, scenario, from, to, by, method)
+}

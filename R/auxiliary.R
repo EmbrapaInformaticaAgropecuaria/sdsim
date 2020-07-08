@@ -865,7 +865,7 @@ sdEquationList <- function(...) {
 
 # Merge the a default scenario with an alternate scenario. Returns the
 # merged scenario.
-mergeScenarios <- function(defaultScenario, alternateScenario, verbose) { 
+mergeScenarios <- function(defaultScenario, alternateScenario, verbose = FALSE) { 
   if (length(alternateScenario$state) > 0)
     defaultScenario$addState(alternateScenario$state, verbose = verbose)
   if (length(alternateScenario$constant) > 0)

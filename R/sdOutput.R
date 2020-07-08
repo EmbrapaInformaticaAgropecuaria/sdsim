@@ -542,6 +542,14 @@ sdOutputClass <- R6::R6Class(
                                            private$pScenario$id, 
                                            ".xml"))
       }
+    },
+    appendOutTraj = function(row) {
+      index <- nrow(private$pOutTrajectory) + 1
+      private$pOutTrajectory[index, ] <- row
+    },
+    appendAuxTraj = function(row) {
+      index <- nrow(private$pAuxTrajectory) + 1
+      private$pAuxTrajectory[index, ] <- row
     }
   ),
   active = list(
