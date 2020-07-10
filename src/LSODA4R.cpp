@@ -16,7 +16,7 @@ int NEQ;
 int NAUX;
 
 void sys(double t, double *y, double *dydt) {
-  Function f = ENV["func"];
+  Function f = ENV["ode"];
 
   NumericVector yR(y, y + NEQ);
   double parms = 0;
@@ -35,10 +35,10 @@ void sys(double t, double *y, double *dydt) {
 }
 
 extern "C" {
-  SEXP Lsoda(SEXP t0_S, SEXP tf_S, SEXP y_S, SEXP naux, SEXP rtol_S, SEXP atol_S, SEXP env) {
+  SEXP Lsoda(SEXP t0_S, SEXP tf_S, SEXP y_S, SEXP rtol_S, SEXP atol_S, SEXP env) {
 	  ENV = as<Environment>(env);
 	  NEQ = LENGTH(y_S);
-	  NAUX = as<int>(naux);
+	  NAUX = LENGTH(ENV["aux"]);
 
 	  double t0 = as<double>(t0_S);
 	  double tf = as<double>(tf_S);
