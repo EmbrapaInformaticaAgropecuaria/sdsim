@@ -565,6 +565,9 @@ sdOutputClass <- R6::R6Class(
     },
     UpdateAuxTraj = function(row) {
       private$pAuxTrajectory <- c(private$pAuxTrajectory, row)
+    },
+    SetOutTraj = function(df) {
+      private$pOutTrajectory <- df
     }
   ),
   active = list(

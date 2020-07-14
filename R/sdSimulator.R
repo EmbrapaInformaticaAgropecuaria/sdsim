@@ -12,14 +12,15 @@ CreateFuncEval <-
     par <- env$par
     inp <- env$inp
     sw <- env$sw
-    aux <- env$aux
     
     aux <- vector("list", length = length(auxiliary))
     names(aux) <- names(auxiliary)
     auxseq <- seq_along(auxiliary)
     timeSeries <- match(names(inp$fun_), names(inp))
-    
+
     FuncEval <- function(t, st, parms) { 
+      # e <- globalenv()
+      # e$counter <- e$counter + 1
       st <- as.list(st)
       if(!is.null(stNames))
         names(st) <- stNames
@@ -444,19 +445,7 @@ sdSimulatorClass <- R6::R6Class(
           private$pMethod <- "lsoda"
         }
       }
-      
-      private$pCurrTime <- private$pTimes$from
-      private$pCurrState <- private$pSimScenario$state
-
-      private$pOutput <- sdOutputClass$new(
-        outTrajectory = unlist(private$pCurrState, use.names = F),
-        auxTrajectory = NULL,
-        timeSeriesTrajectory = NULL,
-        model = private$pModel,
-        scenario = private$pSimScenario,
-        diagnostics = NULL,
-        postProcessOut = NULL)
-
+  
     },
     print = function() {
       cat(indent("$model", indent = 4), sep = "\n")
@@ -523,6 +512,18 @@ sdSimulatorClass <- R6::R6Class(
       assign("inp", inp, private$pOdeEnv)
       assign("sw", sw, private$pOdeEnv)
       
+      private$pCurrTime <- private$pTimes$from
+      private$pCurrState <- private$pSimScenario$state
+      
+      private$pOutput <- sdOutputClass$new(
+        outTrajectory = unlist(private$pCurrState, use.names = F),
+        auxTrajectory = NULL,
+        timeSeriesTrajectory = NULL,
+        model = private$pModel,
+        scenario = private$pSimScenario,
+        diagnostics = NULL,
+        postProcessOut = NULL)
+      
       # verify state variables
       if (is.null(st) || length(st) == 0)
         stop(sprintf(sdSimulatorMsg$sdSimulateAtomic1,model$id))
@@ -566,22 +567,20 @@ sdSimulatorClass <- R6::R6Class(
       }
     },
     runStep = function(time) {
-      
+
       # If the model is atomic
       if (inherits(private$pModel, sdOdeModelClass$classname)) {
         # If time is smaller than current time
         if(time - private$pCurrTime > 0) {
-          out <- runOdeStep(ode = private$pOde, from = private$pCurrTime, to = time, state = private$pCurrState)
+          out <- sdsim::oneStep(ode = private$pOde, from = private$pCurrTime, to = time, state = private$pCurrState)
 
           # Save state trajectory 
           private$pOutput$UpdateOutTraj(out$state)
-          # private$pOutTraj[length(private$pOutTraj) + 1] <- list(out$state)
           private$pOdeEnv$st <- setNames(as.list(out$state), names(private$pCurrState))
 
           # Save auxiliary trajectory
           if(!is.null(out$aux))
             private$pOutput$UpdateAuxTraj(out$aux)
-            # private$pAuxTraj[length(private$pAuxTraj) + 1] <- list(out$aux)
 
           # Update current time and current state
           private$pCurrTime <- time
@@ -604,6 +603,11 @@ sdSimulatorClass <- R6::R6Class(
         stop(sprintf(sdSimulatorMsg$sdSimulate2))
       }
       
+    },
+    runAllSteps = function(rtol = 1e-6, atol= 1e-6) {
+      time <- seq(private$pTimes$from, private$pTimes$to, private$pTimes$by)
+      out <- sdsim::allSteps(private$pOde, time, private$pCurrState, rtol = rtol, atol = atol)
+      private$pOutput$SetOutTraj(out$state)
     }
   ),
   active = list(
@@ -639,16 +643,6 @@ sdSimulatorClass <- R6::R6Class(
     pOde = NULL
   )
 )
-
-runOdeStep <- function(ode,
-                       from = NULL,
-                       to = NULL,
-                       state = NULL) {
-
-  output <- sdsim::stepSolver(ode, from, to, state)
-
-  return(output)
-}
 
 runOdeSimulation <- function(env, model,
                              scenario = NULL,
