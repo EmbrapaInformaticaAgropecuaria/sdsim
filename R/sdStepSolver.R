@@ -1,4 +1,4 @@
-oneStep <- function(ode, from, to, state, rtol = 1e-8, atol = 1e-8) {
+oneStep <- function(ode, from, to, state, rtol = 1e-6, atol = 1e-6) {
   e <- environment(ode)
   naux <- length(e$aux)
 
@@ -13,7 +13,7 @@ oneStep <- function(ode, from, to, state, rtol = 1e-8, atol = 1e-8) {
   return(list(state = newEnv$out[-1], aux = newEnv$aux))
 }
 
-allSteps <- function(ode, time, y, rtol, atol) {
+allSteps <- function(ode, time, y, rtol = 1e-6, atol = 1e-6) {
   e <- environment(ode)
   naux <- length(e$aux)
   

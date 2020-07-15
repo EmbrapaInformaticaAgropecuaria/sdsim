@@ -19,8 +19,8 @@ CreateFuncEval <-
     timeSeries <- match(names(inp$fun_), names(inp))
 
     FuncEval <- function(t, st, parms) { 
-      # e <- globalenv()
-      # e$counter <- e$counter + 1
+      e <- globalenv()
+      e$counter <- e$counter + 1
       st <- as.list(st)
       if(!is.null(stNames))
         names(st) <- stNames
@@ -37,13 +37,14 @@ CreateFuncEval <-
       # evaluate the auxiliary variables and update the aux list
       for (var in auxseq)
         aux[[var]] <- eval(auxiliary[[var]])
-      
+
       output <- func(t = t, st = st, ct = ct, par = par,
                      inp = inp, sw = sw, aux = aux)
-
+      
       # Save aux trajectory
       if (storeAuxTrajectory)
         output <- c(output, aux)
+      
 
       if (!unlistReturn)
         return(output)
@@ -604,9 +605,9 @@ sdSimulatorClass <- R6::R6Class(
       }
       
     },
-    runAllSteps = function(rtol = 1e-6, atol= 1e-6) {
+    runAllSteps = function() {
       time <- seq(private$pTimes$from, private$pTimes$to, private$pTimes$by)
-      out <- sdsim::allSteps(private$pOde, time, private$pCurrState, rtol = rtol, atol = atol)
+      out <- sdsim::allSteps(private$pOde, time, private$pCurrState)
       private$pOutput$SetOutTraj(out$state)
     }
   ),
