@@ -560,14 +560,11 @@ sdOutputClass <- R6::R6Class(
                                            ".xml"))
       }
     },
-    UpdateOutTraj = function(row) {
-      private$pOutTrajectory <- c(private$pOutTrajectory, row)
+    UpdateOutTraj = function(traj) {
+        private$pOutTrajectory <- c(private$pOutTrajectory, traj)
     },
     UpdateAuxTraj = function(row) {
       private$pAuxTrajectory <- c(private$pAuxTrajectory, row)
-    },
-    SetOutTraj = function(df) {
-      private$pOutTrajectory <- df
     }
   ),
   active = list(
@@ -581,7 +578,7 @@ sdOutputClass <- R6::R6Class(
       if (length(private[["pOutTrajectory"]]) == 0)
         return(NULL)
       else if(is.vector(private$pOutTrajectory)) {
-        names <- names(private$pScenario$state)
+        names <- c("time", names(private$pScenario$state))
         df <- data.frame(t(matrix(private$pOutTrajectory, nrow = length(names))))
         colnames(df) <- names
         return(df)

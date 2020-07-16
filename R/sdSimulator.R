@@ -477,68 +477,28 @@ sdSimulatorClass <- R6::R6Class(
         
     },
     initModel = function() {
-      private$pOdeEnv <- new.env(parent = emptyenv())
       
-      initVars <- private$pModel$initVars
-      postProcess <- private$pModel$postProcess
-      trigger <- private$pModel$trigger
-      event <- private$pModel$event
-      auxiliary <- private$pModel$aux
-      
-      # Get variables from default scenario
-      st <- private$pSimScenario$state
-      ct <- private$pSimScenario$constant
-      par <- private$pSimScenario$parameter
-      inp <- private$pSimScenario$input
-      sw <- private$pSimScenario$switch
-      
-      # run the initVars function
-      if (!is.null(initVars)) { 
-        modelInit <- initVars(st = st,
-                              ct = ct,
-                              par = par,
-                              inp = inp,
-                              sw = sw,
-                              aux = auxiliary)
-        st <- modelInit$st
-        ct <- modelInit$ct
-        par <- modelInit$par
-        inp <- modelInit$inp
-        sw <- modelInit$sw
+      if (inherits(private$pModel, sdOdeModelClass$classname)) {
+        out <- initOdeModel(private$pModel, private$pSimScenario)
+        private$pOdeEnv <- out$odeEnv
+        private$pOde <- out$ode
       }
-      
-      assign("st", st, private$pOdeEnv)
-      assign("ct", ct, private$pOdeEnv)
-      assign("par", par, private$pOdeEnv)
-      assign("inp", inp, private$pOdeEnv)
-      assign("sw", sw, private$pOdeEnv)
+      else if (inherits(private$pModel, sdOdeModelClass$classname)) {
+        
+      }
       
       private$pCurrTime <- private$pTimes$from
       private$pCurrState <- private$pSimScenario$state
       
       private$pOutput <- sdOutputClass$new(
-        outTrajectory = unlist(private$pCurrState, use.names = F),
+        outTrajectory = c(private$pTimes$from, unlist(private$pSimScenario$state, use.names = F)),
         auxTrajectory = NULL,
         timeSeriesTrajectory = NULL,
         model = private$pModel,
         scenario = private$pSimScenario,
         diagnostics = NULL,
         postProcessOut = NULL)
-      
-      # verify state variables
-      if (is.null(st) || length(st) == 0)
-        stop(sprintf(sdSimulatorMsg$sdSimulateAtomic1,model$id))
-      
-      environment(CreateFuncEval) <- private$pModel$modelEnvironment
 
-      private$pOde <-
-        CreateFuncEval(func = private$pModel$ode,
-                       private$pOdeEnv,
-                       auxiliary = auxiliary,
-                       lastEvalTime = (private$pCurrTime - 1), # TODO: mudar para nulo?
-                       storeAuxTrajectory = T,
-                       unlistReturn = T,
-                       stNames = names(st))
     },
     runSimulation = function(events = TRUE,
                         maxroots = 100,
@@ -567,48 +527,32 @@ sdSimulatorClass <- R6::R6Class(
         stop(sprintf(sdSimulatorMsg$sdSimulate2))
       }
     },
-    runStep = function(time) {
+    runSteps = function(from = NULL, to = NULL, by = NULL) {
+      if (is.null(from))
+        from <- private$pCurrTime
+      if (is.null(to))
+        to <- private$pTimes$to
+      if (is.null(by))
+        by <- private$pTimes$by
+      
+      if(from < to && private$pCurrTime <= from) {
+        if(to - from - by < 1e-6) { # If one step only
+          out <- sdsim::runSteps(private$pOde, c(from, to), private$pCurrState)
+          currState <- out$state[-1]
+          
+        } else { # More than one step
+          times <- seq(from, to, by)
+          out <- sdsim::runSteps(private$pOde, times, private$pCurrState)
 
-      # If the model is atomic
-      if (inherits(private$pModel, sdOdeModelClass$classname)) {
-        # If time is smaller than current time
-        if(time - private$pCurrTime > 0) {
-          out <- sdsim::oneStep(ode = private$pOde, from = private$pCurrTime, to = time, state = private$pCurrState)
-
-          # Save state trajectory 
-          private$pOutput$UpdateOutTraj(out$state)
-          private$pOdeEnv$st <- setNames(as.list(out$state), names(private$pCurrState))
-
-          # Save auxiliary trajectory
-          if(!is.null(out$aux))
-            private$pOutput$UpdateAuxTraj(out$aux)
-
-          # Update current time and current state
-          private$pCurrTime <- time
-          private$pCurrState <- setNames(as.list(out$state), names(private$pCurrState))
-        } else if(time == private$pCurrTime) {
-          # TODO
-        } else {
-          # TODO
+          # Get last state
+          currState <- tail(out$state, length(private$pCurrState))
         }
         
+        # Save trajectory and update current state and time
+        private$pOutput$UpdateOutTraj(out$state)
+        private$pCurrState <- setNames(as.list(currState), names(private$pCurrState))
+        private$pCurrTime <- to
       }
-      #if the model is static
-      else if (inherits(private$pModel, sdStaticModelClass$classname)) {
-
-      } 
-      #if the model is coupled
-      else if (inherits(private$pModel, sdCoupledModelClass$classname)) {
-
-      } else {
-        stop(sprintf(sdSimulatorMsg$sdSimulate2))
-      }
-      
-    },
-    runAllSteps = function() {
-      time <- seq(private$pTimes$from, private$pTimes$to, private$pTimes$by)
-      out <- sdsim::allSteps(private$pOde, time, private$pCurrState)
-      private$pOutput$SetOutTraj(out$state)
     }
   ),
   active = list(
@@ -629,6 +573,12 @@ sdSimulatorClass <- R6::R6Class(
     },
     output = function() {
       return(private$pOutput)
+    },
+    currentTime = function() {
+      return(private$pCurrTime)
+    },
+    currentState = function() {
+      return(private$pCurrState)
     }
   ),
   private = list(
@@ -1250,4 +1200,59 @@ runCoupledSimulation <- function(model,
       postProcessOut = postProcess)
   }
   return(output)
+}
+
+initOdeModel <- function(model, scenario) {
+
+  odeEnv <- new.env(parent = emptyenv())
+
+  initVars <- model$initVars
+  postProcess <- model$postProcess
+  trigger <- model$trigger
+  event <- model$event
+  auxiliary <- model$aux
+
+  # Get variables from default scenario
+  st <- scenario$state
+  ct <- scenario$constant
+  par <- scenario$parameter
+  inp <- scenario$input
+  sw <- scenario$switch
+
+  # run the initVars function
+  if (!is.null(initVars)) {
+    modelInit <- initVars(st = st,
+                          ct = ct,
+                          par = par,
+                          inp = inp,
+                          sw = sw,
+                          aux = auxiliary)
+    st <- modelInit$st
+    ct <- modelInit$ct
+    par <- modelInit$par
+    inp <- modelInit$inp
+    sw <- modelInit$sw
+  }
+
+  assign("st", st, odeEnv)
+  assign("ct", ct, odeEnv)
+  assign("par", par, odeEnv)
+  assign("inp", inp, odeEnv)
+  assign("sw", sw, odeEnv)
+
+  # verify state variables
+  if (is.null(st) || length(st) == 0)
+    stop(sprintf(sdSimulatorMsg$sdSimulateAtomic1,model$id))
+
+  environment(CreateFuncEval) <- model$modelEnvironment
+
+  ode <-
+    CreateFuncEval(func = model$ode,
+                   odeEnv,
+                   auxiliary = auxiliary,
+                   lastEvalTime = (model$defaultScenario$times$from - 1), # TODO: mudar para nulo?
+                   storeAuxTrajectory = T,
+                   unlistReturn = T,
+                   stNames = names(st))
+  return(list(odeEnv = odeEnv, ode = ode))
 }
