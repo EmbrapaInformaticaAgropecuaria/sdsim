@@ -19,8 +19,6 @@ CreateFuncEval <-
     timeSeries <- match(names(inp$fun_), names(inp))
 
     FuncEval <- function(t, st, parms) { 
-      e <- globalenv()
-      e$counter <- e$counter + 1
       st <- as.list(st)
       if(!is.null(stNames))
         names(st) <- stNames
@@ -626,13 +624,14 @@ runOdeSimulation <- function(env, model,
 
   
   environment(CreateFuncEval) <- model$modelEnvironment
-  
+
   odeEval <-
     CreateFuncEval(func = model$ode,
-                   env,
+                   env = env,
                    auxiliary = auxiliary,
                    lastEvalTime = (from - 1), # TODO: mudar para nulo?
                    storeAuxTrajectory = storeAuxTrajectory)
+
   
   # Run simulation without root function, data frame or times vector
   if (!events || is.null(trigger) ||
@@ -660,15 +659,14 @@ runOdeSimulation <- function(env, model,
       }
       
       triggerEval <-
-        CreateFuncEval(func = trigger, ct = ct, par = par, 
-                       inp = inp, sw = sw, auxiliary = auxiliary, 
+        CreateFuncEval(func = trigger, env = env, auxiliary = auxiliary, 
                        lastEvalTime = (from - 1))
       
       if (is.function(event)) { 
         
         # EVENTS func triggered by a root function
         eventEval <- CreateFuncEval(event,
-                                            ct, par, inp, sw, 
+                                            env = env, 
                                             auxiliary = auxiliary,
                                             lastEvalTime = (from - 1),
                                             unlistReturn = T)
@@ -716,10 +714,7 @@ runOdeSimulation <- function(env, model,
       # events in a function with the triggers times in trigger
       eventEval <-
         CreateFuncEval(event,
-                       ct,
-                       par,
-                       inp,
-                       sw,
+                       env,
                        auxiliary = auxiliary,
                        lastEvalTime = (from - 1),
                        unlistReturn = T)
@@ -765,14 +760,14 @@ runOdeSimulation <- function(env, model,
           collapse = "\n")
   
   # Calculate time series trajectory
-  if (storeTimeSeriesTrajectory && length(inp$interpolation_) > 0) { 
+  if (storeTimeSeriesTrajectory && length(env$inp$interpolation_) > 0) { 
     tsTrajectory <- data.frame(time = outTrajectory[, "time"])
     
-    for (x in inp$fun_)
+    for (x in env$inp$fun_)
       tsTrajectory <-
         cbind(tsTrajectory, as.numeric(x(tsTrajectory[, "time"])))
     
-    colnames(tsTrajectory) <- c("time", names(inp$fun_))
+    colnames(tsTrajectory) <- c("time", names(env$inp$fun_))
   } else { 
     tsTrajectory <- NULL
   }
@@ -795,7 +790,7 @@ runOdeSimulation <- function(env, model,
     postProcess <- tryCatch(
       postProcess(outTrajectory,
                       auxTrajectory, tsTrajectory,
-                      ct, par, inp, sw),
+                      env$ct, env$par, env$inp, env$sw),
       error = function(e) { 
         warning(sprintf(sdSimulatorMsg$sdSimulateAtomic4, model$id, e))
         return(NULL)
