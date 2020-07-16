@@ -865,14 +865,17 @@ server <- shinyServer(function(input, output, session) {
         model <- AssembleModel(simData, input, timeSeriesDirectory, progressFunction)
         alternateScenario <- AssembleAlternateScenario(simData, timeSeriesDirectory)
 
-        out <- sdsim::sdSimulate(model = model,
-                                 scenario = alternateScenario,
-                                 method = input$method,
-                                 from = as.numeric(input$initialTime),
-                                 to = as.numeric(input$finalTime),
-                                 by = as.numeric(input$step),
-                                 storeAuxTrajectory = T,
-                                 storeTimeSeriesTrajectory = T)
+        simulator <- sdsim::sdSimulator(model = model,
+                                  scenario = alternateScenario,
+                                  from = as.numeric(input$initialTime),
+                                  to = as.numeric(input$finalTime),
+                                  by = as.numeric(input$step),
+                                  method = input$method)
+        simulator$initModel()
+        simulator$runSimulation(storeAuxTrajectory = T,
+                                storeTimeSeriesTrajectory = T)
+        out <- simulator$output
+   
 
         simData$models[[simData$currentModelId]]$out <- out
         
