@@ -174,6 +174,8 @@ sdsim::summary - Time Series Trajectory Summary
     <defaultscenario2>sdsim::defaultScenario - Static Model '%s' set default scenario: The default scenario must be a sdScenario object. Create one using the help('sdScenario') or help('sdLoadScenario')constructors. No default scenario was set.</defaultscenario2>
   </sdStaticModelMsg>
   <sdSimulatorMsg>
+    <sdRunSteps1>sdsim::runSteps - Simulation current time is greater than 'from'. The simulator will run with 'from' = %s</sdRunSteps1>
+    <sdRunSteps2>sdsim::runSteps - Simulation initial time is greater than final time. Insert a valid final time.</sdRunSteps2>   
     <sdSimulate>sdsim::sdSimulate - Simulation aborted: A model must be informed to run the simulation.</sdSimulate>
     <sdSimulate2>sdsim::sdSimulate - Simulation aborted:Invalid model class. See help('sdLoadModel') for available classes.</sdSimulate2>
     <sdSimulateModel>sdsim::sdSimulate - Simulation of the %s model '%s' aborted: A valid model default scenario or the scenario argument must be informed to run the simulation.</sdSimulateModel>

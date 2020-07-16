@@ -530,30 +530,39 @@ sdSimulatorClass <- R6::R6Class(
     runSteps = function(from = NULL, to = NULL, by = NULL) {
       if (is.null(from))
         from <- private$pCurrTime
-      if (is.null(to))
-        to <- private$pTimes$to
+
+      if(private$pCurrTime > from) {
+        warning(sprintf(sdSimulatorMsg$sdRunSteps1, private$pCurrTime))
+        from <- private$pCurrTime
+      }
+      
       if (is.null(by))
         by <- private$pTimes$by
-      
-      if(from < to && private$pCurrTime <= from) {
-        if(to - from - by < 1e-6) { # If one step only
-          out <- sdsim::runSteps(private$pOde, c(from, to), private$pCurrState)
-          currState <- out$state[-1]
-          
-        } else { # More than one step
-          times <- seq(from, to, by)
-          out <- sdsim::runSteps(private$pOde, times, private$pCurrState)
+      if (is.null(to))
+        to <- from + by
 
-          # Get last state
-          currState <- tail(out$state, length(private$pCurrState))
-        }
-        
-        # Save trajectory and update current state and time
-        private$pOutput$UpdateOutTraj(out$state)
-        private$pCurrState <- setNames(as.list(currState), names(private$pCurrState))
-        private$pCurrTime <- to
+      if(from > to) {
+        stop(sprintf(sdSimulatorMsg$sdRunSteps2))
       }
+
+      if(to - from - by < 1e-6) { # If one step only
+        out <- sdsim::runSteps(private$pOde, c(from, to), private$pCurrState)
+        currState <- out$state[-1]
+
+      } else { # More than one step
+        times <- seq(from, to, by)
+        out <- sdsim::runSteps(private$pOde, times, private$pCurrState)
+
+        # Get last state
+        currState <- tail(out$state, length(private$pCurrState))
+      }
+
+      # Save trajectory and update current state and time
+      private$pOutput$UpdateOutTraj(out$state)
+      private$pCurrState <- setNames(as.list(currState), names(private$pCurrState))
+      private$pCurrTime <- to
     }
+
   ),
   active = list(
     model = function() {
