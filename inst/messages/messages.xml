@@ -174,28 +174,23 @@ sdsim::summary - Time Series Trajectory Summary
     <defaultscenario2>sdsim::defaultScenario - Static Model '%s' set default scenario: The default scenario must be a sdScenario object. Create one using the help('sdScenario') or help('sdLoadScenario')constructors. No default scenario was set.</defaultscenario2>
   </sdStaticModelMsg>
   <sdSimulatorMsg>
-    <sdRunSteps1>sdsim::runSteps - Simulation current time is greater than 'from'. The simulator will run with 'from' = %s</sdRunSteps1>
-    <sdRunSteps2>sdsim::runSteps - Simulation initial time is greater than final time. Insert a valid final time.</sdRunSteps2>   
-    <sdSimulate>sdsim::sdSimulate - Simulation aborted: A model must be informed to run the simulation.</sdSimulate>
-    <sdSimulate2>sdsim::sdSimulate - Simulation aborted:Invalid model class. See help('sdLoadModel') for available classes.</sdSimulate2>
-    <sdSimulateModel>sdsim::sdSimulate - Simulation of the %s model '%s' aborted: A valid model default scenario or the scenario argument must be informed to run the simulation.</sdSimulateModel>
-    <sdSimulateAtomic0>sdsim::sdSimulate - Simulation of the model '%s' aborted: The increment of the time sequence must be inside the starting and end values of the sequence and have the right sign (positive for crescent sequences and negative for descreasing ones). Define a valid time sequence in the default scenario or via the arguments to run a simulation.</sdSimulateAtomic0>
-    <sdSimulateAtomic1>sdsim::sdSimulate - Simulation of the model '%s' aborted: no state variables informed. Define the state variables in the default scenario or via the scenario argument.</sdSimulateAtomic1>
-    <sdSimulateAtomic2>sdsim::sdSimulate - Simulation of the model '%s' aborted: No time sequence informed. Define the time sequence in the default scenario or via the arguments.</sdSimulateAtomic2>
-    <sdSimulateAtomic3>sdsim::sdSimulate - Simulation of the model '%s': The given method do not have root-finding capability. The simulator will run with the default method: 'lsoda'.</sdSimulateAtomic3>
-    <sdSimulateAtomic4>sdsim::sdSimulate - Simulation of the model '%s': The postProcess function returned the following error. %s</sdSimulateAtomic4>
-    <sdSimulateAtomic5>sdsim::sdSimulate - Simulation of the model '%s': No method informed. The simulator will run with the default method: 'lsoda'.</sdSimulateAtomic5>
-    <sdSimulateAtomic6>sdsim::sdSimulate - Simulation of the model '%s': Scenario argument of type '%s' discarted. It must be a valid sdScenarioClass object or a character string with a scenario XML or EXCEL file name.</sdSimulateAtomic6>
-    <sdSimulateAtomic7>sdsim::sdSimulate - Simulation of the model '%s' aborted: No differential equations function, model is empty.</sdSimulateAtomic7>
+    <initialize1>sdsim::initialize - Simulation aborted: A model must be informed to run the simulation.</initialize1>
+    <initialize2>sdsim::initialize - Simulation of the coupled model '%s' aborted: Could not build the default coupled model. Use the $buildCoupledModel method to build it.</initialize2>
+    <initialize3>sdsim::initialize - Simulation of the coupled model '%s' aborted: No component differential equations function or algebraic equation was set.</initialize3>
+    <initialize4>sdsim::initialize - Simulation of the model '%s': Scenario argument of type '%s' discarted. It must be a valid sdScenarioClass object or a character string with a scenario XML or EXCEL file name.</initialize4>
+    <initialize5>sdsim::initialize - Simulation of the model '%s' aborted: A valid model default scenario or the scenario argument must be informed to run the simulation.</initialize5>
+    <initialize6>sdsim::initialize - Simulation of the model '%s' aborted: No time sequence informed. Define the time sequence in the default scenario or via the arguments.</initialize6>
+    <initialize7>sdsim::initialize - Simulation of the model '%s' aborted: The increment of the time sequence must be inside the starting and end values of the sequence and have the right sign (positive for crescent sequences and negative for descreasing ones). Define a valid time sequence in the default scenario or via the arguments to run a simulation.</initialize7>
+    <initialize8>sdsim::initialize - Simulation of the model '%s': No method informed. The simulator will run with the default method: 'lsoda'.</initialize8>
+    <initAtomic1>sdsim::initModel - Simulation of the model '%s' aborted: no state variables informed. Define the state variables in the default scenario or via the scenario argument.</initAtomic1>
+    <runSteps1>sdsim::runSteps - Simulation current time is greater than 'from'. The simulator will run with 'from' = %s</runSteps1>
+    <runSteps2>sdsim::runSteps - Simulation initial time is greater than final time. Insert a valid final time.</runSteps2>   
+    <runSimulation1>sdsim::runSimulation - Simulation aborted:Invalid model class. See help('sdLoadModel') for available classes.</runSimulation1>
+    <runSimulationAtomic1>sdsim::runSimulation - Simulation of the model '%s': The given method do not have root-finding capability. The simulator will run with the default method: 'lsoda'.</runSimulationAtomic1>
+    <runSimulationAtomic2>sdsim::runSimulation - Simulation of the model '%s': The postProcess function returned the following error. %s</runSimulationAtomic2>
     <sdSimulateStatic0>sdsim::sdSimulate - Simulation of the static model '%s' aborted: No algebraic equations, model is empty.</sdSimulateStatic0>
-    <sdSimulateStatic1>sdsim::sdSimulate - Simulation of the static model '%s' aborted: No time sequence informed. Define the time sequence in the default scenario or via the arguments.</sdSimulateStatic1>
-    <sdSimulateStatic2>sdsim::sdSimulate - Simulation of the static model '%s' aborted: The increment of the time sequence must be inside the starting and end values of the sequence and have the right sign (positive for crescent sequences and negative for descreasing ones). Define a valid time sequence in the default scenario or via the arguments to run a simulation.</sdSimulateStatic2>
-    <sdSimulateCoupled0>sdsim::sdSimulate - Simulation of the coupled model '%s' aborted: No component differential equations function or algebraic equation was set.</sdSimulateCoupled0>
-    <sdSimulateCoupled1>sdsim::sdSimulate - Simulation of the coupled model '%s' aborted: Could not build the default coupled model. Use the $buildCoupledModel method to build it.</sdSimulateCoupled1>
-    <sdSimulateCoupled3>sdsim::sdSimulate - Simulation of the coupled model '%s' aborted: No time sequence informed. Define the time sequence in the default scenario or via the arguments.</sdSimulateCoupled3>
     <sdSimulateCoupled4>sdsim::sdSimulate - Simulation of the coupled model '%s' aborted: no state variables informed. Define the state variables in the default scenario or via the 'scenario' argument.</sdSimulateCoupled4>
     <sdSimulateCoupled5>sdsim::sdSimulate - Simulation of the coupled model '%s': The given method do not have root-finding capability. The simulator will run with the default method: 'lsoda'.</sdSimulateCoupled5>
     <sdSimulateCoupled6>sdsim::sdSimulate - Simulation of the coupled model '%s': The component '%s' postProcess function returned the following error. %s</sdSimulateCoupled6>
-    <sdSimulateCoupled7>sdsim::sdSimulate - Simulation of the coupled model '%s' aborted: The increment of the time sequence must be inside the starting and end values of the sequence and have the right sign (positive for crescent sequences and negative for descreasing ones). Define a valid time sequence in the default scenario or via the arguments to run a simulation.</sdSimulateCoupled7>
   </sdSimulatorMsg>
 </Messages>

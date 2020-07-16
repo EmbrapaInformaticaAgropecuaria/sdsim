@@ -353,30 +353,14 @@ sdSimulatorClass <- R6::R6Class(
                           ) {
       # save model
       if (missing(model))
-        stop(sprintf(sdSimulatorMsg$sdSimulate))
+        stop(sprintf(sdSimulatorMsg$initialize1))
       private$pModel <- model
       
       #coupled Model verifications
       if (inherits(model, sdCoupledModelClass$classname)) {
-        # Try to build the coupled model if it is not built
-        if (!model$isBuilt) { 
-          model$buildCoupledModel(from = from,
-                                  to = to,
-                                  by = by,
-                                  method = method)
-          
-          if (!model$isBuilt)
-            stop(sprintf(sdSimulatorMsg$sdSimulateCoupled1,model$id))
-        }
-        
-        if (length(model$componentsEquations) == 0 && 
-            length(model$componentsAux) == 0)
-          stop(sprintf(sdSimulatorMsg$sdSimulateCoupled0,model$id))
-        
-        # convert list of scenarios to coupled scenario
-        if (is.list(scenario))
-          scenario <- sdBuildCoupledScenario(id = "coupledScen", 
-                                             scenarios = scenario)
+        scenario  <- buildModel(model = model, scenario = scenario, 
+                                from = from, to = to, by = by, 
+                                method = method)
       }
       
       # get the simulation scenario
@@ -394,7 +378,7 @@ sdSimulatorClass <- R6::R6Class(
             private$pAltScenario <- scenario
           }
           else
-            warning(sprintf(sdSimulatorMsg$sdSimulateAtomic6,
+            warning(sprintf(sdSimulatorMsg$initialize4,
                             model$id, typeof(scenario)))
         } else {
           private$pSimScenario <- model$defaultScenario
@@ -407,10 +391,10 @@ sdSimulatorClass <- R6::R6Class(
           private$pSimScenario <- scenario
         }
         else
-          stop(sprintf(sdSimulatorMsg$sdSimulateModel, "Ode", model$id), 
+          stop(sprintf(sdSimulatorMsg$initialize5, model$id), 
                call. = FALSE)
       } else {
-        stop(sprintf(sdSimulatorMsg$sdSimulateModel, "Ode", model$id), 
+        stop(sprintf(sdSimulatorMsg$initialize5, model$id), 
              call. = FALSE)
       }
       
@@ -426,10 +410,10 @@ sdSimulatorClass <- R6::R6Class(
 
       # verify data
       if (is.null(private$pTimes) || !all(c("from", "to", "by") %in% names(private$pTimes)))
-        stop(sprintf(sdSimulatorMsg$sdSimulateAtomic2,private$pModel$id))
+        stop(sprintf(sdSimulatorMsg$initialize6,private$pModel$id))
       else if (!(abs(private$pTimes$to - private$pTimes$from) >= abs(private$pTimes$by) && 
                  (private$pTimes$to - private$pTimes$from)*private$pTimes$by > 0)) # invalid time sequence
-        stop(sprintf(sdSimulatorMsg$sdSimulateAtomic0,private$pModel$id))
+        stop(sprintf(sdSimulatorMsg$initialize7,private$pModel$id))
       
       
       # Override scenario method with the function parameters
@@ -472,7 +456,8 @@ sdSimulatorClass <- R6::R6Class(
         cat(indent(capture.output(private$pAltScenario), indent = 4), 
             sep = "\n")
       }
-        
+      cat(indent("$output", indent = 4), sep = "\n")
+      cat(indent(capture.output(private$pOutput), indent = 4), sep = "\n")
     },
     initModel = function() {
       
@@ -481,7 +466,7 @@ sdSimulatorClass <- R6::R6Class(
         private$pOdeEnv <- out$odeEnv
         private$pOde <- out$ode
       }
-      else if (inherits(private$pModel, sdOdeModelClass$classname)) {
+      else if (inherits(private$pModel, sdStaticModelClass$classname)) {
         
       }
       
@@ -522,7 +507,7 @@ sdSimulatorClass <- R6::R6Class(
                              private$pTimes$by, private$pMethod, events, maxroots,
                              storeAuxTrajectory, storeTimeSeriesTrajectory, verbose)
       } else {
-        stop(sprintf(sdSimulatorMsg$sdSimulate2))
+        stop(sprintf(sdSimulatorMsg$runSimulation1))
       }
     },
     runSteps = function(from = NULL, to = NULL, by = NULL) {
@@ -530,7 +515,7 @@ sdSimulatorClass <- R6::R6Class(
         from <- private$pCurrTime
 
       if(private$pCurrTime > from) {
-        warning(sprintf(sdSimulatorMsg$sdRunSteps1, private$pCurrTime))
+        warning(sprintf(sdSimulatorMsg$runSteps1, private$pCurrTime))
         from <- private$pCurrTime
       }
       
@@ -540,7 +525,7 @@ sdSimulatorClass <- R6::R6Class(
         to <- from + by
 
       if(from > to) {
-        stop(sprintf(sdSimulatorMsg$sdRunSteps2))
+        stop(sprintf(sdSimulatorMsg$runSteps2))
       }
 
       if(to - from - by < 1e-6) { # If one step only
@@ -621,6 +606,12 @@ runOdeSimulation <- function(env, model,
   trigger <- model$trigger
   event <- model$event
   auxiliary <- model$aux
+  
+  st <- env$st
+  ct <- env$ct
+  par <- env$par
+  inp <- env$inp
+  sw <- env$sw
 
   
   environment(CreateFuncEval) <- model$modelEnvironment
@@ -640,7 +631,7 @@ runOdeSimulation <- function(env, model,
        !is.numeric(trigger))) { 
     # Run simulation without support to events
     outTrajectory <- deSolve::ode(
-      y = unlist(env$st),
+      y = unlist(st),
       times = seq(from, to, by),
       parms = NULL,
       func = odeEval,
@@ -654,7 +645,7 @@ runOdeSimulation <- function(env, model,
           !identical(method, deSolve::lsode) &&
           (!is.vector(method) ||
            !method %in% c("lsoda", "lsode", "radau"))) { 
-        warning(sprintf(sdSimulatorMsg$sdSimulateAtomic3,model$id))
+        warning(sprintf(sdSimulatorMsg$runSimulationAtomic1,model$id))
         method <- "lsoda"
       }
       
@@ -672,7 +663,7 @@ runOdeSimulation <- function(env, model,
                                             unlistReturn = T)
         
         outTrajectory <- deSolve::ode(
-          y = unlist(env$st),
+          y = unlist(st),
           times = seq(from, to, by),
           func = odeEval,
           parms = NULL,
@@ -687,7 +678,7 @@ runOdeSimulation <- function(env, model,
       } else {
         # no event func, stop in the first root func
         outTrajectory <- deSolve::ode(
-          y = unlist(env$st),
+          y = unlist(st),
           times = seq(from, to, by),
           func = odeEval,
           parms = NULL,
@@ -708,7 +699,7 @@ runOdeSimulation <- function(env, model,
           !identical(method, deSolve::lsode) &&
           (!is.vector(method) ||
            !method %in% c("lsoda", "lsode", "radau"))) { 
-        warning(sprintf(sdSimulatorMsg$sdSimulateAtomic3,model$id))
+        warning(sprintf(sdSimulatorMsg$runSimulationAtomic1,model$id))
         method <- "lsoda"
       }
       # events in a function with the triggers times in trigger
@@ -720,7 +711,7 @@ runOdeSimulation <- function(env, model,
                        unlistReturn = T)
       
       outTrajectory <- deSolve::ode(
-        y = unlist(env$st),
+        y = unlist(st),
         times = seq(from, to, by),
         func = odeEval,
         parms = NULL,
@@ -734,11 +725,11 @@ runOdeSimulation <- function(env, model,
           !identical(method, deSolve::lsode) &&
           (!is.vector(method) ||
            !method %in% c("lsoda", "lsode", "radau"))) { 
-        warning(sprintf(sdSimulatorMsg$sdSimulateAtomic3,model$id))
+        warning(sprintf(sdSimulatorMsg$runSimulationAtomic1,model$id))
         method <- "lsoda"
       }
       outTrajectory <- deSolve::ode(
-        y = unlist(env$st),
+        y = unlist(st),
         times = seq(from, to, by),
         func = odeEval,
         parms = NULL,
@@ -747,7 +738,7 @@ runOdeSimulation <- function(env, model,
         method = method)
     } else { # run without events / maybe no event func for the time vector
       outTrajectory <- deSolve::ode(
-        y = unlist(env$st),
+        y = unlist(st),
         times = seq(from, to, by),
         parms = NULL,
         func = odeEval,
@@ -760,14 +751,14 @@ runOdeSimulation <- function(env, model,
           collapse = "\n")
   
   # Calculate time series trajectory
-  if (storeTimeSeriesTrajectory && length(env$inp$interpolation_) > 0) { 
+  if (storeTimeSeriesTrajectory && length(inp$interpolation_) > 0) { 
     tsTrajectory <- data.frame(time = outTrajectory[, "time"])
     
-    for (x in env$inp$fun_)
+    for (x in inp$fun_)
       tsTrajectory <-
         cbind(tsTrajectory, as.numeric(x(tsTrajectory[, "time"])))
     
-    colnames(tsTrajectory) <- c("time", names(env$inp$fun_))
+    colnames(tsTrajectory) <- c("time", names(inp$fun_))
   } else { 
     tsTrajectory <- NULL
   }
@@ -775,7 +766,7 @@ runOdeSimulation <- function(env, model,
   if (storeAuxTrajectory && length(auxiliary) > 0) { 
     # separate the aux trajectory from the output trajectory
     # Auxiliaries begin at time column + length(state) + 1
-    iAuxBegin <- 2 + length(env$st)
+    iAuxBegin <- 2 + length(st)
     outTrajectory <- as.data.frame(outTrajectory)
     auxTrajectory <- outTrajectory[, c(1, iAuxBegin:ncol(outTrajectory))]
     outTrajectory <- outTrajectory[, 1:(iAuxBegin - 1)]
@@ -790,9 +781,9 @@ runOdeSimulation <- function(env, model,
     postProcess <- tryCatch(
       postProcess(outTrajectory,
                       auxTrajectory, tsTrajectory,
-                      env$ct, env$par, env$inp, env$sw),
+                      ct, par, inp, sw),
       error = function(e) { 
-        warning(sprintf(sdSimulatorMsg$sdSimulateAtomic4, model$id, e))
+        warning(sprintf(sdSimulatorMsg$runSimulationAtomic2, model$id, e))
         return(NULL)
       })
   
@@ -1206,6 +1197,29 @@ runCoupledSimulation <- function(model,
   return(output)
 }
 
+buildModel <- function(model, scenario, from = NULL, to = NULL, by = NULL, method = NULL) {
+  # Try to build the coupled model if it is not built
+  if (!model$isBuilt) { 
+    model$buildCoupledModel(from = from,
+                            to = to,
+                            by = by,
+                            method = method)
+    
+    if (!model$isBuilt)
+      stop(sprintf(sdSimulatorMsg$initialize2,model$id))
+  }
+  
+  if (length(model$componentsEquations) == 0 && 
+      length(model$componentsAux) == 0)
+    stop(sprintf(sdSimulatorMsg$initialize3,model$id))
+  
+  # convert list of scenarios to coupled scenario
+  if (is.list(scenario))
+    scenario <- sdBuildCoupledScenario(id = "coupledScen", 
+                                       scenarios = scenario)
+  return(scenario)
+}
+
 initOdeModel <- function(model, scenario) {
 
   odeEnv <- new.env(parent = emptyenv())
@@ -1246,7 +1260,7 @@ initOdeModel <- function(model, scenario) {
 
   # verify state variables
   if (is.null(st) || length(st) == 0)
-    stop(sprintf(sdSimulatorMsg$sdSimulateAtomic1,model$id))
+    stop(sprintf(sdSimulatorMsg$initAtomic1,model$id))
 
   environment(CreateFuncEval) <- model$modelEnvironment
 
