@@ -4,10 +4,18 @@
 \alias{sdOdeModel}
 \title{Creates an Atomic System Dynamics Model Object}
 \usage{
-sdOdeModel(id = NULL, description = NULL, defaultScenario = NULL,
-  aux = NULL, ode = NULL, InitVars = NULL,
-  PostProcessVars = NULL, RootSpecification = NULL,
-  EventFunction = NULL, globalFunctions = NULL)
+sdOdeModel(
+  id = NULL,
+  description = NULL,
+  defaultScenario = NULL,
+  aux = NULL,
+  ode = NULL,
+  initVars = NULL,
+  postProcess = NULL,
+  trigger = NULL,
+  event = NULL,
+  globalFunctions = NULL
+)
 }
 \arguments{
 \item{id}{A character string with the model ID. It is coerced to a valid id 
@@ -60,7 +68,7 @@ with respect to time, and whose next elements are extra values that are
 computed at each time step and need to be included in the simulation output. 
 The derivatives must be specified in the same order as the state variables.}
 
-\item{InitVars}{(Optional) An R-function that initialize or change the 
+\item{initVars}{(Optional) An R-function that initialize or change the 
 initial state values and/or other model variables before the solver call when
 running a simulation. 
 It can be used, for example, to compute some dependent parameter variables or 
@@ -73,11 +81,11 @@ variables, \code{inp} is a list with the model input variables, \code{sw} is
 a list with the model switch variables and \code{aux} is a list with the 
 model auxiliary equations in R-expression format, as defined by the user.
 
-The return value of the \code{InitVars} function must be a list containing 
+The return value of the \code{initVars} function must be a list containing 
 all the variable arguments named in the same way, except the aux equations; 
 e.g. \code{return(list(st = st, ct = ct, inp = inp, par = par, sw = sw))}.}
 
-\item{PostProcessVars}{(Optional) An R-function that receives the simulation 
+\item{postProcess}{(Optional) An R-function that receives the simulation 
 output inside the \code{sdSimulate} function and process it to derive further 
 conclusions. 
 
@@ -92,17 +100,17 @@ is a list with the model parameter variables, \code{inp} is a list with the
 model input variables and \code{sw} is a list with the model switch 
 variables.
 
-The return value of \code{PostProcessVars} will be stored in the postProcess
+The return value of \code{postProcess} will be stored in the postProcess
 field of the \code{\link{sdOutput}} simulation output object and can be 
 anything that suits the user needs.}
 
-\item{RootSpecification}{(Optional) A numeric vector containing the times to 
-trigger the \code{EventFunction}, or a data.frame as specified in the 
+\item{trigger}{(Optional) A numeric vector containing the times to 
+trigger the \code{event}, or a data.frame as specified in the 
 \code{\link[deSolve]{events}} documentation, or an R-function that becomes 
 zero when a root occur. 
 
 When a root is found, the simulation triggers an event by calling 
-the \code{EventFunction}. If no \code{EventFunction} is defined, when a root 
+the \code{event}. If no \code{event} is defined, when a root 
 is found the simulation stops. 
 
 When specified as a function it must be defined as: function(t, st, ct, par, 
@@ -119,7 +127,7 @@ current time step.
 It should return a numeric vector. If any element of this vector is zero an 
 event is trigged.}
 
-\item{EventFunction}{(Optional) An R-function that specifies the event. 
+\item{event}{(Optional) An R-function that specifies the event. 
 
 It must be defined as: function(t, st, ct, par, inp, sw, aux). 
 Where \code{t} is the current time point in the integration, \code{st} is 
@@ -132,7 +140,7 @@ current time step, \code{sw} is  list with the model switch variables and
 current time step. 
 
 It should return the state-values (some of which modified), as a vector with 
-the variables in the right order. If no \code{EventFunction} is defined, when 
+the variables in the right order. If no \code{event} is defined, when 
 a root is found the simulation stops.}
 
 \item{globalFunctions}{A named list of extra functions that can be executed 

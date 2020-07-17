@@ -1333,7 +1333,6 @@ sdLoadScenario <- function(file,
 # interpolationCol = "Interpolation"
 
 
-# TODO: finish documentation
 #' Create flow object
 #'  
 #'
@@ -1390,7 +1389,7 @@ sdFlow <- function(flows = NULL, flowRate = NULL,
                      boundaries = boundaries)
 }
 
-#' Create sunction object
+#' Create function object
 #'  
 #'
 #' This function stores the ode function which must have the following format:
@@ -1398,11 +1397,82 @@ sdFlow <- function(flows = NULL, flowRate = NULL,
 #' 
 #' @param func 
 #' 
-#' @return  
+#' @return   
+#'
+#' @examples
+#' func <- sdsim::sdFunction(
+#' function(t, st, ct, par, inp, sw, aux) {
+#' dPrey <- par$alpha * st$Y -
+#'       par$beta * st$Y * st$R
+#' dPredator <- par$delta * st$Y * st$R -
+#'       par$gamma * st$R
+#'     return(list(c(dPrey, dPredator)))
+#'   }
+#' )
 sdFunction <- function(func = NULL) {
   sdFunctionOdeClass$new(func = func)
 }
 
+
+#' Create simulator object
+#'
+#' Creates the object that simulates a \code{model} using it's default scenario merged
+#' with the given \code{scenario}. A wrapper around the 
+#' \code{\link[deSolve]{ode}} solver.
+#' 
+#'
+#' @param model A \code{\link{sdOdeModelClass}}, a 
+#' \code{\link{sdCoupledModelClass}} or a \code{\link{sdStaticModelClass}} 
+#' object.
+#' @param scenario A \code{\link{sdScenarioClass}} object or a character string 
+#' with a scenario XML or EXCEL file name. 
+#' 
+#' If the \code{model} is a \code{\link{sdCoupledModelClass}} object the 
+#' \code{scenario} must be a coupled scenario object (created with the 
+#' \code{\link{sdBuildCoupledScenario}} function), or a list of 
+#' \code{\link{sdScenarioClass}} objects and/or character strings with a 
+#' scenario XML or EXCEL file name - the elements of this list must be named 
+#' with the component ID that will use it.
+#' @param from If not missing, overwrites the starting value of the time 
+#' sequence. Of length 1.
+#' @param to If not missing, overwrites the end (maximal) value of the time 
+#' sequence. Of length 1.
+#' @param by If not missing, overwrites the increment of the time sequence. 
+#' A number of length 1.
+#' @param method If not missing, overwrites the integration method.
+#' 
+#' The integrator to be used in the simulation, a string
+#' ("lsoda", "lsode", "lsodes","lsodar","vode", "daspk", "euler",
+#' "rk4", "ode23", "ode45", "radau", "bdf", "bdf_d", "adams", "impAdams" or
+#' "impAdams_d"). Default value is "lsoda".
+#' 
+#' When running with support to events the given method must
+#' be one of the following routines, which have root-finding capability:
+#' \code{\link[deSolve]{lsoda}}, \code{\link[deSolve]{lsode}} or
+#' \code{\link[deSolve]{radau}}; If the given method is different from any of
+#' these three routines the simulator will run with the default method
+#' "lsoda".
+#' 
+#' See the \code{\link[deSolve]{ode}} and the \code{\link[deSolve]{events}}
+#' details section for more information.
+#' @return
+#' @examples 
+#' # Load the Bouncing Ball model from the sdsim repository
+#' bb <- sdLoadModel(file = "BouncingBall", repository = TRUE)
+#' 
+#' # simulate the model with validation and plot the results
+#' simulator <- sdSimulator(model = bb)
+#' simulator$runSimulation()
+#' simulator$outpout$plot("height speed", multipleYAxis = TRUE, units = TRUE)
+#' 
+#' # simualte the Bouncing Ball model in a different scenario with the 
+#' # coeficient of restitution equals 0.5 and a shorter time sequence
+#' hardBallScen <- sdScenario(id = "hardBall", 
+#'                            times = list(to = 5),
+#'                            input = list(k = 0.5))
+#' simulator <- sdSimulator(model = bb, scenario = hardBallScen)
+#' simulator$runSimulation()
+#' simulator$outpout$plot()
 sdSimulator <- function(model,
                         scenario = NULL,
                         from = NULL,

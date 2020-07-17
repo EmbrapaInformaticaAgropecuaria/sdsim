@@ -4,8 +4,11 @@
 \alias{sdRunApp}
 \title{The sdsim Shiny Server Interface}
 \usage{
-sdRunApp(launch.browser = T, port = getOption("shiny.port"),
-  host = getOption("shiny.host", "127.0.0.1"))
+sdRunApp(
+  launch.browser = T,
+  port = getOption("shiny.port"),
+  host = getOption("shiny.host", "127.0.0.1")
+)
 }
 \arguments{
 \item{launch.browser}{If true, the system's default web browser will be 

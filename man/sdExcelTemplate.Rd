@@ -4,8 +4,7 @@
 \alias{sdExcelTemplate}
 \title{Create a Scenario EXCEL Template}
 \usage{
-sdExcelTemplate(file = "Scenario.xlsx", colWidth = c(10, 10, 10, 30,
-  10))
+sdExcelTemplate(file = "Scenario.xlsx", colWidth = c(10, 10, 10, 30, 10))
 }
 \arguments{
 \item{file}{A string with the name of the excel file. The file extension

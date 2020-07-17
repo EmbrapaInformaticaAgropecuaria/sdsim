@@ -4,8 +4,14 @@
 \alias{sdStaticModel}
 \title{Creates Static Model Object}
 \usage{
-sdStaticModel(id = NULL, description = NULL, defaultScenario = NULL,
-  algebraicEquations = NULL, InitVars = NULL, globalFunctions = NULL)
+sdStaticModel(
+  id = NULL,
+  description = NULL,
+  defaultScenario = NULL,
+  algebraicEquations = NULL,
+  initVars = NULL,
+  globalFunctions = NULL
+)
 }
 \arguments{
 \item{id}{A character string with the model ID. It is coerced to a valid id 
@@ -37,7 +43,7 @@ The algebraic equation are evaluated at each time step during simulations.
 See the function \code{\link{sdInitEquations}} to learn how this list is 
 generated.}
 
-\item{InitVars}{(Optional) An R-function that initialize or change the 
+\item{initVars}{(Optional) An R-function that initialize or change the 
 initial values of the model variables before the solver call when
 running a simulation. 
 It can be used, for example, to compute some dependent parameter variables or 
@@ -50,7 +56,7 @@ parameter variables, \code{inp} is a list with the model input variables,
 with the model algebraic equations in R-expression format, as defined by the 
 user.
 
-The return value of the \code{InitVars} function should be a list containing 
+The return value of the \code{initVars} function should be a list containing 
 all the function arguments, except the algebraic equations, named in the same 
 way, e.g. \code{return(list(ct = ct, inp = inp, par = par, sw = sw))}.}
 

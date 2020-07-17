@@ -4,13 +4,26 @@
 \alias{sdScenario}
 \title{Creates a Scenario Object}
 \usage{
-sdScenario(id, times = list(from = 0, to = 100, by = 1),
-  method = c("lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk",
-  "euler", "rk4", "ode23", "ode45", "radau", "bdf", "bdf_d", "adams",
-  "impAdams", "impAdams_d"), state, constant, parameter, input,
-  interpolation, switch, unit, description, timeSeriesDirectory = "",
-  variableCol = "Variable", valueCol = "Value", unitCol = "Unit",
-  descriptionCol = "Description", interpolationCol = "Interpolation")
+sdScenario(
+  id,
+  times = list(from = 0, to = 100, by = 1),
+  method = c("lsoda", "lsode", "lsodes", "lsodar", "vode", "daspk", "euler", "rk4",
+    "ode23", "ode45", "radau", "bdf", "bdf_d", "adams", "impAdams", "impAdams_d"),
+  state,
+  constant,
+  parameter,
+  input,
+  interpolation,
+  switch,
+  unit,
+  description,
+  timeSeriesDirectory = "",
+  variableCol = "Variable",
+  valueCol = "Value",
+  unitCol = "Unit",
+  descriptionCol = "Description",
+  interpolationCol = "Interpolation"
+)
 }
 \arguments{
 \item{id}{A character string with the scenario ID.}

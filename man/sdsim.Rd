@@ -3,7 +3,6 @@
 \docType{package}
 \name{sdsim}
 \alias{sdsim}
-\alias{sdsim-package}
 \title{sdsim: System Dynamics Simulator for Models of Initial Value Problems of 
 Ordinary Differential Equations (ODE)}
 \description{

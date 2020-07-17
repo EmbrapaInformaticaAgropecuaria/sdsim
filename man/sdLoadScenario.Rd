@@ -4,12 +4,21 @@
 \alias{sdLoadScenario}
 \title{Loads a Scenario Object from External Files}
 \usage{
-sdLoadScenario(file, timeSeriesDirectory = "", stateSheet = "state",
-  constantSheet = "constant", inputSheet = "input",
-  parameterSheet = "parameter", switchSheet = "switch",
-  simulationSheet = "simulation", variableCol = "Variable",
-  valueCol = "Value", unitCol = "Unit",
-  descriptionCol = "Description", interpolationCol = "Interpolation")
+sdLoadScenario(
+  file,
+  timeSeriesDirectory = "",
+  stateSheet = "state",
+  constantSheet = "constant",
+  inputSheet = "input",
+  parameterSheet = "parameter",
+  switchSheet = "switch",
+  simulationSheet = "simulation",
+  variableCol = "Variable",
+  valueCol = "Value",
+  unitCol = "Unit",
+  descriptionCol = "Description",
+  interpolationCol = "Interpolation"
+)
 }
 \arguments{
 \item{file}{A scenario file name in '.xlsx', '.xls' or '.xml' containing the 

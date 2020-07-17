@@ -4,8 +4,12 @@
 \alias{sdCoupledModel}
 \title{Creates a Coupled System Dynamics Model}
 \usage{
-sdCoupledModel(id = NULL, description = NULL, components = NULL,
-  connections = NULL)
+sdCoupledModel(
+  id = NULL,
+  description = NULL,
+  components = NULL,
+  connections = NULL
+)
 }
 \arguments{
 \item{id}{A character string with the coupled model ID. It is coerced to a 

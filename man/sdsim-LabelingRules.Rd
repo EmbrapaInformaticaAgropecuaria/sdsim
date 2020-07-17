@@ -5,7 +5,9 @@
 \alias{sdsim-LabelingRules}
 \alias{sdsimModelLabelingRules}
 \title{sdsim Labeling Rules}
-\format{An object of class \code{NULL} of length 0.}
+\format{
+An object of class \code{NULL} of length 0.
+}
 \usage{
 sdsimModelLabelingRules
 }

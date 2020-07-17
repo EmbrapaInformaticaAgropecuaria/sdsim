@@ -4,8 +4,12 @@
 \alias{sdFlow}
 \title{Create flow object}
 \usage{
-sdFlow(flows = NULL, flowRate = NULL, stocks = NULL,
-  boundaries = c("boundary"))
+sdFlow(
+  flows = NULL,
+  flowRate = NULL,
+  stocks = NULL,
+  boundaries = c("boundary")
+)
 }
 \arguments{
 \item{flows}{}

@@ -4,8 +4,16 @@
 \alias{sdTemporalFunction}
 \title{Transform Time Series Variables into Temporal Functions}
 \usage{
-sdTemporalFunction(x, colTimes = 1, colValue = 2, method = "linear",
-  sep = ",", dec = ".", header = TRUE, timeSeriesDirectory = "")
+sdTemporalFunction(
+  x,
+  colTimes = 1,
+  colValue = 2,
+  method = "linear",
+  sep = ",",
+  dec = ".",
+  header = TRUE,
+  timeSeriesDirectory = ""
+)
 }
 \arguments{
 \item{x}{The time series variable value. It can be a fixed value, a matrix, 
@@ -61,7 +69,7 @@ types.
 \details{
 Uses the \code{\link[stats]{approxfun}} or the \code{\link[stats]{splinefun}}
 function to interpolate the time series values across the given time 
-sequence.
+sequence.  
 
 What happens when \code{x} is a:
 \itemize{
