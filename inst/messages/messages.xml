@@ -182,15 +182,16 @@ sdsim::summary - Time Series Trajectory Summary
     <initialize6>sdsim::initialize - Simulation of the model '%s' aborted: No time sequence informed. Define the time sequence in the default scenario or via the arguments.</initialize6>
     <initialize7>sdsim::initialize - Simulation of the model '%s' aborted: The increment of the time sequence must be inside the starting and end values of the sequence and have the right sign (positive for crescent sequences and negative for descreasing ones). Define a valid time sequence in the default scenario or via the arguments to run a simulation.</initialize7>
     <initialize8>sdsim::initialize - Simulation of the model '%s': No method informed. The simulator will run with the default method: 'lsoda'.</initialize8>
-    <initAtomic1>sdsim::initModel - Simulation of the model '%s' aborted: no state variables informed. Define the state variables in the default scenario or via the scenario argument.</initAtomic1>
+    <initAtomic1>sdsim::initModel - Simulation of the model '%s' aborted: No differential equations function, model is empty.</initAtomic1>
+    <initAtomic2>sdsim::initModel - Simulation of the model '%s' aborted: no state variables informed. Define the state variables in the default scenario or via the scenario argument.</initAtomic2>
     <runSteps1>sdsim::runSteps - Simulation current time is greater than 'from'. The simulator will run with 'from' = %s</runSteps1>
     <runSteps2>sdsim::runSteps - Simulation initial time is greater than final time. Insert a valid final time.</runSteps2>   
     <runSimulation1>sdsim::runSimulation - Simulation aborted:Invalid model class. See help('sdLoadModel') for available classes.</runSimulation1>
     <runSimulationAtomic1>sdsim::runSimulation - Simulation of the model '%s': The given method do not have root-finding capability. The simulator will run with the default method: 'lsoda'.</runSimulationAtomic1>
     <runSimulationAtomic2>sdsim::runSimulation - Simulation of the model '%s': The postProcess function returned the following error. %s</runSimulationAtomic2>
-    <sdSimulateStatic0>sdsim::sdSimulate - Simulation of the static model '%s' aborted: No algebraic equations, model is empty.</sdSimulateStatic0>
-    <sdSimulateCoupled4>sdsim::sdSimulate - Simulation of the coupled model '%s' aborted: no state variables informed. Define the state variables in the default scenario or via the 'scenario' argument.</sdSimulateCoupled4>
-    <sdSimulateCoupled5>sdsim::sdSimulate - Simulation of the coupled model '%s': The given method do not have root-finding capability. The simulator will run with the default method: 'lsoda'.</sdSimulateCoupled5>
-    <sdSimulateCoupled6>sdsim::sdSimulate - Simulation of the coupled model '%s': The component '%s' postProcess function returned the following error. %s</sdSimulateCoupled6>
+    <runSimulationStatic1>sdsim::runSimulation - Simulation of the static model '%s' aborted: No algebraic equations, model is empty.</runSimulationStatic1>
+    <runSimulationCoupled1>sdsim::runSimulation - Simulation of the coupled model '%s' aborted: no state variables informed. Define the state variables in the default scenario or via the 'scenario' argument.</runSimulationCoupled1>
+    <runSimulationCoupled2>sdsim::runSimulation - Simulation of the coupled model '%s': The given method do not have root-finding capability. The simulator will run with the default method: 'lsoda'.</runSimulationCoupled2>
+    <runSimulationCoupled3>sdsim::runSimulation - Simulation of the coupled model '%s': The component '%s' postProcess function returned the following error. %s</runSimulationCoupled3>
   </sdSimulatorMsg>
 </Messages>

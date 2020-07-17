@@ -560,11 +560,23 @@ sdOutputClass <- R6::R6Class(
                                            ".xml"))
       }
     },
-    UpdateOutTraj = function(traj) {
+    updateOutTraj = function(traj) {
         private$pOutTrajectory <- c(private$pOutTrajectory, traj)
     },
-    UpdateAuxTraj = function(row) {
-      private$pAuxTrajectory <- c(private$pAuxTrajectory, row)
+    setOutTraj = function(traj) {
+      private$pOutTrajectory <- traj
+    },
+    setAuxTraj = function(traj) {
+      private$pAuxTrajectory <- traj
+    },
+    setTimeSeries = function(ts) {
+      private$pTimeSeriesTrajectory <- ts
+    },
+    setPostProcess = function(postProc) {
+      private$pPostProcessOut <- postProc
+    },
+    setDiagnostics = function(diag) {
+      private$pDiag <- diag
     }
   ),
   active = list(
