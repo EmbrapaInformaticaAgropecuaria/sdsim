@@ -452,12 +452,12 @@ sdSimulatorClass <- R6::R6Class(
       private$pOutput$setPostProcess(output$diagnostics)
       private$pOutput$setDiagnostics(output$postProcessOut)
     },
-    runSteps = function(from = NULL, to = NULL, by = NULL) {
+    runStep = function(from = NULL, to = NULL, by = NULL) {
       if (is.null(from))
         from <- private$pCurrTime
 
       if(private$pCurrTime > from) {
-        warning(sprintf(sdSimulatorMsg$runSteps1, private$pCurrTime))
+        warning(sprintf(sdSimulatorMsg$runStep1, private$pCurrTime))
         from <- private$pCurrTime
       }
       
@@ -467,16 +467,16 @@ sdSimulatorClass <- R6::R6Class(
         to <- from + by
 
       if(from > to) {
-        stop(sprintf(sdSimulatorMsg$runSteps2))
+        stop(sprintf(sdSimulatorMsg$runStep2))
       }
 
       if(to - from - by < 1e-6) { # If one step only
-        out <- sdsim::runSteps(private$pOde, c(from, to), private$pCurrState)
+        out <- sdsim::runStep(private$pOde, c(from, to), private$pCurrState)
         currState <- out$state[-1]
 
       } else { # More than one step
         times <- seq(from, to, by)
-        out <- sdsim::runSteps(private$pOde, times, private$pCurrState)
+        out <- sdsim::runStep(private$pOde, times, private$pCurrState)
 
         # Get last state
         currState <- tail(out$state, length(private$pCurrState))

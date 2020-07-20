@@ -184,8 +184,8 @@ sdsim::summary - Time Series Trajectory Summary
     <initialize8>sdsim::initialize - Simulation of the model '%s': No method informed. The simulator will run with the default method: 'lsoda'.</initialize8>
     <initAtomic1>sdsim::initModel - Simulation of the model '%s' aborted: No differential equations function, model is empty.</initAtomic1>
     <initAtomic2>sdsim::initModel - Simulation of the model '%s' aborted: no state variables informed. Define the state variables in the default scenario or via the scenario argument.</initAtomic2>
-    <runSteps1>sdsim::runSteps - Simulation current time is greater than 'from'. The simulator will run with 'from' = %s</runSteps1>
-    <runSteps2>sdsim::runSteps - Simulation initial time is greater than final time. Insert a valid final time.</runSteps2>   
+    <runStep1>sdsim::runStep - Simulation current time is greater than 'from'. The simulator will run with 'from' = %s</runStep1>
+    <runStep2>sdsim::runStep - Simulation initial time is greater than final time. Insert a valid final time.</runStep2>   
     <runSimulation1>sdsim::runSimulation - Simulation aborted:Invalid model class. See help('sdLoadModel') for available classes.</runSimulation1>
     <runSimulationAtomic1>sdsim::runSimulation - Simulation of the model '%s': The given method do not have root-finding capability. The simulator will run with the default method: 'lsoda'.</runSimulationAtomic1>
     <runSimulationAtomic2>sdsim::runSimulation - Simulation of the model '%s': The postProcess function returned the following error. %s</runSimulationAtomic2>

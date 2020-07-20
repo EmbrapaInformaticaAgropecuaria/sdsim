@@ -1,4 +1,4 @@
-runSteps <- function(ode, time, y, rtol = 1e-6, atol = 1e-6) {
+runStep <- function(ode, time, y, rtol = 1e-6, atol = 1e-6) {
   e <- environment(ode)
   naux <- length(e$aux)
   
