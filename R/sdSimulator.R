@@ -69,7 +69,9 @@ CreateCoupledFuncEval <- function(componentsId,
                                   inp,
                                   sw,
                                   auxiliary,
-                                  storeAuxTrajectory = F) { 
+                                  unlistReturn = F,
+                                  storeAuxTrajectory = F,
+                                  stNames = NULL) { 
   lastEvalTime <- -Inf
   
   modelseq <- seq_along(componentsId)
@@ -85,27 +87,29 @@ CreateCoupledFuncEval <- function(componentsId,
   CoupledFuncEval <- function(t, state, parms) { 
     # stores the model definitions result
     st <- as.list(state)
-    
+    if(!is.null(stNames))
+      names(st) <- stNames
+
     # evaluate time series varibles if the last evaluation time
     # is different than the current time
-    if (lastEvalTime != t) { 
+    if (lastEvalTime != t) {
       # compute the time series in the inputs
       inp[timeSeries] <<- lapply(inp$fun_, function(x) x(t))
-      
+
       lastEvalTime <<- t
     }
     # make the connections using the transformation st connection matrix
     #inpConnection <- as.list(conSt %*% state)
     inp[conStInps] <<- st[conSt]
-    
+
     # evaluate the auxiliary variables and update the aux list
     for (var in auxseq)
       eq[[var]] <<- aux[[var]] <<- eval(auxiliary[[var]])
-    
+
     inp[conAuxInps] <<- aux[conAux]
-    
+
     # run the components model definitions
-    for (i in modelseq) { 
+    for (i in modelseq) {
       # run the model definition
       mDef <- funcs[[i]](t = t,
                          st = st[compIndex[["st"]][[componentsId[[i]]]]],
@@ -114,12 +118,12 @@ CreateCoupledFuncEval <- function(componentsId,
                          inp = inp[compIndex[["inp"]][[componentsId[[i]]]]],
                          sw = sw[compIndex[["sw"]][[componentsId[[i]]]]],
                          aux = aux[compIndex[["aux"]][[componentsId[[i]]]]])
-      
+
       # concatenate the states derivatives
       dState[compIndex[["st"]][[componentsId[[i]]]]] <- mDef[[1]]
       # concatenate the global auxiliary values
       mAux <- mDef[-1]
-      
+
       if (length(mAux) > 0) { # there is auxiliary values
         names(mAux)[names(mAux) %in% ""] <- "noname"
         names(mAux) <- paste0(componentsId[[i]], ".", names(mAux))
@@ -127,11 +131,17 @@ CreateCoupledFuncEval <- function(componentsId,
       }
     }
     
+    
     # Save aux trajectory
-    if (storeAuxTrajectory) 
+    if (storeAuxTrajectory)
       return(list(dState, dAux, aux))
-    else
-      return(list(dState, dAux))
+    else {
+      if(unlistReturn)
+        return(unlist(c(dState, dAux)))
+      else
+        return(list(dState, dAux))
+    }
+      
   }
   
   return(CoupledFuncEval)
@@ -1122,7 +1132,7 @@ initOdeModel <- function(model, scenario) {
                    odeEnv,
                    auxiliary = model$aux,
                    lastEvalTime = (model$defaultScenario$times$from - 1), # TODO: mudar para nulo?
-                   storeAuxTrajectory = T,
+                   storeAuxTrajectory = F,
                    unlistReturn = T,
                    stNames = names(st))
   return(list(odeEnv = odeEnv, ode = ode))
@@ -1226,6 +1236,44 @@ initCoupledModel <- function(model, scenario) {
   assign("par", par, odeEnv)
   assign("inp", inp, odeEnv)
   assign("sw", sw, odeEnv)
+  
+  componentsEquations <- model$componentsEquations
+  
+  if (length(componentsEquations) > 0) {
+    
+    createCoupledFuncEval <- CreateCoupledFuncEval
+    
+    environment(createCoupledFuncEval) <- model$modelEnv
+    
+    # get the aux connections index
+    conAux <- match(unlist(model$eqConnections, use.names = F), names(model$componentsAux))
+    conAuxInps <- match(names(model$eqConnections), names(inp))
+    
+    # get the connected st index and the connected inp index
+    conSt <- match(unlist(model$stConnections, use.names = F), names(st))
+    conStInps <- match(names(model$stConnections), names(inp))
+    
+    # check if the match outputed any NA values
+    compIndex <- model$indexComponents
+    odeCoupledEval <- createCoupledFuncEval(
+      componentsId = names(componentsEquations),
+      funcs = componentsEquations,
+      conSt = conSt,
+      conStInps = conStInps,
+      conAux = conAux,
+      conAuxInps = conAuxInps,
+      compIndex = compIndex,
+      lenst = length(st),
+      ct = ct,
+      par = par,
+      inp = inp,
+      sw = sw,
+      aux = model$componentsAux,
+      unlistReturn = T,
+      storeAuxTrajectory = F,
+      stNames = names(st))
+    
+  }
 
-  return(list(odeEnv = odeEnv, ode = NULL))
+  return(list(odeEnv = odeEnv, ode = odeCoupledEval))
 }
