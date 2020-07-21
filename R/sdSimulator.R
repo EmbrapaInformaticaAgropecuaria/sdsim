@@ -43,7 +43,9 @@ CreateFuncEval <-
       if (storeAuxTrajectory)
         output <- c(output, aux)
       
-
+      if(!is.null(parms)) # set any value in LSODA4R.cpp
+        unlistReturn <- TRUE
+      
       if (!unlistReturn)
         return(output)
       else
@@ -131,10 +133,15 @@ CreateCoupledFuncEval <- function(componentsId,
       }
     }
     
+    if(!is.null(parms)) # set any value in LSODA4R.cpp
+      unlistReturn <- TRUE
     
     # Save aux trajectory
     if (storeAuxTrajectory)
-      return(list(dState, dAux, aux))
+      if(unlistReturn)
+        return(unlist(c(dState, dAux, aux)))
+      else
+        return(list(dState, dAux, aux))
     else {
       if(unlistReturn)
         return(unlist(c(dState, dAux)))
@@ -428,7 +435,7 @@ sdSimulatorClass <- R6::R6Class(
                         verbose = F) {
       # If the model is atomic
       if (inherits(private$pModel, sdOdeModelClass$classname)) {
-        output <- runOdeSimulation(private$pOdeEnv, private$pModel, private$pTimes$from, private$pTimes$to, 
+        output <- runOdeSimulation(private$pOdeEnv, private$pOde, private$pModel, private$pTimes$from, private$pTimes$to, 
                          private$pTimes$by, private$pMethod, events, maxroots, terminalroot,
                          ties, storeAuxTrajectory, storeTimeSeriesTrajectory)
       } 
@@ -439,7 +446,7 @@ sdSimulatorClass <- R6::R6Class(
       } 
       #if the model is coupled
       else if (inherits(private$pModel, sdCoupledModelClass$classname)) {
-        output <- runCoupledSimulation(private$pOdeEnv, private$pModel, private$pTimes$from, private$pTimes$to, 
+        output <- runCoupledSimulation(private$pOdeEnv, private$pOde, private$pModel, private$pTimes$from, private$pTimes$to, 
                              private$pTimes$by, private$pMethod, events, maxroots,
                              storeAuxTrajectory, storeTimeSeriesTrajectory, verbose)
       } else {
@@ -529,7 +536,8 @@ sdSimulatorClass <- R6::R6Class(
   )
 )
 
-runOdeSimulation <- function(env, model,
+runOdeSimulation <- function(env, ode,
+                             model,
                              from = NULL,
                              to = NULL,
                              by = NULL,
@@ -553,15 +561,8 @@ runOdeSimulation <- function(env, model,
   par <- env$par
   inp <- env$inp
   sw <- env$sw
-  
-  environment(CreateFuncEval) <- model$modelEnvironment
 
-  odeEval <-
-    CreateFuncEval(func = model$ode,
-                   env = env,
-                   auxiliary = auxiliary,
-                   lastEvalTime = (from - 1), # TODO: mudar para nulo?
-                   storeAuxTrajectory = storeAuxTrajectory)
+  odeEval <- ode
 
   
   # Run simulation without root function, data frame or times vector
@@ -685,7 +686,7 @@ runOdeSimulation <- function(env, model,
         method = method)
     }
   }
-  
+
   diagnostics <-
     paste(capture.output(deSolve::diagnostics(outTrajectory)), 
           collapse = "\n")
@@ -813,7 +814,8 @@ runStaticSimulation <- function(env, model,
   return(output)
 }
 
-runCoupledSimulation <- function(env, model,
+runCoupledSimulation <- function(env, ode,
+                                 model,
                                  from = NULL,
                                  to = NULL,
                                  by = NULL,
@@ -890,10 +892,6 @@ runCoupledSimulation <- function(env, model,
     if (is.null(st) || length(st) == 0)
       stop(sprintf(sdSimulatorMsg$runSimulationCoupled1,model$id))
     
-    createCoupledFuncEval <- CreateCoupledFuncEval
-    
-    environment(createCoupledFuncEval) <- model$modelEnv
-    
     # get the aux connections index
     conAux <- match(unlist(model$eqConnections, use.names = F), names(aux))
     conAuxInps <- match(names(model$eqConnections), names(inp))
@@ -904,21 +902,7 @@ runCoupledSimulation <- function(env, model,
     
     # check if the match outputed any NA values
     compIndex <- model$indexComponents
-    odeCoupledEval <- createCoupledFuncEval(
-      componentsId = names(componentsEquations),
-      funcs = componentsEquations,
-      conSt = conSt,
-      conStInps = conStInps,
-      conAux = conAux,
-      conAuxInps = conAuxInps,
-      compIndex = compIndex,
-      lenst = length(st),
-      ct = ct,
-      par = par,
-      inp = inp,
-      sw = sw,
-      aux = aux,
-      storeAuxTrajectory = storeAuxTrajectory)
+    odeCoupledEval <- ode
     
     times <- seq(from = from,
                  to = to,
@@ -1132,8 +1116,8 @@ initOdeModel <- function(model, scenario) {
                    odeEnv,
                    auxiliary = model$aux,
                    lastEvalTime = (model$defaultScenario$times$from - 1), # TODO: mudar para nulo?
-                   storeAuxTrajectory = F,
-                   unlistReturn = T,
+                   storeAuxTrajectory = T,
+                   unlistReturn = F,
                    stNames = names(st))
   return(list(odeEnv = odeEnv, ode = ode))
 }
@@ -1269,8 +1253,8 @@ initCoupledModel <- function(model, scenario) {
       inp = inp,
       sw = sw,
       aux = model$componentsAux,
-      unlistReturn = T,
-      storeAuxTrajectory = F,
+      unlistReturn = F,
+      storeAuxTrajectory = T,
       stNames = names(st))
     
   }

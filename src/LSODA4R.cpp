@@ -15,7 +15,7 @@ void sys(double t, double *y, double *dydt) {
   Function f = ENV["ode"];
   
   NumericVector yR(y, y + NEQ);
-  double parms = 0;
+  double parms = 1;
   NumericVector result = as<NumericVector>(f(t, yR, parms));
   for(int i = 0; i < NEQ; i++) {
     dydt[i] = result[i];
