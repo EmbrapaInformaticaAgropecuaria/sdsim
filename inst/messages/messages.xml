@@ -186,6 +186,7 @@ sdsim::summary - Time Series Trajectory Summary
     <initAtomic2>sdsim::initModel - Simulation of the model '%s' aborted: no state variables informed. Define the state variables in the default scenario or via the scenario argument.</initAtomic2>
     <runStep1>sdsim::runStep - Simulation current time is greater than 'from'. The simulator will run with 'from' = %s</runStep1>
     <runStep2>sdsim::runStep - Simulation initial time is greater than final time. Insert a valid final time.</runStep2>   
+    <runStep3>sdsim::runStep - Model '%s' has no ODE. Nothing was done. </runStep3>
     <runSimulation1>sdsim::runSimulation - Simulation aborted:Invalid model class. See help('sdLoadModel') for available classes.</runSimulation1>
     <runSimulationAtomic1>sdsim::runSimulation - Simulation of the model '%s': The given method do not have root-finding capability. The simulator will run with the default method: 'lsoda'.</runSimulationAtomic1>
     <runSimulationAtomic2>sdsim::runSimulation - Simulation of the model '%s': The postProcess function returned the following error. %s</runSimulationAtomic2>

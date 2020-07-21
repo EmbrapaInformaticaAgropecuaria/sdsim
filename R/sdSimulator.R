@@ -460,6 +460,11 @@ sdSimulatorClass <- R6::R6Class(
       private$pOutput$setDiagnostics(output$postProcessOut)
     },
     runStep = function(from = NULL, to = NULL, by = NULL) {
+      if(is.null(private$pOde)) {
+        warning(sprintf(sdSimulatorMsg$runStep3, private$pModel$id))
+        return()
+      }
+        
       if (is.null(from))
         from <- private$pCurrTime
 
@@ -751,7 +756,7 @@ runStaticSimulation <- function(env, model,
   equations <- model$algebraicEquations
   initVars <- model$initVars
   globalfuns <- model$globalFunctions
-  
+
   # stop if model is empty
   if (length(equations) == 0)
     stop(sprintf(sdSimulatorMsg$runSimulationStatic1,model$id))
@@ -771,14 +776,14 @@ runStaticSimulation <- function(env, model,
   eq <- list()
   if (length(inp$fun_) > 0) { 
     timeSeries <- which(names(inp) %in% names(inp$fun_))
-    for (t in seq(times$from, times$to, times$by)) { 
+    for (t in seq(from, to, by)) { 
       # compute the input time Series values 
       inp[timeSeries] <- lapply(inp$fun_, function(x) x(t))
       
       for (equationsVar in names(equations))
         eq[[equationsVar]] <- eval(equations[[equationsVar]],
                                    enclos = auxenv)
-      
+
       # Concatenate the equations trajectory
       eqTrajectory <- rbind(eqTrajectory, c(time = t, unlist(eq)))
       
@@ -797,7 +802,7 @@ runStaticSimulation <- function(env, model,
       eq[[equationsVar]] <- eval(equations[[equationsVar]],
                                  envir = auxenv)
     eqTrajectory <- as.data.frame(rbind(eqTrajectory, 
-                                        c(time = times$from, unlist(eq))), 
+                                        c(time = from, unlist(eq))), 
                                   row.names = NULL)
   }
   
@@ -806,11 +811,9 @@ runStaticSimulation <- function(env, model,
     outTrajectory = eqTrajectory,
     auxTrajectory = NULL,
     timeSeriesTrajectory = tsTrajectory,
-    model = model,
-    scenario = scenario,
     diagnostics = NULL,
     postProcessOut = NULL)
-  
+
   return(output)
 }
 
