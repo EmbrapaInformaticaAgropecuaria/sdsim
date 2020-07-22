@@ -12,11 +12,14 @@ Environment ENV;
 int NEQ;
 
 void sys(double t, double *y, double *dydt) {
-  Function f = ENV["ode"];
+  Function ode = ENV["ode"];
+  Function trigger = ENV["trigger"];
+  Function event = ENV["event"];
   
   NumericVector yR(y, y + NEQ);
   double parms = 1;
-  NumericVector result = as<NumericVector>(f(t, yR, parms));
+  NumericVector result = as<NumericVector>(ode(t, yR, parms));
+  
   for(int i = 0; i < NEQ; i++) {
     dydt[i] = result[i];
   }
@@ -31,6 +34,9 @@ extern "C" {
     std::vector<double> y = as<std::vector<double>>(y_S);
     double rtol = as<double>(rtol_S);
     double atol = as<double>(atol_S);
+    
+    Function trigger = ENV["trigger"];
+    Function event = ENV["event"];
 
     int np = time.size() - 1;
     int istate = 1;
@@ -40,13 +46,18 @@ extern "C" {
     for (int i = 0; i < np; i++) {
 
       vector<double> out;
-
       lsoda.lsoda_update(sys, NEQ, y, out, &time[i], time[i + 1], &istate, nullptr, rtol, atol);
+      NumericVector yOut(&out[1], &out[NEQ + 1]);
+
+      bool triggerQ = as<bool>(trigger(time[i + 1], yOut, 1));
+      if(triggerQ == false) {
+        yOut = as<NumericVector>(event(time[i + 1], yOut, 1));
+      }
 
       Y[(NEQ + 1) * i] = time[i];
       for (int j = 0; j < NEQ; j++) {
-        Y[(NEQ + 1) * i + 1 + j] = out[j+1];
-        y[j] = out[j+1];
+        Y[(NEQ + 1) * i + 1 + j] = yOut[j];
+        y[j] = yOut[j];
       }
     }
     

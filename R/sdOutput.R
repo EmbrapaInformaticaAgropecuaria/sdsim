@@ -224,7 +224,7 @@ sdOutputClass <- R6::R6Class(
       if (!is.null(private[["pOutTrajectory"]])) { 
         cat(indent("$Output Trajectories", indent = 4), sep = "\n")
         if(is.vector(private$pOutTrajectory)) {
-          names <- names("time", private$pScenario$state)
+          names <- c("time", names(private$pScenario$state))
           df <- data.frame(t(matrix(private$pOutTrajectory, nrow = length(names))))
           colnames(df) <- names
           cat(indent(paste(capture.output(tail(df, n = 10, 

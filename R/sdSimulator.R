@@ -22,7 +22,7 @@ CreateFuncEval <-
       st <- as.list(st)
       if(!is.null(stNames))
         names(st) <- stNames
-
+      
       # evaluate time series and auxiliary varibles if the last evaluation time
       # is different than the current time
       if (lastEvalTime != t) {
@@ -48,7 +48,7 @@ CreateFuncEval <-
       
       if (!unlistReturn)
         return(output)
-      else
+      else 
         return(unlist(output))
     }
     
@@ -397,9 +397,9 @@ sdSimulatorClass <- R6::R6Class(
     },
     initModel = function(verbose = F) {
       
-      if (!private$pModel$isVerified)
-        private$pModel$verifyModel(private$pSimScenario, verbose = verbose)
-      
+      # if (!private$pModel$isVerified)
+      #   private$pModel$verifyModel(private$pSimScenario, verbose = verbose)
+      # 
       if (inherits(private$pModel, sdOdeModelClass$classname)) {
         out <- initOdeModel(private$pModel, private$pSimScenario)
       }
@@ -412,6 +412,8 @@ sdSimulatorClass <- R6::R6Class(
       
       private$pOdeEnv <- out$odeEnv
       private$pOde <- out$ode
+      private$pTrigger <- out$trigger
+      private$pEvent <- out$event
       
       private$pCurrTime <- private$pTimes$from
       private$pCurrState <- private$pSimScenario$state
@@ -435,7 +437,7 @@ sdSimulatorClass <- R6::R6Class(
                         verbose = F) {
       # If the model is atomic
       if (inherits(private$pModel, sdOdeModelClass$classname)) {
-        output <- runOdeSimulation(private$pOdeEnv, private$pOde, private$pModel, private$pTimes$from, private$pTimes$to, 
+        output <- runOdeSimulation(private$pOdeEnv, private$pOde, private$pTrigger, private$pEvent, private$pModel, private$pTimes$from, private$pTimes$to, 
                          private$pTimes$by, private$pMethod, events, maxroots, terminalroot,
                          ties, storeAuxTrajectory, storeTimeSeriesTrajectory)
       } 
@@ -483,12 +485,12 @@ sdSimulatorClass <- R6::R6Class(
       }
 
       if(to - from - by < 1e-6) { # If one step only
-        out <- sdsim::runStep(private$pOde, c(from, to), private$pCurrState)
+        out <- sdsim::runStep(private$pOde, private$pTrigger, private$pEvent, c(from, to), private$pCurrState)
         currState <- out$state[-1]
 
       } else { # More than one step
         times <- seq(from, to, by)
-        out <- sdsim::runStep(private$pOde, times, private$pCurrState)
+        out <- sdsim::runStep(private$pOde,private$pTrigger, private$pEvent, times, private$pCurrState)
 
         # Get last state
         currState <- tail(out$state, length(private$pCurrState))
@@ -537,11 +539,13 @@ sdSimulatorClass <- R6::R6Class(
     pCurrTime = NULL,
     pCurrState = NULL,
     pOdeEnv = NULL,
-    pOde = NULL
+    pOde = NULL,
+    pTrigger = NULL,
+    pEvent = NULL
   )
 )
 
-runOdeSimulation <- function(env, ode,
+runOdeSimulation <- function(env, ode, trigger, event,
                              model,
                              from = NULL,
                              to = NULL,
@@ -553,12 +557,8 @@ runOdeSimulation <- function(env, ode,
                              ties = "notordered",
                              storeAuxTrajectory = T,
                              storeTimeSeriesTrajectory = F) {
-  
-  # Get model functions
-  initVars <- model$initVars
+
   postProcess <- model$postProcess
-  trigger <- model$trigger
-  event <- model$event
   auxiliary <- model$aux
   
   st <- env$st
@@ -568,7 +568,6 @@ runOdeSimulation <- function(env, ode,
   sw <- env$sw
 
   odeEval <- ode
-
   
   # Run simulation without root function, data frame or times vector
   if (!events || is.null(trigger) ||
@@ -595,19 +594,21 @@ runOdeSimulation <- function(env, ode,
         method <- "lsoda"
       }
       
-      triggerEval <-
-        CreateFuncEval(func = trigger, env = env, auxiliary = auxiliary, 
-                       lastEvalTime = (from - 1))
-      
+      triggerEval <- trigger
+      # triggerEval <-
+      #   CreateFuncEval(func = trigger, env = env, auxiliary = auxiliary,
+      #                  lastEvalTime = (from - 1))
+
       if (is.function(event)) { 
         
         # EVENTS func triggered by a root function
-        eventEval <- CreateFuncEval(event,
-                                            env = env, 
-                                            auxiliary = auxiliary,
-                                            lastEvalTime = (from - 1),
-                                            unlistReturn = T)
-        
+        eventEval <- event
+        # eventEval <- CreateFuncEval(event,
+        #                                     env = env,
+        #                                     auxiliary = auxiliary,
+        #                                     lastEvalTime = (from - 1),
+        #                                     unlistReturn = T)
+
         outTrajectory <- deSolve::ode(
           y = unlist(st),
           times = seq(from, to, by),
@@ -649,12 +650,13 @@ runOdeSimulation <- function(env, ode,
         method <- "lsoda"
       }
       # events in a function with the triggers times in trigger
-      eventEval <-
-        CreateFuncEval(event,
-                       env,
-                       auxiliary = auxiliary,
-                       lastEvalTime = (from - 1),
-                       unlistReturn = T)
+      eventEval <- event
+      # eventEval <-
+      #   CreateFuncEval(event,
+      #                  env,
+      #                  auxiliary = auxiliary,
+      #                  lastEvalTime = (from - 1),
+      #                  unlistReturn = T)
       
       outTrajectory <- deSolve::ode(
         y = unlist(st),
@@ -1079,6 +1081,9 @@ initOdeModel <- function(model, scenario) {
   odeEnv <- new.env(parent = emptyenv())
 
   initVars <- model$initVars
+  trigger <- model$trigger
+  event <- model$event
+  auxiliary <- model$aux
 
   # Get variables from default scenario
   st <- scenario$state
@@ -1114,15 +1119,40 @@ initOdeModel <- function(model, scenario) {
 
   environment(CreateFuncEval) <- model$modelEnvironment
 
-  ode <-
+  odeEval <-
     CreateFuncEval(func = model$ode,
                    odeEnv,
-                   auxiliary = model$aux,
+                   auxiliary = auxiliary,
                    lastEvalTime = (model$defaultScenario$times$from - 1), # TODO: mudar para nulo?
                    storeAuxTrajectory = T,
                    unlistReturn = F,
                    stNames = names(st))
-  return(list(odeEnv = odeEnv, ode = ode))
+  
+  if (is.function(trigger)) {
+    triggerEval <-
+      CreateFuncEval(func = trigger, 
+                     env = odeEnv, 
+                     auxiliary = auxiliary, 
+                     lastEvalTime = (model$defaultScenario$times$from - 1), 
+                     stNames = names(st))
+  } else {
+    triggerEval <- trigger
+  }
+
+  
+  if (is.function(event)) {
+    eventEval <- CreateFuncEval(event,
+                                env = odeEnv, 
+                                auxiliary = auxiliary,
+                                lastEvalTime = (model$defaultScenario$times$from - 1),
+                                unlistReturn = T,
+                                stNames = names(st))
+  }
+  else {
+    eventEval <- event
+  }
+  
+  return(list(odeEnv = odeEnv, ode = odeEval, trigger = triggerEval, event = eventEval))
 }
 
 initStaticModel <- function(model, scenario) {
