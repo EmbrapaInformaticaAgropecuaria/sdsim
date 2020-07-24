@@ -38,11 +38,11 @@ CreateFuncEval <-
 
       output <- func(t = t, st = st, ct = ct, par = par,
                      inp = inp, sw = sw, aux = aux)
-      
+
       # Save aux trajectory
       if (storeAuxTrajectory)
         output <- c(output, aux)
-      
+
       if(!is.null(parms)) # set any value in LSODA4R.cpp
         unlistReturn <- TRUE
       
