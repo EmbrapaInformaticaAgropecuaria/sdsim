@@ -1,7 +1,12 @@
-runStep <- function(ode, trigger, event, time, y, rtol = 1e-6, atol = 1e-6) {
+initLSODA <- function() {
+  obj <- .Call("initLSODA")
+}
+
+runLSODA <- function(obj, ode, trigger, event, time, y, rtol = 1e-6, atol = 1e-6) {
   # New environment for ODE, trigger and event functions
   newEnv <- new.env(parent = parent.env(globalenv()))
   assign("ode", ode, newEnv)
+  assign("istate", obj$istate, newEnv)
   
   if(is.function(trigger)) {
     assign("trigger", trigger, newEnv)
@@ -20,7 +25,9 @@ runStep <- function(ode, trigger, event, time, y, rtol = 1e-6, atol = 1e-6) {
     assign("eventQ", FALSE, newEnv)
   }
   
-  out <- .Call("Lsoda", as.double(time), as.double(y), as.double(rtol), as.double(atol), newEnv)
+  out <- .Call("runLSODA", obj$lsoda, as.double(time), as.double(y), as.double(rtol), as.double(atol), newEnv)
 
-  return(list(state = out))
+  return(list(state = out, istate = newEnv$istate))
 }
+
+

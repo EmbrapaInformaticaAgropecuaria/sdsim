@@ -12,6 +12,14 @@ Environment ENV;
 
 int NEQ;
 
+extern "C" {
+  SEXP initLSODA()
+  {
+    XPtr<LSODA> ptr(new LSODA(), true);
+    return(ptr);
+  }
+}
+
 void sys(double t, double *y, double *dydt) {
   // Get ODE function
   Function ode = ENV["ode"];
@@ -21,14 +29,13 @@ void sys(double t, double *y, double *dydt) {
   
   // Evaluate differentials
   vector<double>result = as<vector<double>>(ode(t, yR, parms));
-
   for(int i = 0; i < NEQ; i++) {
     dydt[i] = result[i];
   }
 }
 
 extern "C" {
-  SEXP Lsoda(SEXP time_S, SEXP y_S, SEXP rtol_S, SEXP atol_S, SEXP env) {
+  SEXP runLSODA(SEXP obj, SEXP time_S, SEXP y_S, SEXP rtol_S, SEXP atol_S, SEXP env) {
     // Set global variables
     ENV = as<Environment>(env);
     NEQ = LENGTH(y_S);
@@ -39,20 +46,26 @@ extern "C" {
     double rtol = as<double>(rtol_S);
     double atol = as<double>(atol_S);
     
-    
-    int np = time.size() - 1; // Number of points to evaluate
+    // Number of points to evaluate
+    int np = time.size() - 1; 
     
     // Return vector (time_1 st1_1 st2_1 st3_1 ... time_np st1_np st2_np st3_np) 
     vector<double> Y(np * (NEQ + 1), 0);
     
-    LSODA lsoda; // lsoda object
-    vector<double> out; // lsoda_update return
-    int istate = 1;
+    // lsoda_update return
+    vector<double> out; 
+  
+    // LSODA object
+    XPtr<LSODA> ptr(obj);
+    
+    // Istate value
+    int istate = ENV["istate"];
+    
     for (int i = 0; i < np; i++) {
       // Calculate a state given previous state and time range
-      lsoda.lsoda_update(sys, NEQ, y, out, &time[i], time[i + 1], &istate, nullptr, rtol, atol);
+      ptr->lsoda_update(sys, NEQ, y, out, &time[i], time[i + 1], &istate, nullptr, rtol, atol);
       vector<double> yOut(&out[1], &out[NEQ + 1]); // Discard out first element (it is always zero)
-      
+
       // Get and check trigger function
       bool triggerQ = ENV["triggerQ"];
       double root;
@@ -71,6 +84,8 @@ extern "C" {
         istate = 1;
       }
       
+      ENV["istate"] = istate;
+      
       // Save output
       Y[(NEQ + 1) * i] = time[i];
       for (int j = 0; j < NEQ; j++) {
@@ -81,6 +96,3 @@ extern "C" {
     return wrap(Y);
   }
 }
-
-
-

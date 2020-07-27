@@ -426,6 +426,8 @@ sdSimulatorClass <- R6::R6Class(
         scenario = private$pSimScenario,
         diagnostics = NULL,
         postProcessOut = NULL)
+      
+      private$pObj <- list(lsoda = sdsim::initLSODA(), istate = 1) 
 
     },
     runSimulation = function(events = TRUE,
@@ -485,17 +487,21 @@ sdSimulatorClass <- R6::R6Class(
       }
 
       if(to - from - by < 1e-6) { # If one step only
-        out <- sdsim::runStep(private$pOde, private$pTrigger, private$pEvent, c(from, to), private$pCurrState)
+        out <- sdsim::runLSODA(private$pObj, private$pOde, private$pTrigger, private$pEvent, c(from, to), private$pCurrState)
         currState <- out$state[-1]
 
       } else { # More than one step
         times <- seq(from, to, by)
-        out <- sdsim::runStep(private$pOde,private$pTrigger, private$pEvent, times, private$pCurrState)
-
+        out <- sdsim::runLSODA(private$pObj, private$pOde, private$pTrigger, private$pEvent, times, private$pCurrState)
+        
+        
         # Get last state
         currState <- tail(out$state, length(private$pCurrState))
       }
-
+      
+      # Update LSODA istate value
+      private$pObj$istate <- out$istate
+      
       # Save trajectory and update current state and time
       private$pOutput$updateOutTraj(out$state)
       private$pCurrState <- setNames(as.list(currState), names(private$pCurrState))
@@ -541,7 +547,8 @@ sdSimulatorClass <- R6::R6Class(
     pOdeEnv = NULL,
     pOde = NULL,
     pTrigger = NULL,
-    pEvent = NULL
+    pEvent = NULL,
+    pObj = NULL
   )
 )
 
