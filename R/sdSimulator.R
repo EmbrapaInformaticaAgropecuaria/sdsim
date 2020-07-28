@@ -574,8 +574,6 @@ runOdeSimulation <- function(env, ode, trigger, event,
   inp <- env$inp
   sw <- env$sw
 
-  odeEval <- ode
-  
   # Run simulation without root function, data frame or times vector
   if (!events || is.null(trigger) ||
       (!is.function(trigger) &&
@@ -586,7 +584,7 @@ runOdeSimulation <- function(env, ode, trigger, event,
       y = unlist(st),
       times = seq(from, to, by),
       parms = NULL,
-      func = odeEval,
+      func = ode,
       method = method
     )
   } else { # Run simulation with support to events
@@ -601,29 +599,15 @@ runOdeSimulation <- function(env, ode, trigger, event,
         method <- "lsoda"
       }
       
-      triggerEval <- trigger
-      # triggerEval <-
-      #   CreateFuncEval(func = trigger, env = env, auxiliary = auxiliary,
-      #                  lastEvalTime = (from - 1))
-
       if (is.function(event)) { 
-        
-        # EVENTS func triggered by a root function
-        eventEval <- event
-        # eventEval <- CreateFuncEval(event,
-        #                                     env = env,
-        #                                     auxiliary = auxiliary,
-        #                                     lastEvalTime = (from - 1),
-        #                                     unlistReturn = T)
-
         outTrajectory <- deSolve::ode(
           y = unlist(st),
           times = seq(from, to, by),
-          func = odeEval,
+          func = ode,
           parms = NULL,
-          rootfunc = triggerEval,
+          rootfunc = trigger,
           events = list(
-            func = eventEval, # TODO: da pra passar isso como nulo p/ evitar chamar o ode 2x?
+            func = event, # TODO: da pra passar isso como nulo p/ evitar chamar o ode 2x?
             root = T,
             maxroots = maxroots,
             terminalroot = terminalroot),
@@ -634,9 +618,9 @@ runOdeSimulation <- function(env, ode, trigger, event,
         outTrajectory <- deSolve::ode(
           y = unlist(st),
           times = seq(from, to, by),
-          func = odeEval,
+          func = ode,
           parms = NULL,
-          rootfunc = triggerEval,
+          rootfunc = trigger,
           events = list(
             root = T,
             maxroots = maxroots,
@@ -656,21 +640,12 @@ runOdeSimulation <- function(env, ode, trigger, event,
         warning(sprintf(sdSimulatorMsg$runSimulationAtomic1,model$id))
         method <- "lsoda"
       }
-      # events in a function with the triggers times in trigger
-      eventEval <- event
-      # eventEval <-
-      #   CreateFuncEval(event,
-      #                  env,
-      #                  auxiliary = auxiliary,
-      #                  lastEvalTime = (from - 1),
-      #                  unlistReturn = T)
-      
       outTrajectory <- deSolve::ode(
         y = unlist(st),
         times = seq(from, to, by),
-        func = odeEval,
+        func = ode,
         parms = NULL,
-        events = list(func = eventEval,
+        events = list(func = event,
                       time = trigger),
         method = method)
     } else if (is.data.frame(trigger)) { 
@@ -686,7 +661,7 @@ runOdeSimulation <- function(env, ode, trigger, event,
       outTrajectory <- deSolve::ode(
         y = unlist(st),
         times = seq(from, to, by),
-        func = odeEval,
+        func = ode,
         parms = NULL,
         events = list(data = trigger,
                       ties = ties),
@@ -696,7 +671,7 @@ runOdeSimulation <- function(env, ode, trigger, event,
         y = unlist(st),
         times = seq(from, to, by),
         parms = NULL,
-        func = odeEval,
+        func = ode,
         method = method)
     }
   }

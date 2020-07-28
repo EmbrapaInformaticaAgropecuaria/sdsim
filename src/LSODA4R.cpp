@@ -58,28 +58,33 @@ extern "C" {
     // LSODA object
     XPtr<LSODA> ptr(obj);
     
-    // Istate value
-    int istate = ENV["istate"];
+    int istate = ENV["istate"]; // Istate value
+    string triggerT = ENV["triggerT"]; // trigger type
+    string eventT = ENV["eventT"]; // event type
     
     for (int i = 0; i < np; i++) {
       // Calculate a state given previous state and time range
-      ptr->lsoda_update(sys, NEQ, y, out, &time[i], time[i + 1], &istate, nullptr, rtol, atol);
+      double tin = time[i];
+      ptr->lsoda_update(sys, NEQ, y, out, &tin, time[i + 1], &istate, nullptr, rtol, atol);
       vector<double> yOut(&out[1], &out[NEQ + 1]); // Discard out first element (it is always zero)
 
-      // Get and check trigger function
-      bool triggerQ = ENV["triggerQ"];
-      double root;
-      if(triggerQ) {
+      // Check trigger
+      double root = 1;
+      if(triggerT == "function") { // If trigger is a function check root
         Function trigger = ENV["trigger"];
-        root = as<double>(trigger(time[i + 1], yOut, 1));
+        root = as<double>(trigger(time[i], yOut, 1));
+      } else if(triggerT == "numeric") { // If trigger is a timeEvent vector check if there is an event in time[i]
+        vector<double> timeEvent = as<vector<double>>(ENV["trigger"]);
+        if(find(timeEvent.begin(), timeEvent.end(), time[i]) != timeEvent.end()) {
+          root = 0;
+        }
       }
 
-      // Get and evaluate event function
-      bool eventQ = ENV["eventQ"];
-      if(eventQ) {
+      // Evaluate event function
+      if(eventT == "function") {
         Function event = ENV["event"];
         if(root <= 0 || fabs(root) < atol) {
-          yOut = as<vector<double>>(event(time[i + 1], yOut, 1));
+          yOut = as<vector<double>>(event(time[i], yOut, 1));
         }
         istate = 1;
       }
@@ -87,7 +92,7 @@ extern "C" {
       ENV["istate"] = istate;
       
       // Save output
-      Y[(NEQ + 1) * i] = time[i];
+      Y[(NEQ + 1) * i] = time[i + 1];
       for (int j = 0; j < NEQ; j++) {
         Y[(NEQ + 1) * i + 1 + j] = yOut[j];
         y[j] = yOut[j];
