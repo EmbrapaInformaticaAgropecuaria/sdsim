@@ -36,7 +36,8 @@ Imports:
   shiny,
   shinyAce,
   shinydashboard,
-  rhandsontable
+  rhandsontable,
+  bazar
 RoxygenNote: 7.1.1
 Suggests: knitr,
     rmarkdown,

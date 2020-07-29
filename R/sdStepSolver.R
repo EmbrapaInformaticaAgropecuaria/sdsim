@@ -2,8 +2,8 @@ initLSODA <- function() {
   obj <- .Call("initLSODA")
 }
 
-runLSODA <- function(obj, ode, trigger, event, time, y, rtol = 1e-6, atol = 1e-6) {
-  # New environment for ODE, trigger and event functions
+runLSODA <- function(obj, ode, times, state, trigger = NULL, event = NULL, atol = 1e-6, rtol = 1e-6) {
+  # New environment for ODE, istate, trigger and event
   newEnv <- new.env(parent = parent.env(globalenv()))
   assign("ode", ode, newEnv)
   assign("istate", obj$istate, newEnv)
@@ -14,9 +14,8 @@ runLSODA <- function(obj, ode, trigger, event, time, y, rtol = 1e-6, atol = 1e-6
       assign("triggerT", "function", newEnv)
     } else if (is.numeric(trigger)) {
       assign("triggerT", "numeric", newEnv)
-      if(!all(trigger %in% time) && trigger >= time[1] && trigger <= time[length(time)]) {
-        time <- checkEventTime(trigger, time)
-      }
+      triggerInTime <- trigger[which(trigger > times[1] & trigger < times[length(times)])]
+      times <- sort(bazar::almost.unique(c(triggerInTime, times)))
     }
   } else {
     assign("triggerT", "none", newEnv)
@@ -29,20 +28,7 @@ runLSODA <- function(obj, ode, trigger, event, time, y, rtol = 1e-6, atol = 1e-6
   } else {
     assign("eventT", "none", newEnv)
   }
-  out <- .Call("runLSODA", obj$lsoda, as.double(time), as.double(y), as.double(rtol), as.double(atol), newEnv)
+  out <- .Call("runLSODA", obj$lsoda, as.double(times), as.double(state), as.double(rtol), as.double(atol), newEnv)
 
   return(list(state = out, istate = newEnv$istate))
 }
-
-checkEventTime <- function(trigger, time) {
-  checkInterval <- function(trigger) {
-    if(trigger >= time[1] && trigger <= time[length(time)]) {
-      sort(c(trigger, time))
-    }
-  }
-  
-  res <- lapply(trigger, checkInterval)
-  time <- sort(unique(unlist(res)))
-  return(time)
-}
-

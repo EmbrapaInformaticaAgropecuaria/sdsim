@@ -463,7 +463,7 @@ sdSimulatorClass <- R6::R6Class(
       private$pOutput$setPostProcess(output$diagnostics)
       private$pOutput$setDiagnostics(output$postProcessOut)
     },
-    runStep = function(from = NULL, to = NULL, by = NULL) {
+    runStep = function(from = NULL, to = NULL, by = NULL, events = TRUE, atol = 1e-6, rtol = 1e-6) {
       if(is.null(private$pOde)) {
         warning(sprintf(sdSimulatorMsg$runStep3, private$pModel$id))
         return()
@@ -487,24 +487,41 @@ sdSimulatorClass <- R6::R6Class(
       }
 
       if(to - from - by < 1e-6) { # If one step only
-        out <- sdsim::runLSODA(private$pObj, private$pOde, private$pTrigger, private$pEvent, c(from, to), private$pCurrState)
-        currState <- out$state[-1]
-
+        times <- c(from, to)
       } else { # More than one step
         times <- seq(from, to, by)
-        out <- sdsim::runLSODA(private$pObj, private$pOde, private$pTrigger, private$pEvent, times, private$pCurrState)
-        
-        
-        # Get last state
-        currState <- tail(out$state, length(private$pCurrState))
       }
       
+      if(!events || is.null(private$pTrigger) ||
+         (!is.function(private$pTrigger) &&
+          # !is.data.frame(trigger) && 
+          !is.numeric(private$pTrigger))) {
+        out <- sdsim::runLSODA(obj = private$pObj, 
+                               ode = private$pOde, 
+                               time = times, 
+                               state = private$pCurrState, 
+                               trigger = NULL, 
+                               event = NULL,
+                               atol = atol, 
+                               rtol = rtol)
+        
+      } else {
+        out <- sdsim::runLSODA(obj = private$pObj, 
+                               ode = private$pOde, 
+                               time = times, 
+                               state = private$pCurrState, 
+                               trigger = private$pTrigger, 
+                               event = private$pEvent,
+                               atol = atol, 
+                               rtol = rtol)
+      }
+
       # Update LSODA istate value
       private$pObj$istate <- out$istate
       
       # Save trajectory and update current state and time
       private$pOutput$updateOutTraj(out$state)
-      private$pCurrState <- setNames(as.list(currState), names(private$pCurrState))
+      private$pCurrState <- setNames(as.list(tail(out$state, length(private$pCurrState))), names(private$pCurrState))
       private$pCurrTime <- to
     }
 

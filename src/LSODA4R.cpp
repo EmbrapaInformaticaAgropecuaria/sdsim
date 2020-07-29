@@ -75,8 +75,11 @@ extern "C" {
         root = as<double>(trigger(time[i], yOut, 1));
       } else if(triggerT == "numeric") { // If trigger is a timeEvent vector check if there is an event in time[i]
         vector<double> timeEvent = as<vector<double>>(ENV["trigger"]);
-        if(find(timeEvent.begin(), timeEvent.end(), time[i]) != timeEvent.end()) {
-          root = 0;
+        for(int j = 0; j < timeEvent.size(); j++) {
+          if(fabs(timeEvent[j] - time[i]) < atol) {
+            root = 0;
+            continue;
+          }
         }
       }
 
