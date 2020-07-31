@@ -88,8 +88,8 @@ extern "C" {
         Function event = ENV["event"];
         if(root <= 0 || fabs(root) < atol) {
           yOut = as<vector<double>>(event(time[i], yOut, 1));
+          istate = 1;
         }
-        istate = 1;
       }
       
       ENV["istate"] = istate;
