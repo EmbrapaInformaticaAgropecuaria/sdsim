@@ -7,18 +7,20 @@ CreateFuncEval <-
            storeAuxTrajectory = F,
            stNames = NULL) { 
     
-    st <- env$st
-    ct <- env$ct
-    par <- env$par
     inp <- env$inp
-    sw <- env$sw
-    
+
     aux <- vector("list", length = length(auxiliary))
     names(aux) <- names(auxiliary)
     auxseq <- seq_along(auxiliary)
     timeSeries <- match(names(inp$fun_), names(inp))
 
     FuncEval <- function(t, st, parms) { 
+      env <- env
+      par <- env$par
+      ct <- env$ct
+      inp <- env$inp
+      sw <- env$sw
+
       st <- as.list(st)
       if(!is.null(stNames))
         names(st) <- stNames
@@ -28,7 +30,6 @@ CreateFuncEval <-
       if (lastEvalTime != t) {
         # compute the time series contained in the input
         inp[timeSeries] <<- lapply(inp$fun_, function(x) x(t))
-        
         lastEvalTime <<- t
       }
       
@@ -526,6 +527,30 @@ sdSimulatorClass <- R6::R6Class(
       private$pOutput$updateOutTraj(out$state)
       private$pCurrState <- setNames(as.list(tail(out$state, length(private$pCurrState))), names(private$pCurrState))
       private$pCurrTime <- to
+    },
+    modifyParameter = function(...) {
+      backup <- private$pSimScenario$parameter
+      private$pSimScenario$addParameter(...)
+      private$pOdeEnv$par <- private$pSimScenario$parameter
+      private$pSimScenario$addParameter(backup)
+    },
+    modifyConstant = function(...) {
+      backup <- private$pSimScenario$constant
+      private$pSimScenario$addConstant(...)
+      private$pOdeEnv$ct <- private$pSimScenario$constant
+      private$pSimScenario$addConstant(backup)
+    },
+    modifySwitch = function(...) {
+      backup <- private$pSimScenario$switch
+      private$pSimScenario$addSwitch(...)
+      private$pOdeEnv$sw <- private$pSimScenario$switch
+      private$pSimScenario$addSwitch(backup)
+    },
+    modifyInput = function(...) {
+      backup <- private$pSimScenario$input
+      private$pSimScenario$addInput(...)
+      private$pOdeEnv$inp <- private$pSimScenario$input
+      private$pSimScenario$addInput(backup)
     }
 
   ),
