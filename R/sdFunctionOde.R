@@ -20,7 +20,8 @@ sdFunctionOdeClass <- R6::R6Class(
                names(formals(func)))) {
         stop(sprintf(""))
       }
-      
+
+      environment(func) <- new.env(parent = parent.env(globalenv()))
       private$pOde <- func
     },
     
