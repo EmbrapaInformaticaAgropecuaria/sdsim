@@ -409,7 +409,7 @@ sdSimulatorClass <- R6::R6Class(
       else if (inherits(private$pModel, sdCoupledModelClass$classname)) {
         out <- initCoupledModel(private$pModel, private$pSimScenario)
       }
-      
+
       private$pOdeEnv <- out$odeEnv
       private$pOde <- out$ode
       private$pTrigger <- out$trigger
@@ -467,6 +467,9 @@ sdSimulatorClass <- R6::R6Class(
       if(is.null(private$pOde)) {
         warning(sprintf(sdSimulatorMsg$runStep3, private$pModel$id))
         return()
+      }
+      if(private$pMethod != "lsoda") {
+        warning(sprintf(sdSimulatorMsg$runStep4, private$pMethod))
       }
         
       if (is.null(from))
