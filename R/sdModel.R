@@ -3,7 +3,8 @@ sdModelClass <- R6::R6Class(
   
   public = list(print = function(){},
                 verifyModel = function() {},
-                saveXml = function(){}),
+                saveXml = function(){},
+                computeDiff = function(){}),
   
   active = list(
     id = function(id) { 

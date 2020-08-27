@@ -724,6 +724,33 @@ sdOdeModelClass <- R6::R6Class(
                          indent = TRUE),  file = file) 
       
       invisible(rootsdModel)
+    },
+    computeAux = function(t = NULL, st = NULL, ct = NULL, par = NULL, inp = NULL, sw = NULL) {
+    env = new.env(globalenv())
+    env$t <- t
+    env$st <- st
+    env$ct <- ct
+    env$par <- par
+    env$inp <- inp
+    env$sw <- sw
+
+    # evaluate the auxiliary variables and update the aux list
+    aux <- vector("list", length = length(private$pAux))
+    names(aux) <- names(private$pAux)
+    auxseq <- seq_along(private$pAux)
+    for (var in auxseq)
+      aux[[var]] <- eval(private$pAux[[var]], envir = env)
+    return(aux)
+    },
+    computeDiff = function(t = NULL, st = NULL, ct = NULL, par = NULL, inp = NULL, sw = NULL) { 
+      # evaluate the auxiliary variables and update the aux list
+      aux <- self$computeAux(t = t, st = st, ct = ct, par = par,
+                        inp = inp, sw = sw)
+
+      diff <- self$ode(t = t, st = st, ct = ct, par = par,
+                           inp = inp, sw = sw, aux = aux)
+      diff <- as.list(unlist(diff))
+      return(diff)
     }
   ),
   active = list(
