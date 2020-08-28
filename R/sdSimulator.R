@@ -24,7 +24,7 @@ CreateFuncEval <-
       st <- as.list(st)
       if(!is.null(stNames))
         names(st) <- stNames
-      
+
       # evaluate time series and auxiliary varibles if the last evaluation time
       # is different than the current time
       if (lastEvalTime != t) {
@@ -32,7 +32,7 @@ CreateFuncEval <-
         inp[timeSeries] <<- lapply(inp$fun_, function(x) x(t))
         lastEvalTime <<- t
       }
-      
+
       # evaluate the auxiliary variables and update the aux list
       for (var in auxseq)
         aux[[var]] <- eval(auxiliary[[var]])
@@ -494,6 +494,16 @@ sdSimulatorClass <- R6::R6Class(
         times <- c(from, to)
       } else { # More than one step
         times <- seq(from, to, by)
+        if(!(to %in% times)) {
+          times <- sort(c(times, to))
+        }
+      }
+      
+      if(private$pOdeEnv$flag == TRUE) {
+        private$pCurrState <- private$pOdeEnv$st
+        private$pOutput$replaceOutTrajRow(c(from, private$pOdeEnv$st))
+        private$pObj$istate <- 1
+        private$pOdeEnv$flag <- FALSE
       }
       
       if(!events || is.null(private$pTrigger) ||
@@ -522,7 +532,7 @@ sdSimulatorClass <- R6::R6Class(
 
       # Update LSODA istate value
       private$pObj$istate <- out$istate
-      
+
       # Save trajectory and update current state and time
       private$pOutput$updateOutTraj(out$state)
       private$pCurrState <- setNames(as.list(tail(out$state, length(private$pCurrState))), names(private$pCurrState))
@@ -551,8 +561,14 @@ sdSimulatorClass <- R6::R6Class(
       private$pSimScenario$addInput(...)
       private$pOdeEnv$inp <- private$pSimScenario$input
       private$pSimScenario$addInput(backup)
+    },
+    modifyState = function(...) {
+      private$pOdeEnv$flag <- TRUE
+      backup <- private$pSimScenario$state
+      private$pSimScenario$addState(...)
+      private$pOdeEnv$st <- private$pSimScenario$state
+      private$pSimScenario$addState(backup)
     }
-
   ),
   active = list(
     model = function() {
@@ -1134,6 +1150,7 @@ initOdeModel <- function(model, scenario) {
     sw <- modelInit$sw
   }
 
+  assign("flag", FALSE, odeEnv)
   assign("st", st, odeEnv)
   assign("ct", ct, odeEnv)
   assign("par", par, odeEnv)

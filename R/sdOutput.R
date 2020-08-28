@@ -581,6 +581,10 @@ sdOutputClass <- R6::R6Class(
                                            ".xml"))
       }
     },
+    replaceOutTrajRow = function(row) {
+      l <- length(private$pOutTrajectory)
+      private$pOutTrajectory[(l - length(row) + 1):l] <- row
+    },
     updateOutTraj = function(traj) {
         private$pOutTrajectory <- c(private$pOutTrajectory, traj)
     },
