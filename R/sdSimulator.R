@@ -655,12 +655,6 @@ sdSimulatorClass <- R6::R6Class(
     },
     currentState = function() {
       return(private$pCurrState)
-    },
-    ode = function() {
-      return(private$pOde)
-    },
-    aux = function() {
-      return(private$pAux)
     }
   ),
   private = list(
