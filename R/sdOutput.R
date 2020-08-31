@@ -223,16 +223,7 @@ sdOutputClass <- R6::R6Class(
       
       if (!is.null(private[["pOutTrajectory"]])) { 
         cat(indent("$Output Trajectories", indent = 4), sep = "\n")
-        if(is.vector(private$pOutTrajectory)) {
-          names <- c("time", names(private$pScenario$state))
-          df <- data.frame(t(matrix(private$pOutTrajectory, nrow = length(names))))
-          colnames(df) <- names
-          cat(indent(paste(capture.output(tail(df, n = 10, 
-                                               addrownums = FALSE)), 
-                           collapse =  "\n"), indent = 4))
-        } 
-        else
-          cat(indent(paste(capture.output(tail(private$pOutTrajectory, n = 10, 
+        cat(indent(paste(capture.output(tail(self$outTrajectory, n = 10, 
                                                addrownums = FALSE)), 
                            collapse =  "\n"), indent = 4))
         cat("\n\n")
@@ -242,7 +233,7 @@ sdOutputClass <- R6::R6Class(
         # static models do not have auxiliaries
         if (!inherits(private$pModel, sdStaticModelClass$classname)) { 
           cat(indent("$Auxiliary Trajectories", indent = 4), sep = "\n")
-          cat(indent(paste(capture.output(tail(private[["pAuxTrajectory"]], n = 10, 
+          cat(indent(paste(capture.output(tail(self$auxTrajectory, n = 10, 
                                                addrownums = FALSE)), 
                            collapse =  "\n"), indent = 4))
           cat("\n\n")
@@ -261,22 +252,13 @@ sdOutputClass <- R6::R6Class(
     summary = function() { 
       
       if (!is.null(private[["pOutTrajectory"]])) {
-        if(is.vector(private$pOutTrajectory)) {
-          names <- c("time", names(private$pScenario$state))
-          df <- data.frame(t(matrix(private$pOutTrajectory, nrow = length(names))))
-          colnames(df) <- names
-          data <- df
-        } else {
-          data <- private$pOutTrajectory
-        } 
-        
         message(sdOutputMsg$summary1)
-        print(summary(data))
+        print(summary(self$outTrajectory))
       }
       
       if (!is.null(private[["pAuxTrajectory"]])) { 
         message(sdOutputMsg$summary2)
-        print(summary(private[["pAuxTrajectory"]]))
+        print(summary(self$auxTrajectory))
       }
       
       if (!is.null(private[["pTimeSeriesTrajectory"]])) { 
@@ -297,14 +279,7 @@ sdOutputClass <- R6::R6Class(
       
       which <- list(...)
       
-      if(is.vector(private$pOutTrajectory)) {
-        names <- c("time", names(private$pScenario$state))
-        df <- data.frame(t(matrix(private$pOutTrajectory, nrow = length(names))))
-        colnames(df) <- names
-        data <- df
-      } else {
-        data <- private$pOutTrajectory
-      } 
+      data <- self$outTrajectory 
       
       # retrieve the model default scenario
       dfscen <- private$pModel$defaultScenario
@@ -334,8 +309,8 @@ sdOutputClass <- R6::R6Class(
           which <- "all"
           warning(sprintf(sdOutputMsg$plot2,private$pOutputId))
         } else { 
-          if (!is.null(private[["pAuxTrajectory"]]))
-            data <- merge(data, private[["pAuxTrajectory"]],
+          if (!is.null(self$auxTrajectory))
+            data <- merge(data, self$auxTrajectory,
                           sort = FALSE, by.x = "time", by.y = "time")
           
           if (!is.null(private[["pTimeSeriesTrajectory"]]))
@@ -540,25 +515,13 @@ sdOutputClass <- R6::R6Class(
         dir.create(path = paste0(path, "/"), recursive = TRUE)
       
       # save the trajectories
-      if (!is.null(private$pOutTrajectory)) {
-        
-        if(is.vector(private$pOutTrajectory)) {
-          names <- c("time", names(private$pScenario$state))
-          df <- data.frame(t(matrix(private$pOutTrajectory, nrow = length(names))))
-          colnames(df) <- names
-          data <- df
-        } else {
-          data <- private$pOutTrajectory
-        } 
-        
-        write.csv(x = data, 
+      if (!is.null(private$pOutTrajectory))
+        write.csv(x = self$outTrajectory, 
                   file = paste0(path, "/outputTrajectory.csv"),
                   row.names = F)
-      }
-        
       
       if (!is.null(private$pAuxTrajectory))
-        write.csv(x = private$pAuxTrajectory, 
+        write.csv(x = self$auxTrajectory, 
                   file = paste0(path, "/auxTrajectory.csv"), row.names = F)
       
       if (!is.null(private$pTimeSeriesTrajectory))
@@ -585,8 +548,8 @@ sdOutputClass <- R6::R6Class(
       l <- length(private$pOutTrajectory)
       private$pOutTrajectory[(l - length(row) + 1):l] <- row
     },
-    updateOutTraj = function(traj) {
-        private$pOutTrajectory <- c(private$pOutTrajectory, traj)
+    updateTraj = function(name, traj) {
+        private[[name]] <- c(private[[name]], traj)
     },
     setOutTraj = function(traj) {
       private$pOutTrajectory <- traj
@@ -627,7 +590,14 @@ sdOutputClass <- R6::R6Class(
     auxTrajectory = function() { 
       if (length(private[["pAuxTrajectory"]]) == 0)
         return(NULL)
-      return(private[["pAuxTrajectory"]])
+      else if(is.vector(private$pAuxTrajectory)) {
+        names <- c("time", names(private$pModel$aux))
+        df <- data.frame(t(matrix(private$pAuxTrajectory, nrow = length(names))))
+        colnames(df) <- names
+        return(df)
+      } 
+      else
+        return(private$pAuxTrajectory)
     },
     timeSeriesTrajectory = function() { 
       if (length(private[["pTimeSeriesTrajectory"]]) == 0)

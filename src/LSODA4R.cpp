@@ -39,6 +39,8 @@ extern "C" {
     // Set global variables
     ENV = as<Environment>(env);
     NEQ = LENGTH(y_S);
+    
+    int AUX_L = ENV["auxLength"];
 
     // Change SEXP to c++ types
     vector<double> time = as<vector<double>>(time_S);
@@ -51,20 +53,34 @@ extern "C" {
     
     // Return vector (time_1 st1_1 st2_1 st3_1 ... time_np st1_np st2_np st3_np) 
     vector<double> Y(np * (NEQ + 1), 0);
+    vector<double> AUX(np * (AUX_L + 1), 0);
     
     // lsoda_update return
     vector<double> out; 
-  
+    
     // LSODA object
     XPtr<LSODA> ptr(obj);
     
     int istate = ENV["istate"]; // Istate value
     string triggerT = ENV["triggerT"]; // trigger type
     string eventT = ENV["eventT"]; // event type
+    string auxT = ENV["auxT"];
     
     for (int i = 0; i < np; i++) {
-      // Calculate a state given previous state and time range
       double tin = time[i];
+      
+      // Compute auxiliaries
+      if(auxT == "true") {
+        Function auxFunc = ENV["auxFunc"];
+        vector<double> aux = as<vector<double>>(auxFunc(time[i + 1], y, 0.));
+        
+        AUX[(AUX_L + 1) * i] = tin;
+        for (int j = 0; j < AUX_L; j++) {
+          AUX[(AUX_L + 1) * i + 1 + j] = aux[j];
+        }
+      }
+      
+      // Calculate a state given previous state and time range
       ptr->lsoda_update(sys, NEQ, y, out, &tin, time[i + 1], &istate, nullptr, rtol, atol);
       vector<double> yOut(&out[1], &out[NEQ + 1]); // Discard out first element (it is always zero)
 
@@ -100,6 +116,9 @@ extern "C" {
         Y[(NEQ + 1) * i + 1 + j] = yOut[j];
         y[j] = yOut[j];
       }
+    }
+    if(auxT == "true") {
+      ENV["aux"] = AUX;
     }
     return wrap(Y);
   }

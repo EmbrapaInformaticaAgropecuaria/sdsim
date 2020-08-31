@@ -2,9 +2,10 @@ initLSODA <- function() {
   obj <- .Call("initLSODA")
 }
 
-runLSODA <- function(obj, ode, times, state, trigger = NULL, event = NULL, atol = 1e-6, rtol = 1e-6) {
+runLSODA <- function(obj, ode, aux, auxLength, times, state, trigger = NULL, event = NULL, atol = 1e-6, rtol = 1e-6) {
   # New environment for ODE, istate, trigger and event
   newEnv <- new.env(parent = parent.env(globalenv()))
+  assign("aux", NULL, newEnv)
   assign("ode", ode, newEnv)
   assign("istate", obj$istate, newEnv)
   
@@ -28,7 +29,16 @@ runLSODA <- function(obj, ode, times, state, trigger = NULL, event = NULL, atol 
   } else {
     assign("eventT", "none", newEnv)
   }
+  
+  if(!is.null(aux)) {
+    assign("auxFunc", aux, newEnv)
+    assign("auxLength", auxLength, newEnv)
+    assign("auxT", "true", newEnv)
+  } else {
+    assign("auxT", "false", newEnv)
+    assign("auxLength", 0, newEnv)
+  }
+  
   out <- .Call("runLSODA", obj$lsoda, as.double(times), as.double(state), as.double(rtol), as.double(atol), newEnv)
-
-  return(list(state = out, istate = newEnv$istate))
+  return(list(state = out, aux = newEnv$aux, istate = newEnv$istate))
 }

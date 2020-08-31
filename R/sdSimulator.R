@@ -56,6 +56,48 @@ CreateFuncEval <-
     return(FuncEval)
   }
 
+CreateAuxEval <-
+  function(env,
+           auxiliary,
+           lastEvalTime,
+           stNames = NULL) { 
+    
+    inp <- env$inp
+    
+    aux <- vector("list", length = length(auxiliary))
+    names(aux) <- names(auxiliary)
+    auxseq <- seq_along(auxiliary)
+    timeSeries <- match(names(inp$fun_), names(inp))
+    
+    AuxEval <- function(t, st, parms) { 
+      env <- env
+      par <- env$par
+      ct <- env$ct
+      inp <- env$inp
+      sw <- env$sw
+      
+      st <- as.list(st)
+      if(!is.null(stNames))
+        names(st) <- stNames
+      
+      # evaluate time series and auxiliary varibles if the last evaluation time
+      # is different than the current time
+      if (lastEvalTime != t) {
+        # compute the time series contained in the input
+        inp[timeSeries] <<- lapply(inp$fun_, function(x) x(t))
+        lastEvalTime <<- t
+      }
+      
+      # evaluate the auxiliary variables and update the aux list
+      for (var in auxseq)
+        aux[[var]] <- eval(auxiliary[[var]])
+      
+      return(unlist(aux))
+    }
+    
+    return(AuxEval)
+  }
+
 # A clousure that returns a function that concatenate the funcs return value
 # at each time t. It pre evaluates the models time series, make the connections
 # using the A transformation matrix and pre evaluates the auxiliary equations.
@@ -67,14 +109,13 @@ CreateCoupledFuncEval <- function(componentsId,
                                   conAuxInps,
                                   compIndex,
                                   lenst,
-                                  ct,
-                                  par,
-                                  inp,
-                                  sw,
+                                  env,
                                   auxiliary,
                                   unlistReturn = F,
                                   storeAuxTrajectory = F,
                                   stNames = NULL) { 
+  inp <- env$inp
+  
   lastEvalTime <- -Inf
   
   modelseq <- seq_along(componentsId)
@@ -88,6 +129,11 @@ CreateCoupledFuncEval <- function(componentsId,
   dAux <- list()
   
   CoupledFuncEval <- function(t, state, parms) { 
+    env <- env
+    par <- env$par
+    ct <- env$ct
+    sw <- env$sw
+    
     # stores the model definitions result
     st <- as.list(state)
     if(!is.null(stNames))
@@ -413,6 +459,7 @@ sdSimulatorClass <- R6::R6Class(
 
       private$pOdeEnv <- out$odeEnv
       private$pOde <- out$ode
+      private$pAux <- out$aux
       private$pTrigger <- out$trigger
       private$pEvent <- out$event
       
@@ -421,7 +468,7 @@ sdSimulatorClass <- R6::R6Class(
       
       private$pOutput <- sdOutputClass$new(
         outTrajectory = c(private$pTimes$from, unlist(private$pSimScenario$state, use.names = F)),
-        auxTrajectory = NULL,
+        auxTrajectory = c(),
         timeSeriesTrajectory = NULL,
         model = private$pModel,
         scenario = private$pSimScenario,
@@ -464,7 +511,7 @@ sdSimulatorClass <- R6::R6Class(
       private$pOutput$setPostProcess(output$diagnostics)
       private$pOutput$setDiagnostics(output$postProcessOut)
     },
-    runStep = function(from = NULL, to = NULL, by = NULL, events = TRUE, atol = 1e-6, rtol = 1e-6) {
+    runStep = function(from = NULL, to = NULL, by = NULL, events = TRUE, storeAuxTrajectory = TRUE, atol = 1e-6, rtol = 1e-6) {
       if(is.null(private$pOde)) {
         warning(sprintf(sdSimulatorMsg$runStep3, private$pModel$id))
         return()
@@ -506,12 +553,19 @@ sdSimulatorClass <- R6::R6Class(
         private$pOdeEnv$flag <- FALSE
       }
       
+      if(storeAuxTrajectory) 
+        aux <- private$pAux
+      else 
+        aux <- NULL
+
       if(!events || is.null(private$pTrigger) ||
          (!is.function(private$pTrigger) &&
           # !is.data.frame(trigger) && 
           !is.numeric(private$pTrigger))) {
         out <- sdsim::runLSODA(obj = private$pObj, 
                                ode = private$pOde, 
+                               aux = aux,
+                               auxLength = length(private$pModel$aux),
                                time = times, 
                                state = private$pCurrState, 
                                trigger = NULL, 
@@ -521,7 +575,9 @@ sdSimulatorClass <- R6::R6Class(
         
       } else {
         out <- sdsim::runLSODA(obj = private$pObj, 
-                               ode = private$pOde, 
+                               ode = private$pOde,
+                               aux = aux,
+                               auxLength = length(private$pModel$aux),
                                time = times, 
                                state = private$pCurrState, 
                                trigger = private$pTrigger, 
@@ -533,10 +589,15 @@ sdSimulatorClass <- R6::R6Class(
       # Update LSODA istate value
       private$pObj$istate <- out$istate
 
-      # Save trajectory and update current state and time
-      private$pOutput$updateOutTraj(out$state)
+      # Save state trajectory and update current state and time
+      private$pOutput$updateTraj("pOutTrajectory", out$state)
       private$pCurrState <- setNames(as.list(tail(out$state, length(private$pCurrState))), names(private$pCurrState))
       private$pCurrTime <- to
+      
+      # Save auxiliary trajectory
+      if(!is.null(out$aux))
+        private$pOutput$updateTraj("pAuxTrajectory", out$aux)
+
     },
     modifyParameter = function(...) {
       backup <- private$pSimScenario$parameter
@@ -594,6 +655,12 @@ sdSimulatorClass <- R6::R6Class(
     },
     currentState = function() {
       return(private$pCurrState)
+    },
+    ode = function() {
+      return(private$pOde)
+    },
+    aux = function() {
+      return(private$pAux)
     }
   ),
   private = list(
@@ -607,6 +674,7 @@ sdSimulatorClass <- R6::R6Class(
     pCurrState = NULL,
     pOdeEnv = NULL,
     pOde = NULL,
+    pAux = NULL,
     pTrigger = NULL,
     pEvent = NULL,
     pObj = NULL
@@ -1172,6 +1240,17 @@ initOdeModel <- function(model, scenario) {
                    unlistReturn = F,
                    stNames = names(st))
   
+  auxEval <- NULL
+  if(length(auxiliary) != 0) {
+    auxEval <- 
+      CreateAuxEval(odeEnv,
+                    auxiliary,
+                    model$defaultScenario$times$from - 1,
+                    names(st))
+  }
+
+  
+  
   if (is.function(trigger)) {
     triggerEval <-
       CreateFuncEval(func = trigger, 
@@ -1196,7 +1275,7 @@ initOdeModel <- function(model, scenario) {
     eventEval <- event
   }
   
-  return(list(odeEnv = odeEnv, ode = odeEval, trigger = triggerEval, event = eventEval))
+  return(list(odeEnv = odeEnv, ode = odeEval, aux = auxEval, trigger = triggerEval, event = eventEval))
 }
 
 initStaticModel <- function(model, scenario) {
@@ -1292,6 +1371,7 @@ initCoupledModel <- function(model, scenario) {
     sw  <- MergeLists(modelInit$sw, sw, "coupledSwitch")
   }
 
+  assign("flag", FALSE, odeEnv)
   assign("st", st, odeEnv)
   assign("ct", ct, odeEnv)
   assign("par", par, odeEnv)
@@ -1325,10 +1405,7 @@ initCoupledModel <- function(model, scenario) {
       conAuxInps = conAuxInps,
       compIndex = compIndex,
       lenst = length(st),
-      ct = ct,
-      par = par,
-      inp = inp,
-      sw = sw,
+      env = odeEnv,
       aux = model$componentsAux,
       unlistReturn = F,
       storeAuxTrajectory = T,
