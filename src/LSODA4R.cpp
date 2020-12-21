@@ -12,13 +12,13 @@
 // 
 // int NEQ;
 // 
-// extern "C" {
-//   SEXP initLSODA()
-//   {
-//     XPtr<LSODA> ptr(new LSODA(), true);
-//     return(ptr);
-//   }
+// // [[Rcpp::export]]
+// SEXP initLSODA_c()
+// {
+//   XPtr<LSODA> ptr(new LSODA(), true);
+//   return(ptr);
 // }
+// 
 // 
 // void sys(double t, double *y, double *dydt) {
 //   // Get ODE function
@@ -26,7 +26,7 @@
 // 
 //   vector<double> yR(y, y + NEQ);
 //   double parms = 1;
-//   
+// 
 //   // Evaluate differentials
 //   vector<double>result = as<vector<double>>(ode(t, yR, parms));
 //   for(int i = 0; i < NEQ; i++) {
@@ -39,7 +39,7 @@
 //     // Set global variables
 //     ENV = as<Environment>(env);
 //     NEQ = LENGTH(y_S);
-//     
+// 
 //     int AUX_L = ENV["auxLength"];
 // 
 //     // Change SEXP to c++ types
@@ -47,39 +47,39 @@
 //     vector<double> y = as<vector<double>>(y_S);
 //     double rtol = as<double>(rtol_S);
 //     double atol = as<double>(atol_S);
-//     
+// 
 //     // Number of points to evaluate
-//     int np = time.size() - 1; 
-//     
-//     // Return vector (time_1 st1_1 st2_1 st3_1 ... time_np st1_np st2_np st3_np) 
+//     int np = time.size() - 1;
+// 
+//     // Return vector (time_1 st1_1 st2_1 st3_1 ... time_np st1_np st2_np st3_np)
 //     vector<double> Y(np * (NEQ + 1), 0);
 //     vector<double> AUX(np * (AUX_L + 1), 0);
-//     
+// 
 //     // lsoda_update return
-//     vector<double> out; 
-//     
+//     vector<double> out;
+// 
 //     // LSODA object
 //     XPtr<LSODA> ptr(obj);
-//     
+// 
 //     int istate = ENV["istate"]; // Istate value
 //     string triggerT = ENV["triggerT"]; // trigger type
 //     string eventT = ENV["eventT"]; // event type
 //     string auxT = ENV["auxT"];
-//     
+// 
 //     for (int i = 0; i < np; i++) {
 //       double tin = time[i];
-//       
+// 
 //       // Compute auxiliaries
 //       if(auxT == "true") {
 //         Function auxFunc = ENV["auxFunc"];
 //         vector<double> aux = as<vector<double>>(auxFunc(time[i + 1], y, 0.));
-//         
+// 
 //         AUX[(AUX_L + 1) * i] = tin;
 //         for (int j = 0; j < AUX_L; j++) {
 //           AUX[(AUX_L + 1) * i + 1 + j] = aux[j];
 //         }
 //       }
-//       
+// 
 //       // Calculate a state given previous state and time range
 //       ptr->lsoda_update(sys, NEQ, y, out, &tin, time[i + 1], &istate, nullptr, rtol, atol);
 //       vector<double> yOut(&out[1], &out[NEQ + 1]); // Discard out first element (it is always zero)
@@ -107,9 +107,9 @@
 //           istate = 1;
 //         }
 //       }
-//       
+// 
 //       ENV["istate"] = istate;
-//       
+// 
 //       // Save output
 //       Y[(NEQ + 1) * i] = time[i + 1];
 //       for (int j = 0; j < NEQ; j++) {

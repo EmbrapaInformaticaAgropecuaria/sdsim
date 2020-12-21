@@ -475,7 +475,7 @@ sdSimulatorClass <- R6::R6Class(
         diagnostics = NULL,
         postProcessOut = NULL)
       
-      # private$pObj <- list(lsoda = sdsim::initLSODA(), istate = 1) 
+      private$pObj <- list(lsoda = sdsim::initLSODA(), istate = 1)
 
     },
     runSimulation = function(events = TRUE,
@@ -510,95 +510,95 @@ sdSimulatorClass <- R6::R6Class(
       private$pOutput$setTimeSeries(output$timeSeriesTrajectory)
       private$pOutput$setPostProcess(output$diagnostics)
       private$pOutput$setDiagnostics(output$postProcessOut)
+    },
+    runStep = function(from = NULL, to = NULL, by = NULL, events = TRUE, storeAuxTrajectory = TRUE, atol = 1e-6, rtol = 1e-6) {
+      if(is.null(private$pOde)) {
+        warning(sprintf(sdSimulatorMsg$runStep3, private$pModel$id))
+        return()
+      }
+      if(private$pMethod != "lsoda") {
+        warning(sprintf(sdSimulatorMsg$runStep4, private$pMethod))
+      }
+
+      if (is.null(from))
+        from <- private$pCurrTime
+
+      if(private$pCurrTime > from) {
+        warning(sprintf(sdSimulatorMsg$runStep1, private$pCurrTime))
+        from <- private$pCurrTime
+      }
+
+      if (is.null(by))
+        by <- private$pTimes$by
+      if (is.null(to))
+        to <- from + by
+
+      if(from > to) {
+        stop(sprintf(sdSimulatorMsg$runStep2))
+      }
+
+      if(to - from - by < 1e-6) { # If one step only
+        times <- c(from, to)
+      } else { # More than one step
+        times <- seq(from, to, by)
+        if(!(to %in% times)) {
+          times <- sort(c(times, to))
+        }
+      }
+
+      if(private$pOdeEnv$flag == TRUE) {
+        private$pCurrState <- private$pOdeEnv$st
+        private$pOutput$replaceOutTrajRow(c(from, private$pOdeEnv$st))
+        private$pObj$istate <- 1
+        private$pOdeEnv$flag <- FALSE
+      }
+
+      if(storeAuxTrajectory)
+        aux <- private$pAux
+      else
+        aux <- NULL
+
+      if(!events || is.null(private$pTrigger) ||
+         (!is.function(private$pTrigger) &&
+          # !is.data.frame(trigger) &&
+          !is.numeric(private$pTrigger))) {
+        out <- sdsim::runLSODA(obj = private$pObj,
+                               ode = private$pOde,
+                               aux = aux,
+                               auxLength = length(private$pModel$aux),
+                               time = times,
+                               state = private$pCurrState,
+                               trigger = NULL,
+                               event = NULL,
+                               atol = atol,
+                               rtol = rtol)
+
+      } else {
+        out <- sdsim::runLSODA(obj = private$pObj,
+                               ode = private$pOde,
+                               aux = aux,
+                               auxLength = length(private$pModel$aux),
+                               time = times,
+                               state = private$pCurrState,
+                               trigger = private$pTrigger,
+                               event = private$pEvent,
+                               atol = atol,
+                               rtol = rtol)
+      }
+
+      # Update LSODA istate value
+      private$pObj$istate <- out$istate
+
+      # Save state trajectory and update current state and time
+      private$pOutput$updateTraj("pOutTrajectory", out$state)
+      private$pCurrState <- setNames(as.list(tail(out$state, length(private$pCurrState))), names(private$pCurrState))
+      private$pCurrTime <- to
+
+      # Save auxiliary trajectory
+      if(!is.null(out$aux))
+        private$pOutput$updateTraj("pAuxTrajectory", out$aux)
+
     }
-    # runStep = function(from = NULL, to = NULL, by = NULL, events = TRUE, storeAuxTrajectory = TRUE, atol = 1e-6, rtol = 1e-6) {
-    #   if(is.null(private$pOde)) {
-    #     warning(sprintf(sdSimulatorMsg$runStep3, private$pModel$id))
-    #     return()
-    #   }
-    #   if(private$pMethod != "lsoda") {
-    #     warning(sprintf(sdSimulatorMsg$runStep4, private$pMethod))
-    #   }
-    #     
-    #   if (is.null(from))
-    #     from <- private$pCurrTime
-    # 
-    #   if(private$pCurrTime > from) {
-    #     warning(sprintf(sdSimulatorMsg$runStep1, private$pCurrTime))
-    #     from <- private$pCurrTime
-    #   }
-    #   
-    #   if (is.null(by))
-    #     by <- private$pTimes$by
-    #   if (is.null(to))
-    #     to <- from + by
-    # 
-    #   if(from > to) {
-    #     stop(sprintf(sdSimulatorMsg$runStep2))
-    #   }
-    # 
-    #   if(to - from - by < 1e-6) { # If one step only
-    #     times <- c(from, to)
-    #   } else { # More than one step
-    #     times <- seq(from, to, by)
-    #     if(!(to %in% times)) {
-    #       times <- sort(c(times, to))
-    #     }
-    #   }
-    #   
-    #   if(private$pOdeEnv$flag == TRUE) {
-    #     private$pCurrState <- private$pOdeEnv$st
-    #     private$pOutput$replaceOutTrajRow(c(from, private$pOdeEnv$st))
-    #     private$pObj$istate <- 1
-    #     private$pOdeEnv$flag <- FALSE
-    #   }
-    #   
-    #   if(storeAuxTrajectory) 
-    #     aux <- private$pAux
-    #   else 
-    #     aux <- NULL
-    # 
-    #   if(!events || is.null(private$pTrigger) ||
-    #      (!is.function(private$pTrigger) &&
-    #       # !is.data.frame(trigger) && 
-    #       !is.numeric(private$pTrigger))) {
-    #     out <- sdsim::runLSODA(obj = private$pObj, 
-    #                            ode = private$pOde, 
-    #                            aux = aux,
-    #                            auxLength = length(private$pModel$aux),
-    #                            time = times, 
-    #                            state = private$pCurrState, 
-    #                            trigger = NULL, 
-    #                            event = NULL,
-    #                            atol = atol, 
-    #                            rtol = rtol)
-    #     
-    #   } else {
-    #     out <- sdsim::runLSODA(obj = private$pObj, 
-    #                            ode = private$pOde,
-    #                            aux = aux,
-    #                            auxLength = length(private$pModel$aux),
-    #                            time = times, 
-    #                            state = private$pCurrState, 
-    #                            trigger = private$pTrigger, 
-    #                            event = private$pEvent,
-    #                            atol = atol, 
-    #                            rtol = rtol)
-    #   }
-    # 
-    #   # Update LSODA istate value
-    #   private$pObj$istate <- out$istate
-    # 
-    #   # Save state trajectory and update current state and time
-    #   private$pOutput$updateTraj("pOutTrajectory", out$state)
-    #   private$pCurrState <- setNames(as.list(tail(out$state, length(private$pCurrState))), names(private$pCurrState))
-    #   private$pCurrTime <- to
-    #   
-    #   # Save auxiliary trajectory
-    #   if(!is.null(out$aux))
-    #     private$pOutput$updateTraj("pAuxTrajectory", out$aux)
-    # 
-    # },
     # modifyParameter = function(...) {
     #   backup <- private$pSimScenario$parameter
     #   private$pSimScenario$addParameter(...)
