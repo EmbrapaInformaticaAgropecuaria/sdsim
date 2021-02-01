@@ -1039,8 +1039,7 @@ runCoupledSimulation <- function(env, ode,
       }
       
       createCoupledRootEventFunc <- CreateCoupledRootEventFunc
-      environment(createCoupledRootEventFunc) <-  environment(
-        createCoupledFuncEval)
+      environment(createCoupledRootEventFunc) <- model$modelEnv
       RootEventFuncsEval <- createCoupledRootEventFunc(
         componentsId = names(componentsTrigger),
         rootFuncs = componentsTrigger,
