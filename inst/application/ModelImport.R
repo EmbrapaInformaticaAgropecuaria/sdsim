@@ -662,7 +662,7 @@ UpdateLoadedScenario <- function(simData, session, input,
 LoadOdeModelData <- function(modelXml, simData) {
   # Get auxiliary data frame and update rhandsontable values
   aux <- AuxListToDataFrame(modelXml)
-  
+
   globalFunctions <- modelXml$globalFunctions
   globalFunctions <- lapply(names(globalFunctions), function(x) {
     paste0(x, " <- ", FunToString(globalFunctions[[x]]))
@@ -915,8 +915,15 @@ ConnectionsListToDataFrame <- function(model,
 AuxListToDataFrame <- function(modelXml, auxListName = "aux") {
   ls <- lapply(modelXml[[auxListName]], function(x) toString(x))
   
-  description <- modelXml$defaultScenario$sdScenario$description
-  unit <- modelXml$defaultScenario$sdScenario$unit
+  if(auxListName == "aux") {
+    description <- modelXml$auxDescription
+    unit <- modelXml$auxUnits
+  }
+  else if(auxListName == "algebraicEquations") {
+    description <- modelXml$equationsDescription
+    unit <- modelXml$equationsUnits
+  }
+  
   
   df <- data.frame(Variable = names(ls), Value = unlist(ls),
                    Unit = character(NROW(ls)),

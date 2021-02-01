@@ -1,7 +1,7 @@
 # shinyUI
 source("AuxiliaryUI.R", local = TRUE)
 # library(DiagrammeR)
-require(visNetwork)
+# require(visNetwork)
 
 # Interface dimensions
 # Width of sidebar and page title

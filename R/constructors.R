@@ -353,7 +353,9 @@ sdLoadModel <- function(file, repository = F,
       aux = model$aux ,
       description = model$description,
       globalFunctions = lapply(model$globalFunctions, 
-                               StringToFun))
+                               StringToFun),
+      auxDescription = model$auxDescription,
+      auxUnits = model$auxUnits)
     return(model)
   } else if (sdCoupledModelClass$classname %in% modelTags) { # load coupled model
     if (!is.null(model$components)) { 
@@ -477,10 +479,11 @@ sdLoadModel <- function(file, repository = F,
                                     defaultScenario = model$defaultScenario,
                                     initVars = StringToFun(model$initVars),
                                     algebraicEquations = model$algebraicEquations,
-                                    description = 
-                                      model$description,
+                                    description = model$description,
                                     globalFunctions = lapply(model$globalFunctions, 
-                                                             StringToFun))
+                                                             StringToFun),
+                                    equationsUnits = model$equationsUnits,
+                                    equationsDescription = model$equationsDescription)
     
     return(model)
   } else {

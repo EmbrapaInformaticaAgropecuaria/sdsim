@@ -18,7 +18,6 @@ CreateFuncEval <-
       env <- env
       par <- env$par
       ct <- env$ct
-      inp <- env$inp
       sw <- env$sw
 
       st <- as.list(st)
@@ -73,7 +72,6 @@ CreateAuxEval <-
       env <- env
       par <- env$par
       ct <- env$ct
-      inp <- env$inp
       sw <- env$sw
       
       st <- as.list(st)
@@ -598,38 +596,38 @@ sdSimulatorClass <- R6::R6Class(
       if(!is.null(out$aux))
         private$pOutput$updateTraj("pAuxTrajectory", out$aux)
 
-    }
-    # modifyParameter = function(...) {
-    #   backup <- private$pSimScenario$parameter
-    #   private$pSimScenario$addParameter(...)
-    #   private$pOdeEnv$par <- private$pSimScenario$parameter
-    #   private$pSimScenario$addParameter(backup)
-    # },
-    # modifyConstant = function(...) {
-    #   backup <- private$pSimScenario$constant
-    #   private$pSimScenario$addConstant(...)
-    #   private$pOdeEnv$ct <- private$pSimScenario$constant
-    #   private$pSimScenario$addConstant(backup)
-    # },
-    # modifySwitch = function(...) {
-    #   backup <- private$pSimScenario$switch
-    #   private$pSimScenario$addSwitch(...)
-    #   private$pOdeEnv$sw <- private$pSimScenario$switch
-    #   private$pSimScenario$addSwitch(backup)
-    # },
+    },
+    modifyParameter = function(...) {
+      backup <- private$pSimScenario$parameter
+      private$pSimScenario$addParameter(...)
+      private$pOdeEnv$par <- private$pSimScenario$parameter
+      private$pSimScenario$addParameter(backup)
+    },
+    modifyConstant = function(...) {
+      backup <- private$pSimScenario$constant
+      private$pSimScenario$addConstant(...)
+      private$pOdeEnv$ct <- private$pSimScenario$constant
+      private$pSimScenario$addConstant(backup)
+    },
+    modifySwitch = function(...) {
+      backup <- private$pSimScenario$switch
+      private$pSimScenario$addSwitch(...)
+      private$pOdeEnv$sw <- private$pSimScenario$switch
+      private$pSimScenario$addSwitch(backup)
+    },
     # modifyInput = function(...) {
     #   backup <- private$pSimScenario$input
     #   private$pSimScenario$addInput(...)
     #   private$pOdeEnv$inp <- private$pSimScenario$input
     #   private$pSimScenario$addInput(backup)
     # },
-    # modifyState = function(...) {
-    #   private$pOdeEnv$flag <- TRUE
-    #   backup <- private$pSimScenario$state
-    #   private$pSimScenario$addState(...)
-    #   private$pOdeEnv$st <- private$pSimScenario$state
-    #   private$pSimScenario$addState(backup)
-    # }
+    modifyState = function(...) {
+      private$pOdeEnv$flag <- TRUE
+      backup <- private$pSimScenario$state
+      private$pSimScenario$addState(...)
+      private$pOdeEnv$st <- private$pSimScenario$state
+      private$pSimScenario$addState(backup)
+    }
   ),
   active = list(
     model = function() {

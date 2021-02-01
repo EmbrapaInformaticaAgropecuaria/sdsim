@@ -144,7 +144,8 @@ sdStaticModelClass <- R6::R6Class(
                           defaultScenario,
                           algebraicEquations,
                           initVars,
-                          globalFunctions) { 
+                          globalFunctions,
+                          equationsUnits, equationsDescription) { 
       funDefaultArgs <- c("ct", "par", "inp", "sw", "eq")
       # mandatory parameters
       if (!missing(id) && !is.null(id))
@@ -237,12 +238,34 @@ sdStaticModelClass <- R6::R6Class(
       if (!missing(description) && !is.null(description))
         self$description <- (description)
       
+      if (!missing(equationsUnits) && !is.null(equationsUnits))
+        private$pEquationsUnits <- equationsUnits
+      
+      if (!missing(equationsDescription) && !is.null(equationsDescription))
+        private$pEquationsDescription <- equationsDescription
+      
       private$flagVerify <- FALSE
     },
     print = function() { 
       # convert all the attributes to string 
       modelStr <- list()
-      modelStr$algebraicEquations <- lapply(private$pAlgebraicEquations, toString)
+      
+      nRows <- length(private$pAlgebraicEquations)
+      auxDF <- data.frame(Variable = names(private$pAlgebraicEquations), 
+                          Value = unlist(lapply(private$pAlgebraicEquations, toString), use.names = F),
+                          Unit = character(nRows),
+                          Description = character(nRows),
+                          row.names = NULL, stringsAsFactors = FALSE)
+      
+      for (varNm in auxDF[["Variable"]]) { 
+        if (varNm %in% names(private$pEquationsDescription))
+          auxDF[["Description"]][[which(auxDF[["Variable"]] == varNm)]] <- private$pEquationsDescription[[varNm]]
+        
+        if (varNm %in% names(private$pEquationsUnits))
+          auxDF[["Unit"]][[which(auxDF[["Variable"]] == varNm)]] <- private$pEquationsUnits[[varNm]]
+      }
+      modelStr$algebraicEquations <- auxDF
+      
       modelStr$initVars <- FunToString(private$pInitVars)
       modelStr$globalFunctions <- private$pGlobalFunctions
       
@@ -369,6 +392,8 @@ sdStaticModelClass <- R6::R6Class(
                      description = private$pDescription,
                      initVars = FunToString(private$pInitVars),
                      algebraicEquations = private$pAlgebraicEquations,
+                     equationsUnits = private$pEquationsUnits,
+                     equationsDescription = private$pEquationsDescription,
                      globalFunctions = globalFunctions)
       invisible(ListToXML(rootsdModel, lModel))
       
@@ -428,6 +453,8 @@ sdStaticModelClass <- R6::R6Class(
     pInitVars = NULL,
     pGlobalFunctions = list(),
     pAlgebraicEquations = list(),
-    flagVerify = FALSE
+    flagVerify = FALSE,
+    pEquationsUnits = NULL,
+    pEquationsDescription = NULL
   )
 )

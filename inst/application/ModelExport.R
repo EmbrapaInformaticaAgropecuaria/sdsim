@@ -196,6 +196,9 @@ OdeModelToXml <- function(model) {
   globalFunctions <- StrGlobalFunctionsToList(model$globalFunctions, 
                                               asCharacter = T)
   
+  units <- DataFrameToList(model$aux, valueCol = "Unit")
+  description <- DataFrameToList(model$aux, valueCol = "Description")
+
   lModel <- list(id = model$id,
                  description = model$description,
                  initVars = model$initVars,
@@ -203,6 +206,8 @@ OdeModelToXml <- function(model) {
                  trigger = model$trigger,
                  event = model$event,
                  aux = DataFrameToList(model$aux),
+                 auxUnits = units,
+                 auxDescription = description,
                  globalFunctions = globalFunctions)
   
   ListToXML(rootsdModel, lModel)
@@ -269,10 +274,15 @@ StaticModelToXml <- function(model) {
   globalFunctions <- StrGlobalFunctionsToList(model$globalFunctions, 
                                               asCharacter = T)
   
+  units <- DataFrameToList(model$aux, valueCol = "Unit")
+  description <- DataFrameToList(model$aux, valueCol = "Description")
+  
   lModel <- list(id = model$id,
                  description = model$description,
                  initVars = model$initVars,
                  algebraicEquations = DataFrameToList(model$aux),
+                 equationsUnits = units,
+                 equationsDescription = description,
                  globalFunctions = globalFunctions)
   
   ListToXML(rootsdModel, lModel)

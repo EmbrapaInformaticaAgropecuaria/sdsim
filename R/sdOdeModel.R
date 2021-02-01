@@ -263,7 +263,8 @@ sdOdeModelClass <- R6::R6Class(
                           postProcess, 
                           trigger,
                           event,
-                          globalFunctions) { 
+                          globalFunctions, 
+                          auxUnits, auxDescription) { 
       funDefaultArgs <- c("t", "st", "ct", "par", "inp", "sw", "aux")
 
       # Create new environment for model functions
@@ -431,7 +432,15 @@ sdOdeModelClass <- R6::R6Class(
       }
       
       if (!missing(description) && !is.null(description))
-        self$description <- description
+        private$pDescription <- description
+      
+      if (!missing(auxUnits) && !is.null(auxUnits))
+        private$pAuxUnits <- auxUnits
+      
+      if (!missing(auxDescription) && !is.null(auxDescription))
+        private$pAuxDescription <- auxDescription
+      
+      
       
       private$flagVerify <- FALSE
     },
@@ -447,7 +456,21 @@ sdOdeModelClass <- R6::R6Class(
       })
       
       names(modelStr) <- unlist(modelFuns)
-      modelStr$aux <- lapply(private$pAux, toString)
+      nRows <- length(private$pAux)
+      auxDF <- data.frame(Variable = names(private$pAux), 
+                            Value = unlist(lapply(private$pAux, toString), use.names = F),
+                            Unit = character(nRows),
+                            Description = character(nRows),
+                            row.names = NULL, stringsAsFactors = FALSE)
+      
+      for (varNm in auxDF[["Variable"]]) { 
+        if (varNm %in% names(private$pAuxDescription))
+          auxDF[["Description"]][[which(auxDF[["Variable"]] == varNm)]] <- private$pAuxDescription[[varNm]]
+        
+        if (varNm %in% names(private$pAuxUnits))
+          auxDF[["Unit"]][[which(auxDF[["Variable"]] == varNm)]] <- private$pAuxUnits[[varNm]]
+      }
+      modelStr$aux <- auxDF
       modelStr$globalFunctions <- private$pGlobalFunctions
       
       # print the attributes
@@ -700,6 +723,8 @@ sdOdeModelClass <- R6::R6Class(
                      trigger = trigger,
                      event = FunToString(private$pEvent),
                      aux = private$pAux,
+                     auxUnits = private$pAuxUnits,
+                     auxDescription = private$pAuxDescription,
                      globalFunctions = globalFunctions)
       ListToXML(rootsdModel, lModel)
       
@@ -795,7 +820,10 @@ sdOdeModelClass <- R6::R6Class(
     pEvent = NULL,
     pGlobalFunctions = list(),
     pAux = list(),
-    pModelEnvironment = NULL
+    pModelEnvironment = NULL,
+    pDescription = NULL,
+    pAuxUnits = NULL,
+    pAuxDescription = NULL
   )
 )
 
