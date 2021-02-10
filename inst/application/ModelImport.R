@@ -731,7 +731,7 @@ LoadScenarioData <- function(scenario, simData, parentModelId = NULL) {
   parameter <- ScenarioListToDataFrame(scenario, "parameter")
   switch <- ScenarioListToDataFrame(scenario, "switch")
   times <- scenario$times
-  
+
   # Create scenario
   scenarioData <- CreateScenarioObject(
     id = scenario$id,
@@ -915,6 +915,8 @@ ConnectionsListToDataFrame <- function(model,
 AuxListToDataFrame <- function(modelXml, auxListName = "aux") {
   ls <- lapply(modelXml[[auxListName]], function(x) toString(x))
   
+  description <- NULL
+  unit <- NULL
   if(auxListName == "aux") {
     description <- modelXml$auxDescription
     unit <- modelXml$auxUnits
@@ -933,10 +935,9 @@ AuxListToDataFrame <- function(modelXml, auxListName = "aux") {
   # Add descriptions and units to each variable
   for (varNm in df[["Variable"]]) {
     if (varNm %in% names(description))
-      df[["Description"]][[which(df[["Variable"]] == varNm)]] <- 
-        description[[varNm]]
+      df[["Description"]][[which(df[["Variable"]] == varNm)]] <- ifelse(!is.null(description[[varNm]]), description[[varNm]], "")
     if (varNm %in% names(unit))
-      df[["Unit"]][[which(df[["Variable"]] == varNm)]] <- unit[[varNm]]
+      df[["Unit"]][[which(df[["Variable"]] == varNm)]] <- ifelse(!is.null(unit[[varNm]]), unit[[varNm]], "")
   }
   
   return(df)

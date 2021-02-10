@@ -259,10 +259,10 @@ sdStaticModelClass <- R6::R6Class(
       
       for (varNm in auxDF[["Variable"]]) { 
         if (varNm %in% names(private$pEquationsDescription))
-          auxDF[["Description"]][[which(auxDF[["Variable"]] == varNm)]] <- private$pEquationsDescription[[varNm]]
-        
+          auxDF[["Description"]][[which(auxDF[["Variable"]] == varNm)]] <- ifelse(!is.null(private$pEquationsDescription[[varNm]]), private$pEquationsDescription[[varNm]], "")
+
         if (varNm %in% names(private$pEquationsUnits))
-          auxDF[["Unit"]][[which(auxDF[["Variable"]] == varNm)]] <- private$pEquationsUnits[[varNm]]
+          auxDF[["Unit"]][[which(auxDF[["Variable"]] == varNm)]] <- ifelse(!is.null(private$pEquationsUnits[[varNm]]), private$pEquationsUnits[[varNm]], "")
       }
       modelStr$algebraicEquations <- auxDF
       

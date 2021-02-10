@@ -560,7 +560,7 @@ sdScenarioClass <- R6::R6Class(
                         state = private[["pState"]],
                         constant = private[["pConstant"]],
                         input = inputs,
-                        interpolation = private[["pInput"]][["interpolation_"]],
+                        interpolation = as.list(private[["pInput"]][["interpolation_"]]),
                         parameter = private[["pParameter"]],
                         switch = switches,
                         unit = private[["pUnit"]],

@@ -1,0 +1,4 @@
+#CXX_STD = CXX11
+
+#PKG_CPPFLAGS = -I../inst/include/ -O3 -ffast-math
+#PKG_LIBS= -L../inst/libs/x64 -llsoda -Wl,-rpath,`Rscript -e 'cat(paste0(gsub("src", "", getwd()), "inst/libs/x64"))'`

@@ -465,10 +465,11 @@ sdOdeModelClass <- R6::R6Class(
       
       for (varNm in auxDF[["Variable"]]) { 
         if (varNm %in% names(private$pAuxDescription))
-          auxDF[["Description"]][[which(auxDF[["Variable"]] == varNm)]] <- private$pAuxDescription[[varNm]]
-        
+          auxDF[["Description"]][[which(auxDF[["Variable"]] == varNm)]] <- ifelse(!is.null(private$pAuxDescription[[varNm]]), private$pAuxDescription[[varNm]], "")
+
         if (varNm %in% names(private$pAuxUnits))
-          auxDF[["Unit"]][[which(auxDF[["Variable"]] == varNm)]] <- private$pAuxUnits[[varNm]]
+          auxDF[["Unit"]][[which(auxDF[["Variable"]] == varNm)]] <- ifelse(!is.null(private$pAuxUnits[[varNm]]), private$pAuxUnits[[varNm]], "")
+            
       }
       modelStr$aux <- auxDF
       modelStr$globalFunctions <- private$pGlobalFunctions
